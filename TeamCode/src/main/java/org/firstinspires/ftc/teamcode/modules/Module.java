@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.modules;
 
-interface Module {
+public interface Module {
     void init();
     void update();
 }
