@@ -5,34 +5,35 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.util.MotorPriority;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Intake {
     public DcMotorEx intake;
     public enum STATE {ON, OFF, REVERSE}
 
-    HashMap<String, MotorPriority> motorPriorities;
+    ArrayList<MotorPriority> motorPriorities;
     double intakePower = 1.0;
 
     public STATE currentState = STATE.OFF;
 
-    public Intake(HardwareMap hardwareMap, HashMap<String, MotorPriority> motorPriorities) {
+    public Intake(HardwareMap hardwareMap, ArrayList<MotorPriority> motorPriorities) {
         this.motorPriorities = motorPriorities;
 
         intake = hardwareMap.get(DcMotorEx.class, "intake");
-        motorPriorities.put("intake", new MotorPriority(intake,3,4));
+        motorPriorities.add(6, new MotorPriority(intake,3,4));
     }
 
     public void update() {
         switch (currentState) {
             case ON:
-                motorPriorities.get("intake").setTargetPower(intakePower);
+                motorPriorities.get(6).setTargetPower(intakePower);
                 break;
             case OFF:
-                motorPriorities.get("intake").setTargetPower(0.0);
+                motorPriorities.get(6).setTargetPower(0.0);
                 break;
             case REVERSE:
-                motorPriorities.get("intake").setTargetPower(-intakePower);
+                motorPriorities.get(6).setTargetPower(-intakePower);
                 break;
         }
     }

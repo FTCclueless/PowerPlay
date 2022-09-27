@@ -7,15 +7,17 @@ import org.firstinspires.ftc.teamcode.sensors.Sensors;
 import org.firstinspires.ftc.teamcode.util.MotorPriority;
 import org.firstinspires.ftc.teamcode.util.PID;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 
 public class Slides {
-    public DcMotorEx slides;
+    public DcMotorEx slide1, slide2;
     Sensors sensors;
 
-    HashMap<String, MotorPriority> motorPriorities;
-    public enum STATE {PICKUP, GROUND, LOW, MEDIUM, HIGH}
+    ArrayList<MotorPriority> motorPriorities;
+    public enum STATE {PICKUP, GROUND, LOW, MEDIUM, HIGH, ADJUST}
 
     public STATE currentState = STATE.PICKUP;
     public PID slidesPID = new PID(0.0225,0.008,0.000007);
@@ -27,13 +29,13 @@ public class Slides {
     public double slidesPower = 0.0;
     public static double slidesPercentMax = 0.98;
 
-    public Slides(HardwareMap hardwareMap, HashMap<String, MotorPriority> motorPriorities, Sensors sensors) {
+    public Slides(HardwareMap hardwareMap, ArrayList<MotorPriority> motorPriorities, Sensors sensors) {
         this.motorPriorities = motorPriorities;
         this.sensors = sensors;
 
-        // TODO: Implement 2 slides motor
-        slides = hardwareMap.get(DcMotorEx.class, "slides");
-        motorPriorities.put("slides", new MotorPriority(slides,3,4));
+        slide1 = hardwareMap.get(DcMotorEx.class, "slide1");
+        slide2 = hardwareMap.get(DcMotorEx.class, "slide2");
+        motorPriorities.add(5, new MotorPriority(new DcMotorEx[] {slide1, slide2},3,4));
     }
 
     public void update() {
@@ -42,7 +44,7 @@ public class Slides {
         double slidesError = targetSlidesLength - currentSlidesLength;
         targetSlidesVelocity = Math.max(Math.min(slidesError * (47.141223206685275/2), (47.141223206685275*slidesPercentMax)),-47.141223206685275*slidesPercentMax);
         slidesPower = slidesPID.update(targetSlidesVelocity - currentSlidesVelocity);
-        motorPriorities.get("slides").setTargetPower(slidesPower);
+        motorPriorities.get(5).setTargetPower(slidesPower);
 
         switch (currentState) {
             case PICKUP:
@@ -59,6 +61,8 @@ public class Slides {
                 break;
             case HIGH:
                 targetSlidesLength = 40.0;
+                break;
+            case ADJUST:
                 break;
         }
     }
@@ -86,5 +90,15 @@ public class Slides {
 
     public void moveToHigh() {
         currentState = STATE.HIGH;
+    }
+
+    public void moveUp (double amount) {
+        currentState = STATE.ADJUST;
+        targetSlidesLength += amount;
+    }
+
+    public void moveDown (double amount) {
+        currentState = STATE.ADJUST;
+        targetSlidesLength -= amount;
     }
 }
