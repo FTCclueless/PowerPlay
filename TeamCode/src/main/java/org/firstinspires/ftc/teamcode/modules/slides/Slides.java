@@ -17,9 +17,7 @@ public class Slides {
     Sensors sensors;
 
     ArrayList<MotorPriority> motorPriorities;
-    public enum STATE {PICKUP, GROUND, LOW, MEDIUM, HIGH, ADJUST}
 
-    public STATE currentState = STATE.PICKUP;
     public PID slidesPID = new PID(0.0225,0.008,0.000007);
 
     public double currentSlidesLength = 0.0;
@@ -45,26 +43,6 @@ public class Slides {
         targetSlidesVelocity = Math.max(Math.min(slidesError * (47.141223206685275/2), (47.141223206685275*slidesPercentMax)),-47.141223206685275*slidesPercentMax);
         slidesPower = slidesPID.update(targetSlidesVelocity - currentSlidesVelocity);
         motorPriorities.get(5).setTargetPower(slidesPower);
-
-        switch (currentState) {
-            case PICKUP:
-                targetSlidesLength = 2.5;
-                break;
-            case GROUND:
-                targetSlidesLength = 5.0;
-                break;
-            case LOW:
-                targetSlidesLength = 10.0;
-                break;
-            case MEDIUM:
-                targetSlidesLength = 20.0;
-                break;
-            case HIGH:
-                targetSlidesLength = 40.0;
-                break;
-            case ADJUST:
-                break;
-        }
     }
 
     public void updateSlidesValues() {
@@ -73,32 +51,38 @@ public class Slides {
     }
 
     public void moveToPickup() {
-        currentState = STATE.PICKUP;
+        targetSlidesLength = 2.5;
     }
 
     public void moveToGround() {
-        currentState = STATE.GROUND;
+        targetSlidesLength = 5.0;
     }
 
     public void moveToLow() {
-        currentState = STATE.LOW;
+        targetSlidesLength = 10.0;
     }
 
     public void moveToMedium() {
-        currentState = STATE.MEDIUM;
+        targetSlidesLength = 20.0;
     }
 
     public void moveToHigh() {
-        currentState = STATE.HIGH;
+        targetSlidesLength = 40.0;
     }
 
     public void moveUp (double amount) {
-        currentState = STATE.ADJUST;
         targetSlidesLength += amount;
     }
 
     public void moveDown (double amount) {
-        currentState = STATE.ADJUST;
         targetSlidesLength -= amount;
+    }
+
+    public void setTargetSlidesLength (double amount) {
+        targetSlidesLength = amount;
+    }
+
+    public double getCurrentSlidesLength () {
+        return currentSlidesLength;
     }
 }
