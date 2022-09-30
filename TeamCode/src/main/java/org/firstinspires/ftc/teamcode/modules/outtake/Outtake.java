@@ -32,6 +32,9 @@ public class Outtake {
     double currentSlidesLength = 0.0;
     double currentV4BarAngle = 0.0;
 
+    double currentExtension = 0.0;
+    double currentHeight = 0.0;
+
     double x, y, z;
 
     public Outtake (HardwareMap hardwareMap, ArrayList<MotorPriority> motorPriorities, Sensors sensors) {
@@ -60,11 +63,12 @@ public class Outtake {
         currentSlidesLength = slides.getCurrentSlidesLength();
         currentV4BarAngle = v4Bar.getCurrentV4BarAngle();
 
-        double currentExtension = Math.cos(currentV4BarAngle) * v4BarLength;
+        currentExtension = Math.cos(currentV4BarAngle) * v4BarLength;
+        currentHeight = currentSlidesLength + (Math.sin(currentV4BarAngle) * v4BarLength);
 
         x = Math.cos(currentTurretAngle) * currentExtension;
         y = Math.sin(currentTurretAngle) * currentExtension;
-        z = currentSlidesLength + (Math.sin(currentV4BarAngle) * v4BarLength);
+        z = currentHeight;
     }
 
     public void setTarget(double targetX, double targetY, double targetZ) {
