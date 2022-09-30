@@ -46,7 +46,7 @@ public class Turret {
         currentTurretVelocity = sensors.getTurretVelocity();
     }
 
-    // ALL TURRET VALUES ASSUME FRONT IS THE BACK OF THE ROBOT AND 0 DEGREES IS COMPLETELY TO THE RIGHT
+    // ALL TURRET VALUES ASSUME FRONT IS THE BACK OF THE ROBOT AND 0 DEGREES IS COMPLETELY TO THE RIGHT AND 180 DEGREES IS TO THE LEFT
 
     public void moveToPickup() { targetTurretAngle = 0.0; }
     public void moveToLeft() { targetTurretAngle = 180.0; }

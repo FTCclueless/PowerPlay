@@ -49,9 +49,13 @@ public class Outtake {
         slides.setTargetSlidesLength(targetSlidesLength);
         turret.setTargetTurretAngle(targetTurretAngle);
         v4Bar.setTargetV4BarAngle(targetV4BarAngle);
+
+        slides.update();
+        turret.update();
+        v4Bar.update();
     }
 
-    public void updatePos () {
+    public void updatePos() {
         currentTurretAngle = turret.getCurrentTurretAngle();
         currentSlidesLength = slides.getCurrentSlidesLength();
         currentV4BarAngle = v4Bar.getCurrentV4BarAngle();
