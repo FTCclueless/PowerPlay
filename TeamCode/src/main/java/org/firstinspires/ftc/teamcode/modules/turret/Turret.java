@@ -14,9 +14,7 @@ public class Turret {
     Sensors sensors;
 
     ArrayList<MotorPriority> motorPriorities;
-    public enum STATE {PICKUP, LEFT, RIGHT, BACK, BACK_LEFT, BACK_RIGHT, ADJUST}
 
-    public STATE currentState = STATE.PICKUP;
     public PID turretPID = new PID(0.0045, 0.0003,0.0);
 
     public double currentTurretAngle = 0.0;
@@ -26,8 +24,9 @@ public class Turret {
     public double turretPower = 0.0;
     public static double turretPercentMax = 0.98;
 
-    public Turret(HardwareMap hardwareMap, ArrayList<MotorPriority> motorPriorities) {
+    public Turret(HardwareMap hardwareMap, ArrayList<MotorPriority> motorPriorities, Sensors sensors) {
         this.motorPriorities = motorPriorities;
+        this.sensors = sensors;
 
         turret = hardwareMap.get(DcMotorEx.class, "turret");
         motorPriorities.add(4, new MotorPriority(turret,4,4));
@@ -40,30 +39,6 @@ public class Turret {
         targetTurretVelocity = Math.max(Math.min(turretError * (230.4596076657823/5), (230.4596076657823*turretPercentMax)),-230.4596076657823*turretPercentMax);
         turretPower = turretPID.update(targetTurretVelocity - currentTurretVelocity);
         motorPriorities.get(4).setTargetPower(turretPower);
-
-        // ALL TURRET VALUES ASSUME FRONT IS THE INTAKE
-        switch (currentState) {
-            case PICKUP:
-                targetTurretAngle = 0.1;
-                break;
-            case LEFT:
-                targetTurretAngle = -90.0;
-                break;
-            case RIGHT:
-                targetTurretAngle = 90.0;
-                break;
-            case BACK:
-                targetTurretAngle = 0.0;
-                break;
-            case BACK_LEFT:
-                targetTurretAngle = -45.0;
-                break;
-            case BACK_RIGHT:
-                targetTurretAngle = 45.0;
-                break;
-            case ADJUST:
-                break;
-        }
     }
 
     public void updateTurretValues() {
@@ -71,20 +46,28 @@ public class Turret {
         currentTurretVelocity = sensors.getTurretVelocity();
     }
 
-    public void moveToPickup() { currentState = STATE.PICKUP; }
-    public void moveToLeft() { currentState = STATE.LEFT; }
-    public void moveToRight() { currentState = STATE.RIGHT; }
-    public void moveToBack() { currentState = STATE.BACK; }
-    public void moveToBackLeft() { currentState = STATE.BACK_LEFT; }
-    public void moveToBackRight() { currentState = STATE.BACK_RIGHT; }
+    // ALL TURRET VALUES ASSUME FRONT IS THE BACK OF THE ROBOT AND 0 DEGREES IS COMPLETELY TO THE RIGHT
+
+    public void moveToPickup() { targetTurretAngle = 0.0; }
+    public void moveToLeft() { targetTurretAngle = 180.0; }
+    public void moveToRight() { targetTurretAngle = 0.0; }
+    public void moveToBack() { targetTurretAngle = 0.0; }
+    public void moveToBackLeft() { targetTurretAngle = 135.0; }
+    public void moveToBackRight() { targetTurretAngle = 45.0; }
 
     public void moveLeft (double amount) {
-        currentState = STATE.ADJUST;
         targetTurretAngle -= amount;
     }
 
     public void moveRight (double amount) {
-        currentState = STATE.ADJUST;
         targetTurretAngle += amount;
+    }
+
+    public void setTargetTurretAngle (double angle) {
+        targetTurretAngle = angle;
+    }
+
+    public double getCurrentTurretAngle () {
+        return currentTurretAngle;
     }
 }

@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.modules.drive.Drivetrain;
 import org.firstinspires.ftc.teamcode.modules.intake.Intake;
+import org.firstinspires.ftc.teamcode.modules.outtake.Outtake;
 import org.firstinspires.ftc.teamcode.modules.slides.Slides;
 import org.firstinspires.ftc.teamcode.modules.turret.Turret;
 import org.firstinspires.ftc.teamcode.sensors.Sensors;
@@ -18,8 +19,7 @@ public class Robot {
 
     Drivetrain drivetrain;
     Intake intake;
-    Turret turret;
-    Slides slides;
+    Outtake outtake;
 
     Sensors sensors;
 
@@ -34,8 +34,7 @@ public class Robot {
 
         drivetrain = new Drivetrain(hardwareMap, motorPriorities);
         intake = new Intake(hardwareMap, motorPriorities);
-        turret = new Turret(hardwareMap, motorPriorities);
-        slides = new Slides(hardwareMap, motorPriorities, sensors);
+        outtake = new Outtake(hardwareMap, motorPriorities, sensors);
     }
 
     public void update() {
@@ -43,9 +42,10 @@ public class Robot {
 
         updateMotors();
 
+        drivetrain.update();
+
         intake.update();
-        turret.update();
-        slides.update();
+        outtake.update();
 
         sensors.updateHub1();
     }
