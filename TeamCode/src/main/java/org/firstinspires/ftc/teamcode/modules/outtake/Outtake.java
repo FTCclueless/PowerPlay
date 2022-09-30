@@ -28,12 +28,12 @@ public class Outtake {
     double targetSlidesLength = 0.0;
     double targetV4BarAngle = 0.0;
 
+    double currentExtension = 0.0;
+    double currentHeight = 0.0;
+
     double currentTurretAngle = 0.0;
     double currentSlidesLength = 0.0;
     double currentV4BarAngle = 0.0;
-
-    double currentExtension = 0.0;
-    double currentHeight = 0.0;
 
     double x, y, z;
 
