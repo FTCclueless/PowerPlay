@@ -66,17 +66,19 @@ public class Outtake {
         currentExtension = Math.cos(currentV4BarAngle) * v4BarLength;
         currentHeight = currentSlidesLength + (Math.sin(currentV4BarAngle) * v4BarLength);
 
+        // targetSlidesLength = targetHeight - (Math.sin(currentV4BarAngle) * v4BarLength);
+
         x = Math.cos(currentTurretAngle) * currentExtension;
         y = Math.sin(currentTurretAngle) * currentExtension;
         z = currentHeight;
     }
 
     public void setTarget(double targetX, double targetY, double targetZ) {
-        targetHeight = targetZ - z; // targetZ - currentSlidesLength + (Math.sin(currentV4BarAngle) * v4BarLength) - (Math.sin(targetV4BarAngle) * v4BarLength);
-        targetExtension = Math.sqrt(Math.pow((x-targetX),2) + Math.pow((y-targetY),2));
+        targetHeight = targetZ;
+        targetExtension = Math.sqrt(Math.pow((targetX),2) + Math.pow((targetY),2));
 
         targetV4BarAngle = Math.acos(targetExtension / v4BarLength);
-        targetSlidesLength = targetHeight - (Math.sin(targetV4BarAngle) * v4BarLength);
-        targetTurretAngle = Math.acos((x-targetX) / targetExtension);
+        targetSlidesLength = targetHeight - (Math.sin(targetV4BarAngle) * v4BarLength); // comment out this if you want the v4bar to stay horizontal as slides are moving and then uncomment line 69
+        targetTurretAngle = Math.atan2(targetY,targetX);
     }
 }
