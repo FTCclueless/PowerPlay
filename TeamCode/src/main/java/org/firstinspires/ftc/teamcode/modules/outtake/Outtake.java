@@ -72,7 +72,7 @@ public class Outtake {
     }
 
     public void setTarget(double targetX, double targetY, double targetZ) {
-        targetHeight = targetZ - z;
+        targetHeight = targetZ - z; // targetZ - currentSlidesLength + (Math.sin(currentV4BarAngle) * v4BarLength) - (Math.sin(targetV4BarAngle) * v4BarLength);
         targetExtension = Math.sqrt(Math.pow((x-targetX),2) + Math.pow((y-targetY),2));
 
         targetV4BarAngle = Math.acos(targetExtension / v4BarLength);
