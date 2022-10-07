@@ -40,14 +40,14 @@ public class Robot {
     public void update() {
         loopStart = System.nanoTime();
 
+        sensors.updateHub1();
+
         updateMotors();
 
         drivetrain.update();
 
         intake.update();
         outtake.update();
-
-        sensors.updateHub1();
     }
 
     public void initHubs() {
