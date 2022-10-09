@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.modules.outtake;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.modules.slides.Slides;
@@ -35,6 +36,9 @@ public class Outtake {
     double currentSlidesLength = 0.0;
     double currentV4BarAngle = 0.0;
 
+    double turretXOffset = -2.0;
+    double turretYOffset = 0.0;
+
     double x, y, z;
 
     public Outtake (HardwareMap hardwareMap, ArrayList<MotorPriority> motorPriorities, Sensors sensors) {
@@ -47,7 +51,7 @@ public class Outtake {
     }
 
     public void update() {
-        updatePos();
+        updateRelativePos();
 
         slides.setTargetSlidesLength(targetSlidesLength);
         turret.setTargetTurretAngle(targetTurretAngle);
@@ -58,7 +62,7 @@ public class Outtake {
         v4Bar.update();
     }
 
-    public void updatePos() {
+    public void updateRelativePos() {
         currentTurretAngle = turret.getCurrentTurretAngle();
         currentSlidesLength = slides.getCurrentSlidesLength();
         currentV4BarAngle = v4Bar.getCurrentV4BarAngle();
@@ -73,7 +77,7 @@ public class Outtake {
         z = currentHeight;
     }
 
-    public void setTarget(double targetX, double targetY, double targetZ) {
+    public void setTargetRelative(double targetX, double targetY, double targetZ) {
         targetHeight = targetZ;
         targetExtension = Math.sqrt(Math.pow((targetX),2) + Math.pow((targetY),2));
 
@@ -81,4 +85,24 @@ public class Outtake {
         targetSlidesLength = targetHeight - (Math.sin(targetV4BarAngle) * v4BarLength); // comment out this if you want the v4bar to stay horizontal as slides are moving and then uncomment line 69
         targetTurretAngle = Math.atan2(targetY,targetX);
     }
+
+    public Pose2d findGlobalCoordinates (Pose2d robotPose, double xOffset, double yOffset) {
+        double x = robotPose.getX() + xOffset*Math.cos(robotPose.getHeading()) - yOffset*Math.sin(robotPose.getHeading());
+        double y = robotPose.getY() + yOffset*Math.cos(robotPose.getHeading()) + xOffset*Math.sin(robotPose.getHeading());
+
+        return new Pose2d(x, y, robotPose.getHeading());
+    }
+
+    public void setTargetGlobal (Pose2d robotPose, Pose2d polePose, double targetZ) {
+        Pose2d turretPos = findGlobalCoordinates(robotPose, turretXOffset, turretYOffset);
+
+        double deltaX = polePose.getX() - turretPos.getX();
+        double deltaY = polePose.getY() - turretPos.getY();
+
+        double targetX = deltaX * Math.cos(robotPose.getHeading()) + deltaY * Math.sin(robotPose.getHeading());
+        double targetY = deltaY * Math.cos(robotPose.getHeading()) - deltaX * Math.sin(robotPose.getHeading());
+
+        setTargetRelative(targetX, targetY, targetZ);
+    }
+
 }

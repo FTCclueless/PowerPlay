@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.modules.claw.Claw;
 import org.firstinspires.ftc.teamcode.modules.drive.Drivetrain;
 import org.firstinspires.ftc.teamcode.modules.intake.Intake;
 import org.firstinspires.ftc.teamcode.modules.outtake.Outtake;
@@ -20,10 +21,14 @@ public class Robot {
     Drivetrain drivetrain;
     Intake intake;
     Outtake outtake;
+    Claw claw;
 
     Sensors sensors;
 
     ArrayList<MotorPriority> motorPriorities = new ArrayList<>();
+
+    public enum STATE {TEST, IDLE, PREPARE_INTAKE, INTAKE_ROLLER, INTAKE_CLAW, WAIT_FOR_START_SCORING, SCORING, DEPOSIT, RETRACT}
+    public STATE currentState = STATE.IDLE;
 
     public Robot (HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
@@ -35,19 +40,21 @@ public class Robot {
         drivetrain = new Drivetrain(hardwareMap, motorPriorities);
         intake = new Intake(hardwareMap, motorPriorities);
         outtake = new Outtake(hardwareMap, motorPriorities, sensors);
+        claw = new Claw(hardwareMap);
     }
 
     public void update() {
         loopStart = System.nanoTime();
+        updateSubSystems();
 
-        sensors.updateHub1();
+        switch (currentState) {
+            case TEST:
+                break;
+            case IDLE:
+                claw.open();
+                break;
+        }
 
-        updateMotors();
-
-        drivetrain.update();
-
-        intake.update();
-        outtake.update();
     }
 
     public void initHubs() {
@@ -93,5 +100,16 @@ public class Robot {
 
     public void updateLoopTime(){
         loopTime = (System.nanoTime() - loopStart) / 1000000000.0; // converts from nano secs to secs
+    }
+
+    public void updateSubSystems() {
+        sensors.updateHub1();
+
+        updateMotors();
+
+        drivetrain.update();
+        intake.update();
+        outtake.update();
+        claw.update();
     }
 }
