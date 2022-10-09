@@ -46,7 +46,7 @@ public class Sensors {
         return slidesVelocity;
     }
 
-    public double getTurretAngle() {
+    public double getTurretHeading() {
         return turretAngle;
     }
 

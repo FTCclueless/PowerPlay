@@ -42,32 +42,25 @@ public class Turret {
     }
 
     public void updateTurretValues() {
-        currentTurretAngle = sensors.getTurretAngle();
+        currentTurretAngle = clipAngle(sensors.getTurretHeading());
         currentTurretVelocity = sensors.getTurretVelocity();
     }
 
-    // ALL TURRET ANGLES ASSUME THE FRONT IS THE BACK OF THE ROBOT AND 0 DEGREES IS COMPLETELY TO THE RIGHT AND 180 DEGREES IS TO THE LEFT
-
-    public void moveToPickup() { targetTurretAngle = 0.0; }
-    public void moveToLeft() { targetTurretAngle = 180.0; }
-    public void moveToRight() { targetTurretAngle = 0.0; }
-    public void moveToBack() { targetTurretAngle = 0.0; }
-    public void moveToBackLeft() { targetTurretAngle = 135.0; }
-    public void moveToBackRight() { targetTurretAngle = 45.0; }
-
-    public void moveLeft (double amount) {
-        targetTurretAngle -= amount;
+    public void setTargetTurretAngle(double angle) {
+        targetTurretAngle = clipAngle(angle);
     }
 
-    public void moveRight (double amount) {
-        targetTurretAngle += amount;
-    }
-
-    public void setTargetTurretAngle (double angle) {
-        targetTurretAngle = angle;
-    }
-
-    public double getCurrentTurretAngle () {
+    public double getCurrentTurretAngle() {
         return currentTurretAngle;
+    }
+
+    public double clipAngle(double angle){
+        while (angle > Math.PI) {
+            angle -= Math.PI * 2.0;
+        }
+        while (angle < -Math.PI) {
+            angle += Math.PI * 2.0;
+        }
+        return angle;
     }
 }

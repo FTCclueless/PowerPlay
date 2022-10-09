@@ -7,13 +7,13 @@ import org.firstinspires.ftc.teamcode.util.MyServo;
 public class Claw {
     MyServo claw;
 
-    public double currentClawAngle = 0.0;
-    public double targetClawAngle = 0.0;
+    public double currentClawPosition = 0.0;
+    public double targetClawPosition = 0.0;
     public double clawPower = 0.0;
 
-    double openAngle = 50.0;
-    double intakeAngle = 35.0;
-    double closeAngle = 25.0;
+    double openPosition = 0.6;
+    double intakePosition = 0.4;
+    double closePosition = 0.05;
 
     public enum STATE {OPEN, INTAKE, CLOSED}
     public STATE currentState = STATE.OPEN;
@@ -28,34 +28,34 @@ public class Claw {
 
         switch (currentState) {
             case OPEN:
-                setTargetClawAngle(openAngle);
+                setTargetClawPosition(openPosition);
                 break;
             case INTAKE:
-                setTargetClawAngle(intakeAngle);
+                setTargetClawPosition(intakePosition);
                 break;
             case CLOSED:
-                setTargetClawAngle(closeAngle);
+                setTargetClawPosition(closePosition);
                 break;
         }
 
-        claw.setAngle(targetClawAngle, clawPower);
+        claw.setPosition(targetClawPosition, clawPower);
     }
 
-    private void setTargetClawAngle(double angle) {
-        targetClawAngle = angle;
+    private void setTargetClawPosition(double position) {
+        targetClawPosition = position;
     }
 
     private void setTargetClawAngle(double angle, double power) {
-        targetClawAngle = angle;
+        targetClawPosition = angle;
         clawPower = power;
     }
 
     public double getCurrentClawAngle () {
-        return currentClawAngle;
+        return currentClawPosition;
     }
 
     public void updateClawValues() {
-        currentClawAngle = claw.getAngle();
+        currentClawPosition = claw.getCurrentPosition();
     }
 
     public void open() {
