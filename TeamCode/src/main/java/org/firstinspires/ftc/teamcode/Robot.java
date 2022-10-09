@@ -43,6 +43,10 @@ public class Robot {
         claw = new Claw(hardwareMap);
     }
 
+    boolean startIntake = false;
+    boolean startScoring = false;
+    boolean startDeposit = false;
+
     public void update() {
         loopStart = System.nanoTime();
         updateSubSystems();
@@ -51,7 +55,14 @@ public class Robot {
             case TEST:
                 break;
             case IDLE:
+                outtake.setTargetRelative(2,0,0);
                 claw.open();
+                if (startIntake) {
+                    currentState = STATE.PREPARE_INTAKE;
+                }
+                break;
+            case PREPARE_INTAKE:
+                
                 break;
         }
 
