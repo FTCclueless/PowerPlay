@@ -104,5 +104,4 @@ public class Outtake {
 
         setTargetRelative(targetX, targetY, targetZ);
     }
-
 }
