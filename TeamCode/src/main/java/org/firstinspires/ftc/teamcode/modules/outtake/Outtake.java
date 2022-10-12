@@ -81,9 +81,21 @@ public class Outtake {
         targetHeight = targetZ;
         targetExtension = Math.sqrt(Math.pow((targetX),2) + Math.pow((targetY),2));
 
+        targetTurretAngle = Math.atan2(targetY,targetX);
+
+        // this allows turret angle be more efficient by instead of doing full 180s move v4bar back
+        if (Math.abs(targetTurretAngle) > Math.PI) { // Math.PI = 180 deg
+            if(Math.abs(clipAngle(targetTurretAngle - Math.PI) - currentTurretAngle) < Math.abs(targetTurretAngle - currentTurretAngle)) { // this finds out which angle is closet to current and moves to that
+                targetTurretAngle = clipAngle(targetTurretAngle - Math.PI);
+                targetExtension *= -1;
+            }
+        }
         targetV4BarAngle = Math.acos(targetExtension / v4BarLength);
         targetSlidesLength = targetHeight - (Math.sin(targetV4BarAngle) * v4BarLength); // comment out this if you want the v4bar to stay horizontal as slides are moving and then uncomment line 69
-        targetTurretAngle = Math.atan2(targetY,targetX);
+
+        if (targetSlidesLength < 0) {
+            
+        }
     }
 
     public Pose2d findGlobalCoordinates (Pose2d robotPose, double xOffset, double yOffset) {
@@ -103,5 +115,15 @@ public class Outtake {
         double targetY = deltaY * Math.cos(robotPose.getHeading()) - deltaX * Math.sin(robotPose.getHeading());
 
         setTargetRelative(targetX, targetY, targetZ);
+    }
+
+    public double clipAngle(double angle) {
+        while (angle > Math.PI) {
+            angle -= Math.PI * 2.0;
+        }
+        while (angle < -Math.PI) {
+            angle += Math.PI * 2.0;
+        }
+        return angle;
     }
 }

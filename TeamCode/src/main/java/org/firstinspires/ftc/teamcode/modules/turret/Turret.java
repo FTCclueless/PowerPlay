@@ -54,7 +54,7 @@ public class Turret {
         return currentTurretAngle;
     }
 
-    public double clipAngle(double angle){
+    public double clipAngle(double angle) {
         while (angle > Math.PI) {
             angle -= Math.PI * 2.0;
         }

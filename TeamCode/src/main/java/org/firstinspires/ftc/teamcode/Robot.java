@@ -27,7 +27,7 @@ public class Robot {
 
     ArrayList<MotorPriority> motorPriorities = new ArrayList<>();
 
-    public enum STATE {TEST, IDLE, PREPARE_INTAKE, INTAKE_ROLLER, INTAKE_CLAW, WAIT_FOR_START_SCORING, SCORING, DEPOSIT, RETRACT}
+    public enum STATE {TEST, IDLE, PREPARE_INTAKE, INTAKE_ROLLER, INTAKE_CLAW, WAIT_FOR_START_SCORING, SCORING, DEPOSIT, RETRACT} //WAIT_FOR_START_SCORING = holding area
     public STATE currentState = STATE.IDLE;
 
     public Robot (HardwareMap hardwareMap) {
@@ -62,7 +62,7 @@ public class Robot {
                 }
                 break;
             case PREPARE_INTAKE:
-                
+
                 break;
         }
 
