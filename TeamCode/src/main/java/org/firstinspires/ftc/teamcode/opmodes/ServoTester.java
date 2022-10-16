@@ -7,8 +7,6 @@ import org.firstinspires.ftc.teamcode.Robot;
 
 @TeleOp(group = "Test")
 public class ServoTester extends LinearOpMode {
-
-
     @Override
     public void runOpMode() throws InterruptedException {
         Robot robot = new Robot(hardwareMap);
