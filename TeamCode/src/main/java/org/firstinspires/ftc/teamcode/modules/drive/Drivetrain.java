@@ -74,6 +74,8 @@ public class Drivetrain extends MecanumDrive {
 
     ArrayList<MotorPriority> motorPriorities;
 
+    public ThreeWheelLocalizer localizer;
+
     public Drivetrain(HardwareMap hardwareMap, ArrayList<MotorPriority> motorPriorities) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
@@ -119,7 +121,8 @@ public class Drivetrain extends MecanumDrive {
             setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
         }
 
-        setLocalizer(new ThreeWheelLocalizer(hardwareMap));
+        localizer = new ThreeWheelLocalizer(hardwareMap);
+        setLocalizer(localizer);
 
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
     }

@@ -31,16 +31,13 @@ public class ThreeWheelLocalizer implements Localizer {
     ArrayList<MyPose2d> relHistory = new ArrayList<MyPose2d>();
     ArrayList<Double> loopTimes = new ArrayList<Double>();
 
-    MyPose2d leftDistSensor = new MyPose2d(0,0);
-    MyPose2d rightDistSensor = new MyPose2d(0,0);
-
     BNO055IMU imu;
 
     public ThreeWheelLocalizer(HardwareMap hardwareMap) {
         encoders = new MyEncoder[3];
 
-        encoders[0] = new MyEncoder(new MyPose2d(1.986,-6.988189),1); // right
-        encoders[1] = new MyEncoder(new MyPose2d(1.986,7.283465),  -1); // left
+        encoders[0] = new MyEncoder(new MyPose2d(1.986,7.283465),  -1); // left
+        encoders[1] = new MyEncoder(new MyPose2d(1.986,-6.988189),1); // right
         encoders[2] = new MyEncoder(new MyPose2d(-3.809, -1.019),  -1); // back
     }
 
@@ -94,11 +91,11 @@ public class ThreeWheelLocalizer implements Localizer {
         double loopTime = (currentTime-lastTime)/1000000000.0;
         lastTime = currentTime;
 
-        double deltaRight = encoders[0].getDelta();
-        double deltaLeft = encoders[1].getDelta();
+        double deltaLeft = encoders[0].getDelta();
+        double deltaRight = encoders[1].getDelta();
         double deltaBack = encoders[2].getDelta();
-        double rightY = encoders[0].y;
-        double leftY = encoders[1].y;
+        double leftY = encoders[0].y;
+        double rightY = encoders[1].y;
         double backX = encoders[2].x;
 
         //This is the heading because the heading is proportional to the difference between the left and right wheel.

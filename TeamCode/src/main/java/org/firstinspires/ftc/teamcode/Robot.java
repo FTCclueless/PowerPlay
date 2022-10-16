@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.Vision.Vision;
 import org.firstinspires.ftc.teamcode.modules.claw.Claw;
 import org.firstinspires.ftc.teamcode.modules.drive.Drivetrain;
 import org.firstinspires.ftc.teamcode.modules.intake.Intake;
@@ -24,10 +26,11 @@ public class Robot {
     Claw claw;
 
     Sensors sensors;
+    Vision vision;
 
     ArrayList<MotorPriority> motorPriorities = new ArrayList<>();
 
-    public enum STATE {TEST, IDLE, PREPARE_INTAKE, INTAKE_ROLLER, INTAKE_CLAW, WAIT_FOR_START_SCORING, SCORING, DEPOSIT, RETRACT} //WAIT_FOR_START_SCORING = holding area
+    public enum STATE {TEST, IDLE, INTAKE_ROLLER, INTAKE_CLAW, WAIT_FOR_START_SCORING, SCORING, ADJUST, DEPOSIT, RETRACT} //WAIT_FOR_START_SCORING = holding area
     public STATE currentState = STATE.IDLE;
 
     public Robot (HardwareMap hardwareMap) {
@@ -35,17 +38,26 @@ public class Robot {
 
         initHubs();
 
-        sensors = new Sensors(motorPriorities, controlHub, expansionHub);
-
         drivetrain = new Drivetrain(hardwareMap, motorPriorities);
         intake = new Intake(hardwareMap, motorPriorities);
         outtake = new Outtake(hardwareMap, motorPriorities, sensors);
         claw = new Claw(hardwareMap);
+
+        sensors = new Sensors(hardwareMap, motorPriorities, drivetrain.localizer);
+        vision = new Vision();
     }
 
-    boolean startIntake = false;
+    boolean startRollerIntake = false;
+    boolean startClawIntake = false;
     boolean startScoring = false;
-    boolean startDeposit = false;
+
+    Pose2d conePose = new Pose2d(0,0);
+    double coneHeight = 5.0;
+
+    Pose2d posePose = new Pose2d(0,0);
+    double poleHeight = 32.0;
+
+    long timeSinceClawOpen = 0;
 
     public void update() {
         loopStart = System.nanoTime();
@@ -54,18 +66,67 @@ public class Robot {
         switch (currentState) {
             case TEST:
                 break;
-            case IDLE:
-                outtake.setTargetRelative(2,0,0);
+            case RETRACT:
+                outtake.setTargetRelative(5,0,3);
                 claw.open();
-                if (startIntake) {
-                    currentState = STATE.PREPARE_INTAKE;
+                if (startRollerIntake) {
+                    currentState = STATE.INTAKE_ROLLER;
+                }
+                if (startClawIntake) {
+                    currentState = STATE.INTAKE_CLAW;
                 }
                 break;
-            case PREPARE_INTAKE:
-
+            case INTAKE_ROLLER:
+                claw.open();
+                outtake.setTargetRelative(5,0,3);
+                intake.on();
+                if(sensors.rollerTouch) {
+                   currentState = STATE.WAIT_FOR_START_SCORING;
+                }
+                break;
+            case INTAKE_CLAW:
+                claw.open();
+                outtake.setTargetGlobal(drivetrain.getPoseEstimate(), conePose, coneHeight);
+                if(sensors.clawTouch) {
+                    currentState = STATE.WAIT_FOR_START_SCORING;
+                }
+                break;
+            case WAIT_FOR_START_SCORING:
+                claw.close();
+                outtake.setTargetRelative(2,0,7);
+                if (startScoring) {
+                    currentState = STATE.SCORING;
+                }
+                break;
+            case SCORING:
+                outtake.setTargetGlobal(drivetrain.getPoseEstimate(), posePose, poleHeight);
+                if (outtake.isInPosition()) {
+                    currentState = STATE.ADJUST;
+                }
+                break;
+            case ADJUST:
+                // TODO: Implement Vision + Driver adjustments
+                vision.on();
+                if (vision.readyToDeposit()) {
+                    timeSinceClawOpen = System.currentTimeMillis();
+                    currentState = STATE.DEPOSIT;
+                }
+                break;
+            case DEPOSIT:
+                claw.open();
+                if(System.currentTimeMillis() - timeSinceClawOpen >= 500) {
+                    currentState = STATE.RETRACT;
+                }
                 break;
         }
+    }
 
+    public void startRollerIntake () {
+        startRollerIntake = true;
+    }
+
+    public void startClawIntake () {
+        startClawIntake = true;
     }
 
     public void initHubs() {
@@ -115,6 +176,7 @@ public class Robot {
 
     public void updateSubSystems() {
         sensors.updateHub1();
+        sensors.updateHub2();
 
         updateMotors();
 

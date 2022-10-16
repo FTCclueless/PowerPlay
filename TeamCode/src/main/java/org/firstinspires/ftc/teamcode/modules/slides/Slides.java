@@ -85,4 +85,12 @@ public class Slides {
     public double getCurrentSlidesLength () {
         return currentSlidesLength;
     }
+
+    public boolean isInPosition (double inches) {
+        if(Math.abs(targetSlidesLength - currentSlidesLength) <= inches) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
