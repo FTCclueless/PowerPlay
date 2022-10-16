@@ -3,6 +3,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.util.MyServo;
 import org.firstinspires.ftc.teamcode.vision.Vision;
 import org.firstinspires.ftc.teamcode.modules.claw.Claw;
 import org.firstinspires.ftc.teamcode.modules.drive.Drivetrain;
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.teamcode.modules.outtake.Outtake;
 import org.firstinspires.ftc.teamcode.sensors.Sensors;
 import org.firstinspires.ftc.teamcode.util.MotorPriority;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Robot {
@@ -25,7 +27,8 @@ public class Robot {
     Sensors sensors;
     Vision vision;
 
-    ArrayList<MotorPriority> motorPriorities = new ArrayList<>();
+    public ArrayList<MotorPriority> motorPriorities = new ArrayList<>();
+    public ArrayList<MyServo> servos = new ArrayList<>();
 
     public enum STATE {TEST, IDLE, INTAKE_ROLLER, INTAKE_CLAW, WAIT_FOR_START_SCORING, SCORING, ADJUST, DEPOSIT, RETRACT} //WAIT_FOR_START_SCORING = holding area
     public STATE currentState = STATE.IDLE;
@@ -37,8 +40,8 @@ public class Robot {
 
         drivetrain = new Drivetrain(hardwareMap, motorPriorities);
         intake = new Intake(hardwareMap, motorPriorities);
-        outtake = new Outtake(hardwareMap, motorPriorities, sensors);
-        claw = new Claw(hardwareMap);
+        outtake = new Outtake(hardwareMap, motorPriorities, sensors, servos);
+        claw = new Claw(hardwareMap, servos);
 
         sensors = new Sensors(hardwareMap, motorPriorities, drivetrain.localizer);
         vision = new Vision();
@@ -187,4 +190,6 @@ public class Robot {
     public void setPolePose (Pose2d pose2d) { posePose = pose2d; }
     public void setConeHeight (double height) { coneHeight = height; }
     public void setPoleHeight (double height) { poleHeight = height; }
+
+    public void testMode () {currentState = STATE.TEST; }
 }
