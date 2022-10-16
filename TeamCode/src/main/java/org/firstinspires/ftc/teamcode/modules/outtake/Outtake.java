@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.modules.turret.Turret;
 import org.firstinspires.ftc.teamcode.modules.v4bar.V4Bar;
 import org.firstinspires.ftc.teamcode.sensors.Sensors;
 import org.firstinspires.ftc.teamcode.util.MotorPriority;
+import org.firstinspires.ftc.teamcode.util.MyServo;
 
 import java.util.ArrayList;
 
@@ -41,13 +42,16 @@ public class Outtake {
 
     double x, y, z;
 
-    public Outtake (HardwareMap hardwareMap, ArrayList<MotorPriority> motorPriorities, Sensors sensors) {
+    ArrayList<MyServo> servos;
+
+    public Outtake (HardwareMap hardwareMap, ArrayList<MotorPriority> motorPriorities, Sensors sensors, ArrayList<MyServo> servos) {
         this.motorPriorities = motorPriorities;
         this.sensors = sensors;
+        this.servos = servos;
 
         slides = new Slides(hardwareMap, motorPriorities, sensors);
         turret = new Turret(hardwareMap, motorPriorities, sensors);
-        v4Bar = new V4Bar(hardwareMap);
+        v4Bar = new V4Bar(hardwareMap, servos);
     }
 
     public void update() {

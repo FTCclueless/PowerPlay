@@ -4,16 +4,22 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.util.MyServo;
 
+import java.util.ArrayList;
+
 public class V4Bar {
     public double currentV4BarAngle = 0.0;
     public double targetV4BarAngle = 0.0;
     public double v4barPower = 0.0;
 
     MyServo v4bar1, v4bar2;
+    ArrayList<MyServo> servos;
 
-    public V4Bar(HardwareMap hardwareMap) {
+    public V4Bar(HardwareMap hardwareMap, ArrayList<MyServo> servos) {
         v4bar1 = new MyServo(hardwareMap.servo.get("v4bar1"),"Speed",1,0,1);
         v4bar2 = new MyServo(hardwareMap.servo.get("v4bar2"),"Speed",1,0,1);
+
+        servos.add(1, v4bar1);
+        servos.add(2, v4bar2);
     }
 
     public void update() {
