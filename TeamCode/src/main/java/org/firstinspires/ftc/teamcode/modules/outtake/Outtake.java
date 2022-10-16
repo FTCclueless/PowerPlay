@@ -94,7 +94,7 @@ public class Outtake {
         targetSlidesLength = targetHeight - (Math.sin(targetV4BarAngle) * v4BarLength); // comment out this if you want the v4bar to stay horizontal as slides are moving and then uncomment line 69
 
         if (targetSlidesLength < 0) {
-            
+
         }
     }
 
@@ -105,11 +105,11 @@ public class Outtake {
         return new Pose2d(x, y, robotPose.getHeading());
     }
 
-    public void setTargetGlobal (Pose2d robotPose, Pose2d polePose, double targetZ) {
+    public void setTargetGlobal (Pose2d robotPose, Pose2d targetPose, double targetZ) {
         Pose2d turretPos = findGlobalCoordinates(robotPose, turretXOffset, turretYOffset);
 
-        double deltaX = polePose.getX() - turretPos.getX();
-        double deltaY = polePose.getY() - turretPos.getY();
+        double deltaX = targetPose.getX() - turretPos.getX();
+        double deltaY = targetPose.getY() - turretPos.getY();
 
         double targetX = deltaX * Math.cos(robotPose.getHeading()) + deltaY * Math.sin(robotPose.getHeading());
         double targetY = deltaY * Math.cos(robotPose.getHeading()) - deltaX * Math.sin(robotPose.getHeading());
@@ -125,5 +125,13 @@ public class Outtake {
             angle += Math.PI * 2.0;
         }
         return angle;
+    }
+
+    public boolean isInPosition() {
+        if(turret.isInPosition(5) && slides.isInPosition(5) && v4Bar.isInPosition(15)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

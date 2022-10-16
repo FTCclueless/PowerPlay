@@ -63,4 +63,12 @@ public class Turret {
         }
         return angle;
     }
+
+    public boolean isInPosition (double angle) {
+        if(Math.abs(targetTurretAngle - currentTurretAngle) <= Math.toRadians(angle)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
