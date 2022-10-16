@@ -185,4 +185,9 @@ public class Robot {
         outtake.update();
         claw.update();
     }
+
+    public void setConePose (Pose2d pose2d) { conePose = pose2d; }
+    public void setPolePose (Pose2d pose2d) { posePose = pose2d; }
+    public void setConeHeight (double height) { coneHeight = height; }
+    public void setPoleHeight (double height) { poleHeight = height; }
 }
