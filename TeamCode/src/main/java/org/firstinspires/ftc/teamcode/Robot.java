@@ -12,7 +12,6 @@ import org.firstinspires.ftc.teamcode.modules.outtake.Outtake;
 import org.firstinspires.ftc.teamcode.sensors.Sensors;
 import org.firstinspires.ftc.teamcode.util.MotorPriority;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Robot {
