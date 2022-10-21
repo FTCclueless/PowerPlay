@@ -192,7 +192,7 @@ public class Drivetrain extends MecanumDrive {
         if (signal != null) {
             double forward = signal.getVel().getX() * kV + signal.getAccel().getX() * kA; forward += Math.signum(forward) * kStatic;
             double left = (signal.getVel().getY() * kV + signal.getAccel().getY() * kA) * LATERAL_MULTIPLIER * -1.0; left += Math.signum(left) * kStatic;
-            double turn = signal.getVel().getHeading() * kV + signal.getAccel().getHeading() * kA; turn += Math.signum(turn) * kStatic;
+            double turn = signal.getVel().getHeading() * kV + signal.getAccel().getHeading() * kA; turn += Math.signum(turn) * kStatic; turn *= (0.5 * TRACK_WIDTH);
 
             motorPriorities.get(0).setTargetPower(forward+left+turn);
             motorPriorities.get(1).setTargetPower(forward-left+turn);
