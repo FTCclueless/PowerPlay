@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.modules.drive.Drivetrain;
 
 /**
@@ -48,7 +49,8 @@ public class MotorDirectionDebugger extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        Drivetrain drive = new Drivetrain(hardwareMap);
+        Robot robot = new Robot(hardwareMap);
+        Drivetrain drive = robot.drivetrain;
 
         telemetry.addLine("Press play to begin the debugging opmode");
         telemetry.update();

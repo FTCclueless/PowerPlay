@@ -19,7 +19,7 @@ public class Robot {
     LynxModule controlHub, expansionHub;
     HardwareMap hardwareMap;
 
-    Drivetrain drivetrain;
+    public Drivetrain drivetrain;
     Intake intake;
     Outtake outtake;
     Claw claw;

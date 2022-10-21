@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.MovingStatistics;
 
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
+import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.modules.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.modules.drive.Drivetrain;
 
@@ -33,7 +34,8 @@ public class TrackWidthTuner extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        Drivetrain drive = new Drivetrain(hardwareMap);
+        Robot robot = new Robot(hardwareMap);
+        Drivetrain drive = robot.drivetrain;
         // TODO: if you haven't already, set the localizer to something that doesn't depend on
         // drive encoders for computing the heading
 
