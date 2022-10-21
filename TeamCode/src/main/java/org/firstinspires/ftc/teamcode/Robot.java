@@ -21,15 +21,15 @@ public class Robot {
     HardwareMap hardwareMap;
 
     public Drivetrain drivetrain;
-    Intake intake;
-    Outtake outtake;
-    Claw claw;
+    public Intake intake;
+    public Outtake outtake;
+    public Claw claw;
 
-    Sensors sensors;
-    Vision vision;
+    public Sensors sensors;
+    public Vision vision;
 
-    public ArrayList<MotorPriority> motorPriorities = new ArrayList<>();
-    public ArrayList<MyServo> servos = new ArrayList<>();
+    public ArrayList<MotorPriority> motorPriorities = new ArrayList<>(8);
+    public ArrayList<MyServo> servos = new ArrayList<>(3);
 
     public enum STATE { TEST, IDLE, INTAKE_ROLLER, INTAKE_CLAW, WAIT_FOR_START_SCORING, SCORING, ADJUST, DEPOSIT, RETRACT }
     public STATE currentState = STATE.IDLE;
@@ -40,9 +40,9 @@ public class Robot {
         initHubs();
 
         drivetrain = new Drivetrain(hardwareMap, motorPriorities);
-        intake = new Intake(hardwareMap, motorPriorities);
-        outtake = new Outtake(hardwareMap, motorPriorities, sensors, servos);
         claw = new Claw(hardwareMap, servos);
+        outtake = new Outtake(hardwareMap, motorPriorities, sensors, servos);
+        intake = new Intake(hardwareMap, motorPriorities);
 
         sensors = new Sensors(hardwareMap, motorPriorities, drivetrain.localizer);
         vision = new Vision();

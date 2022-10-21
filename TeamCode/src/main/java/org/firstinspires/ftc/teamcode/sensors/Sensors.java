@@ -41,8 +41,8 @@ public class Sensors {
         }
 
         // init sensors
-        rollerLimit = hardwareMap.get (DigitalChannel.class, "rollerLimit");
-        clawLimit = hardwareMap.get (DigitalChannel.class, "clawLimit");
+        rollerLimit = hardwareMap.get(DigitalChannel.class, "rollerLimit");
+        clawLimit = hardwareMap.get(DigitalChannel.class, "clawLimit");
     }
 
     public void updateHub1() {
@@ -87,4 +87,17 @@ public class Sensors {
     public boolean rollerTouched() { return rollerTouch; }
 
     public boolean clawTouched() { return clawTouch; }
+
+    public int getLeftEncoderPos() { return localizer.encoders[0].currentVal; }
+
+    public int getRightEncoderPos() { return localizer.encoders[1].currentVal; }
+
+    public int getBackEncoderPos() { return localizer.encoders[2].currentVal; }
+
+    public double getLeftEncoderScaleFactor() { return localizer.encoders[0].scaleFactor; }
+
+    public double getRightEncoderScaleFactor() { return localizer.encoders[1].scaleFactor; }
+
+    public double getBackEncoderScaleFactor() { return localizer.encoders[2].scaleFactor; }
+
 }
