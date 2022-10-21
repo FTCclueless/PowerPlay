@@ -33,7 +33,7 @@ public class Sensors {
         this.hardwareMap = hardwareMap;
         this.localizer = localizer;
 
-        // setups bulkReads
+        // setup bulkReads
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
 
         for (LynxModule hub : allHubs) {
