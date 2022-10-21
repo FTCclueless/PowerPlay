@@ -85,6 +85,10 @@ public class Outtake {
         targetHeight = targetZ;
         targetExtension = Math.sqrt(Math.pow((targetX),2) + Math.pow((targetY),2));
 
+        if (targetExtension > v4BarLength) {
+            targetExtension = v4BarLength;
+        }
+
         targetTurretAngle = Math.atan2(targetY,targetX);
 
         // this allows turret angle be more efficient by instead of doing full 180s move v4bar back
@@ -98,7 +102,7 @@ public class Outtake {
         targetSlidesLength = targetHeight - (Math.sin(targetV4BarAngle) * v4BarLength); // comment out this if you want the v4bar to stay horizontal as slides are moving and then uncomment line 69
 
         if (targetSlidesLength < 0) {
-
+            targetSlidesLength = 0;
         }
     }
 
