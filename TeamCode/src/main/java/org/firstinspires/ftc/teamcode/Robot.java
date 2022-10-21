@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -192,4 +193,11 @@ public class Robot {
     public void setPoleHeight (double height) { poleHeight = height; }
 
     public void testMode () {currentState = STATE.TEST; }
+
+    public void followTrajectory(Trajectory trajectory) {
+        drivetrain.followTrajectoryAsync(trajectory);
+        while(drivetrain.isBusy()){
+            update();
+        }
+    }
 }
