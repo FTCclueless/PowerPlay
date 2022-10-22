@@ -36,8 +36,8 @@ public class ThreeWheelLocalizer implements Localizer {
     public ThreeWheelLocalizer(HardwareMap hardwareMap) {
         encoders = new MyEncoder[3];
 
-        encoders[0] = new MyEncoder(new MyPose2d(0,7.6861797267140135),  1); // left
-        encoders[1] = new MyEncoder(new MyPose2d(0,-5.664117306820334),-1); // right
+        encoders[0] = new MyEncoder(new MyPose2d(0,7.6861797267140135),  -1); // left
+        encoders[1] = new MyEncoder(new MyPose2d(0,-5.664117306820334),1); // right
         encoders[2] = new MyEncoder(new MyPose2d(-3.8609325069195584, 0),  -1); // back
     }
 
