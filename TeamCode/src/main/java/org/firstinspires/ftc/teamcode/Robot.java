@@ -183,7 +183,7 @@ public class Robot {
 
         drivetrain.update();
         intake.update();
-        outtake.update();
+//        outtake.update();
         claw.update();
     }
 

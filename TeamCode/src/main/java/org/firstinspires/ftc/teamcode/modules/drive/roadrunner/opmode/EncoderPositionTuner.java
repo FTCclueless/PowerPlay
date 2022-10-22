@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.modules.drive.Drivetrain;
 import org.firstinspires.ftc.teamcode.sensors.Sensors;
 
 @TeleOp
-@Disabled
+
 public class EncoderPositionTuner extends LinearOpMode {
 
     @Override
@@ -30,6 +30,7 @@ public class EncoderPositionTuner extends LinearOpMode {
         double lastAngle = drive.getRawExternalHeading();
         double currentCumAngle = 0;
         while (opModeIsActive()){
+            robot.update();
 
             double turn = gamepad1.right_stick_x * 0.35;
             double p1 = turn;

@@ -36,9 +36,9 @@ public class ThreeWheelLocalizer implements Localizer {
     public ThreeWheelLocalizer(HardwareMap hardwareMap) {
         encoders = new MyEncoder[3];
 
-        encoders[0] = new MyEncoder(new MyPose2d(1.986,7.283465),  -1); // left
-        encoders[1] = new MyEncoder(new MyPose2d(1.986,-6.988189),1); // right
-        encoders[2] = new MyEncoder(new MyPose2d(-3.809, -1.019),  -1); // back
+        encoders[0] = new MyEncoder(new MyPose2d(0,7.6861797267140135),  1); // left
+        encoders[1] = new MyEncoder(new MyPose2d(0,-5.664117306820334),-1); // right
+        encoders[2] = new MyEncoder(new MyPose2d(-3.8609325069195584, 0),  -1); // back
     }
 
     public void getIMU(BNO055IMU imu){
@@ -103,7 +103,7 @@ public class ThreeWheelLocalizer implements Localizer {
         //This gives us deltaY because the back minus theta*R is the amount moved to the left minus the amount of movement in the back encoder due to change in heading
         double relDeltaY = deltaBack - deltaHeading*backX;
         //This is a weighted average for the amount moved forward with the weights being how far away the other one is from the center
-        double relDeltaX = (deltaLeft*rightY - deltaRight*leftY)/(leftY-rightY);
+        double relDeltaX = (deltaRight*leftY - deltaLeft*rightY)/(leftY-rightY);
 
         relHistory.add(0,new MyPose2d(relDeltaX,relDeltaY,deltaHeading));
         relIMUHistory.add(0,new MyPose2d(relDeltaX,relDeltaY,deltaHeading));
@@ -125,7 +125,7 @@ public class ThreeWheelLocalizer implements Localizer {
         loopIMUTimes.add(0,loopTime);
         poseHistory.add(0,currentPose);
         updateVelocity();
-        updateHeadingIMU();
+//        updateHeadingIMU();
     }
 
     MyPose2d lastPose = new MyPose2d(0,0,0);

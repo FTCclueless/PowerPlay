@@ -131,6 +131,8 @@ public class Drivetrain extends MecanumDrive {
         localizer = new ThreeWheelLocalizer(hardwareMap);
         setLocalizer(localizer);
 
+        localizer.getIMU(imu);
+
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
     }
 
