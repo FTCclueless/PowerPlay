@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.util;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import java.util.ArrayList;
@@ -36,7 +38,8 @@ public class MotorPriority {
         // checks if the time remaining to be within targetLoopLength is less than 0.8 (for all motors except slides, since it is two motors).
         // if it is less than 0.8 then don't update, else update
         // Motors take 1.6ms to update so actual loopLength might be targetLoopLength + 0.8
-        if (timeRemaining * 1000.0 <= 1.6) {// potentially is 1.6 ms but we use this formula to allow it to slightly overshoot/undershoot
+
+        if (timeRemaining * 1000.0 <= 1.6 * (motor.length - 1) + 0.8) {// potentially is 1.6 ms but we use this formula to allow it to slightly overshoot/undershoot
             return 0;
         }
 

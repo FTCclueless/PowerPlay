@@ -55,6 +55,11 @@ public class ThreeWheelLocalizer implements Localizer {
         this.x = x;
         this.y = y;
         this.heading += h - this.heading;
+//        imuTimeStamp = System.currentTimeMillis();
+//        lastPose = new MyPose2d(x,y,h);
+//        lastImuHeading = imu.getAngularOrientation().firstAngle;
+//        relIMUHistory.clear();
+//        loopIMUTimes.clear();
     }
 
     @NotNull
@@ -74,11 +79,8 @@ public class ThreeWheelLocalizer implements Localizer {
         return new Pose2d(currentVel.x, currentVel.y, currentVel.heading);
     }
 
-    int i = 0;
     @Override
     public void update() {
-        i ++;
-
         long currentTime = System.nanoTime();
         double loopTime = (currentTime-lastTime)/1000000000.0;
         lastTime = currentTime;
@@ -98,6 +100,7 @@ public class ThreeWheelLocalizer implements Localizer {
         double relDeltaX = (deltaRight*leftY - deltaLeft*rightY)/(leftY-rightY);
 
         relHistory.add(0,new MyPose2d(relDeltaX,relDeltaY,deltaHeading));
+//        relIMUHistory.add(0,new MyPose2d(relDeltaX,relDeltaY,deltaHeading));
 
         if (deltaHeading != 0) { // this avoids the issue where deltaHeading = 0 and then it goes to undefined. This effectively does L'Hopital's
             double r1 = relDeltaX / deltaHeading;
@@ -174,14 +177,14 @@ public class ThreeWheelLocalizer implements Localizer {
         currentPowerVector.heading = turn;
     }
 
-    public void updateVelocity(){
+    public void updateVelocity() {
         double targetVelTimeEstimate = 0.2;
         double actualVelTime = 0;
         double relDeltaXTotal = 0;
         double relDeltaYTotal = 0;
         double totalTime = 0;
         int lastIndex = 0;
-        for (int i = 0; i < loopTimes.size(); i ++){
+        for (int i = 0; i < loopTimes.size(); i++){
             totalTime += loopTimes.get(i);
             if (totalTime <= targetVelTimeEstimate){
                 actualVelTime += loopTimes.get(i);
