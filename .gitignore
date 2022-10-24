@@ -88,3 +88,6 @@ lint/tmp/
 
 .DS_Store
 .idea
+
+*.hprof
+.git.bfg-report
