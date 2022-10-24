@@ -6,6 +6,7 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.modules.drive.ThreeWheelLocalizer;
 import org.firstinspires.ftc.teamcode.util.MotorPriority;
@@ -28,6 +29,8 @@ public class Sensors {
     public boolean rollerTouch = false;
     public boolean clawTouch = false;
 
+    private final VoltageSensor batteryVoltageSensor;
+
     public Sensors (HardwareMap hardwareMap, ArrayList<MotorPriority> motorPriorities, ThreeWheelLocalizer localizer) {
         this.motorPriorities = motorPriorities;
         this.hardwareMap = hardwareMap;
@@ -43,6 +46,8 @@ public class Sensors {
         // init sensors
         rollerLimit = hardwareMap.get(DigitalChannel.class, "rollerLimit");
         clawLimit = hardwareMap.get(DigitalChannel.class, "clawLimit");
+
+        batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
     }
 
     public void updateHub1() {
@@ -100,4 +105,5 @@ public class Sensors {
 
     public double getBackEncoderScaleFactor() { return localizer.encoders[2].scaleFactor; }
 
+    public double getBatteryVoltage() { return batteryVoltageSensor.getVoltage(); }
 }

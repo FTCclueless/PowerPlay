@@ -21,6 +21,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
@@ -136,6 +137,17 @@ public class Drivetrain extends MecanumDrive {
         localizer.getIMU(imu);
 
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
+    }
+
+    public void drive (Gamepad gamepad) {
+        double forward = Math.tan((gamepad.left_stick_y * -1) / 1.8);
+        double left = Math.tan(gamepad.left_stick_x) / 1.8;
+        double turn = gamepad.right_stick_x;
+        double p1 = forward+left+turn;
+        double p2 = forward-left+turn;
+        double p3 = forward+left-turn;
+        double p4 = forward-left-turn;
+        setMotorPowers(p1, p2, p3, p4);
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {

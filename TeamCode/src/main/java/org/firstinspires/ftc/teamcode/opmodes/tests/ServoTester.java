@@ -4,9 +4,18 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.util.ButtonToggle;
 
 @TeleOp(group = "Test")
 public class ServoTester extends LinearOpMode {
+
+    boolean manualMode = true;
+
+    ButtonToggle toggleX = new ButtonToggle();
+
+    public static double servoAngle = 0.0;
+    public static int servoNumber = 0;
+
     @Override
     public void runOpMode() throws InterruptedException {
         Robot robot = new Robot(hardwareMap);
@@ -28,35 +37,45 @@ public class ServoTester extends LinearOpMode {
         while (!isStopRequested()) {
             robot.update();
 
-            numLoops ++;
-            if (gamepad1.a) {
-                servoPos[servoIndex] += 0.001;
+            if (toggleX.isClicked(gamepad1.x)) {
+                manualMode = !manualMode;
             }
-            if (gamepad1.b){
-                servoPos[servoIndex] -= 0.001;
-            }
-            servoPos[servoIndex] = Math.min(1.0,Math.max(0,servoPos[servoIndex]));
 
-            long start = System.nanoTime();
-            robot.servos.get(servoIndex).setPosition(servoPos[servoIndex],1.0);
-            double elapsedTime = (System.nanoTime()-start)/1000000000.0;
-            totalTime += elapsedTime;
+            if (manualMode) {
+                numLoops ++;
+                if (gamepad1.a) {
+                    servoPos[servoIndex] += 0.001;
+                }
+                if (gamepad1.b){
+                    servoPos[servoIndex] -= 0.001;
+                }
+                servoPos[servoIndex] = Math.min(1.0,Math.max(0,servoPos[servoIndex]));
 
-            boolean x = gamepad1.x;
-            if (x && !lastX){
-                servoIndex += robot.servos.size() - 1;
-            }
-            lastX = x;
-            boolean y = gamepad1.y;
-            if (y && !lastY){
-                servoIndex += 1;
-            }
-            lastY = y;
-            servoIndex = servoIndex % robot.servos.size();
+                long start = System.nanoTime();
+                robot.servos.get(servoIndex).setPosition(servoPos[servoIndex],1.0);
+                double elapsedTime = (System.nanoTime()-start)/1000000000.0;
+                totalTime += elapsedTime;
 
-            telemetry.addData("servoNum", servoIndex);
-            telemetry.addData("servoPos", servoPos[servoIndex]);
-            telemetry.addData("averageServoTime", totalTime/numLoops);
+                boolean x = gamepad1.x;
+                if (x && !lastX){
+                    servoIndex += robot.servos.size() - 1;
+                }
+                lastX = x;
+                boolean y = gamepad1.y;
+                if (y && !lastY){
+                    servoIndex += 1;
+                }
+                lastY = y;
+                servoIndex = servoIndex % robot.servos.size();
+
+                telemetry.addData("servoNum", servoIndex);
+                telemetry.addData("servoPos", servoPos[servoIndex]);
+                telemetry.addData("averageServoTime", totalTime/numLoops);
+            } else {
+                robot.servos.get(servoNumber).setAngle(servoAngle);
+                telemetry.addData("servoAngle", servoAngle);
+                telemetry.addData("servoNumber", servoNumber);
+            }
             telemetry.update();
         }
     }
