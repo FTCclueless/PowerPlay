@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.opmodes.tests;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.util.ButtonToggle;
 
+@Config
 @TeleOp(group = "Test")
 public class ServoTester extends LinearOpMode {
 
@@ -72,7 +74,7 @@ public class ServoTester extends LinearOpMode {
                 telemetry.addData("servoPos", servoPos[servoIndex]);
                 telemetry.addData("averageServoTime", totalTime/numLoops);
             } else {
-                robot.servos.get(servoNumber).setAngle(servoAngle);
+                robot.servos.get(servoNumber).setAngle(Math.toRadians(servoAngle));
                 telemetry.addData("servoAngle", servoAngle);
                 telemetry.addData("servoNumber", servoNumber);
             }

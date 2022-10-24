@@ -16,8 +16,6 @@ import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.modules.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.modules.drive.Drivetrain;
 
-import java.util.Objects;
-
 /**
  * This routine is designed to calculate the maximum velocity your bot can achieve under load. It
  * will also calculate the effective kF value for your velocity PID.
@@ -28,7 +26,7 @@ import java.util.Objects;
  */
 @Config
 @Autonomous(group = "drive")
-public class MaxVelocityTuner extends LinearOpMode {
+public class MaxAccelTuner extends LinearOpMode {
     public static double RUNTIME = 2.0;
 
     private ElapsedTime timer;
@@ -62,13 +60,11 @@ public class MaxVelocityTuner extends LinearOpMode {
         timer = new ElapsedTime();
 
         while (!isStopRequested() && timer.seconds() < RUNTIME) {
+            Long start = System.currentTimeMillis() * 1000;
             robot.update();
 
-            Log.e("velocity", robot.drivetrain.getPoseVelocity().getX() + "");
-
-//            Pose2d poseVelo = Objects.requireNonNull(drive.getPoseVelocity(), "poseVelocity() must not be null. Ensure that the getWheelVelocities() method has been overridden in your localizer.");
-//
-//            maxVelocity = Math.max(poseVelo.vec().norm(), maxVelocity);
+            double accel = (robot.drivetrain.getPoseVelocity().getX()) / ((System.currentTimeMillis()*1000) - start);
+            Log.e("acceleration", accel + "");
         }
 
         drive.setDrivePower(new Pose2d());

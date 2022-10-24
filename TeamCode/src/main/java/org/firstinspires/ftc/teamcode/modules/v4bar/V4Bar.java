@@ -15,8 +15,8 @@ public class V4Bar {
     ArrayList<MyServo> servos;
 
     public V4Bar(HardwareMap hardwareMap, ArrayList<MyServo> servos) {
-        v4bar1 = new MyServo(hardwareMap.servo.get("v4bar1"),"Speed",1,0,1);
-        v4bar2 = new MyServo(hardwareMap.servo.get("v4bar2"),"Speed",1,0,1);
+        v4bar1 = new MyServo(hardwareMap.servo.get("v4bar1"),"Super Speed",1,0,1);
+        v4bar2 = new MyServo(hardwareMap.servo.get("v4bar2"),"Super Speed",1,0,1);
 
         servos.add(1, v4bar1);
         servos.add(2, v4bar2);
