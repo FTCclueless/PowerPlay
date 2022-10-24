@@ -1,6 +1,5 @@
 ## Wiring
 
-<<<<<<< HEAD
 Config Name: RobotConfig
 
 ### Control Hub
@@ -78,20 +77,3 @@ I2C
 - Port 1:
 - Port 2:
 - Port 3:
-=======
-Config Name: robotConfig
-
-### Control Hub 1
-
-Motors 
-- Motor Port 0: leftFront
-- Motor Port 1: leftRear
-- Motor Port 2: rightRear
-- Motor Port 3: rightFront
-
-Encoders
-- Port 0: leftEncoder
-- Port 1: backEncoder
-- Port 2: EMPTY
-- Port 3: rightEncoder
->>>>>>> 754cb985ee1c3c49023130c4489e95e614a25b2d
