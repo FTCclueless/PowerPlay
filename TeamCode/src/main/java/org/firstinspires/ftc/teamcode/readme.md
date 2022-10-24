@@ -17,9 +17,9 @@ Encoders
 - Motor Port 3: rightEncoder
 
 Servos
-- Servo Port 0: v4bar1
-- Servo Port 2: v4bar2
-- Servo Port 1: claw
+- Servo Port 0: claw
+- Servo Port 2: v4bar1
+- Servo Port 1: v4bar2
 - Servo Port 3: 
 - Servo Port 4:
 - Servo Port 5:
