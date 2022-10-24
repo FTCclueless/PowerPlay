@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.util.MyServo;
 import org.firstinspires.ftc.teamcode.vision.Vision;
 import org.firstinspires.ftc.teamcode.modules.claw.Claw;
@@ -200,6 +201,13 @@ public class Robot {
 
     public void followTrajectory(Trajectory trajectory) {
         drivetrain.followTrajectoryAsync(trajectory);
+        while(drivetrain.isBusy()) {
+            update();
+        }
+    }
+
+    public void followTrajectorySequence(TrajectorySequence trajectorySequence) {
+        drivetrain.followTrajectorySequenceAsync(trajectorySequence);
         while(drivetrain.isBusy()) {
             update();
         }
