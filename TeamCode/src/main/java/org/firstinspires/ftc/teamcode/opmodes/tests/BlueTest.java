@@ -18,7 +18,7 @@ public class BlueTest extends LinearOpMode {
         Robot robot = new Robot(hardwareMap);
         Drivetrain drive = robot.drivetrain;
 
-        Pose2d origin = new Pose2d(-48, 48, 0);
+        Pose2d origin = new Pose2d(48, 48, 0);
         drive.setPoseEstimate(origin);
 
         TrajectorySequence to = drive.trajectorySequenceBuilder(origin)
