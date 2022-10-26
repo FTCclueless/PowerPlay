@@ -27,9 +27,11 @@ public class MotorPriority {
         lastUpdateTime = System.currentTimeMillis();
         motor = a;
     }
+
     public void setTargetPower(double targetPower){
         power = targetPower;
     }
+
     public double getPriority(double timeRemaining) { // timeRemaining is in secs
         if (power-lastPower == 0) {
             lastUpdateTime = System.currentTimeMillis();
