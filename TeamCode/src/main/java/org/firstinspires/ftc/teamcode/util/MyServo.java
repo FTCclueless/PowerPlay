@@ -5,10 +5,15 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class MyServo {
     Servo servo;
     public double speed;
-    public MyServo(Servo servo, String servoType, double loadMultiplier, double min, double max) {
+    double max, min, basePos;
+    public MyServo(Servo servo, String servoType, double loadMultiplier, double min, double max){
+        this(servo,servoType,loadMultiplier,min,max,min);
+    }
+    public MyServo(Servo servo, String servoType, double loadMultiplier, double min, double max, double basePos) {
         this.servo = servo;
         this.min = min;
         this.max = max;
+        this.basePos = basePos;
 
         switch (servoType) { // Take the no-load speed at 4.8 V and adjust as needed based on load on servo
             case "Torque": speed = Math.toRadians(60) / 0.25; break;
@@ -23,7 +28,6 @@ public class MyServo {
     double offset = 0; // ex: makes deposit bucket level
     long lastUpdateTime = System.nanoTime();
     public double positionPerRadian = 0.19098593171; //300 degrees is operating range so 1/(300*pi/180)
-    double max = 1, min = 0;
 
     double lastPos = 0.0;
     double currentPos = 0.0;
@@ -58,7 +62,7 @@ public class MyServo {
     }
 
     public void setAngle(double angle) {
-        setPosition(clipAngle(angle) * positionPerRadian, 1.0);
+        setPosition(angle * positionPerRadian * Math.signum(max-min) + basePos, 1.0);
     }
     public double getAngle() {
         return currentAngle + offset/positionPerRadian;
