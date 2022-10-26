@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
  */
 @Config
 public class DriveConstants {
-
+    public static final boolean ENABLE_LOGGING = true;
     /*
      * These are motor constants that should be listed online for your motors.
      */
