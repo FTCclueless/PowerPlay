@@ -77,3 +77,6 @@ I2C
 - Port 1:
 - Port 2:
 - Port 3:
+
+Webcams: 
+- Webcam 1
