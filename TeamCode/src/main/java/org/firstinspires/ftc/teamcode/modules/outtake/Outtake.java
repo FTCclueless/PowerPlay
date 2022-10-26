@@ -49,8 +49,8 @@ public class Outtake {
         this.sensors = sensors;
         this.servos = servos;
 
-        slides = new Slides(hardwareMap, motorPriorities, sensors);
         turret = new Turret(hardwareMap, motorPriorities, sensors);
+        slides = new Slides(hardwareMap, motorPriorities, sensors);
         v4Bar = new V4Bar(hardwareMap, servos);
     }
 
@@ -85,6 +85,10 @@ public class Outtake {
         targetHeight = targetZ;
         targetExtension = Math.sqrt(Math.pow((targetX),2) + Math.pow((targetY),2));
 
+        if (targetExtension > v4BarLength) {
+            targetExtension = v4BarLength;
+        }
+
         targetTurretAngle = Math.atan2(targetY,targetX);
 
         // this allows turret angle be more efficient by instead of doing full 180s move v4bar back
@@ -98,7 +102,13 @@ public class Outtake {
         targetSlidesLength = targetHeight - (Math.sin(targetV4BarAngle) * v4BarLength); // comment out this if you want the v4bar to stay horizontal as slides are moving and then uncomment line 69
 
         if (targetSlidesLength < 0) {
+            targetV4BarAngle = (targetV4BarAngle * -1);
 
+            if (targetV4BarAngle < Math.toRadians(-90)) { // in quadrant 3 --> will go into robot
+                targetV4BarAngle += 2*Math.PI;
+            }
+
+            targetSlidesLength = targetHeight - (Math.sin(targetV4BarAngle) * v4BarLength);
         }
     }
 

@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode;
+import android.util.Log;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.util.MyServo;
 import org.firstinspires.ftc.teamcode.vision.Vision;
 import org.firstinspires.ftc.teamcode.modules.claw.Claw;
@@ -20,15 +23,15 @@ public class Robot {
     HardwareMap hardwareMap;
 
     public Drivetrain drivetrain;
-    Intake intake;
-    Outtake outtake;
-    Claw claw;
+    public Intake intake;
+    public Outtake outtake;
+    public Claw claw;
 
-    Sensors sensors;
-    Vision vision;
+    public Sensors sensors;
+    public Vision vision;
 
-    public ArrayList<MotorPriority> motorPriorities = new ArrayList<>();
-    public ArrayList<MyServo> servos = new ArrayList<>();
+    public ArrayList<MotorPriority> motorPriorities = new ArrayList<>(8);
+    public ArrayList<MyServo> servos = new ArrayList<>(3);
 
     public enum STATE { TEST, IDLE, INTAKE_ROLLER, INTAKE_CLAW, WAIT_FOR_START_SCORING, SCORING, ADJUST, DEPOSIT, RETRACT }
     public STATE currentState = STATE.IDLE;
@@ -39,10 +42,9 @@ public class Robot {
         initHubs();
 
         drivetrain = new Drivetrain(hardwareMap, motorPriorities);
-        intake = new Intake(hardwareMap, motorPriorities);
-        outtake = new Outtake(hardwareMap, motorPriorities, sensors, servos);
         claw = new Claw(hardwareMap, servos);
-
+        outtake = new Outtake(hardwareMap, motorPriorities, sensors, servos);
+        intake = new Intake(hardwareMap, motorPriorities);
         sensors = new Sensors(hardwareMap, motorPriorities, drivetrain.localizer);
         vision = new Vision();
     }
@@ -58,6 +60,8 @@ public class Robot {
     double poleHeight = 32.0;
 
     long timeSinceClawOpen = 0;
+
+    private long loopStart = System.nanoTime();
 
     public void update() {
         loopStart = System.nanoTime();
@@ -140,13 +144,12 @@ public class Robot {
         }
     }
 
-    private long loopStart = System.nanoTime();
-    double loopTime = 0.0;
-    double targetLoopLength = 0.008; //Sets the target loop time in milli seconds
-    double numMotorsUpdated = 0;
-    double bestMotorUpdate = 1;
+    double targetLoopLength = 0.1; //Sets the target loop time in milli seconds
 
     public void updateMotors() {
+        double numMotorsUpdated = 0;
+        double bestMotorUpdate = 1;
+
         numMotorsUpdated = 0;
 
         while (bestMotorUpdate > 0 && loopTime <= targetLoopLength) { // updates the motors while still time remaining in the loop
@@ -170,6 +173,8 @@ public class Robot {
         updateLoopTime();
     }
 
+    double loopTime = 0.0;
+
     public void updateLoopTime(){
         loopTime = (System.nanoTime() - loopStart) / 1000000000.0; // converts from nano secs to secs
     }
@@ -178,12 +183,12 @@ public class Robot {
         sensors.updateHub1();
         sensors.updateHub2();
 
-        updateMotors();
-
         drivetrain.update();
         intake.update();
-        outtake.update();
+//        outtake.update();
         claw.update();
+
+        updateMotors();
     }
 
     public void setConePose (Pose2d pose2d) { conePose = pose2d; }
@@ -195,7 +200,14 @@ public class Robot {
 
     public void followTrajectory(Trajectory trajectory) {
         drivetrain.followTrajectoryAsync(trajectory);
-        while(drivetrain.isBusy()){
+        while(drivetrain.isBusy()) {
+            update();
+        }
+    }
+
+    public void followTrajectorySequence(TrajectorySequence trajectorySequence) {
+        drivetrain.followTrajectorySequenceAsync(trajectorySequence);
+        while(drivetrain.isBusy()) {
             update();
         }
     }

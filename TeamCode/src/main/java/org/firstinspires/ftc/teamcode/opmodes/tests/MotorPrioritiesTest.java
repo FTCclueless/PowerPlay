@@ -1,4 +1,6 @@
-package org.firstinspires.ftc.teamcode.modules.drive.roadrunner.opmode;
+package org.firstinspires.ftc.teamcode.opmodes.tests;
+
+import android.util.Log;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -11,12 +13,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.modules.drive.Drivetrain;
 
-/*
- * This is a simple routine to test translational drive capabilities.
- */
 @Config
-@Autonomous(group = "drive")
-public class StraightTest extends LinearOpMode {
+@Autonomous(group = "test")
+public class MotorPrioritiesTest extends LinearOpMode {
     public static double DISTANCE = 60; // in
 
     @Override
@@ -26,22 +25,13 @@ public class StraightTest extends LinearOpMode {
         Robot robot = new Robot(hardwareMap);
         Drivetrain drive = robot.drivetrain;
 
-        Trajectory trajectory = drive.trajectoryBuilder(new Pose2d())
-                .forward(DISTANCE)
-                .build();
-
         waitForStart();
 
         if (isStopRequested()) return;
-
-        robot.followTrajectory(trajectory);
-
-        Pose2d poseEstimate = drive.getPoseEstimate();
-        telemetry.addData("finalX", poseEstimate.getX());
-        telemetry.addData("finalY", poseEstimate.getY());
-        telemetry.addData("finalHeading", poseEstimate.getHeading());
-        telemetry.update();
-
-        while (!isStopRequested() && opModeIsActive()) {};
+        while (!isStopRequested() && opModeIsActive()) {
+            robot.motorPriorities.get(0).setTargetPower(1.0);
+            robot.update();
+        };
     }
 }
+

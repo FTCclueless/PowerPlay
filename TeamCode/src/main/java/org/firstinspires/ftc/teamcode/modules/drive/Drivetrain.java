@@ -21,6 +21,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
@@ -48,10 +49,12 @@ import static org.firstinspires.ftc.teamcode.modules.drive.DriveConstants.kA;
 import static org.firstinspires.ftc.teamcode.modules.drive.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.modules.drive.DriveConstants.kV;
 
+import android.util.Log;
+
 @Config
 public class Drivetrain extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(15, 0, 0);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(10, 0, 0);
 
     public static double LATERAL_MULTIPLIER = 1;
 
@@ -66,7 +69,7 @@ public class Drivetrain extends MecanumDrive {
 
     private TrajectoryFollower follower;
 
-    private DcMotorEx leftFront, leftRear, rightRear, rightFront;
+    public DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private List<DcMotorEx> motors;
 
     private BNO055IMU imu;
@@ -92,7 +95,7 @@ public class Drivetrain extends MecanumDrive {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu = hardwareMap.get(BNO055IMU.class, "imu1");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         imu.initialize(parameters);
@@ -111,8 +114,12 @@ public class Drivetrain extends MecanumDrive {
             motorPriorities.add(new MotorPriority(motors.get(i),3,5));
         }
 
+        setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         if (RUN_USING_ENCODER) {
             setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        } else {
+            setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
 
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -121,10 +128,26 @@ public class Drivetrain extends MecanumDrive {
             setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
         }
 
+        leftFront.setDirection(DcMotor.Direction.REVERSE);
+        leftRear.setDirection(DcMotor.Direction.REVERSE);
+
         localizer = new ThreeWheelLocalizer(hardwareMap);
         setLocalizer(localizer);
 
+        localizer.getIMU(imu);
+
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
+    }
+
+    public void drive (Gamepad gamepad) {
+        double forward = Math.tan((gamepad.left_stick_y * -1));
+        double left = Math.tan(gamepad.left_stick_x);
+        double turn = gamepad.right_stick_x;
+        double p1 = forward+left+turn;
+        double p2 = forward-left+turn;
+        double p3 = forward+left-turn;
+        double p4 = forward-left-turn;
+        setMotorPowers(p1, p2, p3, p4);
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
@@ -192,12 +215,16 @@ public class Drivetrain extends MecanumDrive {
         if (signal != null) {
             double forward = signal.getVel().getX() * kV + signal.getAccel().getX() * kA; forward += Math.signum(forward) * kStatic;
             double left = (signal.getVel().getY() * kV + signal.getAccel().getY() * kA) * LATERAL_MULTIPLIER * -1.0; left += Math.signum(left) * kStatic;
-            double turn = signal.getVel().getHeading() * kV + signal.getAccel().getHeading() * kA; turn += Math.signum(turn) * kStatic; turn *= (0.5 * TRACK_WIDTH);
+            double turn = signal.getVel().getHeading() * kV + signal.getAccel().getHeading() * kA; turn *= (0.5 * TRACK_WIDTH); turn += Math.signum(turn) * kStatic;
 
-            motorPriorities.get(0).setTargetPower(forward+left+turn);
-            motorPriorities.get(1).setTargetPower(forward-left+turn);
-            motorPriorities.get(2).setTargetPower(forward+left-turn);
-            motorPriorities.get(3).setTargetPower(forward-left-turn);
+//            Log.e("FORWARD:",forward + "");
+//            Log.e("LEFT:",left + "");
+//            Log.e("TURN:",turn + "");
+
+            motorPriorities.get(0).setTargetPower(forward+left-turn);
+            motorPriorities.get(1).setTargetPower(forward-left-turn);
+            motorPriorities.get(2).setTargetPower(forward+left+turn);
+            motorPriorities.get(3).setTargetPower(forward-left+turn);
         }
     }
 
