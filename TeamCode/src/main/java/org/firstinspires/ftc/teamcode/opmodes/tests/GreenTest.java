@@ -10,34 +10,31 @@ import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequenc
 
 @Autonomous(group = "Test")
 public class GreenTest extends LinearOpMode {
-    private final int parking_num = 2; // 1, 2, or 3
+    private final int parkingNum = 2; // 1, 2, or 3
 
     @Override
     public void runOpMode() throws InterruptedException {
         Robot robot = new Robot(hardwareMap);
         Drivetrain drive = robot.drivetrain;
 
-        Pose2d origin = new Pose2d(-36, 36, 0);
+        Pose2d origin = new Pose2d(-36, 60, 0);
         drive.setPoseEstimate(origin);
 
         TrajectorySequence seq = null;
-        switch (parking_num) {
+        switch (parkingNum) {
             case 1:
                 seq = drive.trajectorySequenceBuilder(origin)
-                    .strafeLeft(24)
                     .strafeRight(48)
                     .back(24)
                     .build();
                 break;
             case 2:
                 seq = drive.trajectorySequenceBuilder(origin)
-                    .strafeLeft(24)
                     .strafeRight(48)
                     .build();
                 break;
             case 3:
                 seq = drive.trajectorySequenceBuilder(origin)
-                    .strafeLeft(24)
                     .strafeRight(48)
                     .forward(24)
                     .build();

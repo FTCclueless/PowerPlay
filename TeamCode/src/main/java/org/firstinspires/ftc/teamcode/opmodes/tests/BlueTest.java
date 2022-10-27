@@ -11,32 +11,36 @@ import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequenc
 
 @Autonomous(group = "Test")
 public class BlueTest extends LinearOpMode {
-    private final int parking_num = 2; // 1, 2, or 3
-    private final int target_cycles = 5;
+    private final int parkingNum = 3; // 1, 2, or 3
+    private final int targetCycles = 5;
     private int cycles = 0;
     private int state = 0;
+    private final boolean isBlue = true;
+    private final boolean nearBlueTerminal = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
+        int xsign = nearBlueTerminal ? -1 : 1;
+        int ysign = isBlue ? -1 : 1;
+
         Robot robot = new Robot(hardwareMap);
         Drivetrain drive = robot.drivetrain;
 
-        Pose2d origin = new Pose2d(36, 36, 0);
+        Pose2d origin = new Pose2d(36 * xsign, 60 * ysign, 0);
         drive.setPoseEstimate(origin);
 
         TrajectorySequence to = drive.trajectorySequenceBuilder(origin)
-            .strafeLeft(24)
-            .strafeRight(48)
+            .strafeRight(48 * ysign)
             .build();
 
-        Pose2d cyclepose = new Pose2d(36, 12, 0);
+        Pose2d cyclepose = new Pose2d(36 * xsign, 12 * ysign, 0);
         TrajectorySequence cycle = drive.trajectorySequenceBuilder(cyclepose)
             .forward(24)
             .back(24)
             .build();
 
         Trajectory park = null;
-        switch (parking_num) {
+        switch (parkingNum) {
             case 1:
                 park = drive.trajectoryBuilder(cyclepose)
                     .forward(24)
@@ -61,7 +65,7 @@ public class BlueTest extends LinearOpMode {
                     case 1:
                         robot.followTrajectorySequence(cycle);
                         cycles++;
-                        if (cycles >= target_cycles) {
+                        if (cycles >= targetCycles) {
                             state++;
                         }
                         break;
