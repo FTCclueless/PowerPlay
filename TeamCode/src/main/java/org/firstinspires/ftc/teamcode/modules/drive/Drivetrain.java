@@ -140,8 +140,8 @@ public class Drivetrain extends MecanumDrive {
     }
 
     public void drive (Gamepad gamepad) {
-        double forward = 0.4*Math.tan((gamepad.left_stick_y * -1));
-        double left = 0.4*(Math.tan(gamepad.left_stick_x));
+        double forward = 0.4*Math.tan(((gamepad.left_stick_y * -1 ) / 0.85));
+        double left = 0.4*(Math.tan(gamepad.left_stick_x / 0.85));
         double turn = gamepad.right_stick_x*0.9;
 
         Log.e("left_stick_y:", gamepad.left_stick_y + "");

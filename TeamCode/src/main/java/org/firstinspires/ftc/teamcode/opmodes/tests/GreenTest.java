@@ -17,29 +17,29 @@ public class GreenTest extends LinearOpMode {
         Robot robot = new Robot(hardwareMap);
         Drivetrain drive = robot.drivetrain;
 
-        Pose2d origin = new Pose2d(-48, 24, 0);
+        Pose2d origin = new Pose2d(-36, 36, 0);
         drive.setPoseEstimate(origin);
 
         TrajectorySequence seq = null;
         switch (parking_num) {
             case 1:
                 seq = drive.trajectorySequenceBuilder(origin)
-                    .back(24)
-                    .forward(48)
                     .strafeLeft(24)
+                    .strafeRight(48)
+                    .back(24)
                     .build();
                 break;
             case 2:
                 seq = drive.trajectorySequenceBuilder(origin)
-                    .back(24)
-                    .forward(48)
+                    .strafeLeft(24)
+                    .strafeRight(48)
                     .build();
                 break;
             case 3:
                 seq = drive.trajectorySequenceBuilder(origin)
-                    .back(24)
-                    .forward(48)
-                    .strafeRight(24)
+                    .strafeLeft(24)
+                    .strafeRight(48)
+                    .forward(24)
                     .build();
                 break;
         }

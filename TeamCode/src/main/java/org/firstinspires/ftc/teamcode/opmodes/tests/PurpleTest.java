@@ -15,14 +15,14 @@ public class PurpleTest extends LinearOpMode {
         Robot robot = new Robot(hardwareMap);
         Drivetrain drive = robot.drivetrain;
 
-        Pose2d origin = new Pose2d(48, -48, 0);
+        Pose2d origin = new Pose2d(36, -36, 0);
         drive.setPoseEstimate(origin);
 
         TrajectorySequence seq = drive.trajectorySequenceBuilder(origin)
-                .forward(24)
-                .strafeLeft(24)
                 .strafeRight(24)
                 .back(24)
+                .forward(24)
+                .strafeLeft(24)
                 .build();
 
         waitForStart();

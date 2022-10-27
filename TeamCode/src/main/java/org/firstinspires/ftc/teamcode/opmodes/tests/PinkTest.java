@@ -17,29 +17,29 @@ public class PinkTest extends LinearOpMode {
         Robot robot = new Robot(hardwareMap);
         Drivetrain drive = robot.drivetrain;
 
-        Pose2d origin = new Pose2d(-48, -48, 0);
+        Pose2d origin = new Pose2d(-36, -36, 0);
         drive.setPoseEstimate(origin);
 
         TrajectorySequence seq = null;
         switch (parking_num) {
             case 1:
                 seq = drive.trajectorySequenceBuilder(origin)
-                    .forward(24)
-                    .back(24)
                     .strafeRight(24)
+                    .strafeLeft(24)
+                    .forward(24)
                     .build();
                 break;
             case 2:
                 seq = drive.trajectorySequenceBuilder(origin)
-                    .forward(24)
-                    .back(24)
+                    .strafeRight(24)
+                    .strafeLeft(24)
                     .build();
                 break;
             case 3:
                 seq = drive.trajectorySequenceBuilder(origin)
-                    .forward(24)
-                    .back(24)
+                    .strafeRight(24)
                     .strafeLeft(24)
+                    .back(24)
                     .build();
                 break;
         }
