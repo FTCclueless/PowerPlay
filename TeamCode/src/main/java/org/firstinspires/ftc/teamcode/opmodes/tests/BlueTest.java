@@ -21,7 +21,7 @@ public class BlueTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         int xsign = nearBlueTerminal ? -1 : 1;
-        int ysign = isBlue ? -1 : 1;
+        int ysign = isBlue ? 1 : -1;
 
         Robot robot = new Robot(hardwareMap);
         Drivetrain drive = robot.drivetrain;
@@ -54,28 +54,24 @@ public class BlueTest extends LinearOpMode {
         }
 
         waitForStart();
-        if (!isStopRequested()) {
-            boolean running = true;
-            while (running) {
-                switch (state) {
-                    case 0:
-                        robot.followTrajectorySequence(to);
+        while (!isStopRequested()) {
+            switch (state) {
+                case 0:
+                    robot.followTrajectorySequence(to);
+                    state++;
+                    break;
+                case 1:
+                    robot.followTrajectorySequence(cycle);
+                    cycles++;
+                    if (cycles >= targetCycles) {
                         state++;
-                        break;
-                    case 1:
-                        robot.followTrajectorySequence(cycle);
-                        cycles++;
-                        if (cycles >= targetCycles) {
-                            state++;
-                        }
-                        break;
-                    case 3:
-                        if (park != null) {
-                            robot.followTrajectory(park);
-                        }
-                        running = false;
-                        break;
-                }
+                    }
+                    break;
+                case 3:
+                    if (park != null) {
+                        robot.followTrajectory(park);
+                    }
+                    break;
             }
         }
     }
