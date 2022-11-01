@@ -5,9 +5,11 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.modules.actuation.Actuation;
 import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.modules.intake.ServoIntake;
 import org.firstinspires.ftc.teamcode.util.MyServo;
 import org.firstinspires.ftc.teamcode.vision.Vision;
 import org.firstinspires.ftc.teamcode.modules.claw.Claw;
@@ -25,6 +27,7 @@ public class Robot {
 
     public Drivetrain drivetrain;
     public Intake intake;
+    public ServoIntake servoIntake;
     public Outtake outtake;
     public Claw claw;
     public Actuation actuation;
@@ -46,7 +49,8 @@ public class Robot {
         drivetrain = new Drivetrain(hardwareMap, motorPriorities);
         claw = new Claw(hardwareMap, servos);
         outtake = new Outtake(hardwareMap, motorPriorities, sensors, servos);
-        intake = new Intake(hardwareMap, motorPriorities);
+//        intake = new Intake(hardwareMap, motorPriorities);
+        servoIntake = new ServoIntake(hardwareMap);
         actuation = new Actuation(hardwareMap, servos);
         sensors = new Sensors(hardwareMap, motorPriorities, drivetrain.localizer);
         vision = new Vision();
