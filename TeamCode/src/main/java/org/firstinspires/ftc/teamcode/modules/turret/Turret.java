@@ -24,6 +24,8 @@ public class Turret {
     public double turretPower = 0.0;
     public static double turretPercentMax = 0.98;
 
+    double maxTurretSpeed = 6.87843444154; // radians per sec
+
     public Turret(HardwareMap hardwareMap, ArrayList<MotorPriority> motorPriorities, Sensors sensors) {
         this.motorPriorities = motorPriorities;
         this.sensors = sensors;
@@ -36,7 +38,7 @@ public class Turret {
         updateTurretValues();
 
         double turretError = targetTurretAngle - currentTurretAngle;
-        targetTurretVelocity = Math.max(Math.min(turretError * (230.4596076657823/5), (230.4596076657823*turretPercentMax)),-230.4596076657823*turretPercentMax);
+        targetTurretVelocity = Math.max(Math.min(turretError * (maxTurretSpeed/5), (maxTurretSpeed*turretPercentMax)),-maxTurretSpeed*turretPercentMax);
         turretPower = turretPID.update(targetTurretVelocity - currentTurretVelocity);
         motorPriorities.get(4).setTargetPower(turretPower);
     }

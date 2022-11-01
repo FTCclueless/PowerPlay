@@ -26,7 +26,7 @@ public class V4Bar {
         updateV4BarValues();
 
         v4bar1.setAngle(targetV4BarAngle, v4barPower);
-        v4bar2.setAngle(targetV4BarAngle, v4barPower);
+        v4bar2.setAngle(-targetV4BarAngle, v4barPower);
     }
 
     public void setTargetV4BarAngle(double angle) {

@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.modules.actuation.Actuation;
 import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.util.MyServo;
 import org.firstinspires.ftc.teamcode.vision.Vision;
@@ -26,6 +27,7 @@ public class Robot {
     public Intake intake;
     public Outtake outtake;
     public Claw claw;
+    public Actuation actuation;
 
     public Sensors sensors;
     public Vision vision;
@@ -45,6 +47,7 @@ public class Robot {
         claw = new Claw(hardwareMap, servos);
         outtake = new Outtake(hardwareMap, motorPriorities, sensors, servos);
         intake = new Intake(hardwareMap, motorPriorities);
+        actuation = new Actuation(hardwareMap, servos);
         sensors = new Sensors(hardwareMap, motorPriorities, drivetrain.localizer);
         vision = new Vision();
     }
@@ -73,6 +76,7 @@ public class Robot {
             case RETRACT:
                 outtake.setTargetRelative(5,0,3);
                 claw.open();
+                actuation.close();
                 if (startRollerIntake) {
                     currentState = STATE.INTAKE_ROLLER;
                 }
@@ -82,6 +86,7 @@ public class Robot {
                 break;
             case INTAKE_ROLLER:
                 claw.open();
+                actuation.open();
                 outtake.setTargetRelative(5,0,3);
                 intake.on();
                 if(sensors.rollerTouch) {
@@ -90,6 +95,7 @@ public class Robot {
                 break;
             case INTAKE_CLAW:
                 claw.open();
+                actuation.open();
                 outtake.setTargetGlobal(drivetrain.getPoseEstimate(), conePose, coneHeight);
                 if(sensors.clawTouch) {
                     currentState = STATE.WAIT_FOR_START_SCORING;
@@ -97,6 +103,7 @@ public class Robot {
                 break;
             case WAIT_FOR_START_SCORING:
                 claw.close();
+                actuation.close();
                 outtake.setTargetRelative(2,0,7);
                 if (startScoring) {
                     currentState = STATE.SCORING;

@@ -27,6 +27,8 @@ public class Slides {
     public double slidesPower = 0.0;
     public static double slidesPercentMax = 0.98;
 
+    double maxSlidesSpeed = 82.9718558749; // inches per sec
+
     public Slides(HardwareMap hardwareMap, ArrayList<MotorPriority> motorPriorities, Sensors sensors) {
         this.motorPriorities = motorPriorities;
         this.sensors = sensors;
@@ -40,7 +42,7 @@ public class Slides {
         updateSlidesValues();
 
         double slidesError = targetSlidesLength - currentSlidesLength;
-        targetSlidesVelocity = Math.max(Math.min(slidesError * (47.141223206685275/2), (47.141223206685275*slidesPercentMax)),-47.141223206685275*slidesPercentMax);
+        targetSlidesVelocity = Math.max(Math.min(slidesError * (maxSlidesSpeed/2), (maxSlidesSpeed*slidesPercentMax)),-maxSlidesSpeed*slidesPercentMax);
         slidesPower = slidesPID.update(targetSlidesVelocity - currentSlidesVelocity);
         motorPriorities.get(5).setTargetPower(slidesPower);
     }

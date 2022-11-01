@@ -20,8 +20,8 @@ Servos
 - Servo Port 0: claw
 - Servo Port 1: v4bar1
 - Servo Port 2: v4bar2
-- Servo Port 3: 
-- Servo Port 4:
+- Servo Port 3: act1
+- Servo Port 4: act2
 - Servo Port 5:
 
 Analog Sensors

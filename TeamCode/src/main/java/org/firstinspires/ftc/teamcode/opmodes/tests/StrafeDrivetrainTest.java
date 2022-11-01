@@ -18,7 +18,7 @@ public class StrafeDrivetrainTest extends LinearOpMode {
         waitForStart();
 
         while (!isStopRequested()) {
-            drive.setMotorPowers(0.07,-0.07,0.07,-0.07);
+            drive.setMotorPowers(0.15,-0.15,0.15,-0.15);
             robot.update();
         }
     }
