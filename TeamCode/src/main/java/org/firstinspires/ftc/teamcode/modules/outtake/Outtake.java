@@ -7,10 +7,14 @@ import org.firstinspires.ftc.teamcode.modules.slides.Slides;
 import org.firstinspires.ftc.teamcode.modules.turret.Turret;
 import org.firstinspires.ftc.teamcode.modules.v4bar.V4Bar;
 import org.firstinspires.ftc.teamcode.sensors.Sensors;
+import org.firstinspires.ftc.teamcode.util.Model;
 import org.firstinspires.ftc.teamcode.util.MotorPriority;
 import org.firstinspires.ftc.teamcode.util.MyServo;
+import org.firstinspires.ftc.teamcode.util.Pose3D;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Outtake {
     Sensors sensors;
@@ -41,6 +45,9 @@ public class Outtake {
     double turretYOffset = 0.0;
 
     double x, y, z;
+
+    Model leftDrivePod = new Model(Arrays.asList(new Pose3D(8.27, 7.965, 0), new Pose3D(-8.27, 5.6678, 4.21)));
+    Model rightDrivePod = new Model(Arrays.asList(new Pose3D(8.27, -7.965, 0), new Pose3D(-8.27, -5.6678, 4.21)));
 
     ArrayList<MyServo> servos;
 
@@ -143,6 +150,14 @@ public class Outtake {
 
     public boolean isInPosition() {
         if(turret.isInPosition(5) && slides.isInPosition(5) && v4Bar.isInPosition(15)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean isIntersectingRobot (double targetX, double targetY, double targetZ) {
+        if(leftDrivePod.isIntersecting(targetX, targetY, targetZ) || rightDrivePod.isIntersecting(targetX, targetY, targetZ)) {
             return true;
         } else {
             return false;
