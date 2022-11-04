@@ -177,7 +177,7 @@ public class Robot {
             }
             if (bestMotorUpdate != 0) { // priority # of motor needing update the most
                 motorPriorities.get(bestIndex).update(); // Resetting the motor priority so that it knows that it updated the motor and setting the motor of the one that most needs it
-                numMotorsUpdated += motorPriorities.get(bestIndex).motor.length; //adds the number of motors updated
+                numMotorsUpdated += motorPriorities.get(bestIndex).motor.length; // adds the number of motors updated
             }
             updateLoopTime();
         }
@@ -195,7 +195,8 @@ public class Robot {
         sensors.updateHub2();
 
         drivetrain.update();
-        intake.update();
+//        intake.update();
+        servoIntake.update();
 //        outtake.update();
         claw.update();
 

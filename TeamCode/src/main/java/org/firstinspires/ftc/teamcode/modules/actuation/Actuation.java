@@ -7,17 +7,19 @@ import org.firstinspires.ftc.teamcode.util.MyServo;
 import java.util.ArrayList;
 
 public class Actuation {
-    public double currentActrAngle = 0.0;
-    public double targetActAngle = 0.0;
+    public double currentActPosition = 0.0;
+    public double targetActPosition = 0.0;
     public double actPower = 0.0;
 
     MyServo act1, act2;
     ArrayList<MyServo> servos;
 
-    double openAngle = 30.0;
-    double closeAngle = 0.0;
+    double openPosition = 0.5;
+    double closePosition = 0.0;
 
     public Actuation(HardwareMap hardwareMap, ArrayList<MyServo> servos) {
+        this.servos = servos;
+
         act1 = new MyServo(hardwareMap.servo.get("act1"),"Torque",1,0,1);
         act2 = new MyServo(hardwareMap.servo.get("act2"),"Torque",1,0,1);
 
@@ -28,29 +30,24 @@ public class Actuation {
     public void update() {
         updateActValues();
 
-        act1.setAngle(targetActAngle, actPower);
-        act2.setAngle(-targetActAngle, actPower);
+        act1.setPosition(targetActPosition, actPower);
+        act2.setPosition(-targetActPosition, actPower);
     }
 
-    public void setTargetActAngle(double angle) {
-        targetActAngle = angle;
+    public void setTargetActPosition(double position) {
+        targetActPosition = position;
     }
 
-    public void setTargetV4BarAngle(double angle, double power) {
-        targetActAngle = angle;
-        actPower = power;
-    }
-
-    public double getCurrentActAngle() {
-        return currentActrAngle;
+    public double getCurrentActPosition() {
+        return currentActPosition;
     }
 
     public void updateActValues() {
-        currentActrAngle = act1.getAngle();
+        currentActPosition = act1.getCurrentPosition();
     }
 
-    public boolean isInPosition (double angle) {
-        if(Math.abs(targetActAngle - currentActrAngle) <= Math.toRadians(angle)) {
+    public boolean isInPosition (double position) {
+        if (Math.abs(targetActPosition - currentActPosition) <= position) {
             return true;
         } else {
             return false;
@@ -58,12 +55,12 @@ public class Actuation {
     }
 
     public void open() {
-        act1.setAngle(openAngle, actPower);
-        act2.setAngle(-openAngle, actPower);
+        act1.setPosition(openPosition, actPower);
+        act2.setPosition(-openPosition, actPower);
     }
 
     public void close() {
-        act1.setAngle(closeAngle, actPower);
-        act2.setAngle(-closeAngle, actPower);
+        act1.setPosition(closePosition, actPower);
+        act2.setPosition(-closePosition, actPower);
     }
 }

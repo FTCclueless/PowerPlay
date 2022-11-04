@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.modules.outtake;
 
+import android.util.Log;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -47,6 +49,7 @@ public class Outtake {
 
     Model leftDrivePod = new Model(Arrays.asList(new Pose3D(8.27, 7.965, 0), new Pose3D(-8.27, 5.6678, 4.21)));
     Model rightDrivePod = new Model(Arrays.asList(new Pose3D(8.27, -7.965, 0), new Pose3D(-8.27, -5.6678, 4.21)));
+    Model center = new Model(Arrays.asList(new Pose3D(0, 5.6678, 0), new Pose3D(-8.27, -5.6678, 5.34)));
 
     ArrayList<MyServo> servos;
 
@@ -116,6 +119,14 @@ public class Outtake {
 
             targetSlidesLength = targetHeight - (Math.sin(targetV4BarAngle) * v4BarLength);
         }
+
+        if (isIntersectingRobot(targetX, targetY, targetZ)) {
+            targetV4BarAngle = currentV4BarAngle;
+            targetTurretAngle = currentTurretAngle;
+            targetSlidesLength = currentSlidesLength;
+
+            Log.e("INTERSECTION: ", "PLEASE BE AWARE!!");
+        }
     }
 
     public Pose2d findGlobalCoordinates (Pose2d robotPose, double xOffset, double yOffset) {
@@ -156,7 +167,7 @@ public class Outtake {
     }
 
     public boolean isIntersectingRobot (double targetX, double targetY, double targetZ) {
-        if(leftDrivePod.isIntersecting(targetX, targetY, targetZ) || rightDrivePod.isIntersecting(targetX, targetY, targetZ)) {
+        if (leftDrivePod.isIntersecting(targetX, targetY, targetZ) || rightDrivePod.isIntersecting(targetX, targetY, targetZ) || center.isIntersecting(targetX, targetY, targetZ)) {
             return true;
         } else {
             return false;
