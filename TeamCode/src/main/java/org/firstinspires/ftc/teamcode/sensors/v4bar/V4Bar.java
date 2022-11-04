@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.modules.v4bar;
+package org.firstinspires.ftc.teamcode.sensors.v4bar;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
