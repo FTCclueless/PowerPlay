@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.modules.outtake;
 
+import android.util.Log;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -90,13 +92,6 @@ public class Outtake {
     }
 
     public void setTargetRelative(double targetX, double targetY, double targetZ) {
-
-        if (isIntersectingRobot(targetX, targetY, targetZ)) {
-            targetX = 0;
-            targetY = 0;
-            targetZ = 0;
-        }
-        
         targetHeight = targetZ;
         targetExtension = Math.sqrt(Math.pow((targetX),2) + Math.pow((targetY),2));
 
@@ -124,6 +119,14 @@ public class Outtake {
             }
 
             targetSlidesLength = targetHeight - (Math.sin(targetV4BarAngle) * v4BarLength);
+        }
+
+        if (isIntersectingRobot(targetX, targetY, targetZ)) {
+            targetV4BarAngle = currentV4BarAngle;
+            targetTurretAngle = currentTurretAngle;
+            targetSlidesLength = currentSlidesLength;
+
+            Log.e("INTERSECTION: ", "PLEASE BE AWARE!!");
         }
     }
 
