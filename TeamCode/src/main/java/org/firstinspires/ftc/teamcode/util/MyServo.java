@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class MyServo {
     Servo servo;
     public double speed;
+    public double positionPerRadian; // 300 degrees is operating range so 1/(300*pi/180)
     double max, min, basePos;
     public MyServo(Servo servo, String servoType, double loadMultiplier, double min, double max){
         this(servo,servoType,loadMultiplier,min,max,min);
@@ -16,9 +17,22 @@ public class MyServo {
         this.basePos = basePos;
 
         switch (servoType) { // Take the no-load speed at 4.8 V and adjust as needed based on load on servo
-            case "Torque": speed = Math.toRadians(60) / 0.25; break;
-            case "Speed": speed = Math.toRadians(60) / 0.11; break;
-            case "Super Speed": speed = Math.toRadians(60) / 0.055; break;
+            case "Torque":
+                speed = Math.toRadians(60) / 0.25;
+                positionPerRadian = 0.19098593171;
+            break;
+            case "Speed":
+                speed = Math.toRadians(60) / 0.11;
+                positionPerRadian = 0.19098593171;
+            break;
+            case "Super Speed":
+                speed = Math.toRadians(60) / 0.055;
+                positionPerRadian = 0.19098593171;
+            break;
+            case "Amazon":
+                speed = Math.toRadians(60) / 0.13;
+                positionPerRadian = 0.2122065908; // different since operating range is 270 degrees
+            break;
         }
         speed *= loadMultiplier;
     }
@@ -27,7 +41,6 @@ public class MyServo {
     double currentPosition = 0;
     double offset = 0; // ex: makes deposit bucket level
     long lastUpdateTime = System.nanoTime();
-    public double positionPerRadian = 0.19098593171; //300 degrees is operating range so 1/(300*pi/180)
 
     double lastPos = 0.0;
     double currentPos = 0.0;
@@ -93,11 +106,11 @@ public class MyServo {
     public double getLastPos() { return lastPos; }
 
     public double clipAngle(double angle){
-        while (angle > Math.PI) {
-            angle -= Math.PI * 2.0;
+        while (angle > 2*Math.PI) {
+            angle -= 2*Math.PI * 2.0;
         }
-        while (angle < -Math.PI) {
-            angle += Math.PI * 2.0;
+        while (angle < -2*Math.PI) {
+            angle += 2*Math.PI * 2.0;
         }
         return angle;
     }
