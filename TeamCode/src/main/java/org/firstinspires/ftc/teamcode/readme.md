@@ -49,15 +49,15 @@ Motors
 - Motor Port 3: slide2
 
 Encoders
-- Motor Port 0: 
-- Motor Port 1: turret
-- Motor Port 2: slides
-- Motor Port 3: 
+- Motor Port 0: turret
+- Motor Port 1: 
+- Motor Port 2: 
+- Motor Port 3: slides
 
 Servos
 - Servo Port 0: intake1
-- Servo Port 2: intake2
-- Servo Port 1: act1
+- Servo Port 1: intake2
+- Servo Port 2: act1
 - Servo Port 3: act2
 - Servo Port 4:
 - Servo Port 5:

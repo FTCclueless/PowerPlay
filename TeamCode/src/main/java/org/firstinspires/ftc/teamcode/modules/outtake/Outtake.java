@@ -48,6 +48,7 @@ public class Outtake {
 
     Model leftDrivePod = new Model(Arrays.asList(new Pose3D(8.27, 7.965, 0), new Pose3D(-8.27, 5.6678, 4.21)));
     Model rightDrivePod = new Model(Arrays.asList(new Pose3D(8.27, -7.965, 0), new Pose3D(-8.27, -5.6678, 4.21)));
+    Model center = new Model(Arrays.asList(new Pose3D(8.27, -7.965, 0), new Pose3D(-8.27, -5.6678, 4.21)));
 
     ArrayList<MyServo> servos;
 

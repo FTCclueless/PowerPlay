@@ -195,7 +195,8 @@ public class Robot {
         sensors.updateHub2();
 
         drivetrain.update();
-        intake.update();
+//        intake.update();
+        servoIntake.update();
 //        outtake.update();
         claw.update();
 
