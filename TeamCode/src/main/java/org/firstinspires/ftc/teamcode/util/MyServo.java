@@ -71,7 +71,7 @@ public class MyServo {
     }
 
     public void setAngle(double angle, double power) {
-        setPosition(clipAngle(angle) * positionPerRadian, power);
+        setPosition(angle * positionPerRadian, power);
     }
 
     public void setAngle(double angle) {
@@ -105,13 +105,13 @@ public class MyServo {
     }
     public double getLastPos() { return lastPos; }
 
-    public double clipAngle(double angle){
-        while (angle > 2*Math.PI) {
-            angle -= 2*Math.PI * 2.0;
-        }
-        while (angle < -2*Math.PI) {
-            angle += 2*Math.PI * 2.0;
-        }
-        return angle;
-    }
+//    public double clipAngle (double angle) {
+//        while (angle > 2*Math.PI) {
+//            angle -= 2*Math.PI * 2.0;
+//        }
+//        while (angle < -2*Math.PI) {
+//            angle += 2*Math.PI * 2.0;
+//        }
+//        return angle;
+//    }
 }
