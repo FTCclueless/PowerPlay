@@ -19,15 +19,15 @@ public class MyServo {
         switch (servoType) { // Take the no-load speed at 4.8 V and adjust as needed based on load on servo
             case "Torque":
                 speed = Math.toRadians(60) / 0.25;
-                positionPerRadian = 0.19098593171;
+                positionPerRadian = 0.2162104887;
             break;
             case "Speed":
                 speed = Math.toRadians(60) / 0.11;
-                positionPerRadian = 0.19098593171;
+                positionPerRadian = 0.2162104887;
             break;
             case "Super Speed":
                 speed = Math.toRadians(60) / 0.055;
-                positionPerRadian = 0.19098593171;
+                positionPerRadian = 0.2162104887;
             break;
             case "Amazon":
                 speed = Math.toRadians(60) / 0.13;
@@ -70,12 +70,12 @@ public class MyServo {
         }
     }
 
+    public void setPosition (double position) {
+        setPosition(position, 1.0);
+    }
+
     public void setAngle(double angle, double power) {
-<<<<<<< HEAD
-        setPosition(angle * positionPerRadian, power);
-=======
         setPosition(angle * positionPerRadian * Math.signum(max-min) + basePos, power);
->>>>>>> 8f9e93e28d910fa33e2c7c73ff4c1574a10b0866
     }
 
     public void setAngle(double angle) {
