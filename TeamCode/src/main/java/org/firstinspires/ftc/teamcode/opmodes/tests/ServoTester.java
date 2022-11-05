@@ -37,8 +37,6 @@ public class ServoTester extends LinearOpMode {
         waitForStart();
 
         while (!isStopRequested()) {
-            robot.update();
-
             if (toggleX.isClicked(gamepad1.x)) {
                 manualMode = !manualMode;
             }

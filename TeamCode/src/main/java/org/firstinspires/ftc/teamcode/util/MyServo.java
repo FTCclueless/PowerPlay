@@ -50,7 +50,7 @@ public class MyServo {
 
     public void setPosition(double targetPosition, double power) {
         targetPosition += offset;
-        targetPosition = Math.max(Math.min(targetPosition,max),min);
+        targetPosition = Math.max(Math.min(targetPosition,Math.max(min,max)),Math.min(min,max));
         double targetOrientation = targetPosition / positionPerRadian; // converts position to radian angle
         double error = targetOrientation - currentAngle;
         long currentTime = System.nanoTime();
@@ -71,7 +71,11 @@ public class MyServo {
     }
 
     public void setAngle(double angle, double power) {
+<<<<<<< HEAD
         setPosition(angle * positionPerRadian, power);
+=======
+        setPosition(angle * positionPerRadian * Math.signum(max-min) + basePos, power);
+>>>>>>> 8f9e93e28d910fa33e2c7c73ff4c1574a10b0866
     }
 
     public void setAngle(double angle) {

@@ -79,7 +79,7 @@ public class Sensors {
         } catch (Exception e) {
             Log.e("******* Error due to ", e.getClass().getName());
             e.printStackTrace();
-            Log.e("******* fail", "control hub failed");
+            Log.e("******* fail", "expansion hub failed");
         }
     }
 
