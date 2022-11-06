@@ -17,7 +17,8 @@ import org.openftc.easyopencv.OpenCvWebcam;
 @Config
 @TeleOp(name="SleeveDetectCVTest", group ="Concept")
 public class SleeveDetectCVTest extends LinearOpMode {
-    public static boolean useWebCamera = false;
+    public static boolean useWebCamera = true;
+    public static boolean enableCrop = true;
     // Handle hardware stuff...
     int width = 320;
     int height = 240;
@@ -31,6 +32,7 @@ public class SleeveDetectCVTest extends LinearOpMode {
         // robot logic...
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         sleeveDetectCVPipeline.setTelemetry(telemetry);
+        sleeveDetectCVPipeline.setCrop(enableCrop);
         // Initialize the back-facing camera
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         if (useWebCamera) {

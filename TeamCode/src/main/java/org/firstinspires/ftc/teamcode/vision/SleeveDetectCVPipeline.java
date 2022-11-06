@@ -38,7 +38,7 @@ public class SleeveDetectCVPipeline  extends MyOpenCvPipeline {
     private MatOfPoint largestContour;
 
     private ScalarLowHighRanges[] scalarLowHighRanges;
-
+    private boolean enableCrop = false;
     public SleeveDetectCVPipeline() {
         allContours = new ArrayList<MatOfPoint>();
         largestContour = null;
@@ -50,7 +50,9 @@ public class SleeveDetectCVPipeline  extends MyOpenCvPipeline {
     public void setTelemetry(Telemetry tele) {
         telemetry = tele;
     }
-
+    public void setCrop(boolean crop_) {
+        enableCrop = crop_;
+    }
     // Kernel size for blurring
     Size kSize = new Size(5, 5);
     Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size((2 * 2) + 1, (2 * 2) + 1));
@@ -98,7 +100,13 @@ public class SleeveDetectCVPipeline  extends MyOpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
-        RobotLogger.dd(TAG, "received one frame");
+        RobotLogger.dd(TAG, "received one frame %d %d", input.width(), input.height());
+        if (enableCrop) {
+            int w = input.width(), h = input.height();
+            Rect rect = new Rect(w / 4, h / 4, w * 3 / 4, h * 3 / 4);
+            Mat cropedMat = new Mat(input, rect);
+            input = cropedMat;
+        }
         if ((enableDebugFileWriting == true) && (imgCount % 30 == 0)) {
             String file_path_name = "/sdcard/FIRST/sleeve" + String.valueOf(imgCount/30 % 20) + ".jpg";
             imageCodecs.imwrite(file_path_name, input);
