@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.modules.drive.Drivetrain;
  * encoder localizer heading may be significantly off if the track width has not been tuned).
  */
 @TeleOp(group = "drive")
-public class SensorTest extends LinearOpMode {
+public class SensorTester extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Robot robot = new Robot(hardwareMap);
@@ -33,7 +33,11 @@ public class SensorTest extends LinearOpMode {
 
             Pose2d poseEstimate = drive.getPoseEstimate();
 
-            telemetry.addData("clawLimit", robot.sensors.rollerTouched());
+            telemetry.addData("leftEncoder Pos", robot.sensors.getLeftEncoderPos());
+            telemetry.addData("rightEncoder Pos", robot.sensors.getRightEncoderPos());
+            telemetry.addData("backEncoder Pos", robot.sensors.getBackEncoderPos());
+
+            telemetry.addData("clawLimit", robot.sensors.clawTouched());
             telemetry.addData("rollerLimit", robot.sensors.rollerTouched());
             telemetry.update();
         }

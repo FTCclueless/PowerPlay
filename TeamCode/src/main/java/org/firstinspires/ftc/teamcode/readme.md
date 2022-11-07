@@ -29,7 +29,7 @@ Analog Sensors
 - Port 2-3:
 
 Digital Sensors
-- Port 0-1: rollerLimit
+- Port 0-1: 
 - Port 2-3: clawLimit
 - Port 4-5:
 - Port 6-7:
@@ -63,8 +63,8 @@ Servos
 - Servo Port 5:
  
 Analog Sensors
-- Port 0-1:
-- Port 2-3:
+- Port 0-1: rollerLimit
+- Port 2-3: clawLimit
 
 Digital Sensors
 - Port 0-1:

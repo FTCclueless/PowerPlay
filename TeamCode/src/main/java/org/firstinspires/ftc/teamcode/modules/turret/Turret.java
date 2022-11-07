@@ -55,9 +55,17 @@ public class Turret {
     public void update() {
         updateTurretValues();
 
+//        turretError = clipAngle(targetTurretAngle - currentTurretAngle);
+//        targetTurretVelocity = Math.max(Math.min(turretError * (maxTurretSpeed/5), (maxTurretSpeed*turretPercentMax)),-maxTurretSpeed*turretPercentMax);
+//        turretPower = turretPID.update(targetTurretVelocity - currentTurretVelocity);
+//        motorPriorities.get(4).setTargetPower(turretPower);
+
         turretError = clipAngle(targetTurretAngle - currentTurretAngle);
-        targetTurretVelocity = Math.max(Math.min(turretError * (maxTurretSpeed/5), (maxTurretSpeed*turretPercentMax)),-maxTurretSpeed*turretPercentMax);
-        turretPower = turretPID.update(targetTurretVelocity - currentTurretVelocity);
+        if (Math.abs(currentTurretAngle + turretError) < Math.toRadians(270)) {
+            turretError = targetTurretAngle - currentTurretAngle;
+        }
+
+        turretPower = turretPID.update(turretError);
         motorPriorities.get(4).setTargetPower(turretPower);
 
         updateTelemetry();
