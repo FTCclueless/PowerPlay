@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.modules.actuation.Actuation;
 import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.modules.intake.ServoIntake;
 import org.firstinspires.ftc.teamcode.util.MyServo;
+import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 import org.firstinspires.ftc.teamcode.vision.Vision;
 import org.firstinspires.ftc.teamcode.modules.claw.Claw;
 import org.firstinspires.ftc.teamcode.modules.drive.Drivetrain;
@@ -26,11 +27,8 @@ public class Robot {
     HardwareMap hardwareMap;
 
     public Drivetrain drivetrain;
-    public Intake intake;
-    public ServoIntake servoIntake;
     public Outtake outtake;
     public Claw claw;
-    public Actuation actuation;
 
     public Sensors sensors;
     public Vision vision;
@@ -46,13 +44,12 @@ public class Robot {
 
         initHubs();
 
+        TelemetryUtil.setup();
+
         drivetrain = new Drivetrain(hardwareMap, motorPriorities);
+        sensors = new Sensors(hardwareMap, motorPriorities, drivetrain.localizer);
         claw = new Claw(hardwareMap, servos);
         outtake = new Outtake(hardwareMap, motorPriorities, sensors, servos);
-//        intake = new Intake(hardwareMap, motorPriorities);
-        servoIntake = new ServoIntake(hardwareMap);
-        actuation = new Actuation(hardwareMap, servos);
-        sensors = new Sensors(hardwareMap, motorPriorities, drivetrain.localizer);
         vision = new Vision();
     }
 
@@ -77,10 +74,11 @@ public class Robot {
         switch (currentState) {
             case TEST:
                 break;
+            case IDLE:
+                break;
             case RETRACT:
                 outtake.setTargetRelative(5,0,3);
                 claw.open();
-                actuation.close();
                 if (startRollerIntake) {
                     currentState = STATE.INTAKE_ROLLER;
                 }
@@ -90,16 +88,13 @@ public class Robot {
                 break;
             case INTAKE_ROLLER:
                 claw.open();
-                actuation.open();
                 outtake.setTargetRelative(5,0,3);
-                intake.on();
                 if(sensors.rollerTouch) {
                    currentState = STATE.WAIT_FOR_START_SCORING;
                 }
                 break;
             case INTAKE_CLAW:
                 claw.open();
-                actuation.open();
                 outtake.setTargetGlobal(drivetrain.getPoseEstimate(), conePose, coneHeight);
                 if(sensors.clawTouch) {
                     currentState = STATE.WAIT_FOR_START_SCORING;
@@ -107,7 +102,6 @@ public class Robot {
                 break;
             case WAIT_FOR_START_SCORING:
                 claw.close();
-                actuation.close();
                 outtake.setTargetRelative(2,0,7);
                 if (startScoring) {
                     currentState = STATE.SCORING;
@@ -134,6 +128,8 @@ public class Robot {
                 }
                 break;
         }
+
+        TelemetryUtil.sendTelemetry();
     }
 
     public void startRollerIntake () {
@@ -195,9 +191,7 @@ public class Robot {
         sensors.updateHub2();
 
         drivetrain.update();
-//        intake.update();
-        servoIntake.update();
-//        outtake.update();
+        outtake.update();
         claw.update();
 
         updateMotors();

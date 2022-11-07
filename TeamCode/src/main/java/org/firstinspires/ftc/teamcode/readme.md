@@ -44,8 +44,8 @@ I2C
 
 Motors
 - Motor Port 0: turret
-- Motor Port 2: intake
-- Motor Port 1: slide1
+- Motor Port 1: 
+- Motor Port 2: slide1
 - Motor Port 3: slide2
 
 Encoders
@@ -55,10 +55,10 @@ Encoders
 - Motor Port 3: slides
 
 Servos
-- Servo Port 0: intake1
-- Servo Port 1: intake2
-- Servo Port 2: act1
-- Servo Port 3: act2
+- Servo Port 0: 
+- Servo Port 1: 
+- Servo Port 2: 
+- Servo Port 3: 
 - Servo Port 4:
 - Servo Port 5:
  

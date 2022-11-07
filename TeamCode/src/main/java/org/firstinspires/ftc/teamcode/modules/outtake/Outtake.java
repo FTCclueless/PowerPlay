@@ -18,11 +18,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Outtake {
-    Sensors sensors;
+    public Sensors sensors;
 
-    Turret turret;
-    Slides slides;
-    V4Bar v4Bar;
+    public Turret turret;
+    public Slides slides;
+    public V4Bar v4Bar;
 
     ArrayList<MotorPriority> motorPriorities;
 
@@ -66,9 +66,9 @@ public class Outtake {
     public void update() {
         updateRelativePos();
 
-        slides.setTargetSlidesLength(targetSlidesLength);
-        turret.setTargetTurretAngle(targetTurretAngle);
-        v4Bar.setTargetV4BarAngle(targetV4BarAngle);
+//        slides.setTargetSlidesLength(targetSlidesLength);
+//        turret.setTargetTurretAngle(targetTurretAngle);
+//        v4Bar.setTargetV4BarAngle(targetV4BarAngle);
 
         slides.update();
         turret.update();

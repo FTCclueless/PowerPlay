@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequenc
 import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequence.sequencesegment.TurnSegment;
 import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequence.sequencesegment.WaitSegment;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
+import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -54,7 +55,7 @@ public class TrajectorySequenceRunner {
 
     List<TrajectoryMarker> remainingMarkers = new ArrayList<>();
 
-    private final FtcDashboard dashboard;
+//    private final FtcDashboard dashboard;
     private final LinkedList<Pose2d> poseHistory = new LinkedList<>();
 
     public TrajectorySequenceRunner(TrajectoryFollower follower, PIDCoefficients headingPIDCoefficients) {
@@ -65,8 +66,8 @@ public class TrajectorySequenceRunner {
 
         clock = NanoClock.system();
 
-        dashboard = FtcDashboard.getInstance();
-        dashboard.setTelemetryTransmissionInterval(25);
+//        dashboard = FtcDashboard.getInstance();
+//        dashboard.setTelemetryTransmissionInterval(25);
     }
 
     public void followTrajectorySequenceAsync(TrajectorySequence trajectorySequence) {
@@ -81,8 +82,8 @@ public class TrajectorySequenceRunner {
         Pose2d targetPose = null;
         DriveSignal driveSignal = null;
 
-        TelemetryPacket packet = new TelemetryPacket();
-        Canvas fieldOverlay = packet.fieldOverlay();
+//        TelemetryPacket packet = new TelemetryPacket();
+        Canvas fieldOverlay = TelemetryUtil.packet.fieldOverlay();
 
         SequenceSegment currentSegment = null;
 
@@ -184,17 +185,17 @@ public class TrajectorySequenceRunner {
             poseHistory.removeFirst();
         }
 
-        packet.put("x", poseEstimate.getX());
-        packet.put("y", poseEstimate.getY());
-        packet.put("heading (deg)", Math.toDegrees(poseEstimate.getHeading()));
+        TelemetryUtil.packet.put("x", poseEstimate.getX());
+        TelemetryUtil.packet.put("y", poseEstimate.getY());
+        TelemetryUtil.packet.put("heading (deg)", Math.toDegrees(poseEstimate.getHeading()));
 
-        packet.put("xError", getLastPoseError().getX());
-        packet.put("yError", getLastPoseError().getY());
-        packet.put("headingError (deg)", Math.toDegrees(getLastPoseError().getHeading()));
+        TelemetryUtil.packet.put("xError", getLastPoseError().getX());
+        TelemetryUtil.packet.put("yError", getLastPoseError().getY());
+        TelemetryUtil.packet.put("headingError (deg)", Math.toDegrees(getLastPoseError().getHeading()));
 
         draw(fieldOverlay, currentTrajectorySequence, currentSegment, targetPose, poseEstimate);
 
-        dashboard.sendTelemetryPacket(packet);
+//        dashboard.sendTelemetryPacket(packet);
 
         return driveSignal;
     }

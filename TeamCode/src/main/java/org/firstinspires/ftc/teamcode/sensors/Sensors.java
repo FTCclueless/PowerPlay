@@ -64,15 +64,15 @@ public class Sensors {
     }
 
     double turretTicksToRadian = 406.485980136;
-    double slidesTickToInch = 4.32896639347;
+    double slidesTickToInch = 33.5162937069;
 
     public void updateHub2() {
         try {
             turretAngle = motorPriorities.get(4).motor[0].getCurrentPosition() / turretTicksToRadian; // radians of turret
             turretVelocity = motorPriorities.get(4).motor[0].getVelocity() / turretTicksToRadian;
 
-            slidesLength = motorPriorities.get(5).motor[0].getCurrentPosition() / slidesTickToInch; // inches of slides
-            slidesVelocity = motorPriorities.get(5).motor[0].getVelocity() / slidesTickToInch;
+            slidesLength = motorPriorities.get(5).motor[1].getCurrentPosition() / slidesTickToInch; // inches of slides
+            slidesVelocity = motorPriorities.get(5).motor[1].getVelocity() / slidesTickToInch;
 
             rollerTouch = rollerLimit.getState(); // limit switch pressed
             clawTouch = clawLimit.getState();
