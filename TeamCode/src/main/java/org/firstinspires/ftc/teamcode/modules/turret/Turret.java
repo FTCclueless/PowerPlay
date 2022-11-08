@@ -61,7 +61,7 @@ public class Turret {
 //        motorPriorities.get(4).setTargetPower(turretPower);
 
         turretError = clipAngle(targetTurretAngle - currentTurretAngle);
-        if (Math.abs(currentTurretAngle + turretError) < Math.toRadians(270)) {
+        if (Math.abs(currentTurretAngle + turretError) > Math.toRadians(270)) {
             turretError = targetTurretAngle - currentTurretAngle;
         }
 
