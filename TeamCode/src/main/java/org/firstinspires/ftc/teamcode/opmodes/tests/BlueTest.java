@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.tests;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -11,11 +12,19 @@ import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequenc
 
 @Autonomous(group = "Test")
 public class BlueTest extends LinearOpMode {
-    private final int parkingNum = 3; // 1, 2, or 3
-    private final int targetCycles = 5;
-    private final boolean isBlue = true;
-    private final boolean nearBlueTerminal = false;
+    private static final int parkingNum = 3; // 1, 2, or 3
+    private static final int targetCycles = 5;
+    private static final boolean isBlue = true;
+    private static final boolean nearBlueTerminal = false;
+    
+    // Tile offsets
+    private static final int tOffsetx = -12;
+    private static final int tOffsety = -8;
 
+    /* Presets:
+     * Tile len: 24
+     * Robot total width: 16
+     */
     @Override
     public void runOpMode() throws InterruptedException {
         int xsign = nearBlueTerminal ? -1 : 1;
@@ -24,39 +33,57 @@ public class BlueTest extends LinearOpMode {
         Robot robot = new Robot(hardwareMap);
         Drivetrain drive = robot.drivetrain;
 
-        Pose2d origin = new Pose2d((48 - 8) * xsign, 72 * ysign, 0);
+        // 48 - 8 (width / 2) = 40
+        Pose2d origin = new Pose2d((48 + tOffsetx) * xsign, (72 + tOffsety) * ysign, 0);
         drive.setPoseEstimate(origin);
-
+        
         TrajectorySequence to = drive.trajectorySequenceBuilder(origin)
-            .strafeRight(49 * ysign)
+            .turn(-origin.getHeading())
+            .strafeTo(new Vector2d((48 + tOffsetx) * xsign, (20 + tOffsety) * ysign))
+            .strafeTo(new Vector2d((36 + tOffsetx) * xsign, (20 + tOffsety) * ysign)) // Half tile back
             .build();
 
-        Pose2d cyclepose = new Pose2d((48 - 8) * xsign, 23 * ysign, 0);
-        TrajectorySequence cycle = drive.trajectorySequenceBuilder(cyclepose)
-            .forward(24)
-            .back(24) // Go back a half tile more
+        Trajectory cycle1 = drive.trajectoryBuilder(new Pose2d((36 + tOffsetx) * xsign, (20 + tOffsety) * ysign))
+            .strafeTo(new Vector2d((72 + tOffsetx) * xsign, (20 + tOffsety) * ysign))
+            .build();
+    
+        Trajectory cycle2 = drive.trajectoryBuilder(new Pose2d((72 + tOffsetx) * xsign, (20 + tOffsety) * ysign))
+            .strafeTo(new Vector2d((36 + tOffsetx) * xsign, (20 + tOffsety) * ysign))
             .build();
 
-        Trajectory park = null;
+        Vector2d parkingPos = null;
         switch (parkingNum) {
             case 1:
-                park = drive.trajectoryBuilder(cyclepose)
-                    .forward(24)
-                    .build();
+                parkingPos = new Vector2d((24 + tOffsetx) * xsign, (20 + tOffsety) * ysign);
+                break;
+            case 2:
+                parkingPos = new Vector2d((48 + tOffsetx) * xsign, (20 + tOffsety) * ysign);
                 break;
             case 3:
-                park = drive.trajectoryBuilder(cyclepose)
-                    .back(24)
-                    .build();
+                parkingPos = new Vector2d((72 + tOffsetx) * xsign, (20 + tOffsety) * ysign);
                 break;
+        }
+
+        // (72, 24) if even amount of cycles and 36 if not
+        Trajectory park = null;
+        Pose2d parkingOrigin = new Pose2d(36 + tOffsetx + ((targetCycles & 1) * 36), 20, 0);
+        // Miscase for when it is already in its parking space
+        if (parkingPos.getX() == parkingOrigin.getX() && parkingPos.getY() == parkingOrigin.getY()) {
+            park = drive.trajectoryBuilder(parkingOrigin)
+                .strafeTo(parkingPos)
+                .build();
         }
 
         waitForStart();
 
         if (!isStopRequested()) {
             robot.followTrajectorySequence(to);
+            // FIXME jank
             for (int i = 0; i < targetCycles; i++) {
-                robot.followTrajectorySequence(cycle);
+                robot.followTrajectory(cycle1);
+                if (++i < targetCycles) {
+                    robot.followTrajectory(cycle2);
+                }
             }
             if (park != null) {
                 robot.followTrajectory(park);
