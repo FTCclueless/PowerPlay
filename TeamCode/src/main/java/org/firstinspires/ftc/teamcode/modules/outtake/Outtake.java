@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.modules.slides.Slides;
 import org.firstinspires.ftc.teamcode.modules.turret.Turret;
-import org.firstinspires.ftc.teamcode.sensors.v4bar.V4Bar;
+import org.firstinspires.ftc.teamcode.modules.v4bar.V4Bar;
 import org.firstinspires.ftc.teamcode.sensors.Sensors;
 import org.firstinspires.ftc.teamcode.util.Model;
 import org.firstinspires.ftc.teamcode.util.MotorPriority;

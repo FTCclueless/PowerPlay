@@ -7,9 +7,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.modules.slides.Slides;
-import org.firstinspires.ftc.teamcode.sensors.v4bar.V4Bar;
+import org.firstinspires.ftc.teamcode.modules.v4bar.V4Bar;
 import org.firstinspires.ftc.teamcode.util.ButtonToggle;
-import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
 @TeleOp
 @Config
