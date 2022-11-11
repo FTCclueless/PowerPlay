@@ -167,10 +167,6 @@ public class Outtake {
     }
 
     public boolean isIntersectingRobot (double targetX, double targetY, double targetZ) {
-        if (leftDrivePod.isIntersecting(targetX, targetY, targetZ) || rightDrivePod.isIntersecting(targetX, targetY, targetZ) || center.isIntersecting(targetX, targetY, targetZ)) {
-            return true;
-        } else {
-            return false;
-        }
+        return (leftDrivePod.isIntersecting(targetX, targetY, targetZ) || rightDrivePod.isIntersecting(targetX, targetY, targetZ) || center.isIntersecting(targetX, targetY, targetZ));
     }
 }
