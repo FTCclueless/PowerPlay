@@ -5,26 +5,27 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.modules.outtake.Outtake;
 
 @Config
 @TeleOp(group = "Test")
 public class OuttakeTester extends LinearOpMode {
 
-    public static double servoAngle = 0.0;
+    public static double x = 5.0;
+    public static double y = 0.0;
+    public static double z = 0.0;
 
     @Override
     public void runOpMode() throws InterruptedException {
         Robot robot = new Robot(hardwareMap);
+        Outtake outtake = robot.outtake;
         robot.testMode();
 
         waitForStart();
 
         while (!isStopRequested()) {
-            robot.servos.get(0).setAngle(Math.toRadians(servoAngle));
-            robot.servos.get(1).setAngle(-Math.toRadians(servoAngle));
-
-            telemetry.addData("servoAngle", servoAngle);
-            telemetry.update();
+            robot.update();
+            outtake.setTargetRelative(x,y,z);
         }
     }
 }

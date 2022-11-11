@@ -21,7 +21,7 @@ public class Slides {
 
     ArrayList<MotorPriority> motorPriorities;
 
-    public PID slidesPID = new PID(0.02,0.0015,0.0000125);
+    public PID slidesPID = new PID(0.0215,0.01,0.0001);
 
     public double currentSlidesLength = 0.0;
     public double currentSlidesVelocity = 0.0;
@@ -40,7 +40,7 @@ public class Slides {
         slide1 = hardwareMap.get(DcMotorEx.class, "slide1");
         slide2 = hardwareMap.get(DcMotorEx.class, "slide2");
 
-        slide2.setDirection(DcMotorSimple.Direction.REVERSE);
+        slide1.setDirection(DcMotorSimple.Direction.REVERSE);
 
         slide1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slide1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
