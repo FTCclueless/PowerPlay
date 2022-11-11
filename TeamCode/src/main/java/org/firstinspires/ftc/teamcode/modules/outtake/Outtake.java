@@ -47,9 +47,9 @@ public class Outtake {
 
     double x, y, z;
 
-    Model leftDrivePod = new Model(Arrays.asList(new Pose3D(8.27, 7.965, 0), new Pose3D(-8.27, 5.6678, 4.21)));
-    Model rightDrivePod = new Model(Arrays.asList(new Pose3D(8.27, -7.965, 0), new Pose3D(-8.27, -5.6678, 4.21)));
-    Model center = new Model(Arrays.asList(new Pose3D(0, 5.6678, 0), new Pose3D(-8.27, -5.6678, 5.34)));
+    Model leftDrivePod = new Model(Arrays.asList(new Pose3D(8.27, 7.965, 0), new Pose3D(-8.27, 5.6678, -4.21)));
+    Model rightDrivePod = new Model(Arrays.asList(new Pose3D(8.27, -7.965, 0), new Pose3D(-8.27, -5.6678, -4.21)));
+    Model center = new Model(Arrays.asList(new Pose3D(0, 5.6678, 0), new Pose3D(-8.27, -5.6678, -5.34)));
 
     ArrayList<MyServo> servos;
 
@@ -66,9 +66,9 @@ public class Outtake {
     public void update() {
         updateRelativePos();
 
-//        slides.setTargetSlidesLength(targetSlidesLength);
-//        turret.setTargetTurretAngle(targetTurretAngle);
-//        v4Bar.setTargetV4BarAngle(targetV4BarAngle);
+        slides.setTargetSlidesLength(targetSlidesLength);
+        turret.setTargetTurretAngle(targetTurretAngle);
+        v4Bar.setTargetV4BarAngle(targetV4BarAngle);
 
         slides.update();
         turret.update();
@@ -167,9 +167,17 @@ public class Outtake {
     }
 
     public boolean isIntersectingRobot (double targetX, double targetY, double targetZ) {
-        if (leftDrivePod.isIntersecting(targetX, targetY, targetZ) || rightDrivePod.isIntersecting(targetX, targetY, targetZ) || center.isIntersecting(targetX, targetY, targetZ)) {
+        if (leftDrivePod.isIntersecting(targetX, targetY, targetZ)) {
+            Log.e("************************INTERSECTING LEFT DRIVE POD************************", "");
             return true;
-        } else {
+        } else if (center.isIntersecting(targetX, targetY, targetZ))  {
+            Log.e("************************INTERSECTING CENTER************************", "");
+            return true;
+        } else if (rightDrivePod.isIntersecting(targetX, targetY, targetZ))  {
+            Log.e("************************INTERSECTING RIGHT DRIVE POD************************", "");
+            return true;
+        }
+        else {
             return false;
         }
     }

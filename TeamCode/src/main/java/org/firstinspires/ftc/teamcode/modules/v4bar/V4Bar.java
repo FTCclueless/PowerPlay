@@ -3,13 +3,14 @@ package org.firstinspires.ftc.teamcode.modules.v4bar;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.util.MyServo;
+import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
 import java.util.ArrayList;
 
 public class V4Bar {
     public double currentV4BarAngle = 0.0;
     public double targetV4BarAngle = 0.0;
-    public double v4barPower = 0.0;
+    public double v4barPower = 1.0;
 
     MyServo v4bar1, v4bar2;
     ArrayList<MyServo> servos;
@@ -24,11 +25,18 @@ public class V4Bar {
         servos.add(1, v4bar2);
     }
 
+    public void updateTelemetry() {
+        TelemetryUtil.packet.put("targetV4BarAngle: ", targetV4BarAngle);
+        TelemetryUtil.packet.put("currentV4BarAngle: ", currentV4BarAngle);
+    }
+
     public void update() {
         updateV4BarValues();
 
         v4bar1.setAngle(targetV4BarAngle, v4barPower);
         v4bar2.setAngle(-targetV4BarAngle, v4barPower);
+
+        updateTelemetry();
     }
 
     public void setTargetV4BarAngle(double angle) {

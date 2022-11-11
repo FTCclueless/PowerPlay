@@ -11,9 +11,9 @@ public class Claw {
 
     public double currentClawPosition = 0.0;
     public double targetClawPosition = 0.0;
-    public double clawPower = 0.0;
+    public double clawPower = 1.0;
 
-    double openPosition = 0.6;
+    double openPosition = 0.2;
     double intakePosition = 0.4;
     double closePosition = 0.05;
 
