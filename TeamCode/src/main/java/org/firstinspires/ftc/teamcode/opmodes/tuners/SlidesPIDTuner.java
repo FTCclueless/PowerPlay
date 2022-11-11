@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.modules.slides.Slides;
+import org.firstinspires.ftc.teamcode.sensors.v4bar.V4Bar;
 import org.firstinspires.ftc.teamcode.util.ButtonToggle;
 import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
@@ -29,6 +30,8 @@ public class SlidesPIDTuner extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         Robot robot = new Robot(hardwareMap);
         Slides slides = robot.outtake.slides;
+        V4Bar v4Bar = robot.outtake.v4Bar;
+
         waitForStart();
 
         p = slides.slidesPID.p;
@@ -36,6 +39,8 @@ public class SlidesPIDTuner extends LinearOpMode {
         d = slides.slidesPID.d;
 
         slides.setTargetSlidesLength(0.0);
+        v4Bar.setTargetV4BarAngle(Math.toRadians(45));
+
         while (!isStopRequested()) {
             robot.update();
             robot.testMode();

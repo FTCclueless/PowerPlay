@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -14,12 +15,20 @@ public class Auto extends LinearOpMode {
     private final int parkingNum = 3; // 1, 2, or 3
     private final int targetCycles = 5;
     private final boolean isBlue = true;
-    private final boolean nearBlueTerminal = false;
+    private final boolean nearRedTerminal = true;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        int xsign = nearBlueTerminal ? -1 : 1;
-        int ysign = isBlue ? 1 : -1;
+        int xsign = 1;
+        int ysign = 1;
+
+        if (!nearRedTerminal) {
+            xsign = -1;
+        }
+
+        if (!isBlue) {
+            ysign = -1;
+        }
 
         Robot robot = new Robot(hardwareMap);
         Drivetrain drive = robot.drivetrain;
@@ -28,8 +37,8 @@ public class Auto extends LinearOpMode {
         drive.setPoseEstimate(origin);
 
         TrajectorySequence to = drive.trajectorySequenceBuilder(origin)
-            .forward(49 * ysign)
-            .build();
+                .lineToConstantHeading(new Vector2d(40, 40))
+                .build();
 
         Pose2d cyclepose = new Pose2d((48 - 8) * xsign, 23 * ysign, 0);
         TrajectorySequence cycle = drive.trajectorySequenceBuilder(cyclepose)

@@ -27,7 +27,7 @@ public class Claw {
 
         claw = new MyServo(hardwareMap.servo.get("claw"),"Speed",1,0,1);
 
-        servos.add(0, claw);
+        servos.add(2, claw);
     }
 
     public void update() {

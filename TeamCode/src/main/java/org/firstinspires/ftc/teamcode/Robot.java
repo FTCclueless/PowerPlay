@@ -33,8 +33,8 @@ public class Robot {
     public Sensors sensors;
     public Vision vision;
 
-    public ArrayList<MotorPriority> motorPriorities = new ArrayList<>(8);
-    public ArrayList<MyServo> servos = new ArrayList<>(3);
+    public ArrayList<MotorPriority> motorPriorities = new ArrayList<>();
+    public ArrayList<MyServo> servos = new ArrayList<>();
 
     public enum STATE { TEST, IDLE, INTAKE_ROLLER, INTAKE_CLAW, WAIT_FOR_START_SCORING, SCORING, ADJUST, DEPOSIT, RETRACT }
     public STATE currentState = STATE.IDLE;
@@ -48,8 +48,8 @@ public class Robot {
 
         drivetrain = new Drivetrain(hardwareMap, motorPriorities);
         sensors = new Sensors(hardwareMap, motorPriorities, drivetrain.localizer);
-        claw = new Claw(hardwareMap, servos);
         outtake = new Outtake(hardwareMap, motorPriorities, sensors, servos);
+        claw = new Claw(hardwareMap, servos);
         vision = new Vision();
     }
 
