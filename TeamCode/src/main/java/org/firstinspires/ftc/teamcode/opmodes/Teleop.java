@@ -15,13 +15,18 @@ public class Teleop extends LinearOpMode {
         Robot robot = new Robot(hardwareMap);
         Drivetrain drive = robot.drivetrain;
 
-        drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.currentState = Robot.STATE.RETRACT;
 
         waitForStart();
 
         while (!isStopRequested()) {
-            drive.drive(gamepad1);
             robot.update();
+
+            if(gamepad1.a) {
+                robot.startClawIntake();
+            }
+
+            drive.drive(gamepad1);
 
             Pose2d poseEstimate = drive.getPoseEstimate();
         }

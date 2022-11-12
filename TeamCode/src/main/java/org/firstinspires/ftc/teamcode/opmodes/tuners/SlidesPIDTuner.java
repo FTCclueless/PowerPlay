@@ -23,13 +23,14 @@ public class SlidesPIDTuner extends LinearOpMode {
     public static double d = 0.0;
 
     ButtonToggle a = new ButtonToggle();
-    TelemetryPacket packet = new TelemetryPacket();
 
     @Override
     public void runOpMode() throws InterruptedException {
         Robot robot = new Robot(hardwareMap);
         Slides slides = robot.outtake.slides;
         V4Bar v4Bar = robot.outtake.v4Bar;
+
+        robot.testMode();
 
         waitForStart();
 
@@ -42,7 +43,6 @@ public class SlidesPIDTuner extends LinearOpMode {
 
         while (!isStopRequested()) {
             robot.update();
-            robot.testMode();
 
             error = slides.getCurrentSlidesLength() - slides.targetSlidesLength;
             slides.updateSlidesPID(p,i,d);
@@ -56,7 +56,7 @@ public class SlidesPIDTuner extends LinearOpMode {
 
             switch(currentState) {
                 case 1:
-                    slides.setTargetSlidesLength(5);
+                    slides.setTargetSlidesLength(0);
                     break;
                 case 2:
                     slides.setTargetSlidesLength(15);

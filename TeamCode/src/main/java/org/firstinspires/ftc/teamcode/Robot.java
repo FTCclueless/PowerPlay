@@ -1,21 +1,16 @@
 package org.firstinspires.ftc.teamcode;
-import android.util.Log;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.modules.actuation.Actuation;
 import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.modules.intake.ServoIntake;
 import org.firstinspires.ftc.teamcode.util.MyServo;
 import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 import org.firstinspires.ftc.teamcode.vision.Vision;
 import org.firstinspires.ftc.teamcode.modules.claw.Claw;
 import org.firstinspires.ftc.teamcode.modules.drive.Drivetrain;
-import org.firstinspires.ftc.teamcode.modules.intake.Intake;
 import org.firstinspires.ftc.teamcode.modules.outtake.Outtake;
 import org.firstinspires.ftc.teamcode.sensors.Sensors;
 import org.firstinspires.ftc.teamcode.util.MotorPriority;
@@ -36,7 +31,7 @@ public class Robot {
     public ArrayList<MotorPriority> motorPriorities = new ArrayList<>();
     public ArrayList<MyServo> servos = new ArrayList<>();
 
-    public enum STATE { TEST, IDLE, INTAKE_ROLLER, INTAKE_CLAW, WAIT_FOR_START_SCORING, SCORING, ADJUST, DEPOSIT, RETRACT }
+    public enum STATE { IDLE, INTAKE_TELEOP, INTAKE_STACK, WAIT_FOR_START_SCORING, SCORING, ADJUST, DEPOSIT, RETRACT }
     public STATE currentState = STATE.IDLE;
 
     public Robot (HardwareMap hardwareMap) {
@@ -72,28 +67,26 @@ public class Robot {
         updateSubSystems();
 
         switch (currentState) {
-            case TEST:
-                break;
             case IDLE:
                 break;
             case RETRACT:
-                outtake.setTargetRelative(5,0,3);
+                outtake.setTargetRelative(8,0,-4);
                 claw.open();
                 if (startRollerIntake) {
-                    currentState = STATE.INTAKE_ROLLER;
+                    currentState = STATE.INTAKE_TELEOP;
                 }
                 if (startClawIntake) {
-                    currentState = STATE.INTAKE_CLAW;
+                    currentState = STATE.INTAKE_STACK;
                 }
                 break;
-            case INTAKE_ROLLER:
+            case INTAKE_TELEOP:
                 claw.open();
-                outtake.setTargetRelative(5,0,3);
+                outtake.setTargetRelative(8,0,-4);
                 if(sensors.rollerTouch) {
                    currentState = STATE.WAIT_FOR_START_SCORING;
                 }
                 break;
-            case INTAKE_CLAW:
+            case INTAKE_STACK:
                 claw.open();
                 outtake.setTargetGlobal(drivetrain.getPoseEstimate(), conePose, coneHeight);
                 if(sensors.clawTouch) {
@@ -202,7 +195,7 @@ public class Robot {
     public void setConeHeight (double height) { coneHeight = height; }
     public void setPoleHeight (double height) { poleHeight = height; }
 
-    public void testMode () {currentState = STATE.TEST; }
+    public void testMode () { currentState = STATE.IDLE; }
 
     public void followTrajectory(Trajectory trajectory) {
         drivetrain.followTrajectoryAsync(trajectory);

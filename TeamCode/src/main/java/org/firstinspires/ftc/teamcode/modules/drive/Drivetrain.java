@@ -144,15 +144,15 @@ public class Drivetrain extends MecanumDrive {
         double left = -0.4*(Math.tan(gamepad.left_stick_x / 0.85));
         double turn = gamepad.right_stick_x*0.9;
 
-        Log.e("left_stick_y:", gamepad.left_stick_y + "");
-        Log.e("left_stick_x:", gamepad.left_stick_x + "");
-        Log.e("right_stick_x:", gamepad.right_stick_x + "");
-
         double p1 = forward+left+turn;
         double p2 = forward-left+turn;
         double p3 = forward+left-turn;
         double p4 = forward-left-turn;
         setMotorPowers(p1, p2, p3, p4);
+
+//        Log.e("left_stick_y:", gamepad.left_stick_y + "");
+//        Log.e("left_stick_x:", gamepad.left_stick_x + "");
+//        Log.e("right_stick_x:", gamepad.right_stick_x + "");
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
@@ -214,6 +214,8 @@ public class Drivetrain extends MecanumDrive {
         return trajectorySequenceRunner.getLastPoseError();
     }
 
+    public void updateTelemetry() {}
+
     public void update() {
         updatePoseEstimate();
         DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
@@ -231,6 +233,8 @@ public class Drivetrain extends MecanumDrive {
             motorPriorities.get(2).setTargetPower(forward+left+turn);
             motorPriorities.get(3).setTargetPower(forward-left+turn);
         }
+
+        updateTelemetry();
     }
 
     public void waitForIdle() {

@@ -1,21 +1,15 @@
 package org.firstinspires.ftc.teamcode.opmodes.tests;
 
-import android.util.Log;
-
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Robot;
-import org.firstinspires.ftc.teamcode.modules.outtake.Outtake;
 
 @Config
-@TeleOp(group = "Test")
-public class OuttakeTester extends LinearOpMode {
-    public static double x = 5.0;
-    public static double y = 0.0;
-    public static double z = 0.0;
-
+@Autonomous(group = "Reset")
+public class Reset extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Robot robot = new Robot(hardwareMap);
@@ -23,9 +17,10 @@ public class OuttakeTester extends LinearOpMode {
 
         waitForStart();
 
-        while (!isStopRequested()) {
+        while(!isStopRequested()) {
+            robot.outtake.v4Bar.setTargetV4BarAngle(Math.toRadians(90));
+            robot.claw.close();
             robot.update();
-            robot.outtake.setTargetRelative(x,y,z);
         }
     }
 }

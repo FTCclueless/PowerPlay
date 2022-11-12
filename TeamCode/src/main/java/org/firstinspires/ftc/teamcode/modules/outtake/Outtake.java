@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.util.Model;
 import org.firstinspires.ftc.teamcode.util.MotorPriority;
 import org.firstinspires.ftc.teamcode.util.MyServo;
 import org.firstinspires.ftc.teamcode.util.Pose3D;
+import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,14 +27,14 @@ public class Outtake {
 
     ArrayList<MotorPriority> motorPriorities;
 
-    double v4BarLength = 5.0;
+    double v4BarLength = 12.0;
 
     double targetHeight = 0.0;
     double targetExtension = 0.0;
 
-    double targetTurretAngle = 0.0;
-    double targetSlidesLength = 0.0;
-    double targetV4BarAngle = 0.0;
+    public double targetTurretAngle = 0.0;
+    public double targetSlidesLength = 0.0;
+    public double targetV4BarAngle = 0.0;
 
     double currentExtension = 0.0;
     double currentHeight = 0.0;
@@ -48,7 +49,7 @@ public class Outtake {
     double x, y, z;
 
     Model leftDrivePod = new Model(Arrays.asList(new Pose3D(8.27, 7.965, 0), new Pose3D(-8.27, 5.6678, -4.21)));
-    Model rightDrivePod = new Model(Arrays.asList(new Pose3D(8.27, -7.965, 0), new Pose3D(-8.27, -5.6678, -4.21)));
+    Model rightDrivePod = new Model(Arrays.asList(new Pose3D(8.27, -7.965, 0), new Pose3D(-8.27, -5.6678, -9)));
     Model center = new Model(Arrays.asList(new Pose3D(0, 5.6678, 0), new Pose3D(-8.27, -5.6678, -5.34)));
 
     ArrayList<MyServo> servos;
@@ -58,21 +59,32 @@ public class Outtake {
         this.sensors = sensors;
         this.servos = servos;
 
-        turret = new Turret(hardwareMap, motorPriorities, sensors);
-        slides = new Slides(hardwareMap, motorPriorities, sensors);
-        v4Bar = new V4Bar(hardwareMap, servos);
+        turret = new Turret(hardwareMap, motorPriorities, sensors, this);
+        slides = new Slides(hardwareMap, motorPriorities, sensors, this);
+        v4Bar = new V4Bar(hardwareMap, servos, this);
+    }
+
+    public void updateTelemetry () {
+        TelemetryUtil.packet.put("targetHeight: ", targetHeight);
+        TelemetryUtil.packet.put("targetExtension ", targetExtension);
     }
 
     public void update() {
         updateRelativePos();
 
-        slides.setTargetSlidesLength(targetSlidesLength);
-        turret.setTargetTurretAngle(targetTurretAngle);
+        Log.e("targetV4BarAngle ", Math.toDegrees(targetV4BarAngle) + "");
+
         v4Bar.setTargetV4BarAngle(targetV4BarAngle);
+        slides.setTargetSlidesLength(targetSlidesLength);
+        if (slides.isInPosition(5)) {
+            turret.setTargetTurretAngle(targetTurretAngle);
+        }
 
         slides.update();
         turret.update();
         v4Bar.update();
+
+        updateTelemetry();
     }
 
     public void updateRelativePos() {
@@ -119,6 +131,13 @@ public class Outtake {
 
             targetSlidesLength = targetHeight - (Math.sin(targetV4BarAngle) * v4BarLength);
         }
+
+//        Log.e("targetHeight: ", targetHeight + "");
+//        Log.e("targetExtension ", targetExtension + "");
+//
+//        Log.e("targetSlidesLength ", targetSlidesLength + "");
+//        Log.e("targetTurretAngle ", targetTurretAngle + "");
+//        Log.e("targetV4BarAngle ", Math.toDegrees(targetV4BarAngle) + "");
 
         if (isIntersectingRobot(targetX, targetY, targetZ)) {
             targetV4BarAngle = currentV4BarAngle;

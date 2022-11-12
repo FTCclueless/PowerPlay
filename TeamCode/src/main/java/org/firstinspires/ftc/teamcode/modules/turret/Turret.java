@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.modules.outtake.Outtake;
 import org.firstinspires.ftc.teamcode.sensors.Sensors;
 import org.firstinspires.ftc.teamcode.util.MotorPriority;
 import org.firstinspires.ftc.teamcode.util.PID;
@@ -14,10 +15,11 @@ import java.util.ArrayList;
 public class Turret {
     public DcMotorEx turret;
     Sensors sensors;
+    Outtake outtake;
 
     ArrayList<MotorPriority> motorPriorities;
 
-    public PID turretPID = new PID(4.0, 1.0,0.0);
+    public PID turretPID = new PID(4.5, 0.1,0.0);
 
     public double currentTurretAngle = 0.0;
     public double currentTurretVelocity = 0.0;
@@ -29,9 +31,10 @@ public class Turret {
 
     double maxTurretSpeed = 6.87843444154; // radians per sec
 
-    public Turret(HardwareMap hardwareMap, ArrayList<MotorPriority> motorPriorities, Sensors sensors) {
+    public Turret(HardwareMap hardwareMap, ArrayList<MotorPriority> motorPriorities, Sensors sensors, Outtake outtake) {
         this.motorPriorities = motorPriorities;
         this.sensors = sensors;
+        this.outtake = outtake;
 
         turret = hardwareMap.get(DcMotorEx.class, "turret");
 
@@ -45,11 +48,11 @@ public class Turret {
         TelemetryUtil.packet.put("targetTurretAngle: ", Math.toDegrees(targetTurretAngle));
         TelemetryUtil.packet.put("currentTurretAngle: ", Math.toDegrees(currentTurretAngle));
 
-        TelemetryUtil.packet.put("targetTurretVelocity: ", targetTurretVelocity);
-        TelemetryUtil.packet.put("currentTurretVelocity: ", currentTurretVelocity);
-
-        TelemetryUtil.packet.put("turretPower: ", turretPower);
-        TelemetryUtil.packet.put("turretError: ", turretError);
+//        TelemetryUtil.packet.put("targetTurretVelocity: ", targetTurretVelocity);
+//        TelemetryUtil.packet.put("currentTurretVelocity: ", currentTurretVelocity);
+//
+//        TelemetryUtil.packet.put("turretPower: ", turretPower);
+//        TelemetryUtil.packet.put("turretError: ", turretError);
     }
 
     public void update() {
@@ -78,6 +81,7 @@ public class Turret {
 
     public void setTargetTurretAngle(double angle) {
         targetTurretAngle = angle;
+        outtake.targetTurretAngle = targetTurretAngle;
     }
 
     public double getCurrentTurretAngle() {

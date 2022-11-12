@@ -13,9 +13,9 @@ public class Claw {
     public double targetClawPosition = 0.0;
     public double clawPower = 1.0;
 
-    double openPosition = 0.2;
-    double intakePosition = 0.4;
-    double closePosition = 0.05;
+    double openPosition = 0.23;
+    double intakePosition = 0.4489;
+    double closePosition = 0.1299;
 
     public enum STATE {OPEN, INTAKE, CLOSED}
     public STATE currentState = STATE.OPEN;

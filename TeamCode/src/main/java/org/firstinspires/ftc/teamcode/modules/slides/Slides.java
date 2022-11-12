@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.modules.outtake.Outtake;
 import org.firstinspires.ftc.teamcode.sensors.Sensors;
 import org.firstinspires.ftc.teamcode.util.MotorPriority;
 import org.firstinspires.ftc.teamcode.util.PID;
@@ -33,9 +34,12 @@ public class Slides {
 
     double maxSlidesSpeed = 82.9718558749; // inches per sec
 
-    public Slides(HardwareMap hardwareMap, ArrayList<MotorPriority> motorPriorities, Sensors sensors) {
+    Outtake outtake;
+
+    public Slides(HardwareMap hardwareMap, ArrayList<MotorPriority> motorPriorities, Sensors sensors, Outtake outtake) {
         this.motorPriorities = motorPriorities;
         this.sensors = sensors;
+        this.outtake = outtake;
 
         slide1 = hardwareMap.get(DcMotorEx.class, "slide1");
         slide2 = hardwareMap.get(DcMotorEx.class, "slide2");
@@ -54,11 +58,11 @@ public class Slides {
         TelemetryUtil.packet.put("targetSlidesLength: ", targetSlidesLength);
         TelemetryUtil.packet.put("currentSlidesLength: ", currentSlidesLength);
 
-        TelemetryUtil.packet.put("targetSlidesVelocity: ", targetSlidesVelocity);
-        TelemetryUtil.packet.put("currentSlidesVelocity: ", currentSlidesVelocity);
-
-        TelemetryUtil.packet.put("slidesPower: ", slidesPower);
-        TelemetryUtil.packet.put("slidesError: ", slidesError);
+//        TelemetryUtil.packet.put("targetSlidesVelocity: ", targetSlidesVelocity);
+//        TelemetryUtil.packet.put("currentSlidesVelocity: ", currentSlidesVelocity);
+//
+//        TelemetryUtil.packet.put("slidesPower: ", slidesPower);
+//        TelemetryUtil.packet.put("slidesError: ", slidesError);
     }
 
     public void update() {
@@ -78,35 +82,36 @@ public class Slides {
     }
 
     public void moveToPickup() {
-        targetSlidesLength = 2.5;
+        setTargetSlidesLength(2.5);
     }
 
     public void moveToGround() {
-        targetSlidesLength = 5.0;
+        setTargetSlidesLength(5.0);
     }
 
     public void moveToLow() {
-        targetSlidesLength = 10.0;
+        setTargetSlidesLength(10.0);
     }
 
     public void moveToMedium() {
-        targetSlidesLength = 20.0;
+        setTargetSlidesLength(20.0);
     }
 
     public void moveToHigh() {
-        targetSlidesLength = 40.0;
+        setTargetSlidesLength(40.0);
     }
 
     public void moveUp (double amount) {
-        targetSlidesLength += amount;
+        setTargetSlidesLength(targetSlidesLength += amount);
     }
 
     public void moveDown (double amount) {
-        targetSlidesLength -= amount;
+        setTargetSlidesLength(targetSlidesLength -= amount);
     }
 
     public void setTargetSlidesLength (double amount) {
         targetSlidesLength = amount;
+        outtake.targetSlidesLength = amount;
     }
 
     public double getCurrentSlidesLength () {
