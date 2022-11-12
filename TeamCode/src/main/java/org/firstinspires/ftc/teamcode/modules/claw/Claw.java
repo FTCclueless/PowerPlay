@@ -76,4 +76,20 @@ public class Claw {
     public void intake() {
         currentState = STATE.INTAKE;
     }
+
+    public boolean isOpen () {
+        if (currentState == STATE.OPEN) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void move() {
+        if(isOpen()) {
+            close();
+        } else {
+            open();
+        }
+    }
 }

@@ -1,12 +1,16 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.util.Log;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.util.MyServo;
+import org.firstinspires.ftc.teamcode.util.Pose3D;
 import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 import org.firstinspires.ftc.teamcode.vision.Vision;
 import org.firstinspires.ftc.teamcode.modules.claw.Claw;
@@ -31,7 +35,7 @@ public class Robot {
     public ArrayList<MotorPriority> motorPriorities = new ArrayList<>();
     public ArrayList<MyServo> servos = new ArrayList<>();
 
-    public enum STATE { IDLE, INTAKE_TELEOP, INTAKE_STACK, WAIT_FOR_START_SCORING, SCORING, ADJUST, DEPOSIT, RETRACT }
+    public enum STATE { IDLE, INTAKE_RELATIVE, INTAKE_GLOBAL, WAIT_FOR_START_SCORING, SCORING_GLOBAL, SCORING_RELATIVE, ADJUST, DEPOSIT, RETRACT }
     public STATE currentState = STATE.IDLE;
 
     public Robot (HardwareMap hardwareMap) {
@@ -48,15 +52,22 @@ public class Robot {
         vision = new Vision();
     }
 
-    boolean startRollerIntake = false;
-    boolean startClawIntake = false;
-    boolean startScoring = false;
+    boolean startIntakeRelative = false;
+    boolean startIntakeGlobal = false;
+
+    boolean startScoringRelative = false;
+    boolean startScoringGlobal = false;
+
+    boolean startDeposit = false;
 
     Pose2d conePose = new Pose2d(0,0);
     double coneHeight = 5.0;
 
-    Pose2d posePose = new Pose2d(0,0);
+    Pose2d polePose = new Pose2d(0,0);
     double poleHeight = 32.0;
+
+    Pose2d drivePose = new Pose2d(0,0);
+    double scoringHeight = 0.0;
 
     long timeSinceClawOpen = 0;
 
@@ -70,38 +81,86 @@ public class Robot {
             case IDLE:
                 break;
             case RETRACT:
+                claw.close();
                 outtake.setTargetRelative(8,0,-4);
-                claw.open();
-                if (startRollerIntake) {
-                    currentState = STATE.INTAKE_TELEOP;
+                if (startIntakeRelative) {
+                    claw.open();
+                    currentState = STATE.INTAKE_RELATIVE;
                 }
-                if (startClawIntake) {
-                    currentState = STATE.INTAKE_STACK;
+                if (startIntakeGlobal) {
+                    claw.open();
+                    currentState = STATE.INTAKE_GLOBAL;
                 }
                 break;
-            case INTAKE_TELEOP:
-                claw.open();
+            case INTAKE_RELATIVE:
                 outtake.setTargetRelative(8,0,-4);
-                if(sensors.rollerTouch) {
-                   currentState = STATE.WAIT_FOR_START_SCORING;
+
+                if (sensors.clawTouch) { // needs an external claw.close()
+                    sensors.clawTouch = false;
+                    currentState = STATE.WAIT_FOR_START_SCORING;
                 }
                 break;
-            case INTAKE_STACK:
-                claw.open();
-                outtake.setTargetGlobal(drivetrain.getPoseEstimate(), conePose, coneHeight);
-                if(sensors.clawTouch) {
+            case INTAKE_GLOBAL:
+                if (Math.abs(drivetrain.getPoseEstimate().getX() - drivePose.getX()) <= 4 && Math.abs(drivetrain.getPoseEstimate().getY() - drivePose.getY()) <= 4) {
+                    drivePose = drivetrain.getPoseEstimate();
+                }
+                outtake.setTargetGlobal(drivePose, conePose, coneHeight);
+
+                // TODO: Add in external claw.close when the outtake global pose is near the cone pose
+
+                if(sensors.clawTouch) { // needs an external claw.close()
                     currentState = STATE.WAIT_FOR_START_SCORING;
                 }
                 break;
             case WAIT_FOR_START_SCORING:
                 claw.close();
-                outtake.setTargetRelative(2,0,7);
-                if (startScoring) {
-                    currentState = STATE.SCORING;
+                outtake.setTargetRelative(8,0,10);
+                if (startScoringRelative) {
+                    currentState = STATE.SCORING_RELATIVE;
+                }
+                if (startScoringGlobal) {
+                    currentState = STATE.SCORING_GLOBAL;
                 }
                 break;
-            case SCORING:
-                outtake.setTargetGlobal(drivetrain.getPoseEstimate(), posePose, poleHeight);
+            case SCORING_RELATIVE:
+                double targetAngle = 0.0;
+                switch (scoringDirection) {
+                    case FORWARD:
+                        targetAngle = Math.toRadians(-90);
+                        break;
+                    case BACKWARD:
+                        targetAngle = Math.toRadians(90);
+                        break;
+                    case LEFT:
+                        targetAngle = Math.toRadians(0);
+                        break;
+                    case RIGHT:
+                        targetAngle = Math.toRadians(180);
+                        break;
+                }
+
+                // TODO: make auto manage 0 angle
+//                double imu = drivetrain.getExternalHeading();
+                double angle = drivetrain.getPoseEstimate().getHeading();
+                double relativeAngle = clipAngle(targetAngle - angle);
+
+                outtake.setTargetRelative(8*Math.cos(relativeAngle),8*Math.sin(relativeAngle), scoringHeight); // changes dynamically based on driver input
+
+                if (startDeposit) {
+                    currentState = STATE.DEPOSIT;
+                }
+
+                Log.e("angle", angle + "");
+                Log.e("targetAngle", Math.toDegrees(targetAngle) + "");
+                Log.e("relativeAngle", relativeAngle + "");
+                break;
+            case SCORING_GLOBAL:
+                // checks to see if the drivetrain is near the final scoring pose and if it is then give it it's actual drive pose
+                if (Math.abs(drivetrain.getPoseEstimate().getX() - drivePose.getX()) <= 4 && Math.abs(drivetrain.getPoseEstimate().getY() - drivePose.getY()) <= 4) {
+                    drivePose = drivetrain.getPoseEstimate();
+                }
+                outtake.setTargetGlobal(drivePose, polePose, poleHeight);
+
                 if (outtake.isInPosition()) {
                     currentState = STATE.ADJUST;
                 }
@@ -125,12 +184,50 @@ public class Robot {
         TelemetryUtil.sendTelemetry();
     }
 
-    public void startRollerIntake () {
-        startRollerIntake = true;
+    public void updateTelemetry () {
+        TelemetryUtil.packet.put("Current State: ", currentState);
     }
 
-    public void startClawIntake () {
-        startClawIntake = true;
+    public void startIntakeRelative() {
+        startIntakeRelative = true;
+    }
+
+    public void startIntakeGlobal (Pose2d drivePose, Pose2d conePose, double coneHeight) {
+        startIntakeGlobal = true;
+
+        this.drivePose = drivePose;
+        this.conePose = conePose;
+        this.coneHeight = coneHeight;
+    }
+
+    enum ScoringDirection {FORWARD, BACKWARD, LEFT, RIGHT}
+    public ScoringDirection scoringDirection = ScoringDirection.FORWARD;
+
+    public void startScoringRelative(Gamepad gamepad, boolean isBlue, double scoringHeight) {
+        if ((gamepad.dpad_up && isBlue) || (gamepad.dpad_down && !isBlue)) {
+            scoringDirection = ScoringDirection.FORWARD;
+        } else if ((gamepad.dpad_down && isBlue) || (gamepad.dpad_up && !isBlue)) {
+            scoringDirection = ScoringDirection.BACKWARD;
+        } else if ((gamepad.dpad_left && isBlue) || (gamepad.dpad_right && !isBlue)) {
+            scoringDirection = ScoringDirection.LEFT;
+        } else if ((gamepad.dpad_right && isBlue) || (gamepad.dpad_left && !isBlue)) {
+            scoringDirection = ScoringDirection.RIGHT;
+        }
+
+        this.scoringHeight = scoringHeight;
+        startScoringRelative = true;
+    }
+
+    public void startScoringGlobal (Pose2d drivePose, Pose2d polePose, double poleHeight) {
+        startScoringGlobal = true;
+
+        this.drivePose = drivePose;
+        this.polePose = polePose;
+        this.poleHeight = poleHeight;
+    }
+
+    public void startDepositing () {
+        startDeposit = true;
     }
 
     public void initHubs() {
@@ -191,7 +288,7 @@ public class Robot {
     }
 
     public void setConePose (Pose2d pose2d) { conePose = pose2d; }
-    public void setPolePose (Pose2d pose2d) { posePose = pose2d; }
+    public void setPolePose (Pose2d pose2d) { polePose = pose2d; }
     public void setConeHeight (double height) { coneHeight = height; }
     public void setPoleHeight (double height) { poleHeight = height; }
 
@@ -209,5 +306,15 @@ public class Robot {
         while(drivetrain.isBusy()) {
             update();
         }
+    }
+
+    public double clipAngle(double angle) {
+        while (angle > Math.PI) {
+            angle -= Math.PI * 2.0;
+        }
+        while (angle < -Math.PI) {
+            angle += Math.PI * 2.0;
+        }
+        return angle;
     }
 }

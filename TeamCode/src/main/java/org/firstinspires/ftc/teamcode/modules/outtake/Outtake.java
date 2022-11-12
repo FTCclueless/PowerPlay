@@ -72,11 +72,15 @@ public class Outtake {
     public void update() {
         updateRelativePos();
 
-        Log.e("targetV4BarAngle ", Math.toDegrees(targetV4BarAngle) + "");
+        if (targetSlidesLength + Math.sin(targetV4BarAngle) <= 1 && clipAngle(Math.abs(currentTurretAngle-targetTurretAngle)) > Math.toRadians(2.5)) { // checks if the target height is low & turret isn't close to target turret angle
+            slides.setTargetSlidesLength(4); // lifts slides up
+            v4Bar.setTargetV4BarAngle(Math.toRadians(90)); // lifts v4bar up
+        } else { // only sets the v4bar and slides unless the turret is in position or the height is high
+            v4Bar.setTargetV4BarAngle(targetV4BarAngle);
+            slides.setTargetSlidesLength(targetSlidesLength);
+        }
 
-        v4Bar.setTargetV4BarAngle(targetV4BarAngle);
-        slides.setTargetSlidesLength(targetSlidesLength);
-        if (slides.isInPosition(5)) {
+        if (currentSlidesLength + Math.sin(currentV4BarAngle)*v4BarLength >= 1) { // checks if the slides & v4bar are high
             turret.setTargetTurretAngle(targetTurretAngle);
         }
 
@@ -132,14 +136,7 @@ public class Outtake {
             targetSlidesLength = targetHeight - (Math.sin(targetV4BarAngle) * v4BarLength);
         }
 
-//        Log.e("targetHeight: ", targetHeight + "");
-//        Log.e("targetExtension ", targetExtension + "");
-//
-//        Log.e("targetSlidesLength ", targetSlidesLength + "");
-//        Log.e("targetTurretAngle ", targetTurretAngle + "");
-//        Log.e("targetV4BarAngle ", Math.toDegrees(targetV4BarAngle) + "");
-
-        if (isIntersectingRobot(targetX, targetY, targetZ)) {
+        if (isIntersectingRobot(targetX, targetY, targetZ)) { // checks if the target position is a valid position
             targetV4BarAngle = currentV4BarAngle;
             targetTurretAngle = currentTurretAngle;
             targetSlidesLength = currentSlidesLength;
