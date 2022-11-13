@@ -189,9 +189,9 @@ public class TrajectorySequenceRunner {
         TelemetryUtil.packet.put("y", poseEstimate.getY());
         TelemetryUtil.packet.put("heading (deg)", Math.toDegrees(poseEstimate.getHeading()));
 
-        TelemetryUtil.packet.put("xError", getLastPoseError().getX());
-        TelemetryUtil.packet.put("yError", getLastPoseError().getY());
-        TelemetryUtil.packet.put("headingError (deg)", Math.toDegrees(getLastPoseError().getHeading()));
+//        TelemetryUtil.packet.put("xError", getLastPoseError().getX());
+//        TelemetryUtil.packet.put("yError", getLastPoseError().getY());
+//        TelemetryUtil.packet.put("headingError (deg)", Math.toDegrees(getLastPoseError().getHeading()));
 
         draw(fieldOverlay, currentTrajectorySequence, currentSegment, targetPose, poseEstimate);
 

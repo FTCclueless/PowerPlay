@@ -6,12 +6,13 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.util.ButtonToggle;
+import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
 @Config
 @TeleOp(group = "Test")
 public class V4BarTester extends LinearOpMode {
 
-    public static double servoAngle = 0.0;
+    public static double angle = 0.0;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -21,11 +22,10 @@ public class V4BarTester extends LinearOpMode {
         waitForStart();
 
         while (!isStopRequested()) {
-            robot.servos.get(0).setAngle(Math.toRadians(servoAngle));
-            robot.servos.get(1).setAngle(-Math.toRadians(servoAngle));
+            robot.update();
+            robot.outtake.v4Bar.setTargetV4BarAngle(Math.toRadians(angle));
 
-            telemetry.addData("servoAngle", servoAngle);
-            telemetry.update();
+            TelemetryUtil.packet.put("currentV4BarAngle", robot.outtake.v4Bar.getCurrentV4BarAngle());
         }
     }
 }

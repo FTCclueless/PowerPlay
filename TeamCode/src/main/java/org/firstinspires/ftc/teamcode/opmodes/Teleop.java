@@ -22,6 +22,7 @@ public class Teleop extends LinearOpMode {
         Sensors sensors = robot.sensors;
 
         robot.currentState = Robot.STATE.INTAKE_RELATIVE;
+        robot.isRelative = true;
 
         waitForStart();
 
@@ -29,20 +30,15 @@ public class Teleop extends LinearOpMode {
             // Driver A
             drive.drive(gamepad1);
 
-            // get into intake position (just in case)
-            if (gamepad1.a) {
-                robot.startIntakeRelative();
-            }
-
             if (robot.currentState == Robot.STATE.INTAKE_RELATIVE) {
                 if (gamepad1.right_trigger > 0.5 || gamepad2.left_trigger > 0.5 ) {
                     claw.close();
                 } else {
-                    claw.open();
+                    claw.intake();
                 }
             }
 
-            if (gamepad1.b && robot.currentState == Robot.STATE.INTAKE_RELATIVE) {
+            if (gamepad1.a && robot.currentState == Robot.STATE.INTAKE_RELATIVE) {
                 sensors.clawTouch = true;
             }
 
@@ -51,8 +47,16 @@ public class Teleop extends LinearOpMode {
                 robot.startScoringRelative(gamepad2, isBlue, scoringHeight);
             }
 
-            if ((robot.currentState == Robot.STATE.SCORING_RELATIVE) && (gamepad2.right_trigger > 0.5)) {
+            if ((robot.currentState == Robot.STATE.SCORING_RELATIVE) && (gamepad2.right_trigger > 0.5) || (robot.currentState == Robot.STATE.ADJUST) && (gamepad2.right_trigger > 0.5)) {
                 robot.startDepositing();
+            }
+
+            if ((robot.currentState == Robot.STATE.SCORING_RELATIVE) && (Math.abs(gamepad2.left_stick_x) > 0.5) // turret adjustment
+                || (robot.currentState == Robot.STATE.SCORING_RELATIVE) && (Math.abs(gamepad2.left_stick_y) > 0.5) // slides up/down adjustment
+                || (robot.currentState == Robot.STATE.SCORING_RELATIVE) && (Math.abs(gamepad2.right_stick_y) > 0.5) // v4bar + slides adjustment
+                || (robot.currentState == Robot.STATE.ADJUST)
+            ) {
+                robot.startAdjusting(gamepad2);
             }
 
             robot.update();

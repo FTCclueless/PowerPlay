@@ -22,8 +22,8 @@ public class V4Bar {
         this.servos = servos;
         this.outtake = outtake;
 
-        v4bar1 = new MyServo(hardwareMap.servo.get("v4bar1"),"Amazon",1,0,1, 0.22);
-        v4bar2 = new MyServo(hardwareMap.servo.get("v4bar2"),"Amazon",1,0,1,0.78);
+        v4bar1 = new MyServo(hardwareMap.servo.get("v4bar1"),"Amazon",1,0,1, 0.74301);
+        v4bar2 = new MyServo(hardwareMap.servo.get("v4bar2"),"Amazon",1,0,1,0.25699);
 
         servos.add(0, v4bar1);
         servos.add(1, v4bar2);
@@ -37,8 +37,8 @@ public class V4Bar {
     public void update() {
         updateV4BarValues();
 
-        v4bar1.setAngle(targetV4BarAngle, v4barPower);
-        v4bar2.setAngle(-targetV4BarAngle, v4barPower);
+        v4bar1.setAngle(-targetV4BarAngle, v4barPower);
+        v4bar2.setAngle(targetV4BarAngle, v4barPower);
 
         updateTelemetry();
     }

@@ -64,9 +64,11 @@ public class Turret {
 //        motorPriorities.get(4).setTargetPower(turretPower);
 
         turretError = clipAngle(targetTurretAngle - currentTurretAngle);
-        if (Math.abs(currentTurretAngle + turretError) > Math.toRadians(270)) {
-            turretError = targetTurretAngle - currentTurretAngle;
-        }
+
+        // THIS CODE MAKES SURE THE WIRES DON"T TWIST TOO MUCH
+//        if (Math.abs(currentTurretAngle + turretError) > Math.toRadians(270)) {
+//            turretError = targetTurretAngle - currentTurretAngle;
+//        }
 
         turretPower = turretPID.update(turretError);
         motorPriorities.get(4).setTargetPower(turretPower);

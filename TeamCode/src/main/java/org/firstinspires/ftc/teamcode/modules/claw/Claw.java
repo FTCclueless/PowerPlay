@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode.modules.claw;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.util.MyServo;
+import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
 import java.util.ArrayList;
 
@@ -13,9 +16,9 @@ public class Claw {
     public double targetClawPosition = 0.0;
     public double clawPower = 1.0;
 
-    double openPosition = 0.23;
-    double intakePosition = 0.4489;
-    double closePosition = 0.1299;
+    public double openPosition = 0.265;
+    public double intakePosition = 0.307;
+    public double closePosition = 0.07719; //0.096
 
     public enum STATE {OPEN, INTAKE, CLOSED}
     public STATE currentState = STATE.OPEN;
@@ -48,13 +51,8 @@ public class Claw {
         claw.setPosition(targetClawPosition, clawPower);
     }
 
-    private void setTargetClawPosition(double position) {
+    public void setTargetClawPosition(double position) {
         targetClawPosition = position;
-    }
-
-    private void setTargetClawAngle(double angle, double power) {
-        targetClawPosition = angle;
-        clawPower = power;
     }
 
     public double getCurrentClawAngle () {

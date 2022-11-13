@@ -10,7 +10,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.util.MyServo;
-import org.firstinspires.ftc.teamcode.util.Pose3D;
 import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 import org.firstinspires.ftc.teamcode.vision.Vision;
 import org.firstinspires.ftc.teamcode.modules.claw.Claw;
@@ -52,12 +51,15 @@ public class Robot {
         vision = new Vision();
     }
 
+    public boolean isRelative = false;
+
     boolean startIntakeRelative = false;
     boolean startIntakeGlobal = false;
 
     boolean startScoringRelative = false;
     boolean startScoringGlobal = false;
 
+    boolean startAdjust = false;
     boolean startDeposit = false;
 
     Pose2d conePose = new Pose2d(0,0);
@@ -76,24 +78,27 @@ public class Robot {
     public void update() {
         loopStart = System.nanoTime();
         updateSubSystems();
+        updateTelemetry();
 
         switch (currentState) {
             case IDLE:
                 break;
             case RETRACT:
                 claw.close();
-                outtake.setTargetRelative(8,0,-4);
+                outtake.setTargetRelative(5,0,-6);
                 if (startIntakeRelative) {
-                    claw.open();
+                    startIntakeRelative = false;
+                    claw.intake();
                     currentState = STATE.INTAKE_RELATIVE;
                 }
                 if (startIntakeGlobal) {
-                    claw.open();
+                    startIntakeGlobal = false;
+                    claw.intake();
                     currentState = STATE.INTAKE_GLOBAL;
                 }
                 break;
             case INTAKE_RELATIVE:
-                outtake.setTargetRelative(8,0,-4);
+                outtake.setTargetRelative(5,0,-6);
 
                 if (sensors.clawTouch) { // needs an external claw.close()
                     sensors.clawTouch = false;
@@ -116,9 +121,11 @@ public class Robot {
                 claw.close();
                 outtake.setTargetRelative(8,0,10);
                 if (startScoringRelative) {
+                    startScoringRelative = false;
                     currentState = STATE.SCORING_RELATIVE;
                 }
                 if (startScoringGlobal) {
+                    startScoringGlobal = false;
                     currentState = STATE.SCORING_GLOBAL;
                 }
                 break;
@@ -140,19 +147,23 @@ public class Robot {
                 }
 
                 // TODO: make auto manage 0 angle
-//                double imu = drivetrain.getExternalHeading();
-                double angle = drivetrain.getPoseEstimate().getHeading();
+                double angle = clipAngle(drivetrain.getExternalHeading());
                 double relativeAngle = clipAngle(targetAngle - angle);
 
                 outtake.setTargetRelative(8*Math.cos(relativeAngle),8*Math.sin(relativeAngle), scoringHeight); // changes dynamically based on driver input
 
                 if (startDeposit) {
+                    startScoringRelative = false;
+                    startDeposit = false;
+                    timeSinceClawOpen = System.currentTimeMillis();
                     currentState = STATE.DEPOSIT;
                 }
 
-                Log.e("angle", angle + "");
-                Log.e("targetAngle", Math.toDegrees(targetAngle) + "");
-                Log.e("relativeAngle", relativeAngle + "");
+                if (startAdjust) {
+                    startScoringRelative = false;
+                    startAdjust = false;
+                    currentState = STATE.ADJUST;
+                }
                 break;
             case SCORING_GLOBAL:
                 // checks to see if the drivetrain is near the final scoring pose and if it is then give it it's actual drive pose
@@ -166,9 +177,15 @@ public class Robot {
                 }
                 break;
             case ADJUST:
-                // TODO: Implement Vision + Driver adjustments
-                vision.on();
-                if (vision.readyToDeposit()) {
+                // TODO: Implement Vision + Driver Adjustment
+//                vision.on();
+//                if (vision.readyToDeposit()) {
+//                    timeSinceClawOpen = System.currentTimeMillis();
+//                    currentState = STATE.DEPOSIT;
+//                }
+
+                if (startDeposit) {
+                    startDeposit = false;
                     timeSinceClawOpen = System.currentTimeMillis();
                     currentState = STATE.DEPOSIT;
                 }
@@ -176,7 +193,11 @@ public class Robot {
             case DEPOSIT:
                 claw.open();
                 if(System.currentTimeMillis() - timeSinceClawOpen >= 500) {
-                    currentState = STATE.RETRACT;
+                    if (isRelative) {
+                        currentState = STATE.INTAKE_RELATIVE;
+                    } else {
+                        currentState = STATE.RETRACT;
+                    }
                 }
                 break;
         }
@@ -193,11 +214,11 @@ public class Robot {
     }
 
     public void startIntakeGlobal (Pose2d drivePose, Pose2d conePose, double coneHeight) {
-        startIntakeGlobal = true;
-
         this.drivePose = drivePose;
         this.conePose = conePose;
         this.coneHeight = coneHeight;
+
+        startIntakeGlobal = true;
     }
 
     enum ScoringDirection {FORWARD, BACKWARD, LEFT, RIGHT}
@@ -219,11 +240,19 @@ public class Robot {
     }
 
     public void startScoringGlobal (Pose2d drivePose, Pose2d polePose, double poleHeight) {
-        startScoringGlobal = true;
-
         this.drivePose = drivePose;
         this.polePose = polePose;
         this.poleHeight = poleHeight;
+
+        startScoringGlobal = true;
+    }
+
+    public void startAdjusting(Gamepad gamepad) {
+        Log.e("gamepad2.left_stick_x", gamepad.left_stick_x + "");
+        Log.e("gamepad2.left_stick_y", gamepad.left_stick_y + "");
+        Log.e("gamepad2.right_stick_y", gamepad.right_stick_y + "");
+
+        startAdjust = true;
     }
 
     public void startDepositing () {
