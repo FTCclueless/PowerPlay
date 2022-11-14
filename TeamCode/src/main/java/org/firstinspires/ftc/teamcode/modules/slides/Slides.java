@@ -70,6 +70,17 @@ public class Slides {
         updateSlidesValues();
 
         slidesError = targetSlidesLength - currentSlidesLength;
+
+        if (slidesError <= 5) {
+            slidesPID.p = // slow P value
+            slidesPID.i = // slow I value
+            slidesPID.d = // slow D value
+        } else {
+            slidesPID.p = // fast P value
+            slidesPID.i = // fast I value
+            slidesPID.d = // fast D value
+        }
+
         targetSlidesVelocity = Math.max(Math.min(slidesError * (maxSlidesSpeed/2), (maxSlidesSpeed*slidesPercentMax)),-maxSlidesSpeed*slidesPercentMax);
         slidesPower = slidesPID.update(targetSlidesVelocity - currentSlidesVelocity);
         motorPriorities.get(5).setTargetPower(slidesPower);

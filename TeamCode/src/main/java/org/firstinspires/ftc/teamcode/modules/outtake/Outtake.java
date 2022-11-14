@@ -107,7 +107,7 @@ public class Outtake {
     }
 
     public void setTargetRelative(double targetX, double targetY, double targetZ) {
-        targetHeight = Math.max(-12,Math.min(targetZ,32));
+        targetHeight = Math.max(-10,Math.min(targetZ,32));
         targetExtension = Math.sqrt(Math.pow((targetX),2) + Math.pow((targetY),2));
 
         if (targetExtension > v4BarLength) {
