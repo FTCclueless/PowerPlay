@@ -72,15 +72,15 @@ public class Outtake {
     public void update() {
         updateRelativePos();
 
-        if (targetSlidesLength + Math.sin(targetV4BarAngle) <= 1 && clipAngle(Math.abs(currentTurretAngle-targetTurretAngle)) > Math.toRadians(2.5)) { // checks if the target height is low & turret isn't close to target turret angle
-            slides.setTargetSlidesLength(4); // lifts slides up
+        if (targetSlidesLength + Math.sin(targetV4BarAngle) <= 6 && clipAngle(Math.abs(currentTurretAngle-targetTurretAngle)) > Math.toRadians(2.5)) { // checks if the target height is low & turret isn't close to target turret angle
+            slides.setTargetSlidesLength(8); // lifts slides up
             v4Bar.setTargetV4BarAngle(Math.toRadians(90)); // lifts v4bar up
         } else { // only sets the v4bar and slides unless the turret is in position or the height is high
             v4Bar.setTargetV4BarAngle(targetV4BarAngle);
             slides.setTargetSlidesLength(targetSlidesLength);
         }
 
-        if (currentSlidesLength + Math.sin(currentV4BarAngle)*v4BarLength >= 1) { // checks if the slides & v4bar are high
+        if (currentSlidesLength + Math.sin(currentV4BarAngle)*v4BarLength >= 6) { // checks if the slides & v4bar are high
             turret.setTargetTurretAngle(targetTurretAngle);
         }
 
@@ -107,7 +107,7 @@ public class Outtake {
     }
 
     public void setTargetRelative(double targetX, double targetY, double targetZ) {
-        targetHeight = targetZ;
+        targetHeight = Math.max(-12,Math.min(targetZ,32));
         targetExtension = Math.sqrt(Math.pow((targetX),2) + Math.pow((targetY),2));
 
         if (targetExtension > v4BarLength) {
@@ -143,6 +143,7 @@ public class Outtake {
 
             Log.e("INTERSECTION: ", "PLEASE BE AWARE!!");
         }
+
     }
 
     public Pose2d findGlobalCoordinates (Pose2d robotPose, double xOffset, double yOffset) {

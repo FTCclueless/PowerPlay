@@ -29,6 +29,7 @@ public class LocalizationTest extends LinearOpMode {
 
         while (!isStopRequested()) {
             drive.drive(gamepad1);
+            robot.outtake.v4Bar.setTargetV4BarAngle(Math.toRadians(90));
             robot.update();
 
             Pose2d poseEstimate = drive.getPoseEstimate();

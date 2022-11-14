@@ -22,8 +22,8 @@ public class V4Bar {
         this.servos = servos;
         this.outtake = outtake;
 
-        v4bar1 = new MyServo(hardwareMap.servo.get("v4bar1"),"Amazon",1,0,1, 0.74301);
-        v4bar2 = new MyServo(hardwareMap.servo.get("v4bar2"),"Amazon",1,0,1,0.25699);
+        v4bar1 = new MyServo(hardwareMap.servo.get("v4bar1"),"Amazon",1,0,1, 0.7401);
+        v4bar2 = new MyServo(hardwareMap.servo.get("v4bar2"),"Amazon",1,0,1,0.2599);
 
         servos.add(0, v4bar1);
         servos.add(1, v4bar2);

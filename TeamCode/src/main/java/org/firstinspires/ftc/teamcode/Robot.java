@@ -59,7 +59,6 @@ public class Robot {
     boolean startScoringRelative = false;
     boolean startScoringGlobal = false;
 
-    boolean startAdjust = false;
     boolean startDeposit = false;
 
     Pose2d conePose = new Pose2d(0,0);
@@ -80,12 +79,14 @@ public class Robot {
         updateSubSystems();
         updateTelemetry();
 
+        double relativeAngle;
+
         switch (currentState) {
             case IDLE:
                 break;
             case RETRACT:
                 claw.close();
-                outtake.setTargetRelative(5,0,-6);
+                outtake.setTargetRelative(5,0,-9);
                 if (startIntakeRelative) {
                     startIntakeRelative = false;
                     claw.intake();
@@ -98,7 +99,7 @@ public class Robot {
                 }
                 break;
             case INTAKE_RELATIVE:
-                outtake.setTargetRelative(5,0,-6);
+                outtake.setTargetRelative(5,0,-9);
 
                 if (sensors.clawTouch) { // needs an external claw.close()
                     sensors.clawTouch = false;
@@ -121,48 +122,26 @@ public class Robot {
                 claw.close();
                 outtake.setTargetRelative(8,0,10);
                 if (startScoringRelative) {
+                    extensionDistance = 8.0;
                     startScoringRelative = false;
                     currentState = STATE.SCORING_RELATIVE;
                 }
                 if (startScoringGlobal) {
+                    extensionDistance = 8.0;
                     startScoringGlobal = false;
                     currentState = STATE.SCORING_GLOBAL;
                 }
                 break;
             case SCORING_RELATIVE:
-                double targetAngle = 0.0;
-                switch (scoringDirection) {
-                    case FORWARD:
-                        targetAngle = Math.toRadians(-90);
-                        break;
-                    case BACKWARD:
-                        targetAngle = Math.toRadians(90);
-                        break;
-                    case LEFT:
-                        targetAngle = Math.toRadians(0);
-                        break;
-                    case RIGHT:
-                        targetAngle = Math.toRadians(180);
-                        break;
-                }
-
                 // TODO: make auto manage 0 angle
-                double angle = clipAngle(drivetrain.getExternalHeading());
-                double relativeAngle = clipAngle(targetAngle - angle);
-
-                outtake.setTargetRelative(8*Math.cos(relativeAngle),8*Math.sin(relativeAngle), scoringHeight); // changes dynamically based on driver input
+                relativeAngle = clipAngle(targetAngle - clipAngle(drivetrain.getExternalHeading()));
+                outtake.setTargetRelative(extensionDistance*Math.cos(relativeAngle),extensionDistance*Math.sin(relativeAngle), this.scoringHeight); // changes dynamically based on driver input
 
                 if (startDeposit) {
                     startScoringRelative = false;
                     startDeposit = false;
                     timeSinceClawOpen = System.currentTimeMillis();
                     currentState = STATE.DEPOSIT;
-                }
-
-                if (startAdjust) {
-                    startScoringRelative = false;
-                    startAdjust = false;
-                    currentState = STATE.ADJUST;
                 }
                 break;
             case SCORING_GLOBAL:
@@ -176,27 +155,16 @@ public class Robot {
                     currentState = STATE.ADJUST;
                 }
                 break;
-            case ADJUST:
-                // TODO: Implement Vision + Driver Adjustment
-//                vision.on();
-//                if (vision.readyToDeposit()) {
-//                    timeSinceClawOpen = System.currentTimeMillis();
-//                    currentState = STATE.DEPOSIT;
-//                }
-
-                if (startDeposit) {
-                    startDeposit = false;
-                    timeSinceClawOpen = System.currentTimeMillis();
-                    currentState = STATE.DEPOSIT;
-                }
-                break;
             case DEPOSIT:
                 claw.open();
-                if(System.currentTimeMillis() - timeSinceClawOpen >= 500) {
-                    if (isRelative) {
-                        currentState = STATE.INTAKE_RELATIVE;
-                    } else {
-                        currentState = STATE.RETRACT;
+                if(System.currentTimeMillis() - timeSinceClawOpen >= 400) {
+                    outtake.v4Bar.setTargetV4BarAngle(90);
+                    if(System.currentTimeMillis() - timeSinceClawOpen >= 500) {
+                        if (isRelative) {
+                            currentState = STATE.INTAKE_RELATIVE;
+                        } else {
+                            currentState = STATE.RETRACT;
+                        }
                     }
                 }
                 break;
@@ -207,7 +175,8 @@ public class Robot {
 
     public void updateTelemetry () {
         TelemetryUtil.packet.put("Current State: ", currentState);
-    }
+        TelemetryUtil.packet.put("Scoring Height: ", scoringHeight);
+      }
 
     public void startIntakeRelative() {
         startIntakeRelative = true;
@@ -223,19 +192,58 @@ public class Robot {
 
     enum ScoringDirection {FORWARD, BACKWARD, LEFT, RIGHT}
     public ScoringDirection scoringDirection = ScoringDirection.FORWARD;
+    double targetAngle = Math.toRadians(-90);
+    double extensionDistance = 8.0;
+    double lastScoringHeight = 0.0;
 
     public void startScoringRelative(Gamepad gamepad, boolean isBlue, double scoringHeight) {
-        if ((gamepad.dpad_up && isBlue) || (gamepad.dpad_down && !isBlue)) {
-            scoringDirection = ScoringDirection.FORWARD;
-        } else if ((gamepad.dpad_down && isBlue) || (gamepad.dpad_up && !isBlue)) {
-            scoringDirection = ScoringDirection.BACKWARD;
-        } else if ((gamepad.dpad_left && isBlue) || (gamepad.dpad_right && !isBlue)) {
-            scoringDirection = ScoringDirection.LEFT;
-        } else if ((gamepad.dpad_right && isBlue) || (gamepad.dpad_left && !isBlue)) {
-            scoringDirection = ScoringDirection.RIGHT;
+        if (!startScoringRelative) {
+            if (isBlue) {
+                scoringDirection = ScoringDirection.FORWARD;
+                targetAngle = Math.toRadians(-90);
+            } else {
+                scoringDirection = ScoringDirection.BACKWARD;
+                targetAngle = Math.toRadians(90);
+            }
+            this.scoringHeight = scoringHeight;
+            this.extensionDistance = 8.0;
         }
 
-        this.scoringHeight = scoringHeight;
+        // this checks if the lastScoringHeight without offset is not equal to the passed in scoring height without offsets, and if it is true then it will set the scoringHeightWithOffset to the one without offset
+        if (lastScoringHeight != scoringHeight) {
+            this.scoringHeight = scoringHeight;
+            lastScoringHeight = scoringHeight;
+        }
+
+        if (((gamepad.dpad_up && isBlue) || (gamepad.dpad_down && !isBlue)) && (scoringDirection != ScoringDirection.FORWARD)) {
+            scoringDirection = ScoringDirection.FORWARD;
+            targetAngle = Math.toRadians(-90);
+            extensionDistance = 8.0;
+            this.scoringHeight = scoringHeight;
+        } else if (((gamepad.dpad_down && isBlue) || (gamepad.dpad_up && !isBlue)) && (scoringDirection != ScoringDirection.BACKWARD)) {
+            scoringDirection = ScoringDirection.BACKWARD;
+            targetAngle = Math.toRadians(90);
+            extensionDistance = 8.0;
+            this.scoringHeight = scoringHeight;
+        } else if (((gamepad.dpad_left && isBlue) || (gamepad.dpad_right && !isBlue)) && (scoringDirection != ScoringDirection.LEFT)) {
+            scoringDirection = ScoringDirection.LEFT;
+            targetAngle = Math.toRadians(0);
+            extensionDistance = 8.0;
+            this.scoringHeight = scoringHeight;
+        } else if (((gamepad.dpad_right && isBlue) || (gamepad.dpad_left && !isBlue)) && (scoringDirection != ScoringDirection.RIGHT)) {
+            scoringDirection = ScoringDirection.RIGHT;
+            targetAngle = Math.toRadians(180);
+            extensionDistance = 8.0;
+            this.scoringHeight = scoringHeight;
+        }
+
+        extensionDistance -= gamepad.left_stick_y * 0.07;
+        targetAngle -= gamepad.left_stick_x * Math.toRadians(0.4);
+        this.scoringHeight -= gamepad.right_stick_y * 0.08; // offsets
+
+        extensionDistance = Math.max(0,Math.min(this.extensionDistance,12));
+        this.scoringHeight = Math.max(-12,Math.min(this.scoringHeight,32));
+
         startScoringRelative = true;
     }
 
@@ -245,14 +253,6 @@ public class Robot {
         this.poleHeight = poleHeight;
 
         startScoringGlobal = true;
-    }
-
-    public void startAdjusting(Gamepad gamepad) {
-        Log.e("gamepad2.left_stick_x", gamepad.left_stick_x + "");
-        Log.e("gamepad2.left_stick_y", gamepad.left_stick_y + "");
-        Log.e("gamepad2.right_stick_y", gamepad.right_stick_y + "");
-
-        startAdjust = true;
     }
 
     public void startDepositing () {
