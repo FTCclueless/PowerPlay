@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode.modules.claw;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.util.MyServo;
+import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
 import java.util.ArrayList;
 
@@ -13,9 +16,9 @@ public class Claw {
     public double targetClawPosition = 0.0;
     public double clawPower = 1.0;
 
-    double openPosition = 0.2;
-    double intakePosition = 0.4;
-    double closePosition = 0.05;
+    public double intakePosition = 0.1599;
+    public double closePosition = 0.312; //0.096
+    public double openPosition = 0.18;
 
     public enum STATE {OPEN, INTAKE, CLOSED}
     public STATE currentState = STATE.OPEN;
@@ -25,7 +28,7 @@ public class Claw {
     public Claw(HardwareMap hardwareMap, ArrayList<MyServo> servos) {
         this.servos = servos;
 
-        claw = new MyServo(hardwareMap.servo.get("claw"),"Speed",1,0,1);
+        claw = new MyServo(hardwareMap.servo.get("claw"),"Amazon",1,0,1);
 
         servos.add(2, claw);
     }
@@ -48,13 +51,8 @@ public class Claw {
         claw.setPosition(targetClawPosition, clawPower);
     }
 
-    private void setTargetClawPosition(double position) {
+    public void setTargetClawPosition(double position) {
         targetClawPosition = position;
-    }
-
-    private void setTargetClawAngle(double angle, double power) {
-        targetClawPosition = angle;
-        clawPower = power;
     }
 
     public double getCurrentClawAngle () {
@@ -75,5 +73,21 @@ public class Claw {
 
     public void intake() {
         currentState = STATE.INTAKE;
+    }
+
+    public boolean isOpen () {
+        if (currentState == STATE.OPEN) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void move() {
+        if(isOpen()) {
+            close();
+        } else {
+            open();
+        }
     }
 }

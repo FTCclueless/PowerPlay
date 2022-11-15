@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.modules.outtake.Outtake;
 import org.firstinspires.ftc.teamcode.sensors.Sensors;
 import org.firstinspires.ftc.teamcode.util.MotorPriority;
 import org.firstinspires.ftc.teamcode.util.PID;
@@ -21,7 +22,8 @@ public class Slides {
 
     ArrayList<MotorPriority> motorPriorities;
 
-    public PID slidesPID = new PID(0.0215,0.01,0.0001);
+//    public PID slidesPID = new PID(0.0215,0.01,0.0001);
+    public PID slidesPID = new PID(0.017,0.007,0.0);
 
     public double currentSlidesLength = 0.0;
     public double currentSlidesVelocity = 0.0;
@@ -33,9 +35,12 @@ public class Slides {
 
     double maxSlidesSpeed = 82.9718558749; // inches per sec
 
-    public Slides(HardwareMap hardwareMap, ArrayList<MotorPriority> motorPriorities, Sensors sensors) {
+    Outtake outtake;
+
+    public Slides(HardwareMap hardwareMap, ArrayList<MotorPriority> motorPriorities, Sensors sensors, Outtake outtake) {
         this.motorPriorities = motorPriorities;
         this.sensors = sensors;
+        this.outtake = outtake;
 
         slide1 = hardwareMap.get(DcMotorEx.class, "slide1");
         slide2 = hardwareMap.get(DcMotorEx.class, "slide2");
@@ -54,20 +59,53 @@ public class Slides {
         TelemetryUtil.packet.put("targetSlidesLength: ", targetSlidesLength);
         TelemetryUtil.packet.put("currentSlidesLength: ", currentSlidesLength);
 
-        TelemetryUtil.packet.put("targetSlidesVelocity: ", targetSlidesVelocity);
-        TelemetryUtil.packet.put("currentSlidesVelocity: ", currentSlidesVelocity);
-
-        TelemetryUtil.packet.put("slidesPower: ", slidesPower);
-        TelemetryUtil.packet.put("slidesError: ", slidesError);
+//        TelemetryUtil.packet.put("targetSlidesVelocity: ", targetSlidesVelocity);
+//        TelemetryUtil.packet.put("currentSlidesVelocity: ", currentSlidesVelocity);
+//
+//        TelemetryUtil.packet.put("slidesPower: ", slidesPower);
+//        TelemetryUtil.packet.put("slidesError: ", slidesError);
     }
+
+    boolean isVelocity = false;
 
     public void update() {
         updateSlidesValues();
 
         slidesError = targetSlidesLength - currentSlidesLength;
+
+//        if (slidesError <= 5) {
+//            if (isVelocity) {
+//                slidesPID.resetIntegral();
+//                isVelocity = false;
+//            }
+//            slidesPID.p = // positional P value
+//            slidesPID.i = // positional I value
+//            slidesPID.d = // positional D value
+//
+//            slidesPower = slidesPID.update(slidesError);
+//            motorPriorities.get(5).setTargetPower(slidesPower);
+//        } else {
+//            if (!isVelocity) {
+//                slidesPID.resetIntegral();
+//                isVelocity = true;
+//            }
+//            slidesPID.resetIntegral();
+//            slidesPID.p = // velocity P value
+//            slidesPID.i = // velocity I value
+//            slidesPID.d = // velocity D value
+//
+//            targetSlidesVelocity = Math.max(Math.min(slidesError * (maxSlidesSpeed/2), (maxSlidesSpeed*slidesPercentMax)),-maxSlidesSpeed*slidesPercentMax);
+//            slidesPower = slidesPID.update(targetSlidesVelocity - currentSlidesVelocity);
+//            motorPriorities.get(5).setTargetPower(slidesPower);
+//        }
+
         targetSlidesVelocity = Math.max(Math.min(slidesError * (maxSlidesSpeed/2), (maxSlidesSpeed*slidesPercentMax)),-maxSlidesSpeed*slidesPercentMax);
         slidesPower = slidesPID.update(targetSlidesVelocity - currentSlidesVelocity);
         motorPriorities.get(5).setTargetPower(slidesPower);
+
+
+//        slidesPower = slidesPID.update(slidesError);
+//        motorPriorities.get(5).setTargetPower(slidesPower);
 
         updateTelemetry();
     }
@@ -78,35 +116,36 @@ public class Slides {
     }
 
     public void moveToPickup() {
-        targetSlidesLength = 2.5;
+        setTargetSlidesLength(2.5);
     }
 
     public void moveToGround() {
-        targetSlidesLength = 5.0;
+        setTargetSlidesLength(5.0);
     }
 
     public void moveToLow() {
-        targetSlidesLength = 10.0;
+        setTargetSlidesLength(10.0);
     }
 
     public void moveToMedium() {
-        targetSlidesLength = 20.0;
+        setTargetSlidesLength(20.0);
     }
 
     public void moveToHigh() {
-        targetSlidesLength = 40.0;
+        setTargetSlidesLength(40.0);
     }
 
     public void moveUp (double amount) {
-        targetSlidesLength += amount;
+        setTargetSlidesLength(targetSlidesLength += amount);
     }
 
     public void moveDown (double amount) {
-        targetSlidesLength -= amount;
+        setTargetSlidesLength(targetSlidesLength -= amount);
     }
 
     public void setTargetSlidesLength (double amount) {
         targetSlidesLength = amount;
+        outtake.targetSlidesLength = amount;
     }
 
     public double getCurrentSlidesLength () {

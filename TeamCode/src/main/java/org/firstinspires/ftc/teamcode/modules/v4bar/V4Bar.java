@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.modules.v4bar;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.modules.outtake.Outtake;
 import org.firstinspires.ftc.teamcode.util.MyServo;
 import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
@@ -15,32 +16,36 @@ public class V4Bar {
     MyServo v4bar1, v4bar2;
     ArrayList<MyServo> servos;
 
-    public V4Bar(HardwareMap hardwareMap, ArrayList<MyServo> servos) {
-        this.servos = servos;
+    Outtake outtake;
 
-        v4bar1 = new MyServo(hardwareMap.servo.get("v4bar1"),"Amazon",1,0,1, 0.1531);
-        v4bar2 = new MyServo(hardwareMap.servo.get("v4bar2"),"Amazon",1,0,1,0.8469);
+    public V4Bar(HardwareMap hardwareMap, ArrayList<MyServo> servos, Outtake outtake) {
+        this.servos = servos;
+        this.outtake = outtake;
+
+        v4bar1 = new MyServo(hardwareMap.servo.get("v4bar1"),"Amazon",1,0,1, 0.7401);
+        v4bar2 = new MyServo(hardwareMap.servo.get("v4bar2"),"Amazon",1,0,1,0.2599);
 
         servos.add(0, v4bar1);
         servos.add(1, v4bar2);
     }
 
     public void updateTelemetry() {
-        TelemetryUtil.packet.put("targetV4BarAngle: ", targetV4BarAngle);
-        TelemetryUtil.packet.put("currentV4BarAngle: ", currentV4BarAngle);
+        TelemetryUtil.packet.put("targetV4BarAngle: ", Math.toDegrees(targetV4BarAngle));
+        TelemetryUtil.packet.put("currentV4BarAngle: ", Math.toDegrees(currentV4BarAngle));
     }
 
     public void update() {
         updateV4BarValues();
 
-        v4bar1.setAngle(targetV4BarAngle, v4barPower);
-        v4bar2.setAngle(-targetV4BarAngle, v4barPower);
+        v4bar1.setAngle(-targetV4BarAngle, v4barPower);
+        v4bar2.setAngle(targetV4BarAngle, v4barPower);
 
         updateTelemetry();
     }
 
     public void setTargetV4BarAngle(double angle) {
         targetV4BarAngle = angle;
+        outtake.targetV4BarAngle = angle;
     }
 
     public void setTargetV4BarAngle(double angle, double power) {

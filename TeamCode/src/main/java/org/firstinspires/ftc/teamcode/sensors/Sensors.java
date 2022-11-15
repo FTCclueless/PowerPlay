@@ -26,7 +26,6 @@ public class Sensors {
     public double slidesLength, slidesVelocity;
     public double turretAngle, turretVelocity;
 
-    public boolean rollerTouch = false;
     public boolean clawTouch = false;
 
     private final VoltageSensor batteryVoltageSensor;
@@ -74,8 +73,7 @@ public class Sensors {
             slidesLength = motorPriorities.get(5).motor[1].getCurrentPosition() / slidesTickToInch; // inches of slides
             slidesVelocity = motorPriorities.get(5).motor[1].getVelocity() / slidesTickToInch;
 
-            rollerTouch = rollerLimit.getState(); // limit switch pressed
-            clawTouch = clawLimit.getState();
+//            clawTouch = clawLimit.getState();
         } catch (Exception e) {
             Log.e("******* Error due to ", e.getClass().getName());
             e.printStackTrace();
@@ -90,8 +88,6 @@ public class Sensors {
     public double getTurretHeading() { return turretAngle; }
 
     public double getTurretVelocity() { return turretVelocity; }
-
-    public boolean rollerTouched() { return rollerTouch; }
 
     public boolean clawTouched() { return clawTouch; }
 

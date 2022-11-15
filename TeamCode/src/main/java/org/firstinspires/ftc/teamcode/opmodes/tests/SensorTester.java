@@ -38,7 +38,6 @@ public class SensorTester extends LinearOpMode {
             telemetry.addData("backEncoder Pos", robot.sensors.getBackEncoderPos());
 
             telemetry.addData("clawLimit", robot.sensors.clawTouched());
-            telemetry.addData("rollerLimit", robot.sensors.rollerTouched());
             telemetry.update();
         }
     }

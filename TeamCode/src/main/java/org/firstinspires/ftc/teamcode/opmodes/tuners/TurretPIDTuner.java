@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.modules.turret.Turret;
+import org.firstinspires.ftc.teamcode.modules.v4bar.V4Bar;
 import org.firstinspires.ftc.teamcode.util.ButtonToggle;
 
 @TeleOp
@@ -27,6 +28,10 @@ public class TurretPIDTuner extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         Robot robot = new Robot(hardwareMap);
         Turret turret = robot.outtake.turret;
+        V4Bar v4Bar = robot.outtake.v4Bar;
+
+        robot.testMode();
+
         waitForStart();
 
         p = turret.turretPID.p;
@@ -34,9 +39,10 @@ public class TurretPIDTuner extends LinearOpMode {
         d = turret.turretPID.d;
 
         turret.setTargetTurretAngle(Math.toRadians(0));
+        v4Bar.setTargetV4BarAngle(Math.toRadians(90));
+
         while (!isStopRequested()) {
             robot.update();
-            robot.testMode();
 
             error = turret.getCurrentTurretAngle() - turret.targetTurretAngle;
             turret.updateTurretPID(p,i,d);

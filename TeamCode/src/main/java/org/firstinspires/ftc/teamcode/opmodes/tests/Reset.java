@@ -1,19 +1,15 @@
 package org.firstinspires.ftc.teamcode.opmodes.tests;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Robot;
-import org.firstinspires.ftc.teamcode.util.ButtonToggle;
-import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
 @Config
-@TeleOp(group = "Test")
-public class V4BarTester extends LinearOpMode {
-
-    public static double angle = 0.0;
-
+@Autonomous(group = "Reset")
+public class Reset extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Robot robot = new Robot(hardwareMap);
@@ -21,11 +17,12 @@ public class V4BarTester extends LinearOpMode {
 
         waitForStart();
 
-        while (!isStopRequested()) {
+        while(!isStopRequested()) {
+            robot.outtake.v4Bar.setTargetV4BarAngle(Math.toRadians(90));
+            if (robot.outtake.v4Bar.isInPosition(5)) {
+                robot.claw.close();
+            }
             robot.update();
-            robot.outtake.v4Bar.setTargetV4BarAngle(Math.toRadians(angle));
-
-            TelemetryUtil.packet.put("currentV4BarAngle", robot.outtake.v4Bar.getCurrentV4BarAngle());
         }
     }
 }
