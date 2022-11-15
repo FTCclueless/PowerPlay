@@ -119,11 +119,10 @@ public class Robot {
 
                 // TODO: Add in external claw.close when the outtake global pose is near the cone pose
 
-
                 if (isAtPoint && outtake.isInPosition()) {
                     claw.close();
                 }
-                else{
+                else {
                     startClawCloseTime = System.currentTimeMillis();
                 }
 
@@ -183,11 +182,7 @@ public class Robot {
                 if(System.currentTimeMillis() - timeSinceClawOpen >= 300) {
                     outtake.v4Bar.setTargetV4BarAngle(90);
                     if(System.currentTimeMillis() - timeSinceClawOpen >= 650) {
-                        if (isRelative) {
-                            currentState = STATE.INTAKE_RELATIVE;
-                        } else {
-                            currentState = STATE.RETRACT;
-                        }
+                        currentState = STATE.INTAKE_RELATIVE;
                     }
                 }
                 break;

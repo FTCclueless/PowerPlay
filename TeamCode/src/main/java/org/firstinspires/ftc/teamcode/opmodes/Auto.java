@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmodes;
 
 import static org.firstinspires.ftc.teamcode.Robot.STATE.DEPOSIT;
 import static org.firstinspires.ftc.teamcode.Robot.STATE.INTAKE_GLOBAL;
+import static org.firstinspires.ftc.teamcode.Robot.STATE.RETRACT;
 import static org.firstinspires.ftc.teamcode.Robot.STATE.SCORING_GLOBAL;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -36,6 +37,7 @@ public class Auto extends LinearOpMode {
 
         Robot robot = new Robot(hardwareMap);
         Drivetrain drive = robot.drivetrain;
+        robot.currentState = RETRACT;
 
         // 48 - 8 (width / 2) = 40
         Pose2d origin = new Pose2d((48 + tOffsetx) * xsign, (72 + tOffsety) * ysign, 0);
