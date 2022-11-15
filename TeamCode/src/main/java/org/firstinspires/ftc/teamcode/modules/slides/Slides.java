@@ -66,24 +66,46 @@ public class Slides {
 //        TelemetryUtil.packet.put("slidesError: ", slidesError);
     }
 
+    boolean isVelocity = false;
+
     public void update() {
         updateSlidesValues();
 
         slidesError = targetSlidesLength - currentSlidesLength;
 
-        if (slidesError <= 5) {
-            slidesPID.p = // slow P value
-            slidesPID.i = // slow I value
-            slidesPID.d = // slow D value
-        } else {
-            slidesPID.p = // fast P value
-            slidesPID.i = // fast I value
-            slidesPID.d = // fast D value
-        }
+//        if (slidesError <= 5) {
+//            if (isVelocity) {
+//                slidesPID.resetIntegral();
+//                isVelocity = false;
+//            }
+//            slidesPID.p = // positional P value
+//            slidesPID.i = // positional I value
+//            slidesPID.d = // positional D value
+//
+//            slidesPower = slidesPID.update(slidesError);
+//            motorPriorities.get(5).setTargetPower(slidesPower);
+//        } else {
+//            if (!isVelocity) {
+//                slidesPID.resetIntegral();
+//                isVelocity = true;
+//            }
+//            slidesPID.resetIntegral();
+//            slidesPID.p = // velocity P value
+//            slidesPID.i = // velocity I value
+//            slidesPID.d = // velocity D value
+//
+//            targetSlidesVelocity = Math.max(Math.min(slidesError * (maxSlidesSpeed/2), (maxSlidesSpeed*slidesPercentMax)),-maxSlidesSpeed*slidesPercentMax);
+//            slidesPower = slidesPID.update(targetSlidesVelocity - currentSlidesVelocity);
+//            motorPriorities.get(5).setTargetPower(slidesPower);
+//        }
 
         targetSlidesVelocity = Math.max(Math.min(slidesError * (maxSlidesSpeed/2), (maxSlidesSpeed*slidesPercentMax)),-maxSlidesSpeed*slidesPercentMax);
         slidesPower = slidesPID.update(targetSlidesVelocity - currentSlidesVelocity);
         motorPriorities.get(5).setTargetPower(slidesPower);
+
+
+//        slidesPower = slidesPID.update(slidesError);
+//        motorPriorities.get(5).setTargetPower(slidesPower);
 
         updateTelemetry();
     }
