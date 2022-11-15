@@ -61,6 +61,8 @@ public class Robot {
 
     boolean startDeposit = false;
 
+    long startClawCloseTime = System.currentTimeMillis();
+
     Pose2d conePose = new Pose2d(0,0);
     double coneHeight = 5.0;
 
@@ -80,6 +82,7 @@ public class Robot {
         updateTelemetry();
 
         double relativeAngle;
+        boolean isAtPoint;
 
         switch (currentState) {
             case IDLE:
@@ -107,14 +110,24 @@ public class Robot {
                 }
                 break;
             case INTAKE_GLOBAL:
+                isAtPoint = false;
                 if (Math.abs(drivetrain.getPoseEstimate().getX() - drivePose.getX()) <= 4 && Math.abs(drivetrain.getPoseEstimate().getY() - drivePose.getY()) <= 4) {
                     drivePose = drivetrain.getPoseEstimate();
+                    isAtPoint = true;
                 }
                 outtake.setTargetGlobal(drivePose, conePose, coneHeight);
 
                 // TODO: Add in external claw.close when the outtake global pose is near the cone pose
 
-                if(sensors.clawTouch) { // needs an external claw.close()
+
+                if (isAtPoint && outtake.isInPosition()) {
+                    claw.close();
+                }
+                else{
+                    startClawCloseTime = System.currentTimeMillis();
+                }
+
+                if(sensors.clawTouch || System.currentTimeMillis() - startClawCloseTime > 300) { // needs an external claw.close()
                     currentState = STATE.WAIT_FOR_START_SCORING;
                 }
                 break;
@@ -154,13 +167,15 @@ public class Robot {
                 break;
             case SCORING_GLOBAL:
                 // checks to see if the drivetrain is near the final scoring pose and if it is then give it it's actual drive pose
+                isAtPoint = false;
                 if (Math.abs(drivetrain.getPoseEstimate().getX() - drivePose.getX()) <= 4 && Math.abs(drivetrain.getPoseEstimate().getY() - drivePose.getY()) <= 4) {
                     drivePose = drivetrain.getPoseEstimate();
+                    isAtPoint = true;
                 }
                 outtake.setTargetGlobal(drivePose, polePose, poleHeight);
 
-                if (outtake.isInPosition()) {
-                    currentState = STATE.ADJUST;
+                if (isAtPoint && outtake.isInPosition()) {
+                    currentState = STATE.DEPOSIT;
                 }
                 break;
             case DEPOSIT:

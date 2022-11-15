@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.opmodes.tests;
 
+import static org.firstinspires.ftc.teamcode.Robot.STATE.DEPOSIT;
+import static org.firstinspires.ftc.teamcode.Robot.STATE.INTAKE_GLOBAL;
+import static org.firstinspires.ftc.teamcode.Robot.STATE.SCORING_GLOBAL;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
@@ -80,9 +84,17 @@ public class BlueTest extends LinearOpMode {
             robot.followTrajectorySequence(to);
             // FIXME jank
             for (int i = 0; i < targetCycles; i++) {
+                robot.startIntakeGlobal(cycle1.end(),new Pose2d((72-4)*xsign,12*ysign),3-2*i);
                 robot.followTrajectory(cycle1);
-                if (++i < targetCycles) {
+                while (robot.currentState == INTAKE_GLOBAL){
+                    drive.update();
+                }
+                if (i + 1 < targetCycles) {
+                    robot.startScoringGlobal(cycle2.end(),new Pose2d(24*xsign,0),30);
                     robot.followTrajectory(cycle2);
+                    while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT){
+                        drive.update();
+                    }
                 }
             }
             if (park != null) {
