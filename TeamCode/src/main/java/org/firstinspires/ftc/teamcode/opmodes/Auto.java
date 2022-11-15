@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.modules.drive.Drivetrain;
 import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.modules.outtake.Outtake;
 
 @Autonomous(group = "Test")
 public class Auto extends LinearOpMode {
@@ -30,6 +31,7 @@ public class Auto extends LinearOpMode {
      * Tile len: 24
      * Robot total width: 16
      */
+
     @Override
     public void runOpMode() throws InterruptedException {
         int xsign = nearBlueTerminal ? -1 : 1;
@@ -37,7 +39,7 @@ public class Auto extends LinearOpMode {
 
         Robot robot = new Robot(hardwareMap);
         Drivetrain drive = robot.drivetrain;
-        robot.currentState = RETRACT;
+        Outtake outtake = robot.outtake;
 
         // 48 - 8 (width / 2) = 40
         Pose2d origin = new Pose2d((48 + tOffsetx) * xsign, (72 + tOffsety) * ysign, 0);
@@ -78,6 +80,13 @@ public class Auto extends LinearOpMode {
             park = drive.trajectoryBuilder(parkingOrigin)
                 .strafeTo(parkingPos)
                 .build();
+        }
+
+        // moves everything into init position
+        robot.currentState = RETRACT;
+
+        while (!outtake.isInPosition()) {
+            robot.update();
         }
 
         waitForStart();
