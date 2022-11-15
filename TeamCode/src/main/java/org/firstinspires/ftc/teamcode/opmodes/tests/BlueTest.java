@@ -1,9 +1,5 @@
 package org.firstinspires.ftc.teamcode.opmodes.tests;
 
-import static org.firstinspires.ftc.teamcode.Robot.STATE.DEPOSIT;
-import static org.firstinspires.ftc.teamcode.Robot.STATE.INTAKE_GLOBAL;
-import static org.firstinspires.ftc.teamcode.Robot.STATE.SCORING_GLOBAL;
-
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
@@ -20,7 +16,7 @@ public class BlueTest extends LinearOpMode {
     private static final int targetCycles = 5;
     private static final boolean isBlue = true;
     private static final boolean nearBlueTerminal = false;
-    
+
     // Tile offsets
     private static final int tOffsetx = -12;
     private static final int tOffsety = -8;
@@ -40,20 +36,20 @@ public class BlueTest extends LinearOpMode {
         // 48 - 8 (width / 2) = 40
         Pose2d origin = new Pose2d((48 + tOffsetx) * xsign, (72 + tOffsety) * ysign, 0);
         drive.setPoseEstimate(origin);
-        
+
         TrajectorySequence to = drive.trajectorySequenceBuilder(origin)
-            .turn(-origin.getHeading())
-            .strafeTo(new Vector2d((48 + tOffsetx) * xsign, (20 + tOffsety) * ysign))
-            .strafeTo(new Vector2d((36 + tOffsetx) * xsign, (20 + tOffsety) * ysign)) // Half tile back
-            .build();
+                .turn(-origin.getHeading())
+                .strafeTo(new Vector2d((48 + tOffsetx) * xsign, (20 + tOffsety) * ysign))
+                .strafeTo(new Vector2d((36 + tOffsetx) * xsign, (20 + tOffsety) * ysign)) // Half tile back
+                .build();
 
         Trajectory cycle1 = drive.trajectoryBuilder(new Pose2d((36 + tOffsetx) * xsign, (20 + tOffsety) * ysign))
-            .strafeTo(new Vector2d((72 + tOffsetx) * xsign, (20 + tOffsety) * ysign))
-            .build();
-    
+                .strafeTo(new Vector2d((72 + tOffsetx) * xsign, (20 + tOffsety) * ysign))
+                .build();
+
         Trajectory cycle2 = drive.trajectoryBuilder(new Pose2d((72 + tOffsetx) * xsign, (20 + tOffsety) * ysign))
-            .strafeTo(new Vector2d((36 + tOffsetx) * xsign, (20 + tOffsety) * ysign))
-            .build();
+                .strafeTo(new Vector2d((36 + tOffsetx) * xsign, (20 + tOffsety) * ysign))
+                .build();
 
         Vector2d parkingPos = null;
         switch (parkingNum) {
@@ -74,8 +70,8 @@ public class BlueTest extends LinearOpMode {
         // Miscase for when it is already in its parking space
         if (parkingPos.getX() == parkingOrigin.getX() && parkingPos.getY() == parkingOrigin.getY()) {
             park = drive.trajectoryBuilder(parkingOrigin)
-                .strafeTo(parkingPos)
-                .build();
+                    .strafeTo(parkingPos)
+                    .build();
         }
 
         waitForStart();
@@ -84,17 +80,9 @@ public class BlueTest extends LinearOpMode {
             robot.followTrajectorySequence(to);
             // FIXME jank
             for (int i = 0; i < targetCycles; i++) {
-                robot.startIntakeGlobal(cycle1.end(),new Pose2d((72-4)*xsign,12*ysign),3-2*i);
                 robot.followTrajectory(cycle1);
-                while (robot.currentState == INTAKE_GLOBAL){
-                    drive.update();
-                }
-                if (i + 1 < targetCycles) {
-                    robot.startScoringGlobal(cycle2.end(),new Pose2d(24*xsign,0),30);
+                if (++i < targetCycles) {
                     robot.followTrajectory(cycle2);
-                    while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT){
-                        drive.update();
-                    }
                 }
             }
             if (park != null) {
