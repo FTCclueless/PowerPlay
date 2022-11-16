@@ -15,8 +15,8 @@ public class BlueTest extends LinearOpMode {
     private static final int parkingNum = 3; // 1, 2, or 3
     private static final int targetCycles = 5;
     private static final boolean isBlue = true;
-    private static final boolean nearBlueTerminal = false;
-
+    private static final boolean nearRedSubstation = true;
+    
     // Tile offsets
     private static final int tOffsetx = -12;
     private static final int tOffsety = -8;
@@ -27,51 +27,52 @@ public class BlueTest extends LinearOpMode {
      */
     @Override
     public void runOpMode() throws InterruptedException {
-        int xsign = nearBlueTerminal ? -1 : 1;
+        int xsign = nearRedSubstation ? -1 : 1;
         int ysign = isBlue ? 1 : -1;
 
         Robot robot = new Robot(hardwareMap);
         Drivetrain drive = robot.drivetrain;
+        robot.currentState = Robot.STATE.IDLE;
 
         // 48 - 8 (width / 2) = 40
-        Pose2d origin = new Pose2d((48 + tOffsetx) * xsign, (72 + tOffsety) * ysign, 0);
+        Pose2d origin = new Pose2d((48 + tOffsetx) * xsign, (72 + tOffsety) * ysign, -(Math.PI / 2));
         drive.setPoseEstimate(origin);
-
+        
         TrajectorySequence to = drive.trajectorySequenceBuilder(origin)
-                .turn(-origin.getHeading())
-                .strafeTo(new Vector2d((48 + tOffsetx) * xsign, (20 + tOffsety) * ysign))
-                .strafeTo(new Vector2d((36 + tOffsetx) * xsign, (20 + tOffsety) * ysign)) // Half tile back
-                .build();
+            .strafeTo(new Vector2d((48 + tOffsetx) * xsign, (22 + tOffsety) * ysign))
+            .turn(-origin.getHeading() * xsign)
+            .strafeTo(new Vector2d((36 + tOffsetx) * xsign, (22 + tOffsety) * ysign)) // Half tile back
+            .build();
 
-        Trajectory cycle1 = drive.trajectoryBuilder(new Pose2d((36 + tOffsetx) * xsign, (20 + tOffsety) * ysign))
-                .strafeTo(new Vector2d((72 + tOffsetx) * xsign, (20 + tOffsety) * ysign))
-                .build();
-
-        Trajectory cycle2 = drive.trajectoryBuilder(new Pose2d((72 + tOffsetx) * xsign, (20 + tOffsety) * ysign))
-                .strafeTo(new Vector2d((36 + tOffsetx) * xsign, (20 + tOffsety) * ysign))
-                .build();
+        Trajectory cycle1 = drive.trajectoryBuilder(new Pose2d((36 + tOffsetx) * xsign, (22 + tOffsety) * ysign))
+            .strafeTo(new Vector2d((72 + tOffsetx) * xsign, (22 + tOffsety) * ysign))
+            .build();
+    
+        Trajectory cycle2 = drive.trajectoryBuilder(new Pose2d((72 + tOffsetx) * xsign, (22 + tOffsety) * ysign))
+            .strafeTo(new Vector2d((36 + tOffsetx) * xsign, (22 + tOffsety) * ysign))
+            .build();
 
         Vector2d parkingPos = null;
         switch (parkingNum) {
             case 1:
-                parkingPos = new Vector2d((24 + tOffsetx) * xsign, (20 + tOffsety) * ysign);
+                parkingPos = new Vector2d((24 + tOffsetx) * xsign, (22 + tOffsety) * ysign);
                 break;
             case 2:
-                parkingPos = new Vector2d((48 + tOffsetx) * xsign, (20 + tOffsety) * ysign);
+                parkingPos = new Vector2d((48 + tOffsetx) * xsign, (22 + tOffsety) * ysign);
                 break;
             case 3:
-                parkingPos = new Vector2d((72 + tOffsetx) * xsign, (20 + tOffsety) * ysign);
+                parkingPos = new Vector2d((72 + tOffsetx) * xsign, (22 + tOffsety) * ysign);
                 break;
         }
 
         // (72, 24) if even amount of cycles and 36 if not
         Trajectory park = null;
-        Pose2d parkingOrigin = new Pose2d(36 + tOffsetx + ((targetCycles & 1) * 36), 20, 0);
+        Pose2d parkingOrigin = new Pose2d(36 + tOffsetx + ((targetCycles & 1) * 36), 22);
         // Miscase for when it is already in its parking space
         if (parkingPos.getX() == parkingOrigin.getX() && parkingPos.getY() == parkingOrigin.getY()) {
             park = drive.trajectoryBuilder(parkingOrigin)
-                    .strafeTo(parkingPos)
-                    .build();
+                .strafeTo(parkingPos)
+                .build();
         }
 
         waitForStart();
