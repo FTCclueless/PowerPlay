@@ -34,10 +34,6 @@ public class SlidesPIDTuner extends LinearOpMode {
 
         waitForStart();
 
-        p = slides.slidesPID.p;
-        i = slides.slidesPID.i;
-        d = slides.slidesPID.d;
-
         slides.setTargetSlidesLength(0.0);
         v4Bar.setTargetV4BarAngle(Math.toRadians(90));
 
