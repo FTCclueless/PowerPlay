@@ -48,7 +48,7 @@ public class Teleop extends LinearOpMode {
 
             // Driver B
             if (gamepad2.x) { // ground
-                scoringHeight = 5;
+                scoringHeight = 2;
             }
 
             if (gamepad2.a) { // low
