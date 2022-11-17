@@ -22,7 +22,7 @@ public class Slides {
 
 //    public PID slidesPID = new PID(0.0215,0.01,0.0001);
     public PID slidesVelocityPID = new PID(0.017,0.007,0.0);
-    public PID slidesPositionalPID = new PID(0.0275,0.035,0.0);
+    public PID slidesPositionalPID = new PID(0.035,0.02,0.0);
 
     public PID slidesPID = new PID (0.0,0.0,0.0);
 
@@ -74,31 +74,34 @@ public class Slides {
 
         slidesError = targetSlidesLength - currentSlidesLength;
 
-        if (Math.abs(slidesError) <= 5) {
-            if (isVelocity) {
-                slidesPositionalPID.resetIntegral();
-                isVelocity = false;
-            }
-            slidesPID.p = slidesPositionalPID.p; // positional P value
-            slidesPID.i = slidesPositionalPID.i; // positional I value
-            slidesPID.d = slidesPositionalPID.d; // positional D value
+//        if (Math.abs(slidesError) <= 5) {
+//            if (isVelocity) {
+//                isVelocity = false;
+//
+//                slidesPID.p = slidesPositionalPID.p; // positional P value
+//                slidesPID.i = slidesPositionalPID.i; // positional I value
+//                slidesPID.d = slidesPositionalPID.d; // positional D value
+//            }
+//            slidesPower = slidesPID.update(slidesError);
+//        } else {
+//            if (!isVelocity) {
+//                isVelocity = true;
+//
+//                slidesPID.p = slidesVelocityPID.p; // velocity P value
+//                slidesPID.i = slidesVelocityPID.i; // velocity I value
+//                slidesPID.d = slidesVelocityPID.d; // velocity D value
+//            }
+//            targetSlidesVelocity = Math.max(Math.min(slidesError * (maxSlidesSpeed/5), (maxSlidesSpeed*slidesPercentMax)),-maxSlidesSpeed*slidesPercentMax);
+//            slidesPower = slidesPID.update(targetSlidesVelocity - currentSlidesVelocity);
+//        }
 
-            slidesPower = slidesPID.update(slidesError);
-            motorPriorities.get(5).setTargetPower(slidesPower);
-        } else {
-            if (!isVelocity) {
-                slidesVelocityPID.resetIntegral();
-                isVelocity = true;
-            }
-            slidesPID.resetIntegral();
-            slidesPID.p = slidesVelocityPID.p; // velocity P value
-            slidesPID.i = slidesVelocityPID.i; // velocity I value
-            slidesPID.d = slidesVelocityPID.d; // velocity D value
+        slidesPID.p = slidesVelocityPID.p; // velocity P value
+        slidesPID.i = slidesVelocityPID.i; // velocity I value
+        slidesPID.d = slidesVelocityPID.d; // velocity D value
 
-            targetSlidesVelocity = Math.max(Math.min(slidesError * (maxSlidesSpeed/2), (maxSlidesSpeed*slidesPercentMax)),-maxSlidesSpeed*slidesPercentMax);
-            slidesPower = slidesPID.update(targetSlidesVelocity - currentSlidesVelocity);
-            motorPriorities.get(5).setTargetPower(slidesPower);
-        }
+        targetSlidesVelocity = Math.max(Math.min(slidesError * (maxSlidesSpeed/3.5), (maxSlidesSpeed*slidesPercentMax)),-maxSlidesSpeed*slidesPercentMax);
+        slidesPower = slidesPID.update(targetSlidesVelocity - currentSlidesVelocity);
+        motorPriorities.get(5).setTargetPower(slidesPower);
 
         updateTelemetry();
     }

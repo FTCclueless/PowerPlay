@@ -270,7 +270,7 @@ public class Robot {
         // Robot Centric Offsets
         targetAngle -= gamepad.left_stick_x * Math.toRadians(0.4);
         extensionDistance -= gamepad.left_stick_y * 0.07;
-        this.scoringHeight -= gamepad.right_stick_y * 0.08; // offsets
+        this.scoringHeight -= gamepad.right_stick_y * 0.14; // offsets
 
         // Field Centric Offsets
 //        double allianceMultiplier;

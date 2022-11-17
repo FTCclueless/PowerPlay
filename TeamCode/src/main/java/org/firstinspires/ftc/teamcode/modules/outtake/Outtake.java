@@ -72,17 +72,20 @@ public class Outtake {
     public void update() {
         updateRelativePos();
 
-        if (targetSlidesLength + Math.sin(targetV4BarAngle) <= 10 && clipAngle(Math.abs(currentTurretAngle-targetTurretAngle)) > Math.toRadians(2.5)) { // checks if the target height is low & turret isn't close to target turret angle
-            slides.setTargetSlidesLength(12); // lifts slides up
+        if ((targetSlidesLength + (Math.sin(targetV4BarAngle) * v4BarLength) <= 6) && (clipAngle(Math.abs(currentTurretAngle-targetTurretAngle)) > Math.toRadians(2.5))) { // checks if the target height is low & turret isn't close to target turret angle
+            slides.setTargetSlidesLength(10); // lifts slides up
             v4Bar.setTargetV4BarAngle(Math.toRadians(90)); // lifts v4bar up
+            Log.e("avoiding hitting self", "");
         } else { // only sets the v4bar and slides unless the turret is in position or the height is high
             v4Bar.setTargetV4BarAngle(targetV4BarAngle);
             slides.setTargetSlidesLength(targetSlidesLength);
         }
 
-        if (currentSlidesLength + Math.sin(currentV4BarAngle)*v4BarLength >= 10) { // checks if the slides & v4bar are high
+        if (currentSlidesLength + Math.sin(currentV4BarAngle)*v4BarLength > 6) { // checks if the slides & v4bar are high
             turret.setTargetTurretAngle(targetTurretAngle);
         }
+
+        Log.e("value", currentSlidesLength + Math.sin(currentV4BarAngle)*v4BarLength + "");
 
         slides.update();
         turret.update();
