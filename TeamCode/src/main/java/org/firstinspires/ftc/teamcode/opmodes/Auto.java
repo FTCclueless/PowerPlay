@@ -39,7 +39,6 @@ public class Auto extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        //camera = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
         atdp = new AprilTagDetectionPipeline(
                 0.166, // Size of april tag in meters
                 // These 4 values are calibration for the C920 webcam (800x448)
@@ -53,14 +52,12 @@ public class Auto extends LinearOpMode {
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
-            public void onOpened()
-            {
+            public void onOpened() {
                 camera.startStreaming(640,480, OpenCvCameraRotation.UPRIGHT); // need to change for phone back camera
             }
 
             @Override
-            public void onError(int errorCode)
-            {
+            public void onError(int errorCode) {
 
             }
         });
@@ -102,6 +99,7 @@ public class Auto extends LinearOpMode {
         drive.setPoseEstimate(origin);
 
         TrajectorySequence to = drive.trajectorySequenceBuilder(origin)
+                .strafeTo(new Vector2d((48 + tOffsetx) * xsign, (48 + tOffsety) * ysign))
                 .strafeTo(new Vector2d((48 + tOffsetx) * xsign, (23 + tOffsety) * ysign))
                 .turn(-origin.getHeading())
                 .strafeTo(new Vector2d((36 + tOffsetx) * xsign, (23 + tOffsety) * ysign)) // Half tile back
@@ -130,13 +128,14 @@ public class Auto extends LinearOpMode {
 
         // (72, 24) if even amount of cycles and 36 if not
         Trajectory park = null;
-        Pose2d parkingOrigin = new Pose2d(36 + tOffsetx + ((targetCycles & 1) * 36), 23);
+        Pose2d parkingOrigin = new Pose2d((36 + tOffsetx + ((targetCycles & 1) * 36)) * xsign, (23 + tOffsety) * ysign);
+        // Pose2d parkingOrigin = new Pose2d(36 + tOffsetx + ((targetCycles & 1) * 36), 23);
         // Miscase for when it is already in its parking space
-        if (parkingPos.getX() == parkingOrigin.getX() && parkingPos.getY() == parkingOrigin.getY()) {
+        //if (parkingPos.getX() == parkingOrigin.getX() && parkingPos.getY() == parkingOrigin.getY()) {
             park = drive.trajectoryBuilder(parkingOrigin)
                 .strafeTo(parkingPos)
                 .build();
-        }
+        //}
 
         waitForStart();
 
