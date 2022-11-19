@@ -86,6 +86,7 @@ public class Robot {
 
         switch (currentState) {
             case IDLE:
+                outtake.v4Bar.setTargetV4BarAngle(Math.toRadians(70));
                 break;
             case RETRACT:
                 claw.close();

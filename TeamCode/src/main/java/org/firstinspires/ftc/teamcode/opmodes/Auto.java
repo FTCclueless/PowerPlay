@@ -21,6 +21,8 @@ import static org.firstinspires.ftc.teamcode.Robot.STATE.INTAKE_GLOBAL;
 import static org.firstinspires.ftc.teamcode.Robot.STATE.RETRACT;
 import static org.firstinspires.ftc.teamcode.Robot.STATE.SCORING_GLOBAL;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
 @Autonomous(group = "Test")
@@ -63,7 +65,7 @@ public class Auto extends LinearOpMode {
 
             @Override
             public void onError(int errorCode) {
-
+                Log.e("error with vision", "");
             }
         });
 
