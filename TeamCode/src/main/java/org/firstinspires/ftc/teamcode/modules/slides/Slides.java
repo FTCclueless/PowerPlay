@@ -46,7 +46,7 @@ public class Slides {
         slide1 = hardwareMap.get(DcMotorEx.class, "slide1");
         slide2 = hardwareMap.get(DcMotorEx.class, "slide2");
 
-        slide1.setDirection(DcMotorSimple.Direction.REVERSE);
+        slide2.setDirection(DcMotorSimple.Direction.REVERSE);
 
         slide1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slide1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

@@ -65,8 +65,7 @@ public class Outtake {
     }
 
     public void updateTelemetry () {
-        TelemetryUtil.packet.put("targetHeight: ", targetHeight);
-        TelemetryUtil.packet.put("targetExtension ", targetExtension);
+        TelemetryUtil.packet.put("isInPosition: ", isInPosition());
     }
 
     long holdingTime = System.currentTimeMillis();
@@ -74,21 +73,17 @@ public class Outtake {
     public void update() {
         updateRelativePos();
 
-        if ((targetSlidesLength + (Math.sin(targetV4BarAngle) * v4BarLength) <= 3) && (clipAngle(Math.abs(currentTurretAngle-targetTurretAngle)) > Math.toRadians(2.5)) && (System.currentTimeMillis() - holdingTime <= 750)) { // checks if the target height is low & turret isn't close to target turret angle
-            slides.setTargetSlidesLength(4-(Math.signum(targetV4BarAngle)*v4BarLength)); // lifts slides up
+        if ((targetSlidesLength + (Math.sin(targetV4BarAngle) * v4BarLength) <= 6) && (clipAngle(Math.abs(currentTurretAngle-targetTurretAngle)) > Math.toRadians(2.5)) && (System.currentTimeMillis() - holdingTime <= 750)) { // checks if the target height is low & turret isn't close to target turret angle
+            slides.setTargetSlidesLength(10); // lifts slides up
+            v4Bar.setTargetV4BarAngle(Math.toRadians(80)); // lifts v4bar up
             Log.e("avoiding hitting self", "");
-
-            Log.e("targetSlidesLength", targetSlidesLength + "");
-            Log.e("targetV4BarAngle", targetV4BarAngle + "");
-            Log.e("Math.sin(targetV4BarAngle)", Math.sin(targetV4BarAngle) + "");
-            Log.e("value", targetSlidesLength + Math.sin(targetV4BarAngle)*v4BarLength + "");
         } else { // only sets the v4bar and slides unless the turret is in position or the height is high
             holdingTime = System.currentTimeMillis();
             v4Bar.setTargetV4BarAngle(targetV4BarAngle);
             slides.setTargetSlidesLength(targetSlidesLength);
         }
 
-        if (currentSlidesLength + Math.sin(currentV4BarAngle)*v4BarLength > 3) { // checks if the slides & v4bar are high
+        if (currentSlidesLength + Math.sin(currentV4BarAngle)*v4BarLength > 6) { // checks if the slides & v4bar are high
             turret.setTargetTurretAngle(targetTurretAngle);
         }
 

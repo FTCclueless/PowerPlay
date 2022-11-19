@@ -48,8 +48,8 @@ public class Turret {
         TelemetryUtil.packet.put("targetTurretAngle: ", Math.toDegrees(targetTurretAngle));
         TelemetryUtil.packet.put("currentTurretAngle: ", Math.toDegrees(currentTurretAngle));
 
-        TelemetryUtil.packet.put("targetTurretVelocity: ", targetTurretVelocity);
-        TelemetryUtil.packet.put("currentTurretVelocity: ", currentTurretVelocity);
+//        TelemetryUtil.packet.put("targetTurretVelocity: ", targetTurretVelocity);
+//        TelemetryUtil.packet.put("currentTurretVelocity: ", currentTurretVelocity);
 
         TelemetryUtil.packet.put("turretPower: ", turretPower);
         TelemetryUtil.packet.put("turretError: ", turretError);

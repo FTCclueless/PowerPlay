@@ -86,7 +86,8 @@ public class Robot {
 
         switch (currentState) {
             case IDLE:
-                outtake.v4Bar.setTargetV4BarAngle(Math.toRadians(70));
+                claw.close();
+                outtake.setTargetRelative(5,0,3);
                 break;
             case RETRACT:
                 claw.close();
@@ -119,6 +120,9 @@ public class Robot {
                 outtake.setTargetGlobal(drivePose, conePose, coneHeight);
 
                 // TODO: Add in external claw.close when the outtake global pose is near the cone pose
+
+                Log.e("outtake.isInPosition(): ", outtake.isInPosition() + "");
+                Log.e("isAtPoint: ", isAtPoint + "");
 
                 if (isAtPoint && outtake.isInPosition()) {
                     claw.close();
@@ -181,6 +185,7 @@ public class Robot {
             case DEPOSIT:
                 claw.open();
                 if(System.currentTimeMillis() - timeSinceClawOpen >= 300) {
+                    claw.close();
                     outtake.v4Bar.setTargetV4BarAngle(90);
                     if(System.currentTimeMillis() - timeSinceClawOpen >= 650) {
                         currentState = STATE.INTAKE_RELATIVE;
@@ -194,7 +199,6 @@ public class Robot {
 
     public void updateTelemetry () {
         TelemetryUtil.packet.put("Current State: ", currentState);
-        TelemetryUtil.packet.put("Scoring Height: ", scoringHeight);
       }
 
     public void startIntakeRelative() {

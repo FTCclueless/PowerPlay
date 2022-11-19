@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.modules.claw.Claw;
 import org.firstinspires.ftc.teamcode.modules.drive.Drivetrain;
 import org.firstinspires.ftc.teamcode.sensors.Sensors;
+import org.firstinspires.ftc.teamcode.util.PoseStorage;
 
 @TeleOp
 public class Teleop extends LinearOpMode {
@@ -23,6 +24,8 @@ public class Teleop extends LinearOpMode {
 
         robot.currentState = Robot.STATE.INTAKE_RELATIVE;
         robot.isRelative = true;
+
+        drive.localizer.setPoseEstimate(PoseStorage.currentPose);
 
         waitForStart();
 
