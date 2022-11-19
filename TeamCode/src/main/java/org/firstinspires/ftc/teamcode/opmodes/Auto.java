@@ -18,6 +18,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import static org.firstinspires.ftc.teamcode.Robot.STATE.DEPOSIT;
 import static org.firstinspires.ftc.teamcode.Robot.STATE.INTAKE_GLOBAL;
+import static org.firstinspires.ftc.teamcode.Robot.STATE.RETRACT;
 import static org.firstinspires.ftc.teamcode.Robot.STATE.SCORING_GLOBAL;
 
 import java.util.ArrayList;
@@ -73,34 +74,35 @@ public class Auto extends LinearOpMode {
         Drivetrain drive = robot.drivetrain;
 
         // 48 - 8 (width / 2) = 40
-        Pose2d origin = new Pose2d((48 + tOffsetx) * xsign, (72 + tOffsety) * ysign, (-(Math.PI / 2) * ysign));
+        Pose2d origin = new Pose2d((48 + tOffsetx) * xsign, (72 + tOffsety) * ysign, ((Math.PI / 2) * ysign));
         drive.setPoseEstimate(origin);
 
         TrajectorySequence to = drive.trajectorySequenceBuilder(origin)
-                .strafeTo(new Vector2d((48 + tOffsetx) * xsign, (0) * ysign))
-                .strafeTo(new Vector2d((48 + tOffsetx) * xsign, (23 + tOffsety) * ysign))
+                .strafeTo(new Vector2d((48 + tOffsetx) * xsign, (0-tOffsety) * ysign))
+                .strafeTo(new Vector2d((48 + tOffsetx) * xsign, (11) * ysign))
+                .addDisplacementMarker(10, () -> {robot.currentState = Robot.STATE.RETRACT;})
                 .turn(-origin.getHeading())
-                .strafeTo(new Vector2d((36 + tOffsetx) * xsign, (23 + tOffsety) * ysign)) // Half tile back
+                .strafeTo(new Vector2d((36 + tOffsetx) * xsign, (11) * ysign)) // Half tile back
                 .build();
 
-        Trajectory cycle1 = drive.trajectoryBuilder(new Pose2d((36 + tOffsetx) * xsign, (23 + tOffsety) * ysign))
-                .strafeTo(new Vector2d((72 + tOffsetx) * xsign, (23 + tOffsety) * ysign))
+        Trajectory cycle1 = drive.trajectoryBuilder(new Pose2d((36 + tOffsetx) * xsign, (11) * ysign))
+                .strafeTo(new Vector2d((72 + tOffsetx) * xsign, (11) * ysign))
                 .build();
 
-        Trajectory cycle2 = drive.trajectoryBuilder(new Pose2d((72 + tOffsetx) * xsign, (23 + tOffsety) * ysign))
-                .strafeTo(new Vector2d((36 + tOffsetx) * xsign, (23 + tOffsety) * ysign))
+        Trajectory cycle2 = drive.trajectoryBuilder(new Pose2d((72 + tOffsetx) * xsign, (11) * ysign))
+                .strafeTo(new Vector2d((36 + tOffsetx) * xsign, (11) * ysign))
                 .build();
 
         Pose2d parkingOrigin = cycle2.end(); // where the robot ends at the end of its cycles
         Trajectory[] parks = new Trajectory[] {
                 drive.trajectoryBuilder(parkingOrigin)
-                    .strafeTo(new Vector2d((24 + tOffsetx) * xsign, (23 + tOffsety) * ysign))
+                    .strafeTo(new Vector2d((24 + tOffsetx) * xsign, (11) * ysign))
                     .build(),
                 drive.trajectoryBuilder(parkingOrigin)
-                    .strafeTo(new Vector2d((48 + tOffsetx) * xsign, (23 + tOffsety) * ysign))
+                    .strafeTo(new Vector2d((48 + tOffsetx) * xsign, (11) * ysign))
                     .build(),
                 drive.trajectoryBuilder(parkingOrigin)
-                    .strafeTo(new Vector2d((72 + tOffsetx) * xsign, (23 + tOffsety) * ysign))
+                    .strafeTo(new Vector2d((72 + tOffsetx) * xsign, (11) * ysign))
                     .build()
         };
 
@@ -134,21 +136,23 @@ public class Auto extends LinearOpMode {
             telemetry.update();
         }
 
-        robot.currentState = Robot.STATE.RETRACT;
+        robot.currentState = Robot.STATE.IDLE;
 
         waitForStart();
+        double coneStackAdditionalHeight = 1.38;
 
         if (!isStopRequested()) {
             robot.followTrajectorySequence(to);
 
             for (int i = 0; i < targetCycles; i++) {
-                robot.startIntakeGlobal(cycle1.end(),new Pose2d((72-4)*xsign,12*ysign),3-2*i);
+                robot.currentState = Robot.STATE.RETRACT;
+                robot.startIntakeGlobal(cycle1.end(),new Pose2d((72-4)*xsign,12*ysign),-7+coneStackAdditionalHeight*(5-i));
                 robot.followTrajectory(cycle1);
-                while (robot.currentState == INTAKE_GLOBAL){
+                while (robot.currentState == INTAKE_GLOBAL) {
                     robot.update();
                 }
 
-                robot.startScoringGlobal(cycle2.end(),new Pose2d(24*xsign,0),15);
+                robot.startScoringGlobal(cycle2.end(),new Pose2d(24*xsign,0),30);
                 robot.followTrajectory(cycle2);
                 while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
                     robot.update();

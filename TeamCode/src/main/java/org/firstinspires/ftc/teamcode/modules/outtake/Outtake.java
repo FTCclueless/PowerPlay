@@ -185,7 +185,7 @@ public class Outtake {
     }
 
     public boolean isInPosition() {
-        if(turret.isInPosition(5) && slides.isInPosition(2) && v4Bar.isInPosition(10)) {
+        if(turret.isInPosition(5) && slides.isInPosition(1.5) && v4Bar.isInPosition(5)) {
             return true;
         } else {
             return false;
