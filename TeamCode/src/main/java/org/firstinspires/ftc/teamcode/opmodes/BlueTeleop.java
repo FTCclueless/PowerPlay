@@ -7,16 +7,18 @@ import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.modules.claw.Claw;
 import org.firstinspires.ftc.teamcode.modules.drive.Drivetrain;
 import org.firstinspires.ftc.teamcode.sensors.Sensors;
-import org.firstinspires.ftc.teamcode.util.PoseStorage;
+import org.firstinspires.ftc.teamcode.util.Storage;
 
 @TeleOp
-public class Teleop extends LinearOpMode {
+public class BlueTeleop extends LinearOpMode {
 
     boolean isBlue = true;
     double scoringHeight = 30;
 
     @Override
     public void runOpMode() throws InterruptedException {
+        Storage.resetEncoderValues = true;
+
         Robot robot = new Robot(hardwareMap);
         Drivetrain drive = robot.drivetrain;
         Claw claw = robot.claw;
@@ -25,7 +27,7 @@ public class Teleop extends LinearOpMode {
         robot.currentState = Robot.STATE.INTAKE_RELATIVE;
         robot.isRelative = true;
 
-        drive.localizer.setPoseEstimate(PoseStorage.currentPose);
+        drive.localizer.setPoseEstimate(Storage.currentPose);
 
         waitForStart();
 

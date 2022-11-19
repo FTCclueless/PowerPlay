@@ -11,6 +11,8 @@ import org.firstinspires.ftc.teamcode.util.MotorPriority;
 import org.firstinspires.ftc.teamcode.util.PID;
 import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
+import org.firstinspires.ftc.teamcode.util.Storage;
+
 import java.util.ArrayList;
 
 
@@ -48,9 +50,12 @@ public class Slides {
 
         slide2.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        slide1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        if (Storage.resetEncoderValues) {
+            slide1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            slide2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+
         slide1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        slide2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slide2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         motorPriorities.add(5, new MotorPriority(new DcMotorEx[] {slide1, slide2},3,4));
@@ -99,7 +104,7 @@ public class Slides {
         slidesPID.i = slidesVelocityPID.i; // velocity I value
         slidesPID.d = slidesVelocityPID.d; // velocity D value
 
-        targetSlidesVelocity = Math.max(Math.min(slidesError * (maxSlidesSpeed/3.5), (maxSlidesSpeed*slidesPercentMax)),-maxSlidesSpeed*slidesPercentMax);
+        targetSlidesVelocity = Math.max(Math.min(slidesError * (maxSlidesSpeed/4.5), (maxSlidesSpeed*slidesPercentMax)),-maxSlidesSpeed*slidesPercentMax);
         slidesPower = slidesPID.update(targetSlidesVelocity - currentSlidesVelocity);
         motorPriorities.get(5).setTargetPower(slidesPower);
 

@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.modules.outtake.Outtake;
 import org.firstinspires.ftc.teamcode.sensors.Sensors;
 import org.firstinspires.ftc.teamcode.util.MotorPriority;
 import org.firstinspires.ftc.teamcode.util.PID;
+import org.firstinspires.ftc.teamcode.util.Storage;
 import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
 import java.util.ArrayList;
@@ -38,7 +39,10 @@ public class Turret {
 
         turret = hardwareMap.get(DcMotorEx.class, "turret");
 
-        turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        if (Storage.resetEncoderValues) {
+            turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+
         turret.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         motorPriorities.add(4, new MotorPriority(turret,4,4));

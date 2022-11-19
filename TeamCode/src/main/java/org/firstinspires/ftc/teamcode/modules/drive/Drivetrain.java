@@ -34,6 +34,7 @@ import org.firstinspires.ftc.teamcode.util.AxisDirection;
 import org.firstinspires.ftc.teamcode.util.BNO055IMUUtil;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
 import org.firstinspires.ftc.teamcode.util.MotorPriority;
+import org.firstinspires.ftc.teamcode.util.Storage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -118,7 +119,9 @@ public class Drivetrain extends MecanumDrive {
             motorPriorities.add(new MotorPriority(motors.get(i),3,5));
         }
 
-        setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        if (Storage.resetEncoderValues) {
+            setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
 
         if (RUN_USING_ENCODER) {
             setMode(DcMotor.RunMode.RUN_USING_ENCODER);

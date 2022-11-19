@@ -1,9 +1,5 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
-import static org.firstinspires.ftc.teamcode.Robot.STATE.DEPOSIT;
-import static org.firstinspires.ftc.teamcode.Robot.STATE.INTAKE_GLOBAL;
-import static org.firstinspires.ftc.teamcode.Robot.STATE.SCORING_GLOBAL;
-
 import android.util.Log;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -16,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.modules.drive.Drivetrain;
 import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.util.PoseStorage;
+import org.firstinspires.ftc.teamcode.util.Storage;
 import org.firstinspires.ftc.teamcode.vision.AprilTagDetectionPipeline;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -44,6 +40,8 @@ public class BlueParkAuto extends LinearOpMode {
      */
     @Override
     public void runOpMode() throws InterruptedException {
+        Storage.resetEncoderValues = true;
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         atdp = new AprilTagDetectionPipeline(
@@ -108,6 +106,8 @@ public class BlueParkAuto extends LinearOpMode {
                     .build()
         };
 
+        robot.currentState = Robot.STATE.IDLE;
+
         while (opModeInInit()) {
             telemetry.setMsTransmissionInterval(50);
 
@@ -135,10 +135,10 @@ public class BlueParkAuto extends LinearOpMode {
                 }
             }
 
+            robot.update();
             telemetry.update();
         }
 
-        robot.currentState = Robot.STATE.IDLE;
 
         waitForStart();
         double coneStackAdditionalHeight = 1.38;
@@ -150,13 +150,13 @@ public class BlueParkAuto extends LinearOpMode {
                 robot.update();
             }
 
-            robot.followTrajectory(parks[parkingNum]);
+            robot.followTrajectory(parks[parkingNum-1]);
 
             while (robot.drivetrain.isBusy()) {
                 robot.update();
             }
 
-            PoseStorage.currentPose = drive.getPoseEstimate();
+            Storage.currentPose = drive.getPoseEstimate();
         }
     }
 }

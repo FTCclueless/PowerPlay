@@ -86,8 +86,10 @@ public class Robot {
 
         switch (currentState) {
             case IDLE:
-                claw.close();
-                outtake.setTargetRelative(5,0,3);
+                outtake.v4Bar.setTargetV4BarAngle(Math.toRadians(35));
+                if (outtake.isInPosition()) {
+                    claw.fullOpen();
+                }
                 break;
             case RETRACT:
                 claw.close();
@@ -104,7 +106,7 @@ public class Robot {
                 }
                 break;
             case INTAKE_RELATIVE:
-                outtake.setTargetRelative(5,0,-7);
+                outtake.setTargetRelative(5,0,-8);
 
                 if (sensors.clawTouch) { // needs an external claw.close()
                     sensors.clawTouch = false;
@@ -228,7 +230,7 @@ public class Robot {
                 scoringDirection = ScoringDirection.FORWARD;
                 targetAngle = Math.toRadians(-90);
             } else {
-                scoringDirection = ScoringDirection.BACKWARD;
+                scoringDirection = ScoringDirection.FORWARD;
                 targetAngle = Math.toRadians(90);
             }
             this.scoringHeight = scoringHeight;

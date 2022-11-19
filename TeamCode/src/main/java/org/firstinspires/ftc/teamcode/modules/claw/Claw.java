@@ -17,10 +17,12 @@ public class Claw {
     public double clawPower = 1.0;
 
     public double intakePosition = 0.1599; //0.17399
-    public double closePosition = 0.312; // 0.285
+    public double closePosition = 0.8; // 0.285
     public double openPosition = 0.18; // 0.20
 
-    public enum STATE {OPEN, INTAKE, CLOSED}
+    public double fullOpenPosition = 0.0; // 0.20
+
+    public enum STATE {OPEN, INTAKE, CLOSED, FULL_OPEN}
     public STATE currentState = STATE.OPEN;
 
     ArrayList<MyServo> servos;
@@ -45,6 +47,9 @@ public class Claw {
                 break;
             case CLOSED:
                 setTargetClawPosition(closePosition);
+                break;
+            case FULL_OPEN:
+                setTargetClawPosition(fullOpenPosition);
                 break;
         }
 
@@ -73,6 +78,10 @@ public class Claw {
 
     public void intake() {
         currentState = STATE.INTAKE;
+    }
+
+    public void fullOpen() {
+        currentState = STATE.FULL_OPEN;
     }
 
     public boolean isOpen () {

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes;
+package org.firstinspires.ftc.teamcode;
 
 import android.util.Log;
 
@@ -9,10 +9,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.modules.drive.Drivetrain;
 import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.util.PoseStorage;
+import org.firstinspires.ftc.teamcode.util.Storage;
 import org.firstinspires.ftc.teamcode.vision.AprilTagDetectionPipeline;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -40,6 +39,8 @@ public class RedParkAuto extends LinearOpMode {
      */
     @Override
     public void runOpMode() throws InterruptedException {
+        Storage.resetEncoderValues = true;
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         atdp = new AprilTagDetectionPipeline(
@@ -104,6 +105,8 @@ public class RedParkAuto extends LinearOpMode {
                     .build()
         };
 
+        robot.currentState = Robot.STATE.IDLE;
+
         while (opModeInInit()) {
             telemetry.setMsTransmissionInterval(50);
 
@@ -131,10 +134,10 @@ public class RedParkAuto extends LinearOpMode {
                 }
             }
 
+            robot.update();
             telemetry.update();
         }
 
-        robot.currentState = Robot.STATE.IDLE;
 
         waitForStart();
         double coneStackAdditionalHeight = 1.38;
@@ -146,13 +149,13 @@ public class RedParkAuto extends LinearOpMode {
                 robot.update();
             }
 
-            robot.followTrajectory(parks[parkingNum]);
+            robot.followTrajectory(parks[parkingNum-1]);
 
             while (robot.drivetrain.isBusy()) {
                 robot.update();
             }
 
-            PoseStorage.currentPose = drive.getPoseEstimate();
+            Storage.currentPose = drive.getPoseEstimate();
         }
     }
 }
