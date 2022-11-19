@@ -24,8 +24,6 @@ public class V4BarTester extends LinearOpMode {
         while (!isStopRequested()) {
             robot.update();
             robot.outtake.v4Bar.setTargetV4BarAngle(Math.toRadians(angle));
-
-            TelemetryUtil.packet.put("currentV4BarAngle", robot.outtake.v4Bar.getCurrentV4BarAngle());
         }
     }
 }

@@ -58,7 +58,7 @@ public class V4Bar {
     }
 
     public void updateV4BarValues() {
-        currentV4BarAngle = v4bar1.getAngle();
+        currentV4BarAngle = v4bar2.getAngle();
     }
 
     public boolean isInPosition (double angle) {

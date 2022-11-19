@@ -101,7 +101,7 @@ public class Turret {
     }
 
     public boolean isInPosition (double angle) {
-        if (clipAngle(Math.abs(targetTurretAngle - currentTurretAngle)) <= Math.toRadians(angle)) {
+        if (Math.abs(clipAngle(targetTurretAngle - currentTurretAngle)) <= Math.toRadians(angle)) {
             return true;
         } else {
             return false;

@@ -57,10 +57,10 @@ public class MyServo {
         double time = (double)(currentTime - lastUpdateTime)/1.0E9; // converts from nano to secs
         lastUpdateTime = currentTime;
         double update = Math.signum(error) * speed * power * time; // update is the distance (in radians) the servo has moved in a loop at the specified power
-        if (Math.abs(update) >= Math.abs(error)) { // if setting servo position to update will cause the servo to go past it's target, set update = error
-            update = error;
-        }
         currentAngle += update;
+        if (Math.abs(update) >= Math.abs(error)) { // if setting servo position to update will cause the servo to go past it's target, set update = error
+            currentAngle = targetPosition/positionPerRadian;
+        }
         currentPosition = currentAngle * positionPerRadian; // This converts the currentAngle (in radians) to a position value (between 0-1) and then adds the intercept
         if (power == 1.0) {
             servo.setPosition(targetPosition);
@@ -82,7 +82,7 @@ public class MyServo {
         setPosition(angle * positionPerRadian * Math.signum(max-min) + basePos, 1.0);
     }
     public double getAngle() {
-        return currentAngle + offset/positionPerRadian;
+        return (currentAngle) + (offset-basePos)/positionPerRadian;
     }
 
     public void setPositionTimeBased(double position) {

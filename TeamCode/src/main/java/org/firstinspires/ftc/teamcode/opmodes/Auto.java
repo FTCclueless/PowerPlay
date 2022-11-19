@@ -16,6 +16,10 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
+import static org.firstinspires.ftc.teamcode.Robot.STATE.DEPOSIT;
+import static org.firstinspires.ftc.teamcode.Robot.STATE.INTAKE_GLOBAL;
+import static org.firstinspires.ftc.teamcode.Robot.STATE.SCORING_GLOBAL;
+
 import java.util.ArrayList;
 
 @Autonomous(group = "Test")
@@ -61,6 +65,45 @@ public class Auto extends LinearOpMode {
 
             }
         });
+
+        int xsign = isTop ? 1 : -1;
+        int ysign = isLeft ? 1 : -1;
+
+        Robot robot = new Robot(hardwareMap);
+        Drivetrain drive = robot.drivetrain;
+
+        // 48 - 8 (width / 2) = 40
+        Pose2d origin = new Pose2d((48 + tOffsetx) * xsign, (72 + tOffsety) * ysign, (-(Math.PI / 2) * ysign));
+        drive.setPoseEstimate(origin);
+
+        TrajectorySequence to = drive.trajectorySequenceBuilder(origin)
+                .strafeTo(new Vector2d((48 + tOffsetx) * xsign, (0) * ysign))
+                .strafeTo(new Vector2d((48 + tOffsetx) * xsign, (23 + tOffsety) * ysign))
+                .turn(-origin.getHeading())
+                .strafeTo(new Vector2d((36 + tOffsetx) * xsign, (23 + tOffsety) * ysign)) // Half tile back
+                .build();
+
+        Trajectory cycle1 = drive.trajectoryBuilder(new Pose2d((36 + tOffsetx) * xsign, (23 + tOffsety) * ysign))
+                .strafeTo(new Vector2d((72 + tOffsetx) * xsign, (23 + tOffsety) * ysign))
+                .build();
+
+        Trajectory cycle2 = drive.trajectoryBuilder(new Pose2d((72 + tOffsetx) * xsign, (23 + tOffsety) * ysign))
+                .strafeTo(new Vector2d((36 + tOffsetx) * xsign, (23 + tOffsety) * ysign))
+                .build();
+
+        Pose2d parkingOrigin = cycle2.end(); // where the robot ends at the end of its cycles
+        Trajectory[] parks = new Trajectory[] {
+                drive.trajectoryBuilder(parkingOrigin)
+                    .strafeTo(new Vector2d((24 + tOffsetx) * xsign, (23 + tOffsety) * ysign))
+                    .build(),
+                drive.trajectoryBuilder(parkingOrigin)
+                    .strafeTo(new Vector2d((48 + tOffsetx) * xsign, (23 + tOffsety) * ysign))
+                    .build(),
+                drive.trajectoryBuilder(parkingOrigin)
+                    .strafeTo(new Vector2d((72 + tOffsetx) * xsign, (23 + tOffsety) * ysign))
+                    .build()
+        };
+
         while (opModeInInit()) {
             telemetry.setMsTransmissionInterval(50);
 
@@ -89,71 +132,29 @@ public class Auto extends LinearOpMode {
             }
 
             telemetry.update();
-            sleep(20); // FIXME could this be removed?
         }
 
-        int xsign = isTop ? 1 : -1;
-        int ysign = isLeft ? 1 : -1;
-
-        Robot robot = new Robot(hardwareMap);
-        Drivetrain drive = robot.drivetrain;
-        robot.currentState = Robot.STATE.IDLE;
-
-        // 48 - 8 (width / 2) = 40
-        Pose2d origin = new Pose2d((48 + tOffsetx) * xsign, (72 + tOffsety) * ysign, (-(Math.PI / 2) * ysign));
-        drive.setPoseEstimate(origin);
-
-        TrajectorySequence to = drive.trajectorySequenceBuilder(origin)
-                .strafeTo(new Vector2d((48 + tOffsetx) * xsign, (0 + tOffsety) * ysign))
-                .strafeTo(new Vector2d((48 + tOffsetx) * xsign, (23 + tOffsety) * ysign))
-                .turn(-origin.getHeading())
-                .strafeTo(new Vector2d((36 + tOffsetx) * xsign, (23 + tOffsety) * ysign)) // Half tile back
-                .build();
-
-        Trajectory cycle1 = drive.trajectoryBuilder(new Pose2d((36 + tOffsetx) * xsign, (23 + tOffsety) * ysign))
-                .strafeTo(new Vector2d((72 + tOffsetx) * xsign, (23 + tOffsety) * ysign))
-                .build();
-
-        Trajectory cycle2 = drive.trajectoryBuilder(new Pose2d((72 + tOffsetx) * xsign, (23 + tOffsety) * ysign))
-                .strafeTo(new Vector2d((36 + tOffsetx) * xsign, (23 + tOffsety) * ysign))
-                .build();
-
-        Vector2d parkingPos = null;
-        switch (parkingNum) {
-            case 1:
-                parkingPos = new Vector2d((24 + tOffsetx) * xsign, (23 + tOffsety) * ysign);
-                break;
-            case 2:
-                parkingPos = new Vector2d((48 + tOffsetx) * xsign, (23 + tOffsety) * ysign);
-                break;
-            case 3:
-                parkingPos = new Vector2d((72 + tOffsetx) * xsign, (23 + tOffsety) * ysign);
-                break;
-        }
-
-        // (72, 24) if even amount of cycles and 36 if not
-        Trajectory park = null;
-        Pose2d parkingOrigin = new Pose2d((36 + tOffsetx + ((targetCycles & 1) * 36)) * xsign, (23 + tOffsety) * ysign); // where the robot ends at the end of its cycles
-
-        if (parkingOrigin.getX() != parkingOrigin.getX() || parkingOrigin.getY() != parkingOrigin.getY() || parkingOrigin.getHeading() != parkingOrigin.getHeading()) {
-            park = drive.trajectoryBuilder(parkingOrigin)
-                    .strafeTo(parkingPos)
-                    .build();
-        }
+        robot.currentState = Robot.STATE.RETRACT;
 
         waitForStart();
 
         if (!isStopRequested()) {
             robot.followTrajectorySequence(to);
+
             for (int i = 0; i < targetCycles; i++) {
+                robot.startIntakeGlobal(cycle1.end(),new Pose2d((72-4)*xsign,12*ysign),3-2*i);
                 robot.followTrajectory(cycle1);
-                if (++i < targetCycles) {
-                    robot.followTrajectory(cycle2);
+                while (robot.currentState == INTAKE_GLOBAL){
+                    robot.update();
+                }
+
+                robot.startScoringGlobal(cycle2.end(),new Pose2d(24*xsign,0),15);
+                robot.followTrajectory(cycle2);
+                while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
+                    robot.update();
                 }
             }
-            if (park != null) {
-                robot.followTrajectory(park);
-            }
+            robot.followTrajectory(parks[parkingNum]);
         }
     }
 }
