@@ -21,8 +21,8 @@ import java.util.ArrayList;
 @Autonomous(group = "Test")
 public class Auto extends LinearOpMode {
     private static final int targetCycles = 5;
-    private static final boolean isLeft = false;
-    private static final boolean isTop = false;
+    private static final boolean isLeft = true;
+    private static final boolean isTop = true;
     private static int parkingNum = 3; // 1, 2, or 3
 
     // Tile offsets
@@ -102,35 +102,35 @@ public class Auto extends LinearOpMode {
         drive.setPoseEstimate(origin);
 
         TrajectorySequence to = drive.trajectorySequenceBuilder(origin)
-                .strafeTo(new Vector2d((48 + tOffsetx) * xsign, (22 + tOffsety) * ysign))
+                .strafeTo(new Vector2d((48 + tOffsetx) * xsign, (23 + tOffsety) * ysign))
                 .turn(-origin.getHeading())
-                .strafeTo(new Vector2d((36 + tOffsetx) * xsign, (22 + tOffsety) * ysign)) // Half tile back
+                .strafeTo(new Vector2d((36 + tOffsetx) * xsign, (23 + tOffsety) * ysign)) // Half tile back
                 .build();
 
-        Trajectory cycle1 = drive.trajectoryBuilder(new Pose2d((36 + tOffsetx) * xsign, (22 + tOffsety) * ysign))
-                .strafeTo(new Vector2d((72 + tOffsetx) * xsign, (22 + tOffsety) * ysign))
+        Trajectory cycle1 = drive.trajectoryBuilder(new Pose2d((36 + tOffsetx) * xsign, (23 + tOffsety) * ysign))
+                .strafeTo(new Vector2d((72 + tOffsetx) * xsign, (23 + tOffsety) * ysign))
                 .build();
 
-        Trajectory cycle2 = drive.trajectoryBuilder(new Pose2d((72 + tOffsetx) * xsign, (22 + tOffsety) * ysign))
-                .strafeTo(new Vector2d((36 + tOffsetx) * xsign, (22 + tOffsety) * ysign))
+        Trajectory cycle2 = drive.trajectoryBuilder(new Pose2d((72 + tOffsetx) * xsign, (23 + tOffsety) * ysign))
+                .strafeTo(new Vector2d((36 + tOffsetx) * xsign, (23 + tOffsety) * ysign))
                 .build();
 
         Vector2d parkingPos = null;
         switch (parkingNum) {
             case 1:
-                parkingPos = new Vector2d((24 + tOffsetx) * xsign, (22 + tOffsety) * ysign);
+                parkingPos = new Vector2d((24 + tOffsetx) * xsign, (23 + tOffsety) * ysign);
                 break;
             case 2:
-                parkingPos = new Vector2d((48 + tOffsetx) * xsign, (22 + tOffsety) * ysign);
+                parkingPos = new Vector2d((48 + tOffsetx) * xsign, (23 + tOffsety) * ysign);
                 break;
             case 3:
-                parkingPos = new Vector2d((72 + tOffsetx) * xsign, (22 + tOffsety) * ysign);
+                parkingPos = new Vector2d((72 + tOffsetx) * xsign, (23 + tOffsety) * ysign);
                 break;
         }
 
         // (72, 24) if even amount of cycles and 36 if not
         Trajectory park = null;
-        Pose2d parkingOrigin = new Pose2d(36 + tOffsetx + ((targetCycles & 1) * 36), 22);
+        Pose2d parkingOrigin = new Pose2d(36 + tOffsetx + ((targetCycles & 1) * 36), 23);
         // Miscase for when it is already in its parking space
         if (parkingPos.getX() == parkingOrigin.getX() && parkingPos.getY() == parkingOrigin.getY()) {
             park = drive.trajectoryBuilder(parkingOrigin)

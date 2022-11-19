@@ -78,6 +78,11 @@ public class Outtake {
             slides.setTargetSlidesLength(10); // lifts slides up
             v4Bar.setTargetV4BarAngle(Math.toRadians(90)); // lifts v4bar up
             Log.e("avoiding hitting self", "");
+
+            Log.e("targetSlidesLength", targetSlidesLength + "");
+            Log.e("targetV4BarAngle", targetV4BarAngle + "");
+            Log.e("Math.sin(targetV4BarAngle)", Math.sin(targetV4BarAngle) + "");
+            Log.e("value", targetSlidesLength + Math.sin(targetV4BarAngle)*v4BarLength + "");
         } else { // only sets the v4bar and slides unless the turret is in position or the height is high
             holdingTime = System.currentTimeMillis();
             v4Bar.setTargetV4BarAngle(targetV4BarAngle);
@@ -88,7 +93,6 @@ public class Outtake {
             turret.setTargetTurretAngle(targetTurretAngle);
         }
 
-        Log.e("value", targetSlidesLength + Math.sin(currentV4BarAngle)*v4BarLength + "");
 
         slides.update();
         turret.update();
