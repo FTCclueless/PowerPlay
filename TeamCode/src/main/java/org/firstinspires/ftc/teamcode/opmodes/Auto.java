@@ -18,6 +18,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import static org.firstinspires.ftc.teamcode.Robot.STATE.DEPOSIT;
 import static org.firstinspires.ftc.teamcode.Robot.STATE.INTAKE_GLOBAL;
+import static org.firstinspires.ftc.teamcode.Robot.STATE.RETRACT;
 import static org.firstinspires.ftc.teamcode.Robot.STATE.SCORING_GLOBAL;
 
 import java.util.ArrayList;
@@ -138,11 +139,14 @@ public class Auto extends LinearOpMode {
 
         waitForStart();
 
+        double coneStackAdditionalHeight = 1.38;
+
         if (!isStopRequested()) {
             robot.followTrajectorySequence(to);
 
             for (int i = 0; i < targetCycles; i++) {
-                robot.startIntakeGlobal(cycle1.end(),new Pose2d((72-4)*xsign,12*ysign),3-2*i);
+                robot.currentState = RETRACT;
+                robot.startIntakeGlobal(cycle1.end(),new Pose2d((72-4)*xsign,12*ysign),-7+coneStackAdditionalHeight*(5-i)); //-7
                 robot.followTrajectory(cycle1);
                 while (robot.currentState == INTAKE_GLOBAL){
                     robot.update();
