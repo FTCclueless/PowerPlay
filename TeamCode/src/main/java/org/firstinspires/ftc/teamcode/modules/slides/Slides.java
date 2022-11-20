@@ -11,6 +11,8 @@ import org.firstinspires.ftc.teamcode.util.MotorPriority;
 import org.firstinspires.ftc.teamcode.util.PID;
 import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
+import org.firstinspires.ftc.teamcode.util.Storage;
+
 import java.util.ArrayList;
 
 
@@ -34,7 +36,8 @@ public class Slides {
     public double slidesError = 0.0;
     public static double slidesPercentMax = 0.98;
 
-    double maxSlidesSpeed = 82.9718558749; // inches per sec
+    // original: 82.9718558749
+    double maxSlidesSpeed = 82.9718558749 * 0.45; // inches per sec
 
     Outtake outtake;
 
@@ -46,11 +49,14 @@ public class Slides {
         slide1 = hardwareMap.get(DcMotorEx.class, "slide1");
         slide2 = hardwareMap.get(DcMotorEx.class, "slide2");
 
-        slide1.setDirection(DcMotorSimple.Direction.REVERSE);
+        slide2.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        slide1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        if (Storage.resetEncoderValues) {
+            slide1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            slide2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+
         slide1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        slide2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slide2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         motorPriorities.add(5, new MotorPriority(new DcMotorEx[] {slide1, slide2},3,4));
@@ -99,7 +105,7 @@ public class Slides {
         slidesPID.i = slidesVelocityPID.i; // velocity I value
         slidesPID.d = slidesVelocityPID.d; // velocity D value
 
-        targetSlidesVelocity = Math.max(Math.min(slidesError * (maxSlidesSpeed/3.5), (maxSlidesSpeed*slidesPercentMax)),-maxSlidesSpeed*slidesPercentMax);
+        targetSlidesVelocity = Math.max(Math.min(slidesError * (maxSlidesSpeed/10), (maxSlidesSpeed*slidesPercentMax)),-maxSlidesSpeed*slidesPercentMax);
         slidesPower = slidesPID.update(targetSlidesVelocity - currentSlidesVelocity);
         motorPriorities.get(5).setTargetPower(slidesPower);
 

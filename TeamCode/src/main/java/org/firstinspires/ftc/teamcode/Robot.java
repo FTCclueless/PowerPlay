@@ -34,8 +34,8 @@ public class Robot {
     public ArrayList<MotorPriority> motorPriorities = new ArrayList<>();
     public ArrayList<MyServo> servos = new ArrayList<>();
 
-    public enum STATE { IDLE, INTAKE_RELATIVE, INTAKE_GLOBAL, WAIT_FOR_START_SCORING, SCORING_GLOBAL, SCORING_RELATIVE, ADJUST, DEPOSIT, RETRACT }
-    public STATE currentState = STATE.IDLE;
+    public enum STATE {INIT, INTAKE_RELATIVE, INTAKE_GLOBAL, WAIT_FOR_START_SCORING, SCORING_GLOBAL, SCORING_RELATIVE, ADJUST, DEPOSIT, RETRACT, PARK }
+    public STATE currentState = STATE.INIT;
 
     public Robot (HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
@@ -85,7 +85,21 @@ public class Robot {
         boolean isAtPoint;
 
         switch (currentState) {
-            case IDLE:
+            case INIT:
+                outtake.v4Bar.setTargetV4BarAngle(Math.toRadians(35));
+                outtake.slides.setTargetSlidesLength(0);
+                outtake.turret.setTargetTurretAngle(Math.toRadians(0));
+                if (outtake.isInPosition()) {
+                    claw.fullOpen();
+                }
+                break;
+            case PARK:
+                outtake.v4Bar.setTargetV4BarAngle(Math.toRadians(90));
+                outtake.slides.setTargetSlidesLength(0);
+                outtake.turret.setTargetTurretAngle(Math.toRadians(0));
+                if (outtake.isInPosition()) {
+                    claw.fullOpen();
+                }
                 break;
             case RETRACT:
                 claw.close();
@@ -102,7 +116,7 @@ public class Robot {
                 }
                 break;
             case INTAKE_RELATIVE:
-                outtake.setTargetRelative(5,0,-7);
+                outtake.setTargetRelative(5,0,-8);
 
                 if (sensors.clawTouch) { // needs an external claw.close()
                     sensors.clawTouch = false;
@@ -118,6 +132,9 @@ public class Robot {
                 outtake.setTargetGlobal(drivePose, conePose, coneHeight);
 
                 // TODO: Add in external claw.close when the outtake global pose is near the cone pose
+
+                Log.e("outtake.isInPosition(): ", outtake.isInPosition() + "");
+                Log.e("isAtPoint: ", isAtPoint + "");
 
                 if (isAtPoint && outtake.isInPosition()) {
                     claw.close();
@@ -180,6 +197,7 @@ public class Robot {
             case DEPOSIT:
                 claw.open();
                 if(System.currentTimeMillis() - timeSinceClawOpen >= 300) {
+                    claw.close();
                     outtake.v4Bar.setTargetV4BarAngle(90);
                     if(System.currentTimeMillis() - timeSinceClawOpen >= 650) {
                         currentState = STATE.INTAKE_RELATIVE;
@@ -193,7 +211,6 @@ public class Robot {
 
     public void updateTelemetry () {
         TelemetryUtil.packet.put("Current State: ", currentState);
-        TelemetryUtil.packet.put("Scoring Height: ", scoringHeight);
       }
 
     public void startIntakeRelative() {
@@ -223,7 +240,7 @@ public class Robot {
                 scoringDirection = ScoringDirection.FORWARD;
                 targetAngle = Math.toRadians(-90);
             } else {
-                scoringDirection = ScoringDirection.BACKWARD;
+                scoringDirection = ScoringDirection.FORWARD;
                 targetAngle = Math.toRadians(90);
             }
             this.scoringHeight = scoringHeight;
@@ -365,7 +382,7 @@ public class Robot {
     public void setConeHeight (double height) { coneHeight = height; }
     public void setPoleHeight (double height) { poleHeight = height; }
 
-    public void testMode () { currentState = STATE.IDLE; }
+    public void testMode () { currentState = STATE.INIT; }
 
     public void followTrajectory(Trajectory trajectory) {
         drivetrain.followTrajectoryAsync(trajectory);

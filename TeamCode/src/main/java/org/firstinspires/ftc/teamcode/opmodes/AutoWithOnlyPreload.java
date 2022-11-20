@@ -1,5 +1,10 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
+import static org.firstinspires.ftc.teamcode.Robot.STATE.DEPOSIT;
+import static org.firstinspires.ftc.teamcode.Robot.STATE.SCORING_GLOBAL;
+
+import android.util.Log;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
@@ -17,17 +22,11 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-import static org.firstinspires.ftc.teamcode.Robot.STATE.DEPOSIT;
-import static org.firstinspires.ftc.teamcode.Robot.STATE.INTAKE_GLOBAL;
-import static org.firstinspires.ftc.teamcode.Robot.STATE.SCORING_GLOBAL;
-
-import android.util.Log;
-
 import java.util.ArrayList;
 
 @Disabled
 @Autonomous(group = "Test")
-public class Auto extends LinearOpMode {
+public class AutoWithOnlyPreload extends LinearOpMode {
     private static final int targetCycles = 5;
     private static final boolean isLeft = true;
     private static final boolean isTop = true;
@@ -85,7 +84,7 @@ public class Auto extends LinearOpMode {
                 .strafeTo(new Vector2d((48 + tOffsetx) * xsign, (11) * ysign))
                 .addDisplacementMarker(10, () -> {robot.currentState = Robot.STATE.RETRACT;})
                 .turn(-origin.getHeading())
-                .strafeTo(new Vector2d((36 + tOffsetx) * xsign, (11) * ysign)) // Half tile back
+//                .strafeTo(new Vector2d((36 + tOffsetx) * xsign, (11) * ysign)) // Half tile back
                 .build();
 
         Trajectory cycle1 = drive.trajectoryBuilder(new Pose2d((36 + tOffsetx) * xsign, (11) * ysign))
@@ -142,25 +141,17 @@ public class Auto extends LinearOpMode {
         robot.currentState = Robot.STATE.INIT;
 
         waitForStart();
-        double coneStackAdditionalHeight = 1.38;
 
         if (!isStopRequested()) {
             robot.followTrajectorySequence(to);
 
-            for (int i = 0; i < targetCycles; i++) {
-                robot.currentState = Robot.STATE.RETRACT;
-                robot.startIntakeGlobal(cycle1.end(),new Pose2d((72-4)*xsign,12*ysign),-7+coneStackAdditionalHeight*(5-i));
-                robot.followTrajectory(cycle1);
-                while (robot.currentState == INTAKE_GLOBAL) {
-                    robot.update();
-                }
-
-                robot.startScoringGlobal(cycle2.end(),new Pose2d(24*xsign,0),30);
-                robot.followTrajectory(cycle2);
-                while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
-                    robot.update();
-                }
+            robot.currentState = Robot.STATE.RETRACT;
+            robot.startScoringGlobal(cycle2.end(),new Pose2d(24*xsign,0),30);
+            robot.followTrajectory(cycle2);
+            while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
+                robot.update();
             }
+
             robot.followTrajectory(parks[parkingNum]);
         }
     }
