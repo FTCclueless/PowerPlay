@@ -19,7 +19,6 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import static org.firstinspires.ftc.teamcode.Robot.STATE.DEPOSIT;
 import static org.firstinspires.ftc.teamcode.Robot.STATE.INTAKE_GLOBAL;
-import static org.firstinspires.ftc.teamcode.Robot.STATE.RETRACT;
 import static org.firstinspires.ftc.teamcode.Robot.STATE.SCORING_GLOBAL;
 
 import android.util.Log;
@@ -140,7 +139,7 @@ public class Auto extends LinearOpMode {
             telemetry.update();
         }
 
-        robot.currentState = Robot.STATE.IDLE;
+        robot.currentState = Robot.STATE.INIT;
 
         waitForStart();
         double coneStackAdditionalHeight = 1.38;

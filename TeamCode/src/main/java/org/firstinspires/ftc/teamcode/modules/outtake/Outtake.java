@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.util.Model;
 import org.firstinspires.ftc.teamcode.util.MotorPriority;
 import org.firstinspires.ftc.teamcode.util.MyServo;
 import org.firstinspires.ftc.teamcode.util.Pose3D;
+import org.firstinspires.ftc.teamcode.util.Storage;
 import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
 import java.util.ArrayList;
@@ -73,7 +74,7 @@ public class Outtake {
     public void update() {
         updateRelativePos();
 
-        if ((targetSlidesLength + (Math.sin(targetV4BarAngle) * v4BarLength) <= 6) && (clipAngle(Math.abs(currentTurretAngle-targetTurretAngle)) > Math.toRadians(2.5)) && (System.currentTimeMillis() - holdingTime <= 750)) { // checks if the target height is low & turret isn't close to target turret angle
+        if ((targetSlidesLength + (Math.sin(targetV4BarAngle) * v4BarLength) <= 6) && (clipAngle(Math.abs(currentTurretAngle-targetTurretAngle)) > Math.toRadians(2.5)) && (System.currentTimeMillis() - holdingTime <= 750) && !Storage.ignore) { // checks if the target height is low & turret isn't close to target turret angle
             slides.setTargetSlidesLength(10); // lifts slides up
             v4Bar.setTargetV4BarAngle(Math.toRadians(80)); // lifts v4bar up
             Log.e("avoiding hitting self", "");

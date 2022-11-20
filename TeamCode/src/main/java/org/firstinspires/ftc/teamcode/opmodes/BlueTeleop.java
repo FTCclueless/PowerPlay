@@ -47,8 +47,10 @@ public class BlueTeleop extends LinearOpMode {
                 sensors.clawTouch = true;
             }
 
-            if (gamepad1.b && robot.currentState == Robot.STATE.WAIT_FOR_START_SCORING) {
-                robot.currentState = Robot.STATE.INTAKE_RELATIVE;
+            if (gamepad1.b) {
+                Storage.ignore = true;
+            } else {
+                Storage.ignore = false;
             }
 
             // Driver B

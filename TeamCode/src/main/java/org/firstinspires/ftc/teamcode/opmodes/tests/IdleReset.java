@@ -17,7 +17,7 @@ public class IdleReset extends LinearOpMode {
         waitForStart();
 
         while(!isStopRequested()) {
-           robot.currentState = Robot.STATE.IDLE;
+           robot.currentState = Robot.STATE.INIT;
             robot.update();
         }
     }

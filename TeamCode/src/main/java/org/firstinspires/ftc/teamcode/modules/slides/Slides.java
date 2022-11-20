@@ -36,7 +36,8 @@ public class Slides {
     public double slidesError = 0.0;
     public static double slidesPercentMax = 0.98;
 
-    double maxSlidesSpeed = 82.9718558749; // inches per sec
+    // original: 82.9718558749
+    double maxSlidesSpeed = 82.9718558749 * 0.45; // inches per sec
 
     Outtake outtake;
 
@@ -104,7 +105,7 @@ public class Slides {
         slidesPID.i = slidesVelocityPID.i; // velocity I value
         slidesPID.d = slidesVelocityPID.d; // velocity D value
 
-        targetSlidesVelocity = Math.max(Math.min(slidesError * (maxSlidesSpeed/4.5), (maxSlidesSpeed*slidesPercentMax)),-maxSlidesSpeed*slidesPercentMax);
+        targetSlidesVelocity = Math.max(Math.min(slidesError * (maxSlidesSpeed/10), (maxSlidesSpeed*slidesPercentMax)),-maxSlidesSpeed*slidesPercentMax);
         slidesPower = slidesPID.update(targetSlidesVelocity - currentSlidesVelocity);
         motorPriorities.get(5).setTargetPower(slidesPower);
 

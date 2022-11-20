@@ -34,8 +34,8 @@ public class Robot {
     public ArrayList<MotorPriority> motorPriorities = new ArrayList<>();
     public ArrayList<MyServo> servos = new ArrayList<>();
 
-    public enum STATE { IDLE, INTAKE_RELATIVE, INTAKE_GLOBAL, WAIT_FOR_START_SCORING, SCORING_GLOBAL, SCORING_RELATIVE, ADJUST, DEPOSIT, RETRACT }
-    public STATE currentState = STATE.IDLE;
+    public enum STATE {INIT, INTAKE_RELATIVE, INTAKE_GLOBAL, WAIT_FOR_START_SCORING, SCORING_GLOBAL, SCORING_RELATIVE, ADJUST, DEPOSIT, RETRACT, PARK }
+    public STATE currentState = STATE.INIT;
 
     public Robot (HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
@@ -85,8 +85,18 @@ public class Robot {
         boolean isAtPoint;
 
         switch (currentState) {
-            case IDLE:
+            case INIT:
                 outtake.v4Bar.setTargetV4BarAngle(Math.toRadians(35));
+                outtake.slides.setTargetSlidesLength(0);
+                outtake.turret.setTargetTurretAngle(Math.toRadians(0));
+                if (outtake.isInPosition()) {
+                    claw.fullOpen();
+                }
+                break;
+            case PARK:
+                outtake.v4Bar.setTargetV4BarAngle(Math.toRadians(90));
+                outtake.slides.setTargetSlidesLength(0);
+                outtake.turret.setTargetTurretAngle(Math.toRadians(0));
                 if (outtake.isInPosition()) {
                     claw.fullOpen();
                 }
@@ -372,7 +382,7 @@ public class Robot {
     public void setConeHeight (double height) { coneHeight = height; }
     public void setPoleHeight (double height) { poleHeight = height; }
 
-    public void testMode () { currentState = STATE.IDLE; }
+    public void testMode () { currentState = STATE.INIT; }
 
     public void followTrajectory(Trajectory trajectory) {
         drivetrain.followTrajectoryAsync(trajectory);
