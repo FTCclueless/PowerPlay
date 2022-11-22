@@ -11,27 +11,24 @@ public class Actuation {
     public double targetActPosition = 0.0;
     public double actPower = 0.0;
 
-    MyServo act1, act2;
+    MyServo act;
     ArrayList<MyServo> servos;
 
-    double openPosition = 0.5;
-    double closePosition = 0.0;
+    double levelPosition = 0.0;
+    double tiltedPosition = 0.5;
 
     public Actuation(HardwareMap hardwareMap, ArrayList<MyServo> servos) {
         this.servos = servos;
 
-        act1 = new MyServo(hardwareMap.servo.get("act1"),"Torque",1,0,1);
-        act2 = new MyServo(hardwareMap.servo.get("act2"),"Torque",1,0,1);
+        act = new MyServo(hardwareMap.servo.get("act"),"Torque",1,0,1);
 
-        servos.add(3, act1);
-        servos.add(4, act2);
+        servos.add(1, act);
     }
 
     public void update() {
         updateActValues();
 
-        act1.setPosition(targetActPosition, actPower);
-        act2.setPosition(-targetActPosition, actPower);
+        act.setPosition(targetActPosition, actPower);
     }
 
     public void setTargetActPosition(double position) {
@@ -43,24 +40,18 @@ public class Actuation {
     }
 
     public void updateActValues() {
-        currentActPosition = act1.getCurrentPosition();
+        currentActPosition = act.getCurrentPosition();
     }
 
     public boolean isInPosition (double position) {
-        if (Math.abs(targetActPosition - currentActPosition) <= position) {
-            return true;
-        } else {
-            return false;
-        }
+        return Math.abs(targetActPosition - currentActPosition) <= position;
     }
 
-    public void open() {
-        act1.setPosition(openPosition, actPower);
-        act2.setPosition(-openPosition, actPower);
+    public void level() {
+        act.setPosition(levelPosition, actPower);
     }
 
-    public void close() {
-        act1.setPosition(closePosition, actPower);
-        act2.setPosition(-closePosition, actPower);
+    public void tilted() {
+        act.setPosition(tiltedPosition, actPower);
     }
 }

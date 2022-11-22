@@ -83,9 +83,8 @@ public class Auto extends LinearOpMode {
         TrajectorySequence to = drive.trajectorySequenceBuilder(origin)
                 .strafeTo(new Vector2d((48 + tOffsetx) * xsign, (0-tOffsety) * ysign))
                 .strafeTo(new Vector2d((48 + tOffsetx) * xsign, (11) * ysign))
-                .addDisplacementMarker(10, () -> {robot.currentState = Robot.STATE.RETRACT;})
                 .turn(-origin.getHeading())
-                .strafeTo(new Vector2d((36 + tOffsetx) * xsign, (11) * ysign)) // Half tile back
+                .strafeTo(new Vector2d((37) * xsign, (11) * ysign)) // Half tile back
                 .build();
 
         Trajectory cycle1 = drive.trajectoryBuilder(new Pose2d((36 + tOffsetx) * xsign, (11) * ysign))
@@ -93,7 +92,7 @@ public class Auto extends LinearOpMode {
                 .build();
 
         Trajectory cycle2 = drive.trajectoryBuilder(new Pose2d((72 + tOffsetx) * xsign, (11) * ysign))
-                .strafeTo(new Vector2d((36 + tOffsetx) * xsign, (11) * ysign))
+                .strafeTo(new Vector2d((37) * xsign, (11) * ysign))
                 .build();
 
         Pose2d parkingOrigin = cycle2.end(); // where the robot ends at the end of its cycles
@@ -150,13 +149,13 @@ public class Auto extends LinearOpMode {
 
         for (int i = 0; i < targetCycles; i++) {
             robot.currentState = Robot.STATE.RETRACT;
-            robot.startIntakeGlobal(cycle1.end(),new Pose2d((72-4)*xsign,12*ysign),-7+coneStackAdditionalHeight*(5-i));
+            robot.startIntakeGlobal(cycle1.end(),new Pose2d((72-4)*xsign,12*ysign),coneStackAdditionalHeight*(4-i));
             robot.followTrajectory(cycle1, this);
             while (robot.currentState == INTAKE_GLOBAL) {
                 robot.update();
             }
 
-            robot.startScoringGlobal(cycle2.end(),new Pose2d(24*xsign,0),30);
+            robot.startScoringGlobal(cycle2.end(),new Pose2d(24*xsign,0),36);
             robot.followTrajectory(cycle2, this);
             while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
                 robot.update();

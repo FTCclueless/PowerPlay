@@ -68,18 +68,55 @@ public class Outtake {
         TelemetryUtil.packet.put("isInPosition: ", isInPosition());
     }
 
-    long holdingTime = System.currentTimeMillis();
-
     public void update() {
         updateRelativePos();
 
-        // TODO: Clip code
+        boolean turretClips = isTurretGoThroughBad();
+
+        if (turretClips && targetSlidesLength < 9){
+            slides.setTargetSlidesLength(12);
+        }
+        else {
+            slides.setTargetSlidesLength(targetSlidesLength);
+        }
+        if (currentSlidesLength >= 9 || !turretClips){
+            turret.setTargetTurretAngle(targetTurretAngle);
+            extension.setTargetExtensionLength(targetExtensionLength);
+        }
 
         slides.update();
         turret.update();
         extension.update();
 
         updateTelemetry();
+    }
+
+    public void retract()  {
+        extension.retractExtension();
+        slides.setTargetSlidesLength(0);
+        turret.setTargetTurretAngle(Math.toRadians(0));
+    }
+
+    double a = Math.toRadians(20);
+    double b = Math.toRadians(35);
+    double c = Math.toRadians(-35);
+    double d = Math.toRadians(-20);
+
+    public boolean isTurretGoThroughBad() {
+        double clipTarget = clipAngle(targetTurretAngle);
+        double clipCurrent = clipAngle(currentTurretAngle);
+        if (clipTarget == Math.min(Math.max(clipTarget,a),b)
+                || clipCurrent == Math.min(Math.max(clipCurrent,a),b)
+                || Math.signum(targetTurretAngle - (a+b)/2) != Math.signum(currentTurretAngle  - (a+b)/2)){
+            return true;
+        }
+        if (clipTarget == Math.min(Math.max(clipTarget,c),d)
+                || clipCurrent == Math.min(Math.max(clipCurrent,c),d)
+                || Math.signum(targetTurretAngle - (c+d)/2) != Math.signum(currentTurretAngle  - (c+d)/2)){
+            return true;
+        }
+
+        return false;
     }
 
     public void updateRelativePos() {
