@@ -179,6 +179,10 @@ public class Robot {
 
                 outtake.setTargetRelative(extensionDistance*Math.cos(relativeAngle),extensionDistance*Math.sin(relativeAngle), this.scoringHeight); // changes dynamically based on driver input
 
+                if (this.scoringHeight <= 15) {
+                    currentState = STATE.SCORING_RELATIVE_WITHOUT_IMU;
+                }
+
                 if (startDeposit) {
 //                    offsetX = 0.0;
 //                    offsetY = 0.0;
@@ -190,6 +194,10 @@ public class Robot {
                 break;
             case SCORING_RELATIVE_WITHOUT_IMU:
                 outtake.setTargetRelative(extensionDistance*Math.cos(outtake.turret.getCurrentTurretAngle()),extensionDistance*Math.sin(outtake.turret.getCurrentTurretAngle()), this.scoringHeight); // changes dynamically based on driver input
+
+                if (this.scoringHeight > 15) {
+                    currentState = STATE.SCORING_RELATIVE_WITH_IMU;
+                }
 
                 if (startDeposit) {
                     startScoringRelative = false;
