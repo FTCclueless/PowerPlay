@@ -45,7 +45,7 @@ public class PinkTest extends LinearOpMode {
 
         waitForStart();
         if (!isStopRequested()) {
-            robot.followTrajectorySequence(seq);
+            robot.followTrajectorySequence(seq, this);
         }
     }
 }

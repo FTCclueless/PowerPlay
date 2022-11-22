@@ -49,8 +49,8 @@ public class BackAndForth extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
-            robot.followTrajectory(trajectoryForward);
-            robot.followTrajectory(trajectoryBackward);
+            robot.followTrajectory(trajectoryForward, this);
+            robot.followTrajectory(trajectoryBackward, this);
         }
     }
 }

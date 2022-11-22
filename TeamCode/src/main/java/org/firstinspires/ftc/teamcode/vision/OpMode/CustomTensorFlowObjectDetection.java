@@ -132,7 +132,7 @@ public class CustomTensorFlowObjectDetection extends LinearOpMode {
         waitForStart();
 
         if (opModeIsActive()) {
-            FtcDashboard.getInstance().startCameraStream(vuforia, 0);
+            FtcDashboard.getInstance().startCameraStream(tfod, 0);
             while (opModeIsActive()) {
                 if (tfod != null) {
                     // getUpdatedRecognitions() will return null if no new information is available since
@@ -172,9 +172,9 @@ public class CustomTensorFlowObjectDetection extends LinearOpMode {
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
          */
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        //int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(); //cameraMonitorViewId);
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
         if (!useWebCam)
             parameters.cameraDirection = CameraDirection.BACK;

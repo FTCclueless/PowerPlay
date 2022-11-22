@@ -26,7 +26,7 @@ public class PurpleTest extends LinearOpMode {
 
         waitForStart();
         if (!isStopRequested()) {
-            robot.followTrajectorySequence(seq);
+            robot.followTrajectorySequence(seq, this);
         }
     }
 }

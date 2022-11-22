@@ -80,7 +80,7 @@ public class BlueParkAuto extends LinearOpMode {
         TrajectorySequence to = drive.trajectorySequenceBuilder(origin)
                 .strafeTo(new Vector2d((48 + tOffsetx) * xsign, (0-tOffsety) * ysign))
                 .strafeTo(new Vector2d((48 + tOffsetx) * xsign, (11) * ysign))
-                .addDisplacementMarker(10, () -> {robot.currentState = Robot.STATE.PARK;})
+                .addDisplacementMarker(10, () -> {robot.currentState = Robot.STATE.INIT;})
                 .turn(-origin.getHeading())
                 .strafeTo(new Vector2d((36 + tOffsetx) * xsign, (11) * ysign)) // Half tile back
                 .build();
@@ -139,24 +139,16 @@ public class BlueParkAuto extends LinearOpMode {
             telemetry.update();
         }
 
+        robot.outtake.resetEncoders();
 
         waitForStart();
-        double coneStackAdditionalHeight = 1.38;
 
-        if (!isStopRequested()) {
-            robot.followTrajectorySequence(to);
+        robot.followTrajectorySequence(to, this);
 
-            while (robot.drivetrain.isBusy()) {
-                robot.update();
-            }
+        robot.followTrajectory(parks[parkingNum-1], this);
 
-            robot.followTrajectory(parks[parkingNum-1]);
+        Storage.currentPose = drive.getPoseEstimate();
 
-            while (robot.drivetrain.isBusy()) {
-                robot.update();
-            }
-
-            Storage.currentPose = drive.getPoseEstimate();
-        }
+        drive.setMotorPowers(0,0,0,0);
     }
 }

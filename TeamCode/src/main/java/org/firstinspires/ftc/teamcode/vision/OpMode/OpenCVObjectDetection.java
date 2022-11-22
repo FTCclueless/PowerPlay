@@ -1,14 +1,17 @@
-package org.firstinspires.ftc.teamcode.vision;
+package org.firstinspires.ftc.teamcode.vision.opmode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.util.SafeSleep;
+import org.firstinspires.ftc.teamcode.vision.OpenCVObjectDetector;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
+import org.openftc.easyopencv.OpenCvInternalCamera2;
 
 @Autonomous(name="OpenCV Object Detector")
 public class OpenCVObjectDetection extends LinearOpMode {
@@ -28,7 +31,7 @@ public class OpenCVObjectDetection extends LinearOpMode {
         // https://github.com/OpenFTC/EasyOpenCV/blob/master/examples/src/main/java/org/openftc/easyopencv/examples/InternalCameraExample.java
         // Initialize the back-facing camera
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
+        phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera2(OpenCvInternalCamera2.CameraDirection.BACK, cameraMonitorViewId);
         // Connect to the camera
         phoneCam.openCameraDevice();
         // Use the OpenCVObjectDetector pipeline
@@ -79,9 +82,11 @@ public class OpenCVObjectDetection extends LinearOpMode {
          * Wait for the user to press start on the Driver Station
          */
         waitForStart();
+        FtcDashboard.getInstance().startCameraStream(phoneCam, 0);
 
         while (opModeIsActive())
         {
+
             OpenCVObjectDetector.SkystoneLocation location = detector.getLocation();
             if (location != OpenCVObjectDetector.SkystoneLocation.NONE) {
                 // Move to the left / right
@@ -113,7 +118,7 @@ public class OpenCVObjectDetection extends LinearOpMode {
              * excess CPU cycles for no reason. (By default, telemetry is only sent to the DS at 4Hz
              * anyway). Of course in a real OpMode you will likely not want to do this.
              */
-            sleep(100);
+            SafeSleep.sleep_milliseconds(this,100);
         }
         /*
          * IMPORTANT NOTE: calling stopStreaming() will indeed stop the stream of images
@@ -135,6 +140,8 @@ public class OpenCVObjectDetection extends LinearOpMode {
          * the above "important note".
          */
         phoneCam.stopStreaming();
+        FtcDashboard.getInstance().stopCameraStream();
+
         //phoneCam.closeCameraDevice();
 
     }

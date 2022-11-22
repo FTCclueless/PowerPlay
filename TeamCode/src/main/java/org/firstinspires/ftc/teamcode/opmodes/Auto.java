@@ -140,28 +140,30 @@ public class Auto extends LinearOpMode {
         }
 
         robot.currentState = Robot.STATE.INIT;
+        robot.outtake.resetEncoders();
 
         waitForStart();
+
         double coneStackAdditionalHeight = 1.38;
 
-        if (!isStopRequested()) {
-            robot.followTrajectorySequence(to);
+        robot.followTrajectorySequence(to, this);
 
-            for (int i = 0; i < targetCycles; i++) {
-                robot.currentState = Robot.STATE.RETRACT;
-                robot.startIntakeGlobal(cycle1.end(),new Pose2d((72-4)*xsign,12*ysign),-7+coneStackAdditionalHeight*(5-i));
-                robot.followTrajectory(cycle1);
-                while (robot.currentState == INTAKE_GLOBAL) {
-                    robot.update();
-                }
-
-                robot.startScoringGlobal(cycle2.end(),new Pose2d(24*xsign,0),30);
-                robot.followTrajectory(cycle2);
-                while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
-                    robot.update();
-                }
+        for (int i = 0; i < targetCycles; i++) {
+            robot.currentState = Robot.STATE.RETRACT;
+            robot.startIntakeGlobal(cycle1.end(),new Pose2d((72-4)*xsign,12*ysign),-7+coneStackAdditionalHeight*(5-i));
+            robot.followTrajectory(cycle1, this);
+            while (robot.currentState == INTAKE_GLOBAL) {
+                robot.update();
             }
-            robot.followTrajectory(parks[parkingNum]);
+
+            robot.startScoringGlobal(cycle2.end(),new Pose2d(24*xsign,0),30);
+            robot.followTrajectory(cycle2, this);
+            while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
+                robot.update();
+            }
         }
+        robot.followTrajectory(parks[parkingNum], this);
+
+        drive.setMotorPowers(0,0,0,0);
     }
 }

@@ -5,15 +5,14 @@ import android.util.Log;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.modules.extension.Extension;
 import org.firstinspires.ftc.teamcode.modules.slides.Slides;
 import org.firstinspires.ftc.teamcode.modules.turret.Turret;
-import org.firstinspires.ftc.teamcode.modules.v4bar.V4Bar;
 import org.firstinspires.ftc.teamcode.sensors.Sensors;
 import org.firstinspires.ftc.teamcode.util.Model;
 import org.firstinspires.ftc.teamcode.util.MotorPriority;
 import org.firstinspires.ftc.teamcode.util.MyServo;
 import org.firstinspires.ftc.teamcode.util.Pose3D;
-import org.firstinspires.ftc.teamcode.util.Storage;
 import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
 import java.util.ArrayList;
@@ -24,25 +23,20 @@ public class Outtake {
 
     public Turret turret;
     public Slides slides;
-    public V4Bar v4Bar;
+    public Extension extension;
 
     ArrayList<MotorPriority> motorPriorities;
-
-    double v4BarLength = 12.0;
 
     double targetHeight = 0.0;
     double targetExtension = 0.0;
 
     public double targetTurretAngle = 0.0;
     public double targetSlidesLength = 0.0;
-    public double targetV4BarAngle = 0.0;
-
-    double currentExtension = 0.0;
-    double currentHeight = 0.0;
+    public double targetExtensionLength = 0.0;
 
     double currentTurretAngle = 0.0;
     double currentSlidesLength = 0.0;
-    double currentV4BarAngle = 0.0;
+    double currentExtensionLength = 0.0;
 
     double turretXOffset = -2.0;
     double turretYOffset = 0.0;
@@ -62,7 +56,12 @@ public class Outtake {
 
         turret = new Turret(hardwareMap, motorPriorities, sensors, this);
         slides = new Slides(hardwareMap, motorPriorities, sensors, this);
-        v4Bar = new V4Bar(hardwareMap, servos, this);
+        extension = new Extension(hardwareMap, servos, this);
+    }
+
+    public void resetEncoders () {
+        slides.resetEncoders();
+        turret.resetEncoders();
     }
 
     public void updateTelemetry () {
@@ -74,24 +73,11 @@ public class Outtake {
     public void update() {
         updateRelativePos();
 
-        if ((targetSlidesLength + (Math.sin(targetV4BarAngle) * v4BarLength) <= 6) && (clipAngle(Math.abs(currentTurretAngle-targetTurretAngle)) > Math.toRadians(2.5)) && (System.currentTimeMillis() - holdingTime <= 750) && !Storage.ignore) { // checks if the target height is low & turret isn't close to target turret angle
-            slides.setTargetSlidesLength(10); // lifts slides up
-            v4Bar.setTargetV4BarAngle(Math.toRadians(80)); // lifts v4bar up
-            Log.e("avoiding hitting self", "");
-        } else { // only sets the v4bar and slides unless the turret is in position or the height is high
-            holdingTime = System.currentTimeMillis();
-            v4Bar.setTargetV4BarAngle(targetV4BarAngle);
-            slides.setTargetSlidesLength(targetSlidesLength);
-        }
-
-        if (currentSlidesLength + Math.sin(currentV4BarAngle)*v4BarLength > 6) { // checks if the slides & v4bar are high
-            turret.setTargetTurretAngle(targetTurretAngle);
-        }
-
+        // TODO: Clip code
 
         slides.update();
         turret.update();
-        v4Bar.update();
+        extension.update();
 
         updateTelemetry();
     }
@@ -99,50 +85,23 @@ public class Outtake {
     public void updateRelativePos() {
         currentTurretAngle = turret.getCurrentTurretAngle();
         currentSlidesLength = slides.getCurrentSlidesLength();
-        currentV4BarAngle = v4Bar.getCurrentV4BarAngle();
+        currentExtensionLength = extension.getCurrentExtensionLength();
 
-        currentExtension = Math.cos(currentV4BarAngle) * v4BarLength;
-        currentHeight = currentSlidesLength + (Math.sin(currentV4BarAngle) * v4BarLength);
-
-        // targetSlidesLength = targetHeight - (Math.sin(currentV4BarAngle) * v4BarLength);
-
-        x = Math.cos(currentTurretAngle) * currentExtension;
-        y = Math.sin(currentTurretAngle) * currentExtension;
-        z = currentHeight;
+        x = Math.cos(currentTurretAngle) * currentExtensionLength;
+        y = Math.sin(currentTurretAngle) * currentExtensionLength;
+        z = currentSlidesLength;
     }
 
     public void setTargetRelative(double targetX, double targetY, double targetZ) {
-        targetHeight = Math.max(-10,Math.min(targetZ,32));
-        targetExtension = Math.sqrt(Math.pow((targetX),2) + Math.pow((targetY),2));
-
-        if (targetExtension > v4BarLength) {
-            targetExtension = v4BarLength;
-        }
+        targetHeight = Math.max(0, Math.min(targetZ, 39.08666));
+        targetExtension = Math.min(extension.baseSlidesExtension + extension.strokeLength, Math.max(extension.baseSlidesExtension, Math.sqrt(Math.pow((targetX),2) + Math.pow((targetY),2))));
 
         targetTurretAngle = Math.atan2(targetY,targetX);
-
-        // this allows turret angle be more efficient by instead of doing full 180s move v4bar back
-        if (Math.abs(targetTurretAngle) > Math.PI) { // Math.PI = 180 deg
-            if(Math.abs(clipAngle(targetTurretAngle - Math.PI) - currentTurretAngle) < Math.abs(targetTurretAngle - currentTurretAngle)) { // this finds out which angle is closet to current and moves to that
-                targetTurretAngle = clipAngle(targetTurretAngle - Math.PI);
-                targetExtension *= -1;
-            }
-        }
-        targetV4BarAngle = Math.acos(targetExtension / v4BarLength);
-        targetSlidesLength = targetHeight - (Math.sin(targetV4BarAngle) * v4BarLength); // comment out this if you want the v4bar to stay horizontal as slides are moving and then uncomment line 69
-
-        if (targetSlidesLength < 0) {
-            targetV4BarAngle = (targetV4BarAngle * -1);
-
-            if (targetV4BarAngle < Math.toRadians(-90)) { // in quadrant 3 --> will go into robot
-                targetV4BarAngle += 2*Math.PI;
-            }
-
-            targetSlidesLength = targetHeight - (Math.sin(targetV4BarAngle) * v4BarLength);
-        }
+        targetExtensionLength = targetExtension;
+        targetSlidesLength = Math.max(0, targetHeight);
 
         if (isIntersectingRobot(targetX, targetY, targetZ)) { // checks if the target position is a valid position
-            targetV4BarAngle = currentV4BarAngle;
+            targetExtensionLength = currentExtensionLength;
             targetTurretAngle = currentTurretAngle;
             targetSlidesLength = currentSlidesLength;
 
@@ -181,11 +140,7 @@ public class Outtake {
     }
 
     public boolean isInPosition() {
-        if(turret.isInPosition(5) && slides.isInPosition(1.5) && v4Bar.isInPosition(5)) {
-            return true;
-        } else {
-            return false;
-        }
+        return (turret.isInPosition(5) && slides.isInPosition(1.5) && extension.isInPosition(2));
     }
 
     public boolean isIntersectingRobot (double targetX, double targetY, double targetZ) {

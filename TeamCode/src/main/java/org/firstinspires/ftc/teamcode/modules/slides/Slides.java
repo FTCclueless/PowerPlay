@@ -37,7 +37,7 @@ public class Slides {
     public static double slidesPercentMax = 0.98;
 
     // original: 82.9718558749
-    double maxSlidesSpeed = 82.9718558749 * 0.45; // inches per sec
+    double maxSlidesSpeed = 82.9718558749 * 0.9; // inches per sec
 
     Outtake outtake;
 
@@ -51,15 +51,18 @@ public class Slides {
 
         slide2.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        if (Storage.resetEncoderValues) {
-            slide1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            slide2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        }
-
         slide1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         slide2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         motorPriorities.add(5, new MotorPriority(new DcMotorEx[] {slide1, slide2},3,4));
+    }
+
+    public void resetEncoders () {
+        slide1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slide2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        slide1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        slide2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void updateTelemetry() {
@@ -105,7 +108,7 @@ public class Slides {
         slidesPID.i = slidesVelocityPID.i; // velocity I value
         slidesPID.d = slidesVelocityPID.d; // velocity D value
 
-        targetSlidesVelocity = Math.max(Math.min(slidesError * (maxSlidesSpeed/10), (maxSlidesSpeed*slidesPercentMax)),-maxSlidesSpeed*slidesPercentMax);
+        targetSlidesVelocity = Math.max(Math.min(slidesError * (maxSlidesSpeed/5), (maxSlidesSpeed*slidesPercentMax)),-maxSlidesSpeed*slidesPercentMax);
         slidesPower = slidesPID.update(targetSlidesVelocity - currentSlidesVelocity);
         motorPriorities.get(5).setTargetPower(slidesPower);
 
@@ -155,11 +158,7 @@ public class Slides {
     }
 
     public boolean isInPosition (double inches) {
-        if (Math.abs(targetSlidesLength - currentSlidesLength) <= inches) {
-            return true;
-        } else {
-            return false;
-        }
+        return (Math.abs(targetSlidesLength - currentSlidesLength) <= inches);
     }
 
     public void updateSlidesPID (double p, double i, double d) {

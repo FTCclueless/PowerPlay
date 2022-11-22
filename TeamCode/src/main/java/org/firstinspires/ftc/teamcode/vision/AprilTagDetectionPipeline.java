@@ -1,5 +1,7 @@
-package org.firstinspires.ftc.teamcode.vision;//package org.firstinspires.ftc.teamcode.vision;
+package org.firstinspires.ftc.teamcode.vision;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.util.RobotLogger;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -17,7 +19,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 
 
-public class AprilTagDetectionPipeline extends OpenCvPipeline
+public class AprilTagDetectionPipeline extends MyOpenCvPipeline
 {
     private long nativeApriltagPtr;
     private Mat grey = new Mat();
@@ -122,7 +124,7 @@ public class AprilTagDetectionPipeline extends OpenCvPipeline
             needToSetDecimation = true;
         }
     }
-
+    @Override
     public ArrayList<AprilTagDetection> getLatestDetections()
     {
         return detections;
@@ -266,6 +268,9 @@ public class AprilTagDetectionPipeline extends OpenCvPipeline
         Calib3d.solvePnP(points3d, points2d, cameraMatrix, new MatOfDouble(), pose.rvec, pose.tvec, false);
 
         return pose;
+    }
+    public void setTelemetry(Telemetry tele) {
+        telemetry = tele;
     }
 
     /*
