@@ -154,16 +154,16 @@ public class Robot {
                 outtake.retract();
                 outtake.slides.setTargetSlidesLength(5);
                 if (startScoringRelative) {
-                    extensionDistance = 8.0;
+                    extensionDistance = 12.0;
                     startScoringRelative = false;
-                    if (this.scoringHeight <= 15) {
+                    if (this.scoringHeight <= 5) {
                         currentState = STATE.SCORING_RELATIVE_WITHOUT_IMU;
                     } else {
                         currentState = STATE.SCORING_RELATIVE_WITH_IMU;
                     }
                 }
                 if (startScoringGlobal) {
-                    extensionDistance = 8.0;
+                    extensionDistance = 12.0;
                     startScoringGlobal = false;
                     currentState = STATE.SCORING_GLOBAL;
                 }
@@ -179,7 +179,7 @@ public class Robot {
 
                 outtake.setTargetRelative(extensionDistance*Math.cos(relativeAngle),extensionDistance*Math.sin(relativeAngle), this.scoringHeight); // changes dynamically based on driver input
 
-                if (this.scoringHeight <= 15) {
+                if (this.scoringHeight <= 5) {
                     currentState = STATE.SCORING_RELATIVE_WITHOUT_IMU;
                 }
 
@@ -195,7 +195,7 @@ public class Robot {
             case SCORING_RELATIVE_WITHOUT_IMU:
                 outtake.setTargetRelative(extensionDistance*Math.cos(outtake.turret.getCurrentTurretAngle()),extensionDistance*Math.sin(outtake.turret.getCurrentTurretAngle()), this.scoringHeight); // changes dynamically based on driver input
 
-                if (this.scoringHeight > 15) {
+                if (this.scoringHeight > 5) {
                     currentState = STATE.SCORING_RELATIVE_WITH_IMU;
                 }
 
