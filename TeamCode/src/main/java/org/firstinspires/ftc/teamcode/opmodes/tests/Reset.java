@@ -18,8 +18,8 @@ public class Reset extends LinearOpMode {
         waitForStart();
 
         while(!isStopRequested()) {
-            robot.outtake.v4Bar.setTargetV4BarAngle(Math.toRadians(90));
-            if (robot.outtake.v4Bar.isInPosition(5)) {
+            robot.outtake.extension.retractExtension();
+            if (robot.outtake.extension.isInPosition(5)) {
                 robot.claw.close();
             }
             robot.update();

@@ -17,7 +17,7 @@ public class BlueTeleop extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Storage.resetEncoderValues = true;
+        Storage.resetEncoderValues = false;
 
         Robot robot = new Robot(hardwareMap);
         Drivetrain drive = robot.drivetrain;
@@ -45,12 +45,6 @@ public class BlueTeleop extends LinearOpMode {
 
             if (gamepad1.a && robot.currentState == Robot.STATE.INTAKE_RELATIVE) {
                 sensors.clawTouch = true;
-            }
-
-            if (gamepad1.b) {
-                Storage.ignore = true;
-            } else {
-                Storage.ignore = false;
             }
 
             // Driver B

@@ -45,7 +45,7 @@ public class V4Bar {
 
     public void setTargetV4BarAngle(double angle) {
         targetV4BarAngle = angle;
-        outtake.targetV4BarAngle = angle;
+        outtake.targetExtensionLength = angle;
     }
 
     public void setTargetV4BarAngle(double angle, double power) {

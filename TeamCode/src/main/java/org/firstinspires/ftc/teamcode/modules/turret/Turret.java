@@ -39,13 +39,14 @@ public class Turret {
 
         turret = hardwareMap.get(DcMotorEx.class, "turret");
 
-        if (Storage.resetEncoderValues) {
-            turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        }
-
         turret.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         motorPriorities.add(4, new MotorPriority(turret,4,4));
+    }
+
+    public void resetEncoders () {
+        turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        turret.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void updateTelemetry() {

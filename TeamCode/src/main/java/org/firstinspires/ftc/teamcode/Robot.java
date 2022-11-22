@@ -5,6 +5,8 @@ import android.util.Log;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -34,7 +36,7 @@ public class Robot {
     public ArrayList<MotorPriority> motorPriorities = new ArrayList<>();
     public ArrayList<MyServo> servos = new ArrayList<>();
 
-    public enum STATE {INIT, INTAKE_RELATIVE, INTAKE_GLOBAL, WAIT_FOR_START_SCORING, SCORING_GLOBAL, SCORING_RELATIVE, ADJUST, DEPOSIT, RETRACT, PARK }
+    public enum STATE {INIT, INTAKE_RELATIVE, INTAKE_GLOBAL, WAIT_FOR_START_SCORING, SCORING_GLOBAL, SCORING_RELATIVE, ADJUST, DEPOSIT, RETRACT }
     public STATE currentState = STATE.INIT;
 
     public Robot (HardwareMap hardwareMap) {
@@ -86,15 +88,7 @@ public class Robot {
 
         switch (currentState) {
             case INIT:
-                outtake.v4Bar.setTargetV4BarAngle(Math.toRadians(35));
-                outtake.slides.setTargetSlidesLength(0);
-                outtake.turret.setTargetTurretAngle(Math.toRadians(0));
-                if (outtake.isInPosition()) {
-                    claw.fullOpen();
-                }
-                break;
-            case PARK:
-                outtake.v4Bar.setTargetV4BarAngle(Math.toRadians(90));
+                outtake.extension.retractExtension();
                 outtake.slides.setTargetSlidesLength(0);
                 outtake.turret.setTargetTurretAngle(Math.toRadians(0));
                 if (outtake.isInPosition()) {
@@ -198,7 +192,7 @@ public class Robot {
                 claw.open();
                 if(System.currentTimeMillis() - timeSinceClawOpen >= 300) {
                     claw.close();
-                    outtake.v4Bar.setTargetV4BarAngle(90);
+                    outtake.extension.retractExtension();
                     if(System.currentTimeMillis() - timeSinceClawOpen >= 650) {
                         currentState = STATE.INTAKE_RELATIVE;
                     }
@@ -331,7 +325,7 @@ public class Robot {
         }
     }
 
-    double targetLoopLength = 0.1; //Sets the target loop time in milli seconds
+    double targetLoopLength = 0.015; //Sets the target loop time in milli seconds
 
     public void updateMotors() {
         double numMotorsUpdated = 0;
@@ -384,16 +378,16 @@ public class Robot {
 
     public void testMode () { currentState = STATE.INIT; }
 
-    public void followTrajectory(Trajectory trajectory) {
+    public void followTrajectory(Trajectory trajectory, LinearOpMode opMode) {
         drivetrain.followTrajectoryAsync(trajectory);
-        while(drivetrain.isBusy()) {
+        while(drivetrain.isBusy() && opMode.opModeIsActive()) {
             update();
         }
     }
 
-    public void followTrajectorySequence(TrajectorySequence trajectorySequence) {
+    public void followTrajectorySequence(TrajectorySequence trajectorySequence, LinearOpMode opMode) {
         drivetrain.followTrajectorySequenceAsync(trajectorySequence);
-        while(drivetrain.isBusy()) {
+        while(drivetrain.isBusy() && opMode.opModeIsActive()) {
             update();
         }
     }

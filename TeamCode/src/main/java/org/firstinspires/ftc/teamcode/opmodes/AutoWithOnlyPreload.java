@@ -140,19 +140,21 @@ public class AutoWithOnlyPreload extends LinearOpMode {
 
         robot.currentState = Robot.STATE.INIT;
 
+        robot.outtake.resetEncoders();
+
         waitForStart();
 
-        if (!isStopRequested()) {
-            robot.followTrajectorySequence(to);
+        robot.followTrajectorySequence(to, this);
 
-            robot.currentState = Robot.STATE.RETRACT;
-            robot.startScoringGlobal(cycle2.end(),new Pose2d(24*xsign,0),30);
-            robot.followTrajectory(cycle2);
-            while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
-                robot.update();
-            }
-
-            robot.followTrajectory(parks[parkingNum]);
+        robot.currentState = Robot.STATE.RETRACT;
+        robot.startScoringGlobal(cycle2.end(),new Pose2d(24*xsign,0),30);
+        robot.followTrajectory(cycle2, this);
+        while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
+            robot.update();
         }
+
+        robot.followTrajectory(parks[parkingNum], this);
+
+        drive.setMotorPowers(0,0,0,0);
     }
 }
