@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.vision;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -13,7 +12,9 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.util.RobotLogger;
 
+import java.util.ArrayList;
 import java.util.List;
+
 
 public class TFODWrapper {
     String TFOD_MODEL_FILE;
@@ -21,35 +22,49 @@ public class TFODWrapper {
     String[] LABELS;
     Telemetry telemetry;
     HardwareMap hardwareMap;
+    boolean cameraFineControlEnabled;
 
     private static String TAG = "TFODWrapper";
     private static final String VUFORIA_KEY =
             "ARjSEzX/////AAABmTyfc/uSOUjluYpQyDMk15tX0Mf3zESzZKo6V7Y0O/qtPvPQOVben+DaABjfl4m5YNOhGW1HuHywuYGMHpJ5/uXY6L8Mu93OdlOYwwVzeYBhHZx9le+rUMr7NtQO/zWEHajiZ6Jmx7K+A+UmRZMpCmr//dMQdlcuyHmPagFERkl4fdP0UKsRxANaHpwfQcY3npBkmgE8XsmK4zuFEmzfN2/FV0Cns/tiTfXtx1WaFD0YWYfkTHRyNwhmuBxY6MXNmaG8VlLwJcoanBFmor2PVBaRYZ9pnJ4TJU5w25h1lAFAFPbLTz1RT/UB3sHT5CeG0bMyM4mTYLi9SHPOUQjmIomxp9D7R39j8g5G7hiKr2JP";  //Variable Place--Remember to insert key here
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
+    private LinearOpMode opMode;
+    private CameraFineControl cameraFineControl;
+    private final Object detectionsUpdateSync = new Object();
+    List<Recognition> detectionsUpdate = new ArrayList<>();
+    private List<Recognition> detections = new ArrayList<>();
 
+    public void setCameraFindControlFlag(boolean flag) {
+        cameraFineControlEnabled = flag;
+    }
+    public boolean getCameraFindControlFlag() {
+        return cameraFineControlEnabled;
+    }
     public TFODWrapper(String model_file, String[] labels, boolean webCamera, Telemetry tele, HardwareMap hwMap) {
         TFOD_MODEL_FILE  = model_file;
         useWebCam = webCamera;
         LABELS = labels;
         telemetry = tele;
         hardwareMap = hwMap;
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        cameraFineControlEnabled = false;
     }
     public void init() {
         RobotLogger.dd(TAG, "init TFODWrapper");
-
         initVuforia();
         initTfod();
         telemetry.addData(">", "TFOD initialized");
         RobotLogger.dd(TAG, "Vuforia/Tfod initialized");
         telemetry.update();
     }
+
     private void initVuforia() {
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
          */
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+        //int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();//cameraMonitorViewId);
 
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
         if (!useWebCam)
@@ -59,7 +74,6 @@ public class TFODWrapper {
         //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
     }
-
 
     private void initTfod() {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
@@ -84,25 +98,54 @@ public class TFODWrapper {
             // should be set to the value of the images used to create the TensorFlow Object Detection model
             // (typically 16/9).
             tfod.setZoom(1.0, 16.0/9.0);
+            RobotLogger.dd(TAG, "camera name: " + vuforia.getCameraName().toString());
+            if (useWebCam) {
+                cameraFineControl = new CameraFineControl(vuforia, telemetry, tfod);
+            }
         }
     }
+    public void setOpMode(LinearOpMode opmode)
+    {
+        opMode = opmode;
+    }
+    public List<Recognition> getLatestDetections()
+    {
+        return detections;
+    }
 
+    public List<Recognition> getDetectionsUpdate()
+    {
+        synchronized (detectionsUpdateSync)
+        {
+            List<Recognition> ret = detectionsUpdate;
+            detectionsUpdate = null;
+            return ret;
+        }
+    }
+    public TFObjectDetector getTFOD() {
+        return tfod;
+    }
     public void start() {
-        RobotLogger.dd(TAG, "run TFOD");
+        RobotLogger.dd(TAG, "run TF object detection");
 
         if (tfod == null) return;
         // getUpdatedRecognitions() will return null if no new information is available since
         // the last time that call was made.
 
-        List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-        if (updatedRecognitions != null) {
-            RobotLogger.dd("", "TFOD detected: " + updatedRecognitions.size());
+        detections = tfod.getUpdatedRecognitions();
+        synchronized (detectionsUpdateSync)
+        {
+            detectionsUpdate = detections;
+        }
 
-            telemetry.addData("# Objects Detected", updatedRecognitions.size());
+        if (detections != null) {
+            RobotLogger.dd(TAG, "TFOD detected: " + detections.size());
 
+            telemetry.addData("# Objects Detected", detections.size());
+/*
             // step through the list of recognitions and display image position/size information for each one
             // Note: "Image number" refers to the randomized image orientation/number
-            for (Recognition recognition : updatedRecognitions) {
+            for (Recognition recognition : detections) {
                 double col = (recognition.getLeft() + recognition.getRight()) / 2 ;
                 double row = (recognition.getTop()  + recognition.getBottom()) / 2 ;
                 double width  = Math.abs(recognition.getRight() - recognition.getLeft()) ;
@@ -113,9 +156,14 @@ public class TFODWrapper {
                 telemetry.addData("- Position (Row/Col)","%.0f / %.0f", row, col);
                 telemetry.addData("- Size (Width/Height)","%.0f / %.0f", width, height);
             }
-            telemetry.update();
+ */
         }
+        if (useWebCam && cameraFineControlEnabled) {
+            cameraFineControl.doCameraFineControl();
+        }
+        telemetry.update();
     }
+
     public void stop() {
         RobotLogger.dd(TAG, "stop TFODWrapper");
         if (tfod != null) {

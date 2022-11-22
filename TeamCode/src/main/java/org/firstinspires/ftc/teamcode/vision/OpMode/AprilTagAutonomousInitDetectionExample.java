@@ -1,22 +1,36 @@
-package org.firstinspires.ftc.teamcode.vision;
+package org.firstinspires.ftc.teamcode.vision.opmode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.util.RobotLogger;
+import org.firstinspires.ftc.teamcode.util.SafeSleep;
+import org.firstinspires.ftc.teamcode.vision.AprilTagDetectionPipeline;
+import org.firstinspires.ftc.teamcode.vision.CameraFineControl;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
+import org.openftc.easyopencv.OpenCvInternalCamera2;
+import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.ArrayList;
-
+// https://github.com/OpenFTC/EOCV-AprilTag-Plugin
+@Config
 @TeleOp
 public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
 {
+    public static boolean enableCameraControl = false;
+    public static boolean useWebCamera = true;
     OpenCvCamera camera;
+    OpenCvWebcam webCamera;
+    boolean cameraOpened = false;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
+    private CameraFineControl cameraFineControl = null;
 
     static final double FEET_PER_METER = 3.28084;
 
@@ -32,16 +46,22 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
     // UNITS ARE METERS
     double tagsize = 0.166;
 
-    int ID_TAG_OF_INTEREST = 18; // Tag ID 18 from the 36h11 family
+    int ID_TAG_OF_INTEREST = 20; // Tag ID 1 from the 36h11 family
 
     AprilTagDetection tagOfInterest = null;
 
     @Override
     public void runOpMode()
     {
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        //camera = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
+        if (useWebCamera) {
+            webCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+            camera = webCamera;
+        }
+        else
+            camera = OpenCvCameraFactory.getInstance().createInternalCamera2(OpenCvInternalCamera2.CameraDirection.BACK, cameraMonitorViewId);
+
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
 
         camera.setPipeline(aprilTagDetectionPipeline);
@@ -50,7 +70,8 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
             @Override
             public void onOpened()
             {
-                camera.startStreaming(640,480, OpenCvCameraRotation.UPRIGHT); // need to change for phone back camera
+                camera.startStreaming(640,480, OpenCvCameraRotation.SIDEWAYS_LEFT); // need to change for phone back camera
+                cameraOpened = true;
             }
 
             @Override
@@ -61,6 +82,10 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
         });
 
         telemetry.setMsTransmissionInterval(50);
+        while (cameraOpened == false) {
+            sleep(200);
+        }
+        FtcDashboard.getInstance().startCameraStream(camera, 0);
 
         /*
          * The INIT-loop:
@@ -69,14 +94,15 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
         while (!isStarted() && !isStopRequested())
         {
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
+            RobotLogger.dd("", "num of tags detected: " + currentDetections.size());
 
             if(currentDetections.size() != 0)
             {
                 boolean tagFound = false;
-
                 for(AprilTagDetection tag : currentDetections)
                 {
-                    if(tag.id == ID_TAG_OF_INTEREST)
+                    RobotLogger.dd("", "detected tag ID: " + tag.id);
+                    if(tag.id <= ID_TAG_OF_INTEREST)
                     {
                         tagOfInterest = tag;
                         tagFound = true;
@@ -86,7 +112,7 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
 
                 if(tagFound)
                 {
-                    telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
+                    telemetry.addLine("Tag of interest is in sight! " + currentDetections.get(0).id + "\n\nLocation data:");
                     tagToTelemetry(tagOfInterest);
                 }
                 else
@@ -120,10 +146,19 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
                 }
 
             }
-
+            if(useWebCamera && enableCameraControl) {
+                while (! cameraOpened) {
+                    SafeSleep.sleep_milliseconds(this, 10);
+                }
+                if (cameraFineControl == null) {
+                    cameraFineControl = new CameraFineControl(telemetry, webCamera);
+                }
+                cameraFineControl.doCameraFineControl();
+            }
             telemetry.update();
             sleep(20);
         }
+        FtcDashboard.getInstance().stopCameraStream();
 
         /*
          * The START command just came in: now work off the latest snapshot acquired

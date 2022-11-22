@@ -10,6 +10,7 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
+import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
@@ -21,8 +22,10 @@ abstract class MyOpenCvPipeline extends OpenCvPipeline {
     public void setTelemetry(Telemetry tele) {
         telemetry = tele;
     }
+    public ArrayList<AprilTagDetection> getLatestDetections() {
+        return null;
+    }
 }
-
 //https://github.com/superarash1/HHH_FTC_PowerPlay_2022-2033/blob/main/Team8109_Rise/src/main/java/org/firstinspires/ftc/team8109_Rise/Hardware/Sensors/Camera/OpenCV/VisionPipelines/ConeTracker.java
 public class ConeTracker extends MyOpenCvPipeline {
     private String TAG = "ConeTracker";

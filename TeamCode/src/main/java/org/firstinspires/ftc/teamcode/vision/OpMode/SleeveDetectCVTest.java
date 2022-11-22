@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.vision.OpMode;
+package org.firstinspires.ftc.teamcode.vision.opmode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -17,8 +17,8 @@ import org.openftc.easyopencv.OpenCvWebcam;
 @Config
 @TeleOp(name="SleeveDetectCVTest", group ="Concept")
 public class SleeveDetectCVTest extends LinearOpMode {
-    public static boolean useWebCamera = true;
-    public static boolean enableCrop = true;
+    public static boolean useWebCamera = false;
+    public static boolean enableCrop = false;
     // Handle hardware stuff...
     int width = 320;
     int height = 240;
