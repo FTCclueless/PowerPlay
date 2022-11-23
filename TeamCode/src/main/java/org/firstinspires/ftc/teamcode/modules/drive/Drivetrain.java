@@ -245,7 +245,7 @@ public class Drivetrain extends MecanumDrive {
             motorPriorities.get(3).setTargetPower(forward-left+turn);
         }
 
-        if((trajectorySequenceRunner.getLastPoseError().getX() < xThreshold) && (trajectorySequenceRunner.getLastPoseError().getY() < yThreshold) && (trajectorySequenceRunner.getLastPoseError().getHeading() < headingThreshold)) {
+        if((Math.abs(trajectorySequenceRunner.getLastPoseError().getX()) < xThreshold) && (Math.abs(trajectorySequenceRunner.getLastPoseError().getY()) < yThreshold) && (Math.abs(trajectorySequenceRunner.getLastPoseError().getHeading()) < headingThreshold)) {
             breakFollowing();
             setMotorPowers(0,0,0,0);
         }
