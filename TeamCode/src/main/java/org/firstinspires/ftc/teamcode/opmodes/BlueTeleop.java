@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.util.Storage;
 public class BlueTeleop extends LinearOpMode {
 
     boolean isBlue = true;
-    double scoringHeight = 30;
+    double scoringHeight = 35;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -49,26 +49,26 @@ public class BlueTeleop extends LinearOpMode {
 
             // Driver B
             if (gamepad2.x) { // ground
-                scoringHeight = 2;
+                scoringHeight = 0;
             }
 
             if (gamepad2.a) { // low
-                scoringHeight = 10;
+                scoringHeight = 15;
             }
 
             if (gamepad2.b) { // medium
-                scoringHeight = 20;
+                scoringHeight = 25;
             }
 
             if (gamepad2.y) { // high
-                scoringHeight = 30;
+                scoringHeight = 35;
             }
 
-            if ((robot.currentState == Robot.STATE.WAIT_FOR_START_SCORING && gamepad2.right_bumper) || robot.currentState == Robot.STATE.SCORING_RELATIVE) {
+            if ((robot.currentState == Robot.STATE.WAIT_FOR_START_SCORING && gamepad2.right_bumper) || robot.currentState == Robot.STATE.SCORING_RELATIVE_WITH_IMU) {
                 robot.startScoringRelative(gamepad2, isBlue, scoringHeight);
             }
 
-            if (((robot.currentState == Robot.STATE.SCORING_RELATIVE) && (gamepad2.right_trigger > 0.5)) || ((robot.currentState == Robot.STATE.ADJUST) && (gamepad2.right_trigger > 0.5))) {
+            if (((robot.currentState == Robot.STATE.SCORING_RELATIVE_WITH_IMU) && (gamepad2.right_trigger > 0.5)) || ((robot.currentState == Robot.STATE.ADJUST) && (gamepad2.right_trigger > 0.5))) {
                 robot.startDepositing();
             }
 

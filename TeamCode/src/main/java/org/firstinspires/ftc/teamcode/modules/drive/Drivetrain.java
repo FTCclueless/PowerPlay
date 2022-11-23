@@ -241,7 +241,26 @@ public class Drivetrain extends MecanumDrive {
             motorPriorities.get(3).setTargetPower(forward-left+turn);
         }
 
+        if((trajectorySequenceRunner.getLastPoseError().getX() < xThreshold) && (trajectorySequenceRunner.getLastPoseError().getY() < yThreshold) && (trajectorySequenceRunner.getLastPoseError().getHeading() < headingThreshold)) {
+            breakFollowing();
+            setMotorPowers(0,0,0,0);
+        }
+
         updateTelemetry();
+    }
+
+    double xThreshold = 0.5;
+    double yThreshold = 0.5;
+    double headingThreshold = Math.toRadians(5.0);
+
+    public void setBreakFollowingThresholds (Pose2d pose2d) {
+        xThreshold = pose2d.getX();
+        yThreshold = pose2d.getY();
+        headingThreshold = pose2d.getHeading();
+    }
+
+    public void breakFollowing() {
+        trajectorySequenceRunner.breakFollowing();
     }
 
     public void waitForIdle() {
