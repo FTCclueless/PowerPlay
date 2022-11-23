@@ -148,11 +148,11 @@ public class Auto extends LinearOpMode {
         robot.followTrajectorySequence(to, this);
 
         for (int i = 0; i < targetCycles; i++) {
-            robot.drivetrain.setBreakFollowingThresholds(new Pose2d(2.5, 2.5, Math.toRadians(5)));
+            robot.drivetrain.setBreakFollowingThresholds(new Pose2d(2.5, 2.5, Math.toRadians(7)));
 
             robot.currentState = Robot.STATE.RETRACT;
             robot.startIntakeGlobal(cycle1.end(),new Pose2d((72-4)*xsign,12*ysign),coneStackAdditionalHeight*(4-i));
-            
+
             robot.followTrajectory(cycle1, this);
             while (robot.currentState == INTAKE_GLOBAL) {
                 robot.update();
@@ -164,6 +164,8 @@ public class Auto extends LinearOpMode {
                 robot.update();
             }
         }
+        robot.drivetrain.setBreakFollowingThresholds(new Pose2d(0.5, 0.5, Math.toRadians(5)));
+
         robot.followTrajectory(parks[parkingNum], this);
 
         drive.setMotorPowers(0,0,0,0);
