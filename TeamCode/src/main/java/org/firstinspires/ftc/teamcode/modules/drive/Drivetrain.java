@@ -223,6 +223,10 @@ public class Drivetrain extends MecanumDrive {
 
     public void updateTelemetry() {}
 
+    double xThreshold = 0.5;
+    double yThreshold = 0.5;
+    double headingThreshold = Math.toRadians(5.0);
+
     public void update() {
         updatePoseEstimate();
         DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
@@ -248,10 +252,6 @@ public class Drivetrain extends MecanumDrive {
 
         updateTelemetry();
     }
-
-    double xThreshold = 0.5;
-    double yThreshold = 0.5;
-    double headingThreshold = Math.toRadians(5.0);
 
     public void setBreakFollowingThresholds (Pose2d pose2d) {
         xThreshold = pose2d.getX();
