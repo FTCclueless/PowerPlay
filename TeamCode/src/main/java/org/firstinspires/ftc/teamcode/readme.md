@@ -17,11 +17,11 @@ Encoders
 - Motor Port 3: rightEncoder
 
 Servos
-- Servo Port 0: v4bar1
-- Servo Port 1: v4bar2
+- Servo Port 0: 
+- Servo Port 1: 
 - Servo Port 2: claw
-- Servo Port 3: 
-- Servo Port 4: 
+- Servo Port 3: act
+- Servo Port 4: extension
 - Servo Port 5:
 
 Analog Sensors
@@ -29,7 +29,7 @@ Analog Sensors
 - Port 2-3:
 
 Digital Sensors
-- Port 0-1: clawLimit
+- Port 0-1: 
 - Port 2-3: 
 - Port 4-5:
 - Port 6-7:
@@ -63,8 +63,8 @@ Servos
 - Servo Port 5:
  
 Analog Sensors
-- Port 0-1: rollerLimit
-- Port 2-3: clawLimit
+- Port 0-1: clawLimit
+- Port 2-3: 
 
 Digital Sensors
 - Port 0-1:
