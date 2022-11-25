@@ -1,6 +1,7 @@
 ## Wiring
 
 Config Name: RobotConfig
+Wi-fi Password: "ftc11212"
 
 ### Control Hub
 

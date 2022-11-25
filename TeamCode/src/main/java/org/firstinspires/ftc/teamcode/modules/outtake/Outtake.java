@@ -101,6 +101,8 @@ public class Outtake {
     double b = Math.toRadians(35);
     double c = Math.toRadians(-35);
     double d = Math.toRadians(-20);
+    double e = Math.toRadians(95);
+    double f = Math.toRadians(145);
 
     public boolean isTurretGoThroughBad() {
         double clipTarget = clipAngle(targetTurretAngle);

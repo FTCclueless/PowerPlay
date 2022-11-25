@@ -137,7 +137,7 @@ public class Slides {
     }
 
     public void moveToHigh() {
-        setTargetSlidesLength(40.0);
+        setTargetSlidesLength(33.0);
     }
 
     public void moveUp (double amount) {

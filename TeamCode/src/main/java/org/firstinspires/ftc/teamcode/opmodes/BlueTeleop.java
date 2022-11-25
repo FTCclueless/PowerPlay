@@ -17,8 +17,6 @@ public class BlueTeleop extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Storage.resetEncoderValues = false;
-
         Robot robot = new Robot(hardwareMap);
         Drivetrain drive = robot.drivetrain;
         Claw claw = robot.claw;

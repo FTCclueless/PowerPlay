@@ -8,9 +8,9 @@ import org.firstinspires.ftc.teamcode.Robot;
 
 @Config
 @TeleOp(group = "Test")
-public class ExtensionTester extends LinearOpMode {
+public class ActuationTester extends LinearOpMode {
 
-    public static double length = 0.0;
+    public static double position = 0.0;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -21,8 +21,8 @@ public class ExtensionTester extends LinearOpMode {
         waitForStart();
 
         while (!isStopRequested()) {
-            robot.outtake.extension.update();
-            robot.outtake.extension.setTargetExtensionLength(robot.outtake.extension.baseSlidesExtension + length);
+            robot.actuation.update();
+            robot.actuation.setTargetActPosition(position);
         }
     }
 }

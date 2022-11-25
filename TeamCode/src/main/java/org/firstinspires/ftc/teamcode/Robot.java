@@ -235,6 +235,10 @@ public class Robot {
         TelemetryUtil.sendTelemetry();
     }
 
+    public void resetEncoders () {
+        outtake.resetEncoders();
+    }
+
     public void updateTelemetry () {
         TelemetryUtil.packet.put("Current State: ", currentState);
       }

@@ -24,18 +24,19 @@ public class SensorTester extends LinearOpMode {
         Drivetrain drive = robot.drivetrain;
 
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.resetEncoders();
 
         waitForStart();
 
         while (!isStopRequested()) {
-            drive.drive(gamepad1);
-            robot.update();
-
-            Pose2d poseEstimate = drive.getPoseEstimate();
+            robot.sensors.updateHub1();
+            robot.sensors.updateHub2();
 
             telemetry.addData("leftEncoder Pos", robot.sensors.getLeftEncoderPos());
             telemetry.addData("rightEncoder Pos", robot.sensors.getRightEncoderPos());
             telemetry.addData("backEncoder Pos", robot.sensors.getBackEncoderPos());
+            telemetry.addData("current slides length", robot.sensors.slidesLength);
+            telemetry.addData("current turret angle", Math.toDegrees(robot.sensors.turretAngle));
 
             telemetry.addData("clawLimit", robot.sensors.clawTouched());
             telemetry.update();

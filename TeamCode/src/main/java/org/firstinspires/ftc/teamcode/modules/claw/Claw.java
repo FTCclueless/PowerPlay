@@ -16,9 +16,9 @@ public class Claw {
     public double targetClawPosition = 0.0;
     public double clawPower = 1.0;
 
-    public double intakePosition = 0.1599; //0.17399
-    public double closePosition = 0.8; // 0.285
-    public double openPosition = 0.18; // 0.20
+    public double intakePosition = 0.7549; //0.17399
+    public double closePosition = 0.5549; // 0.285
+    public double openPosition = 0.6919; // 0.20
 
     public double fullOpenPosition = 0.0; // 0.20
 

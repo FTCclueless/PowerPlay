@@ -32,6 +32,7 @@ public class TurretPIDTuner extends LinearOpMode {
         Extension extension = robot.outtake.extension;
 
         robot.testMode();
+        robot.outtake.resetEncoders();
 
         waitForStart();
 

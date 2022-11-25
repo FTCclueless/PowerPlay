@@ -14,13 +14,13 @@ public class Actuation {
     MyServo act;
     ArrayList<MyServo> servos;
 
-    double levelPosition = 0.0;
-    double tiltedPosition = 0.5;
+    double levelPosition = 0.233;
+    double tiltedPosition = 0.073;
 
     public Actuation(HardwareMap hardwareMap, ArrayList<MyServo> servos) {
         this.servos = servos;
 
-        act = new MyServo(hardwareMap.servo.get("act"),"Torque",1,0,1);
+        act = new MyServo(hardwareMap.servo.get("act"),"Amazon",1,0.638,0.0);
 
         servos.add(1, act);
     }

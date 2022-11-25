@@ -23,14 +23,15 @@ public class Extension {
         this.servos = servos;
         this.outtake = outtake;
 
-        extension = new MyServo(hardwareMap.servo.get("extension"),"Amazon",1,0,1, 0.0);
+        extension = new MyServo(hardwareMap.servo.get("extension"),"Speed",1,0,0.611, 0.3);
 
         servos.add(0, extension);
     }
 
     public void updateTelemetry() {
         TelemetryUtil.packet.put("targetExtensionLength: ", targetExtensionLength);
-        TelemetryUtil.packet.put("currentExtensionLength: ", currentExtensionLength);
+        TelemetryUtil.packet.put("targetExtensionAngle: ", targetExtensionLength);
+        TelemetryUtil.packet.put("currentExtensionLength: ", Math.toDegrees(targetExtensionAngle));
     }
 
     public void update() {
