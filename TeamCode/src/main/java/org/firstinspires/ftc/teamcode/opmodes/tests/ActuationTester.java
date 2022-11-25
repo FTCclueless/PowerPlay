@@ -21,7 +21,7 @@ public class ActuationTester extends LinearOpMode {
         waitForStart();
 
         while (!isStopRequested()) {
-            robot.actuation.update();
+            robot.update();
             robot.actuation.setTargetActPosition(position);
         }
     }

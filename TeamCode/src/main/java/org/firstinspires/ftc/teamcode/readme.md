@@ -2,6 +2,7 @@
 
 Config Name: RobotConfig
 Wi-fi Password: "ftc11212"
+IP Address: 192.168.43.1:5555
 
 ### Control Hub
 

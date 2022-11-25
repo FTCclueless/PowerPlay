@@ -107,6 +107,7 @@ public class MyServo {
     public double getCurrentPosition() {
         return currentPos;
     }
+
     public double getLastPos() { return lastPos; }
 
 //    public double clipAngle (double angle) {

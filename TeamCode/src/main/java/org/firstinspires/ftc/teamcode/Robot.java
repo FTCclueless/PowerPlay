@@ -91,11 +91,9 @@ public class Robot {
 
         switch (currentState) {
             case INIT:
-                actuation.level();
-                outtake.retract();
-                if (outtake.isInPosition()) {
-                    claw.fullOpen();
-                }
+//                actuation.level();
+//                outtake.retract();
+//                claw.fullOpen();
                 break;
             case RETRACT:
                 claw.close();
@@ -403,6 +401,7 @@ public class Robot {
 
         drivetrain.update();
         outtake.update();
+        actuation.update();
         claw.update();
 
         updateMotors();
@@ -413,7 +412,10 @@ public class Robot {
     public void setConeHeight (double height) { coneHeight = height; }
     public void setPoleHeight (double height) { poleHeight = height; }
 
-    public void testMode () { currentState = STATE.INIT; }
+    public void testMode () {
+        currentState = STATE.INIT;
+        resetEncoders();
+    }
 
     public void followTrajectory(Trajectory trajectory, LinearOpMode opMode) {
         drivetrain.followTrajectoryAsync(trajectory);

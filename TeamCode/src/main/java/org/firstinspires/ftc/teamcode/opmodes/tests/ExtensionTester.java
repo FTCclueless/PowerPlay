@@ -21,8 +21,8 @@ public class ExtensionTester extends LinearOpMode {
         waitForStart();
 
         while (!isStopRequested()) {
-            robot.outtake.extension.update();
             robot.outtake.extension.setTargetExtensionLength(robot.outtake.extension.baseSlidesExtension + length);
+            robot.update();
         }
     }
 }
