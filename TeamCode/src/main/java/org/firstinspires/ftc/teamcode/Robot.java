@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.checkerframework.checker.units.qual.A;
 import org.firstinspires.ftc.teamcode.modules.actuation.Actuation;
 import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.util.MyServo;
@@ -222,11 +221,13 @@ public class Robot {
             case DEPOSIT:
                 claw.open();
                 if(System.currentTimeMillis() - timeSinceClawOpen >= 300) {
-                    claw.close();
-                    actuation.level();
                     outtake.extension.retractExtension();
-                    if(System.currentTimeMillis() - timeSinceClawOpen >= 650) {
-                        currentState = STATE.INTAKE_RELATIVE;
+                    if(System.currentTimeMillis() - timeSinceClawOpen >= 450) {
+                        claw.close();
+                        actuation.level();
+                        if(System.currentTimeMillis() - timeSinceClawOpen >= 650) {
+                            currentState = STATE.INTAKE_RELATIVE;
+                        }
                     }
                 }
                 break;
@@ -317,7 +318,7 @@ public class Robot {
         targetAngle -= gamepad.left_stick_x * Math.toRadians(0.8);
         targetAngle -= gamepad.right_stick_x * Math.toRadians(0.8);
         extensionDistance -= gamepad.left_stick_y * 0.1225;
-        this.scoringHeight -= gamepad.right_stick_y * 0.3; // offsets
+        this.scoringHeight -= gamepad.right_stick_y * 0.25; // offsets
 
         extensionDistance = Math.max(6.31103, Math.min(this.extensionDistance, 19.8937145));
         this.scoringHeight = Math.max(0,Math.min(this.scoringHeight, 39.08666));

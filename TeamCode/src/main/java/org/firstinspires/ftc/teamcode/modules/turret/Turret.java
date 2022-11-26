@@ -20,7 +20,7 @@ public class Turret {
 
     ArrayList<MotorPriority> motorPriorities;
 
-    public PID turretPID = new PID(4.0, 0.1,0.0);
+    public PID turretPID = new PID(3.0, 0.75,0.0);
 
     public double currentTurretAngle = 0.0;
     public double currentTurretVelocity = 0.0;
