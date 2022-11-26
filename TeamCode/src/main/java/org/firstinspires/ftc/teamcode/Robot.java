@@ -38,7 +38,7 @@ public class Robot {
     public ArrayList<MotorPriority> motorPriorities = new ArrayList<>();
     public ArrayList<MyServo> servos = new ArrayList<>();
 
-    public enum STATE {INIT, INTAKE_RELATIVE, INTAKE_GLOBAL, WAIT_FOR_START_SCORING, SCORING_GLOBAL, SCORING_RELATIVE_WITH_IMU, SCORING_RELATIVE_WITHOUT_IMU, ADJUST, DEPOSIT, RETRACT }
+    public enum STATE {IDLE, INIT, INTAKE_RELATIVE, INTAKE_GLOBAL, WAIT_FOR_START_SCORING, SCORING_GLOBAL, SCORING_RELATIVE_WITH_IMU, SCORING_RELATIVE_WITHOUT_IMU, ADJUST, DEPOSIT, RETRACT }
     public STATE currentState = STATE.INIT;
 
     public Robot (HardwareMap hardwareMap) {
@@ -90,10 +90,12 @@ public class Robot {
         boolean isAtPoint;
 
         switch (currentState) {
+            case IDLE:
+                break;
             case INIT:
-//                actuation.level();
-//                outtake.retract();
-//                claw.fullOpen();
+                actuation.level();
+                outtake.retract();
+                claw.fullOpen();
                 break;
             case RETRACT:
                 claw.close();
@@ -413,7 +415,7 @@ public class Robot {
     public void setPoleHeight (double height) { poleHeight = height; }
 
     public void testMode () {
-        currentState = STATE.INIT;
+        currentState = STATE.IDLE;
         resetEncoders();
     }
 

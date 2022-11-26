@@ -25,14 +25,12 @@ public class Extension {
         this.servos = servos;
         this.outtake = outtake;
 
-        extension = new MyServo(hardwareMap.servo.get("extension"),"Speed",1,0.0,1.0, 1.0);
+        extension = new MyServo(hardwareMap.servo.get("extension"),"Speed",1,0.0,0.65, 0.65);
 
         servos.add(0, extension);
     }
 
     public void updateTelemetry() {
-        Log.e("targetExtensionAngle", Math.toDegrees(targetExtensionAngle) + "");
-
         TelemetryUtil.packet.put("targetExtensionLength: ", targetExtensionLength);
         TelemetryUtil.packet.put("targetExtensionAngle: ", Math.toDegrees(targetExtensionAngle));
         TelemetryUtil.packet.put("currentExtensionLength: ", currentExtensionLength);

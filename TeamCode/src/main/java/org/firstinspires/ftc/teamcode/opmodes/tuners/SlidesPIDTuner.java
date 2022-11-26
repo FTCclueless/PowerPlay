@@ -32,7 +32,7 @@ public class SlidesPIDTuner extends LinearOpMode {
         Extension extension = robot.outtake.extension;
 
         robot.testMode();
-        robot.outtake.resetEncoders();
+        robot.resetEncoders();
 
         waitForStart();
 
