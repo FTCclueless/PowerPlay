@@ -40,7 +40,7 @@ public class Extension {
         updateExtensionValues();
         updateTelemetry();
 
-        extension.setAngle(-targetExtensionAngle, extensionPower);
+        extension.setAngle(targetExtensionAngle, extensionPower);
     }
 
     public double baseSlidesExtension = 6.31103;

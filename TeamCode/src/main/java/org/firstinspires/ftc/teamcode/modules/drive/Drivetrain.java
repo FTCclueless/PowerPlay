@@ -21,6 +21,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
@@ -133,8 +134,8 @@ public class Drivetrain extends MecanumDrive {
             setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
         }
 
-        leftFront.setDirection(DcMotor.Direction.REVERSE);
         leftRear.setDirection(DcMotor.Direction.REVERSE);
+        leftFront.setDirection(DcMotor.Direction.REVERSE);
 
         localizer = new ThreeWheelLocalizer(hardwareMap);
         setLocalizer(localizer);
@@ -145,9 +146,13 @@ public class Drivetrain extends MecanumDrive {
     }
 
     public void drive (Gamepad gamepad) {
-        double forward = -0.4*Math.tan(((gamepad.left_stick_y * -1 ) / 0.85));
-        double left = -0.4*(Math.tan(gamepad.left_stick_x / 0.85));
-        double turn = gamepad.right_stick_x*0.9;
+//        double forward = -0.4*Math.tan(((gamepad.left_stick_y * -1 ) / 0.85));
+//        double left = -0.4*(Math.tan(gamepad.left_stick_x / 0.85));
+//        double turn = gamepad.right_stick_x*0.9;
+
+        double forward = gamepad.left_stick_y * -1;
+        double left = gamepad.left_stick_x * -1;
+        double turn = gamepad.right_stick_x * 0.9;
 
         double p1 = forward+left+turn;
         double p2 = forward-left+turn;
