@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.checkerframework.checker.units.qual.A;
 import org.firstinspires.ftc.teamcode.modules.actuation.Actuation;
 import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.util.MyServo;
@@ -38,7 +37,7 @@ public class Robot {
     public ArrayList<MotorPriority> motorPriorities = new ArrayList<>();
     public ArrayList<MyServo> servos = new ArrayList<>();
 
-    public enum STATE {INIT, INTAKE_RELATIVE, INTAKE_GLOBAL, WAIT_FOR_START_SCORING, SCORING_GLOBAL, SCORING_RELATIVE_WITH_IMU, SCORING_RELATIVE_WITHOUT_IMU, ADJUST, DEPOSIT, RETRACT }
+    public enum STATE {IDLE, INIT, INTAKE_RELATIVE, INTAKE_GLOBAL, WAIT_FOR_START_SCORING, SCORING_GLOBAL, SCORING_RELATIVE_WITH_IMU, SCORING_RELATIVE_WITHOUT_IMU, ADJUST, DEPOSIT, RETRACT }
     public STATE currentState = STATE.INIT;
 
     public Robot (HardwareMap hardwareMap) {
@@ -90,12 +89,12 @@ public class Robot {
         boolean isAtPoint;
 
         switch (currentState) {
+            case IDLE:
+                break;
             case INIT:
                 actuation.level();
                 outtake.retract();
-                if (outtake.isInPosition()) {
-                    claw.fullOpen();
-                }
+                claw.fullOpen();
                 break;
             case RETRACT:
                 claw.close();
@@ -222,17 +221,23 @@ public class Robot {
             case DEPOSIT:
                 claw.open();
                 if(System.currentTimeMillis() - timeSinceClawOpen >= 300) {
-                    claw.close();
-                    actuation.level();
                     outtake.extension.retractExtension();
-                    if(System.currentTimeMillis() - timeSinceClawOpen >= 650) {
-                        currentState = STATE.INTAKE_RELATIVE;
+                    if(System.currentTimeMillis() - timeSinceClawOpen >= 450) {
+                        claw.close();
+                        actuation.level();
+                        if(System.currentTimeMillis() - timeSinceClawOpen >= 650) {
+                            currentState = STATE.INTAKE_RELATIVE;
+                        }
                     }
                 }
                 break;
         }
 
         TelemetryUtil.sendTelemetry();
+    }
+
+    public void resetEncoders () {
+        outtake.resetEncoders();
     }
 
     public void updateTelemetry () {
@@ -313,7 +318,7 @@ public class Robot {
         targetAngle -= gamepad.left_stick_x * Math.toRadians(0.8);
         targetAngle -= gamepad.right_stick_x * Math.toRadians(0.8);
         extensionDistance -= gamepad.left_stick_y * 0.1225;
-        this.scoringHeight -= gamepad.right_stick_y * 0.3; // offsets
+        this.scoringHeight -= gamepad.right_stick_y * 0.25; // offsets
 
         extensionDistance = Math.max(6.31103, Math.min(this.extensionDistance, 19.8937145));
         this.scoringHeight = Math.max(0,Math.min(this.scoringHeight, 39.08666));
@@ -351,8 +356,8 @@ public class Robot {
         try {
             controlHub = hardwareMap.get(LynxModule.class, "Control Hub");
             controlHub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
-            expansionHub = hardwareMap.get(LynxModule.class, "Expansion Hub 2");
-            expansionHub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+//            expansionHub = hardwareMap.get(LynxModule.class, "Expansion Hub 2");
+//            expansionHub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         } catch (RuntimeException e) {
             throw new RuntimeException("One or more of the REV hubs could not be found. More info: " + e);
         }
@@ -399,6 +404,7 @@ public class Robot {
 
         drivetrain.update();
         outtake.update();
+        actuation.update();
         claw.update();
 
         updateMotors();
@@ -409,7 +415,10 @@ public class Robot {
     public void setConeHeight (double height) { coneHeight = height; }
     public void setPoleHeight (double height) { poleHeight = height; }
 
-    public void testMode () { currentState = STATE.INIT; }
+    public void testMode () {
+        currentState = STATE.IDLE;
+        resetEncoders();
+    }
 
     public void followTrajectory(Trajectory trajectory, LinearOpMode opMode) {
         drivetrain.followTrajectoryAsync(trajectory);

@@ -13,12 +13,10 @@ import org.firstinspires.ftc.teamcode.util.Storage;
 public class BlueTeleop extends LinearOpMode {
 
     boolean isBlue = true;
-    double scoringHeight = 35;
+    double scoringHeight = 28;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Storage.resetEncoderValues = false;
-
         Robot robot = new Robot(hardwareMap);
         Drivetrain drive = robot.drivetrain;
         Claw claw = robot.claw;
@@ -57,11 +55,11 @@ public class BlueTeleop extends LinearOpMode {
             }
 
             if (gamepad2.b) { // medium
-                scoringHeight = 25;
+                scoringHeight = 20;
             }
 
             if (gamepad2.y) { // high
-                scoringHeight = 35;
+                scoringHeight = 28;
             }
 
             if ((robot.currentState == Robot.STATE.WAIT_FOR_START_SCORING && gamepad2.right_bumper) || robot.currentState == Robot.STATE.SCORING_RELATIVE_WITH_IMU) {

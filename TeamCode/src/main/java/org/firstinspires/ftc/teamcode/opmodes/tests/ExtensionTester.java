@@ -15,13 +15,14 @@ public class ExtensionTester extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Robot robot = new Robot(hardwareMap);
+        robot.outtake.resetEncoders();
         robot.testMode();
 
         waitForStart();
 
         while (!isStopRequested()) {
-            robot.update();
             robot.outtake.extension.setTargetExtensionLength(robot.outtake.extension.baseSlidesExtension + length);
+            robot.update();
         }
     }
 }

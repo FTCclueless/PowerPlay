@@ -3,30 +3,37 @@ package org.firstinspires.ftc.teamcode.modules.actuation;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.util.MyServo;
+import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
 import java.util.ArrayList;
 
 public class Actuation {
     public double currentActPosition = 0.0;
     public double targetActPosition = 0.0;
-    public double actPower = 0.0;
+    public double actPower = 1.0;
 
     MyServo act;
     ArrayList<MyServo> servos;
 
-    double levelPosition = 0.0;
-    double tiltedPosition = 0.5;
+    double levelPosition = 0.233;
+    double tiltedPosition = 0.073;
 
     public Actuation(HardwareMap hardwareMap, ArrayList<MyServo> servos) {
         this.servos = servos;
 
-        act = new MyServo(hardwareMap.servo.get("act"),"Torque",1,0,1);
+        act = new MyServo(hardwareMap.servo.get("act"),"Amazon",1,0.638,0.0);
 
         servos.add(1, act);
     }
 
+    public void updateTelemetry() {
+        TelemetryUtil.packet.put("targetActPosition: ", targetActPosition);
+        TelemetryUtil.packet.put("currentActPosition: ", currentActPosition);
+    }
+
     public void update() {
         updateActValues();
+        updateTelemetry();
 
         act.setPosition(targetActPosition, actPower);
     }
@@ -48,10 +55,10 @@ public class Actuation {
     }
 
     public void level() {
-        act.setPosition(levelPosition, actPower);
+        targetActPosition = levelPosition;
     }
 
     public void tilted() {
-        act.setPosition(tiltedPosition, actPower);
+        targetActPosition = tiltedPosition;
     }
 }

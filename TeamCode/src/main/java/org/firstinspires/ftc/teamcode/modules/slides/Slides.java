@@ -37,7 +37,7 @@ public class Slides {
     public static double slidesPercentMax = 0.98;
 
     // original: 82.9718558749
-    double maxSlidesSpeed = 82.9718558749 * 0.9; // inches per sec
+    double maxSlidesSpeed = 82.9718558749; // inches per sec
 
     Outtake outtake;
 
@@ -137,7 +137,7 @@ public class Slides {
     }
 
     public void moveToHigh() {
-        setTargetSlidesLength(40.0);
+        setTargetSlidesLength(33.0);
     }
 
     public void moveUp (double amount) {
