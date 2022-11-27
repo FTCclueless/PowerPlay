@@ -146,13 +146,9 @@ public class Drivetrain extends MecanumDrive {
     }
 
     public void drive (Gamepad gamepad) {
-//        double forward = -0.4*Math.tan(((gamepad.left_stick_y * -1 ) / 0.85));
-//        double left = -0.4*(Math.tan(gamepad.left_stick_x / 0.85));
-//        double turn = gamepad.right_stick_x*0.9;
-
-        double forward = gamepad.left_stick_y * -1;
-        double left = gamepad.left_stick_x * -1;
-        double turn = gamepad.right_stick_x * 0.9;
+        double forward = -0.4*Math.tan(((gamepad.left_stick_y * -1 ) / 0.85));
+        double left = -0.4*(Math.tan(gamepad.left_stick_x / 0.85)) * 0.8;
+        double turn = gamepad.right_stick_x*0.9;
 
         double p1 = forward+left+turn;
         double p2 = forward-left+turn;
@@ -248,7 +244,7 @@ public class Drivetrain extends MecanumDrive {
             motorPriorities.get(3).setTargetPower(forward-left+turn);
         }
 
-        if((Math.abs(trajectorySequenceRunner.getLastPoseError().getX()) < xThreshold) && (Math.abs(trajectorySequenceRunner.getLastPoseError().getY()) < yThreshold) && (Math.abs(trajectorySequenceRunner.getLastPoseError().getHeading()) < headingThreshold)) {
+        if((Math.abs(trajectorySequenceRunner.getLastPoseError().getX()) < xThreshold) && (Math.abs(trajectorySequenceRunner.getLastPoseError().getY()) < yThreshold) && (Math.abs(trajectorySequenceRunner.getLastPoseError().getHeading()) < headingThreshold) && breakFollowing) {
             breakFollowing();
             setMotorPowers(0,0,0,0);
         }
@@ -256,7 +252,10 @@ public class Drivetrain extends MecanumDrive {
         updateTelemetry();
     }
 
+    boolean breakFollowing = false;
+
     public void setBreakFollowingThresholds (Pose2d pose2d) {
+        breakFollowing = true;
         xThreshold = pose2d.getX();
         yThreshold = pose2d.getY();
         headingThreshold = pose2d.getHeading();

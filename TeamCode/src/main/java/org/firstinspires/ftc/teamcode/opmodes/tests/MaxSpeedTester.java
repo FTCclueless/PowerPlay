@@ -16,8 +16,8 @@ public void runOpMode() throws InterruptedException {
         waitForStart();
 
         while (!isStopRequested()) {
-//            robot.drivetrain.setMotorPowers(1.0,1.0,1.0,1.0);
-//            robot.drivetrain.update();
+            robot.drivetrain.setMotorPowers(1.0,1.0,1.0,1.0);
+            robot.drivetrain.update();
 
             robot.drivetrain.leftFront.setPower(1.0);
             robot.drivetrain.leftRear.setPower(1.0);

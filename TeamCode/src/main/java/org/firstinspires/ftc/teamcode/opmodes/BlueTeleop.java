@@ -1,12 +1,16 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.modules.actuation.Actuation;
 import org.firstinspires.ftc.teamcode.modules.claw.Claw;
 import org.firstinspires.ftc.teamcode.modules.drive.Drivetrain;
 import org.firstinspires.ftc.teamcode.sensors.Sensors;
+import org.firstinspires.ftc.teamcode.util.ButtonToggle;
 import org.firstinspires.ftc.teamcode.util.Storage;
 
 @TeleOp
@@ -20,12 +24,15 @@ public class BlueTeleop extends LinearOpMode {
         Robot robot = new Robot(hardwareMap);
         Drivetrain drive = robot.drivetrain;
         Claw claw = robot.claw;
+        Actuation actuation = robot.actuation;
         Sensors sensors = robot.sensors;
 
         robot.currentState = Robot.STATE.INTAKE_RELATIVE;
         robot.isRelative = true;
 
         drive.localizer.setPoseEstimate(Storage.currentPose);
+
+        ButtonToggle b_left_bumper = new ButtonToggle();
 
         waitForStart();
 
@@ -43,6 +50,10 @@ public class BlueTeleop extends LinearOpMode {
 
             if (gamepad1.a && robot.currentState == Robot.STATE.INTAKE_RELATIVE) {
                 sensors.clawTouch = true;
+            }
+
+            if ((robot.currentState == Robot.STATE.WAIT_FOR_START_SCORING) && (gamepad1.right_bumper)) {
+                robot.currentState = Robot.STATE.INTAKE_RELATIVE;
             }
 
             // Driver B
@@ -68,6 +79,16 @@ public class BlueTeleop extends LinearOpMode {
 
             if (((robot.currentState == Robot.STATE.SCORING_RELATIVE_WITH_IMU) && (gamepad2.right_trigger > 0.5)) || ((robot.currentState == Robot.STATE.ADJUST) && (gamepad2.right_trigger > 0.5))) {
                 robot.startDepositing();
+            }
+
+            if ((b_left_bumper.isClicked(gamepad2.left_bumper)) && (robot.currentState == Robot.STATE.SCORING_RELATIVE_WITH_IMU)) {
+                if (robot.actuation.isLevel()) {
+                    Log.e("going to tilted", "");
+                    actuation.tilted();
+                } else {
+                    Log.e("going to level", "");
+                    actuation.level();
+                }
             }
 
             robot.update();
