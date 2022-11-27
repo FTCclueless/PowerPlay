@@ -65,13 +65,15 @@ public class Outtake {
     }
 
     public void updateTelemetry () {
-        TelemetryUtil.packet.put("isInPosition: ", isInPosition());
+        TelemetryUtil.packet.put("turretClips: ", turretClips);
     }
+
+    boolean turretClips = false;
 
     public void update() {
         updateRelativePos();
 
-        boolean turretClips = isTurretGoThroughBad();
+         turretClips = isTurretGoThroughBad();
 
         if (turretClips && targetSlidesLength < 9){
             slides.setTargetSlidesLength(12);
@@ -80,8 +82,17 @@ public class Outtake {
             slides.setTargetSlidesLength(targetSlidesLength);
         }
         if (currentSlidesLength >= 9 || !turretClips){
-            turret.setTargetTurretAngle(targetTurretAngle);
-            extension.setTargetExtensionLength(targetExtensionLength);
+            if (extension.targetExtensionLength < 8.0) { // retract extension
+                extension.setTargetExtensionLength(targetExtensionLength);
+                if (extension.isInPosition(1.5)) {
+                    turret.setTargetTurretAngle(targetTurretAngle);
+                }
+            } else { // extend extension
+                turret.setTargetTurretAngle(targetTurretAngle);
+                if (turret.isInPosition(5)) {
+                    extension.setTargetExtensionLength(targetExtensionLength);
+                }
+            }
         }
 
         slides.update();
@@ -93,8 +104,10 @@ public class Outtake {
 
     public void retract()  {
         extension.retractExtension();
-        slides.setTargetSlidesLength(0);
-        turret.setTargetTurretAngle(Math.toRadians(0));
+        if (extension.isInPosition(3)) {
+            slides.setTargetSlidesLength(0);
+            turret.setTargetTurretAngle(Math.toRadians(0));
+        }
     }
 
     double a = Math.toRadians(20);
@@ -109,12 +122,17 @@ public class Outtake {
         double clipCurrent = clipAngle(currentTurretAngle);
         if (clipTarget == Math.min(Math.max(clipTarget,a),b)
                 || clipCurrent == Math.min(Math.max(clipCurrent,a),b)
-                || Math.signum(targetTurretAngle - (a+b)/2) != Math.signum(currentTurretAngle  - (a+b)/2)){
+                || Math.signum(clipAngle(targetTurretAngle - (a+b)/2)) != Math.signum(clipAngle(currentTurretAngle  - (a+b)/2))){
             return true;
         }
         if (clipTarget == Math.min(Math.max(clipTarget,c),d)
                 || clipCurrent == Math.min(Math.max(clipCurrent,c),d)
-                || Math.signum(targetTurretAngle - (c+d)/2) != Math.signum(currentTurretAngle  - (c+d)/2)){
+                || Math.signum(clipAngle(targetTurretAngle - (c+d)/2)) != Math.signum(clipAngle(currentTurretAngle  - (c+d)/2))){
+            return true;
+        }
+        if (clipTarget == Math.min(Math.max(clipTarget,e),f)
+                || clipCurrent == Math.min(Math.max(clipCurrent,e),f)
+                || Math.signum(clipAngle(targetTurretAngle - (e+f)/2)) != Math.signum(clipAngle(currentTurretAngle  - (e+f)/2))){
             return true;
         }
 

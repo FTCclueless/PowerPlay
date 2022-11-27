@@ -153,16 +153,12 @@ public class Robot {
                 outtake.retract();
                 outtake.slides.setTargetSlidesLength(5);
                 if (startScoringRelative) {
-                    extensionDistance = 12.0;
+                    extensionDistance = 7.0;
                     startScoringRelative = false;
-                    if (this.scoringHeight <= 5) {
-                        currentState = STATE.SCORING_RELATIVE_WITHOUT_IMU;
-                    } else {
-                        currentState = STATE.SCORING_RELATIVE_WITH_IMU;
-                    }
+                    currentState = STATE.SCORING_RELATIVE_WITH_IMU;
                 }
                 if (startScoringGlobal) {
-                    extensionDistance = 12.0;
+                    extensionDistance = 7.0;
                     startScoringGlobal = false;
                     currentState = STATE.SCORING_GLOBAL;
                 }
@@ -191,20 +187,20 @@ public class Robot {
                     currentState = STATE.DEPOSIT;
                 }
                 break;
-            case SCORING_RELATIVE_WITHOUT_IMU:
-                outtake.setTargetRelative(extensionDistance*Math.cos(outtake.turret.getCurrentTurretAngle()),extensionDistance*Math.sin(outtake.turret.getCurrentTurretAngle()), this.scoringHeight); // changes dynamically based on driver input
-
-                if (this.scoringHeight > 5) {
-                    currentState = STATE.SCORING_RELATIVE_WITH_IMU;
-                }
-
-                if (startDeposit) {
-                    startScoringRelative = false;
-                    startDeposit = false;
-                    timeSinceClawOpen = System.currentTimeMillis();
-                    currentState = STATE.DEPOSIT;
-                }
-                break;
+//            case SCORING_RELATIVE_WITHOUT_IMU:
+//                outtake.setTargetRelative(extensionDistance*Math.cos(outtake.turret.getCurrentTurretAngle()),extensionDistance*Math.sin(outtake.turret.getCurrentTurretAngle()), this.scoringHeight); // changes dynamically based on driver input
+//
+//                if (this.scoringHeight > 5) {
+//                    currentState = STATE.SCORING_RELATIVE_WITH_IMU;
+//                }
+//
+//                if (startDeposit) {
+//                    startScoringRelative = false;
+//                    startDeposit = false;
+//                    timeSinceClawOpen = System.currentTimeMillis();
+//                    currentState = STATE.DEPOSIT;
+//                }
+//                break;
             case SCORING_GLOBAL:
                 // checks to see if the drivetrain is near the final scoring pose and if it is then give it it's actual drive pose
                 isAtPoint = false;
@@ -215,17 +211,21 @@ public class Robot {
                 outtake.setTargetGlobal(drivePose, polePose, poleHeight);
 
                 if (isAtPoint && outtake.isInPosition()) {
+                    timeSinceClawOpen = System.currentTimeMillis();
                     currentState = STATE.DEPOSIT;
                 }
                 break;
             case DEPOSIT:
                 claw.open();
                 if(System.currentTimeMillis() - timeSinceClawOpen >= 300) {
+                    Log.e("Retract Extension", "");
                     outtake.extension.retractExtension();
-                    if(System.currentTimeMillis() - timeSinceClawOpen >= 450) {
+                    if(System.currentTimeMillis() - timeSinceClawOpen >= 850) {
+                        Log.e("Claw Close and Actuation Level", "");
                         claw.close();
                         actuation.level();
-                        if(System.currentTimeMillis() - timeSinceClawOpen >= 650) {
+                        if(System.currentTimeMillis() - timeSinceClawOpen >= 1000) {
+                            Log.e("Retract Everything", "");
                             currentState = STATE.INTAKE_RELATIVE;
                         }
                     }
@@ -242,7 +242,9 @@ public class Robot {
 
     public void updateTelemetry () {
         TelemetryUtil.packet.put("Current State: ", currentState);
+        TelemetryUtil.packet.put("Extension Distance: ", extensionDistance);
       }
+
 
     public void startIntakeRelative() {
         startIntakeRelative = true;
@@ -259,7 +261,7 @@ public class Robot {
     enum ScoringDirection {FORWARD, BACKWARD, LEFT, RIGHT}
     public ScoringDirection scoringDirection = ScoringDirection.FORWARD;
     double targetAngle = Math.toRadians(-90);
-    double extensionDistance = 12.0;
+    double extensionDistance = 7.0;
     double lastScoringHeight = 0.0;
 
 //    double offsetX = 0.0;
@@ -275,7 +277,7 @@ public class Robot {
                 targetAngle = Math.toRadians(90);
             }
             this.scoringHeight = scoringHeight;
-            this.extensionDistance = 12.0;
+            this.extensionDistance = 7.0;
         }
 
         // this checks if the lastScoringHeight without offset is not equal to the passed in scoring height without offsets, and if it is true then it will set the scoringHeightWithOffset to the one without offset
@@ -287,28 +289,28 @@ public class Robot {
         if (((gamepad.dpad_up && isBlue) || (gamepad.dpad_down && !isBlue)) && (scoringDirection != ScoringDirection.FORWARD)) {
             scoringDirection = ScoringDirection.FORWARD;
             targetAngle = Math.toRadians(-90);
-            extensionDistance = 12.0;
+            extensionDistance = 7.0;
             this.scoringHeight = scoringHeight;
 //            offsetX = 0.0;
 //            offsetY = 0.0;
         } else if (((gamepad.dpad_down && isBlue) || (gamepad.dpad_up && !isBlue)) && (scoringDirection != ScoringDirection.BACKWARD)) {
             scoringDirection = ScoringDirection.BACKWARD;
             targetAngle = Math.toRadians(90);
-            extensionDistance = 12.0;
+            extensionDistance = 7.0;
             this.scoringHeight = scoringHeight;
 //            offsetX = 0.0;
 //            offsetY = 0.0;
         } else if (((gamepad.dpad_left && isBlue) || (gamepad.dpad_right && !isBlue)) && (scoringDirection != ScoringDirection.LEFT)) {
             scoringDirection = ScoringDirection.LEFT;
             targetAngle = Math.toRadians(0);
-            extensionDistance = 12.0;
+            extensionDistance = 7.0;
             this.scoringHeight = scoringHeight;
 //            offsetX = 0.0;
 //            offsetY = 0.0;
         } else if (((gamepad.dpad_right && isBlue) || (gamepad.dpad_left && !isBlue)) && (scoringDirection != ScoringDirection.RIGHT)) {
             scoringDirection = ScoringDirection.RIGHT;
             targetAngle = Math.toRadians(180);
-            extensionDistance = 12.0;
+            extensionDistance = 7.0;
             this.scoringHeight = scoringHeight;
 //            offsetX = 0.0;
 //            offsetY = 0.0;

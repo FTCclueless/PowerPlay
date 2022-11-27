@@ -61,4 +61,8 @@ public class Actuation {
     public void tilted() {
         targetActPosition = tiltedPosition;
     }
+
+    public boolean isLevel () {
+        return targetActPosition == levelPosition;
+    }
 }
