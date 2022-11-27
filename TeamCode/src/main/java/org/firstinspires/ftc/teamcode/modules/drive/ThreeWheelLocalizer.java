@@ -38,7 +38,8 @@ public class ThreeWheelLocalizer implements Localizer {
 
         encoders[0] = new MyEncoder(new MyPose2d(0,7.65280377185),  -1); // left (y = 7.6861797267140135)
         encoders[1] = new MyEncoder(new MyPose2d(0,-5.63952182112),1); // right (y = -5.664117306820334)
-        encoders[2] = new MyEncoder(new MyPose2d(-3.8609325069195584, 0),  -1); // back
+        encoders[2] = new MyEncoder(new MyPose2d(-1.9304662534597792, 0),  -1); // back
+//        encoders[2] = new MyEncoder(new MyPose2d(-3.8609325069195584, 0),  -1); // back
     }
 
     public void getIMU(BNO055IMU imu){
