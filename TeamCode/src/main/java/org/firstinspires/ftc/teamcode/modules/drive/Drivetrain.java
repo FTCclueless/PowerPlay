@@ -57,8 +57,11 @@ import android.util.Log;
 
 @Config
 public class Drivetrain extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(15, 0, 0);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(12.5, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(10, 0, 0);
+
+//    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(15, 0, 0);
+//    public static PIDCoefficients HEADING_PID = new PIDCoefficients(10, 0, 0);
 
     public static double LATERAL_MULTIPLIER = 1;
 

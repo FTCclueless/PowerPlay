@@ -84,7 +84,7 @@ public class BlueTeleop extends LinearOpMode {
             if ((b_left_bumper.isClicked(gamepad2.left_bumper)) && (robot.currentState == Robot.STATE.SCORING_RELATIVE_WITH_IMU)) {
                 if (robot.actuation.isLevel()) {
                     Log.e("going to tilted", "");
-                    actuation.tilted();
+                    actuation.tilt();
                 } else {
                     Log.e("going to level", "");
                     actuation.level();

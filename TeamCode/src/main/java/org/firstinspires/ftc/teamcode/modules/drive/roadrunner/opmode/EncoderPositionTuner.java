@@ -9,7 +9,6 @@ import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.modules.drive.Drivetrain;
 import org.firstinspires.ftc.teamcode.sensors.Sensors;
 
-@Disabled
 @TeleOp
 
 public class EncoderPositionTuner extends LinearOpMode {
