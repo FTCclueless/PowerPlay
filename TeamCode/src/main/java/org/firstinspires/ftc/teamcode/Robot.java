@@ -123,7 +123,7 @@ public class Robot {
                 }
                 break;
             case INTAKE_GLOBAL:
-                if (Math.abs(drivetrain.getPoseEstimate().getX() - drivePose.getX()) <= 4 && Math.abs(drivetrain.getPoseEstimate().getY() - drivePose.getY()) <= 4) {
+                if ((Math.abs(drivetrain.getPoseEstimate().getX() - drivePose.getX()) <= 4) && (Math.abs(drivetrain.getPoseEstimate().getY() - drivePose.getY()) <= 4)) {
                     drivePose = drivetrain.getPoseEstimate();
                     isAtPoint = true;
                 }
@@ -247,7 +247,6 @@ public class Robot {
 
     public void updateTelemetry () {
         TelemetryUtil.packet.put("Current State: ", currentState);
-        TelemetryUtil.packet.put("Extension Distance: ", extensionDistance);
       }
 
 
