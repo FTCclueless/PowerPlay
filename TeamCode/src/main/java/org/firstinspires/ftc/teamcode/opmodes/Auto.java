@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
+import static org.firstinspires.ftc.teamcode.Robot.STATE.DEPOSIT;
+import static org.firstinspires.ftc.teamcode.Robot.STATE.INTAKE_GLOBAL;
+import static org.firstinspires.ftc.teamcode.Robot.STATE.SCORING_GLOBAL;
+
 import android.util.Log;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -58,27 +62,30 @@ public class Auto extends LinearOpMode {
         });
 
         // Signs
-        int xS = tb ? 1 : -1;
-        int yS = lr ? 1 : -1;
+        int xSign = tb ? 1 : -1;
+        int ySign = lr ? 1 : -1;
 
         Pose2d origin = new Pose2d(
-            36 * xS,
-            60 * yS,
+            36 * xSign,
+            60 * ySign,
             Math.PI / 2 * (!lr ? -1 : 1)
         );
 
         drive.setPoseEstimate(origin); // FIXME is this needed?
         TrajectorySequence to = drive.trajectorySequenceBuilder(origin)
                 // Move forward extra in order to bump away the signal cone
-                .strafeTo(new Vector2d(origin.getX(), origin.getY() - (52 * yS)))
-                .strafeTo(new Vector2d(origin.getX(), origin.getY() - (cycleY * yS))) // because the turning offsets it by a good amount
-                .turn(-Math.PI / 2 * xS * yS) // FIXME hardcoded (but whatever)
-                .strafeTo(new Vector2d(origin.getX() - (cycleBack * xS), origin.getY() - (cycleY * yS)))
+                .strafeTo(new Vector2d(origin.getX(), origin.getY() - (52 * ySign)))
+                .strafeTo(new Vector2d(origin.getX(), origin.getY() - (cycleY * ySign))) // because the turning offsets it by a good amount
+                .turn(-Math.PI / 2 * xSign * ySign) // FIXME hardcoded (but whatever)
+                .strafeTo(new Vector2d(origin.getX() - (cycleBack * xSign), origin.getY() - (cycleY * ySign)))
                 .build();
 
         Pose2d toEnd = to.end(); // Incredible naming!
-        TrajectorySequence cycle = drive.trajectorySequenceBuilder(toEnd)
-                .strafeTo(new Vector2d(toEnd.getX() + (12 + cycleBack) * xS, toEnd.getY())) // +3 because it ends at -3
+        TrajectorySequence cycleBack = drive.trajectorySequenceBuilder(toEnd)
+                .strafeTo(new Vector2d(toEnd.getX() + (12 + Auto.cycleBack) * xSign, toEnd.getY())) // +3 because it ends at -3
+                .build();
+
+        TrajectorySequence cycleForward = drive.trajectorySequenceBuilder(cycleBack.end())
                 .strafeTo(new Vector2d(toEnd.getX(), toEnd.getY()))
                 .build();
 
@@ -87,9 +94,9 @@ public class Auto extends LinearOpMode {
          * The end position
          */
         Trajectory[] park = new Trajectory[]{
-            drive.trajectoryBuilder(toEnd).strafeTo(new Vector2d(origin.getX() + (23.5 + (tb ? 0 : 1.5)), origin.getY() - (cycleY * yS))).build(),
-            drive.trajectoryBuilder(toEnd).strafeTo(new Vector2d(origin.getX() - (2 * yS), origin.getY() - (cycleY * yS))).build(),
-            drive.trajectoryBuilder(toEnd).strafeTo(new Vector2d(origin.getX() - (25), origin.getY() - (cycleY * yS))).build()
+            drive.trajectoryBuilder(toEnd).strafeTo(new Vector2d(origin.getX() + (23.5 + (tb ? 0 : 1.5)), origin.getY() - (cycleY * ySign))).build(),
+            drive.trajectoryBuilder(toEnd).strafeTo(new Vector2d(origin.getX() - (2 * ySign), origin.getY() - (cycleY * ySign))).build(),
+            drive.trajectoryBuilder(toEnd).strafeTo(new Vector2d(origin.getX() - (25), origin.getY() - (cycleY * ySign))).build()
         };
 
         while (opModeInInit()) {
@@ -126,16 +133,43 @@ public class Auto extends LinearOpMode {
         robot.outtake.resetEncoders();
         waitForStart();
 
-        // FIXME Currently not executing the to trajectory. Is this because the motor encoders are not being reset?
-        if (!isStopRequested()) {
-            robot.followTrajectorySequence(to, this);
-            for (int i = 0; i < cycles; i++) {
-                robot.followTrajectorySequence(cycle, this);
+        double coneStackAdditionalHeight = 1.38;
+
+        robot.followTrajectorySequence(to, this);
+
+        for (int i = 0; i < cycles; i++) {
+            robot.drivetrain.setBreakFollowingThresholds(new Pose2d(2.5, 2.5, Math.toRadians(7)));
+
+            robot.currentState = Robot.STATE.RETRACT;
+            robot.startIntakeGlobal(cycleForward.end(),new Pose2d((72-4)*xSign,12*ySign),coneStackAdditionalHeight*(4-i));
+
+            robot.followTrajectorySequence(cycleForward, this);
+            while (robot.currentState == INTAKE_GLOBAL) {
+                robot.update();
             }
-            robot.followTrajectory(park[parkingNum], this);
+
+            robot.startScoringGlobal(cycleBack.end(), new Pose2d(24*xSign,0),36);
+            robot.followTrajectorySequence(cycleBack, this);
+            while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
+                robot.update();
+            }
         }
+        robot.drivetrain.setBreakFollowingThresholds(new Pose2d(0.5, 0.5, Math.toRadians(5)));
+
+        robot.followTrajectory(park[parkingNum], this);
     }
 }
+
+
+//        if (!isStopRequested()) {
+//            robot.followTrajectorySequence(to, this);
+//            for (int i = 0; i < cycles; i++) {
+//                robot.followTrajectorySequence(cycleBack, this);
+//                robot.followTrajectorySequence(cycleForward, this);
+//            }
+//            robot.followTrajectory(park[parkingNum], this);
+//        }
+
 
 //import com.acmerobotics.roadrunner.geometry.Pose2d;
 //import com.acmerobotics.roadrunner.geometry.Vector2d;
