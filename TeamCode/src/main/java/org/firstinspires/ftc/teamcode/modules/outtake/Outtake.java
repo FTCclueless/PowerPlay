@@ -38,7 +38,7 @@ public class Outtake {
     double currentSlidesLength = 0.0;
     double currentExtensionLength = 0.0;
 
-    double turretXOffset = -2.0;
+    double turretXOffset = -2.5;
     double turretYOffset = 0.0;
 
     double x, y, z;
@@ -65,7 +65,8 @@ public class Outtake {
     }
 
     public void updateTelemetry () {
-        TelemetryUtil.packet.put("turretClips: ", turretClips);
+        TelemetryUtil.packet.put("outtake.isInPosition: ", isInPosition());
+
     }
 
     boolean turretClips = false;
@@ -73,7 +74,7 @@ public class Outtake {
     public void update() {
         updateRelativePos();
 
-         turretClips = isTurretGoThroughBad();
+        turretClips = isTurretGoThroughBad();
 
         if (turretClips && targetSlidesLength < 9){
             slides.setTargetSlidesLength(12);
@@ -194,6 +195,16 @@ public class Outtake {
             angle += Math.PI * 2.0;
         }
         return angle;
+    }
+
+    public boolean isInPositionGlobal(Pose2d robotPose, Pose2d targetPose) {
+        Pose2d globalCoords = findGlobalCoordinates(robotPose, x-2.5,y);
+
+        if (Math.abs(globalCoords.getX() - targetPose.getX()) <= 4 && Math.abs(globalCoords.getY() - globalCoords.getY()) <= 4) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public boolean isInPosition() {

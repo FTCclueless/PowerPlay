@@ -80,13 +80,15 @@ public class Robot {
 
     private long loopStart = System.nanoTime();
 
+    boolean isAtPoint = false;
+    boolean hasGrabbed = false;
+
     public void update() {
         loopStart = System.nanoTime();
         updateSubSystems();
         updateTelemetry();
 
         double relativeAngle;
-        boolean isAtPoint;
 
         switch (currentState) {
             case IDLE:
@@ -121,8 +123,7 @@ public class Robot {
                 }
                 break;
             case INTAKE_GLOBAL:
-                isAtPoint = false;
-                if (Math.abs(drivetrain.getPoseEstimate().getX() - drivePose.getX()) <= 4 && Math.abs(drivetrain.getPoseEstimate().getY() - drivePose.getY()) <= 4) {
+                if ((Math.abs(drivetrain.getPoseEstimate().getX() - drivePose.getX()) <= 4) && (Math.abs(drivetrain.getPoseEstimate().getY() - drivePose.getY()) <= 4)) {
                     drivePose = drivetrain.getPoseEstimate();
                     isAtPoint = true;
                 }
@@ -133,16 +134,24 @@ public class Robot {
                 Log.e("outtake.isInPosition(): ", outtake.isInPosition() + "");
                 Log.e("isAtPoint: ", isAtPoint + "");
 
-                if (isAtPoint && outtake.isInPosition()) {
+                if (isAtPoint && (outtake.isInPosition() || hasGrabbed)) {
+                    Log.e("close claw", "");
                     claw.close();
                 }
                 else {
+                    Log.e("intake claw", "");
+                    claw.intake();
                     startClawCloseTime = System.currentTimeMillis();
                 }
 
                 if(sensors.clawTouch || System.currentTimeMillis() - startClawCloseTime > 300) { // needs an external claw.close()
+                    Log.e("here", "");
+                    hasGrabbed = true;
                     outtake.slides.setTargetSlidesLength(10);
                     if(sensors.clawTouch || outtake.slides.isInPosition(3)) { // needs an external claw.close()
+                        Log.e("here2", "");
+                        isAtPoint = false;
+                        hasGrabbed = false;
                         currentState = STATE.WAIT_FOR_START_SCORING;
                     }
                 }
@@ -203,7 +212,6 @@ public class Robot {
 //                break;
             case SCORING_GLOBAL:
                 // checks to see if the drivetrain is near the final scoring pose and if it is then give it it's actual drive pose
-                isAtPoint = false;
                 if (Math.abs(drivetrain.getPoseEstimate().getX() - drivePose.getX()) <= 4 && Math.abs(drivetrain.getPoseEstimate().getY() - drivePose.getY()) <= 4) {
                     drivePose = drivetrain.getPoseEstimate();
                     isAtPoint = true;
@@ -212,6 +220,7 @@ public class Robot {
 
                 if (isAtPoint && outtake.isInPosition()) {
                     timeSinceClawOpen = System.currentTimeMillis();
+                    isAtPoint = false;
                     currentState = STATE.DEPOSIT;
                 }
                 break;
@@ -238,7 +247,6 @@ public class Robot {
 
     public void updateTelemetry () {
         TelemetryUtil.packet.put("Current State: ", currentState);
-        TelemetryUtil.packet.put("Extension Distance: ", extensionDistance);
       }
 
 
