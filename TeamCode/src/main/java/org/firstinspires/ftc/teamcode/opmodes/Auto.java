@@ -141,7 +141,7 @@ public class Auto extends LinearOpMode {
             robot.drivetrain.setBreakFollowingThresholds(new Pose2d(2.5, 2.5, Math.toRadians(7)));
 
             robot.currentState = Robot.STATE.RETRACT;
-            robot.startIntakeGlobal(cycleForward.end(),new Pose2d((72-10)*xSign,12*ySign),coneStackAdditionalHeight*(4-i));
+            robot.startIntakeGlobal(cycleForward.end(),new Pose2d((72-15)*xSign,12*ySign),coneStackAdditionalHeight*(4-i));
 
             robot.followTrajectorySequence(cycleForward, this);
             while (robot.currentState == INTAKE_GLOBAL) {

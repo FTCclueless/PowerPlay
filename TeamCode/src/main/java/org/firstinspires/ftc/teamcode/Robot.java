@@ -81,6 +81,7 @@ public class Robot {
     private long loopStart = System.nanoTime();
 
     boolean isAtPoint = false;
+    boolean hasGrabbed = false;
 
     public void update() {
         loopStart = System.nanoTime();
@@ -133,7 +134,7 @@ public class Robot {
                 Log.e("outtake.isInPosition(): ", outtake.isInPosition() + "");
                 Log.e("isAtPoint: ", isAtPoint + "");
 
-                if (isAtPoint && outtake.isInPosition()) {
+                if (isAtPoint && (outtake.isInPosition() || hasGrabbed)) {
                     Log.e("close claw", "");
                     claw.close();
                 }
@@ -145,10 +146,12 @@ public class Robot {
 
                 if(sensors.clawTouch || System.currentTimeMillis() - startClawCloseTime > 300) { // needs an external claw.close()
                     Log.e("here", "");
+                    hasGrabbed = true;
                     outtake.slides.setTargetSlidesLength(10);
                     if(sensors.clawTouch || outtake.slides.isInPosition(3)) { // needs an external claw.close()
                         Log.e("here2", "");
                         isAtPoint = false;
+                        hasGrabbed = false;
                         currentState = STATE.WAIT_FOR_START_SCORING;
                     }
                 }
