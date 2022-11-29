@@ -131,10 +131,10 @@ public class Robot {
 
                 // TODO: Add in external claw.close when the outtake global pose is near the cone pose
 
-                Log.e("outtake.isInPosition(): ", outtake.isInPosition() + "");
+                Log.e("outtake.isInPosition(): ", outtake.isInPositionGlobal(drivePose, polePose, 1.5) + "");
                 Log.e("isAtPoint: ", isAtPoint + "");
 
-                if (isAtPoint && (outtake.isInPosition() || hasGrabbed)) {
+                if (isAtPoint && (outtake.isInPositionGlobal(drivePose, conePose, 1.5) || hasGrabbed)) {
                     Log.e("close claw", "");
                     claw.close();
                 }
