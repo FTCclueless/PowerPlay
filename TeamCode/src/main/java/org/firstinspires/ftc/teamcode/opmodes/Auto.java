@@ -81,11 +81,11 @@ public class Auto extends LinearOpMode {
                 .build();
 
         Pose2d toEnd = to.end(); // Incredible naming!
-        TrajectorySequence cycleBack = drive.trajectorySequenceBuilder(toEnd)
+        TrajectorySequence toDeposit = drive.trajectorySequenceBuilder(toEnd)
                 .strafeTo(new Vector2d(toEnd.getX() + (12 + Auto.cycleBack) * xSign, toEnd.getY())) // +3 because it ends at -3
                 .build();
 
-        TrajectorySequence cycleForward = drive.trajectorySequenceBuilder(cycleBack.end())
+        TrajectorySequence toIntake = drive.trajectorySequenceBuilder(toDeposit.end())
                 .strafeTo(new Vector2d(toEnd.getX(), toEnd.getY()))
                 .build();
 
@@ -141,15 +141,15 @@ public class Auto extends LinearOpMode {
             robot.drivetrain.setBreakFollowingThresholds(new Pose2d(2.5, 2.5, Math.toRadians(5)));
 
             robot.currentState = Robot.STATE.RETRACT;
-            robot.startIntakeGlobal(cycleForward.end(),new Pose2d((72-10)*xSign,12*ySign),coneStackAdditionalHeight*(4-i));
-            robot.followTrajectorySequence(cycleForward, this);
+            robot.startIntakeGlobal(toIntake.end(),new Pose2d((72-10)*xSign,12*ySign),coneStackAdditionalHeight*(4-i));
+            robot.followTrajectorySequence(toIntake, this);
 
             while (robot.currentState == INTAKE_GLOBAL) {
                 robot.update();
             }
 
-            robot.followTrajectorySequence(cycleBack, this);
-            robot.startScoringGlobal(cycleBack.end(), new Pose2d(24*xSign,0),36);
+            robot.followTrajectorySequence(toDeposit, this);
+            robot.startScoringGlobal(toDeposit.end(), new Pose2d(24*xSign,0),36);
             while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
                 robot.update();
             }
