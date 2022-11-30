@@ -150,7 +150,7 @@ public class Auto extends LinearOpMode {
         robot.followTrajectorySequence(to, this);
 
         for (int i = 0; i < cycles; i++) {
-            robot.drivetrain.setBreakFollowingThresholds(new Pose2d(2.5, 2.5, Math.toRadians(5)));
+            robot.drivetrain.setBreakFollowingThresholds(new Pose2d(2.5, 2.5, Math.toRadians(5)), toIntake.end());
 
             robot.currentState = Robot.STATE.RETRACT;
             robot.startIntakeGlobal(
@@ -159,19 +159,22 @@ public class Auto extends LinearOpMode {
                 coneStackAdditionalHeight * (4 - i)
             );
 
+            robot.followTrajectorySequence(toIntake, this);
+
             while (robot.currentState == INTAKE_GLOBAL) {
                 robot.update();
             }
 
+            robot.drivetrain.setBreakFollowingThresholds(new Pose2d(2.5, 2.5, Math.toRadians(5)), toDeposit.end());
+
             robot.followTrajectorySequence(toDeposit, this);
             robot.startScoringGlobal(toDeposit.end(), new Pose2d(24 * xSign,0),36);
+            robot.update();
             while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
                 robot.update();
             }
-
-            robot.followTrajectorySequence(toIntake, this);
         }
-        robot.drivetrain.setBreakFollowingThresholds(new Pose2d(0.5, 0.5, Math.toRadians(5)));
+        robot.drivetrain.setBreakFollowingThresholds(new Pose2d(0.5, 0.5, Math.toRadians(5)), park[parkingNum].end());
 
         robot.followTrajectory(park[parkingNum], this);
     }
