@@ -231,7 +231,9 @@ public class Drivetrain extends MecanumDrive {
 
     public void update() {
         updatePoseEstimate();
-        DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
+
+        Pose2d estimate = getPoseEstimate();
+        DriveSignal signal = trajectorySequenceRunner.update(estimate, getPoseVelocity());
         if (signal != null) {
             double forward = signal.getVel().getX() * kV + signal.getAccel().getX() * kA; forward += Math.signum(forward) * kStatic;
             double left = (signal.getVel().getY() * kV + signal.getAccel().getY() * kA) * LATERAL_MULTIPLIER * -1.0; left += Math.signum(left) * kStatic;
@@ -247,7 +249,10 @@ public class Drivetrain extends MecanumDrive {
             motorPriorities.get(3).setTargetPower(forward-left+turn);
         }
 
-        if((Math.abs(trajectorySequenceRunner.getLastPoseError().getX()) < xThreshold) && (Math.abs(trajectorySequenceRunner.getLastPoseError().getY()) < yThreshold) && (Math.abs(trajectorySequenceRunner.getLastPoseError().getHeading()) < headingThreshold) && breakFollowing) {
+        if((breakFollowing)
+                && (Math.abs(estimate.getX() - targetPose.getX()) < xThreshold)
+                && (Math.abs(estimate.getY() - targetPose.getY()) < yThreshold)
+                && (Math.abs(estimate.getHeading() - targetPose.getHeading()) < headingThreshold)) {
             breakFollowing();
             setMotorPowers(0,0,0,0);
         }
@@ -256,12 +261,14 @@ public class Drivetrain extends MecanumDrive {
     }
 
     boolean breakFollowing = false;
+    Pose2d targetPose = new Pose2d(0,0,0);
 
-    public void setBreakFollowingThresholds (Pose2d pose2d) {
+    public void setBreakFollowingThresholds (Pose2d thresholds, Pose2d targetPose) {
+        this.targetPose = targetPose;
         breakFollowing = true;
-        xThreshold = pose2d.getX();
-        yThreshold = pose2d.getY();
-        headingThreshold = pose2d.getHeading();
+        xThreshold = thresholds.getX();
+        yThreshold = thresholds.getY();
+        headingThreshold = thresholds.getHeading();
     }
 
     public void breakFollowing() {

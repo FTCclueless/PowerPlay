@@ -37,7 +37,7 @@ public class Robot {
     public ArrayList<MotorPriority> motorPriorities = new ArrayList<>();
     public ArrayList<MyServo> servos = new ArrayList<>();
 
-    public enum STATE {IDLE, INIT, INTAKE_RELATIVE, INTAKE_GLOBAL, WAIT_FOR_START_SCORING, SCORING_GLOBAL, SCORING_RELATIVE_WITH_IMU, ADJUST, DEPOSIT, RETRACT }
+    public enum STATE {IDLE, INIT, INTAKE_RELATIVE, INTAKE_GLOBAL, WAIT_FOR_START_SCORING, WAIT_FOR_START_SCORING_AUTO, SCORING_GLOBAL, SCORING_RELATIVE_WITH_IMU, ADJUST, DEPOSIT, RETRACT }
     public STATE currentState = STATE.INIT;
 
     public Robot (HardwareMap hardwareMap) {
@@ -152,7 +152,7 @@ public class Robot {
                         Log.e("here2", "");
                         isAtPoint = false;
                         hasGrabbed = false;
-                        currentState = STATE.WAIT_FOR_START_SCORING;
+                        currentState = STATE.WAIT_FOR_START_SCORING_AUTO;
                     }
                 }
                 break;
@@ -166,6 +166,17 @@ public class Robot {
                     startScoringRelative = false;
                     currentState = STATE.SCORING_RELATIVE_WITH_IMU;
                 }
+                if (startScoringGlobal) {
+                    extensionDistance = 7.0;
+                    startScoringGlobal = false;
+                    currentState = STATE.SCORING_GLOBAL;
+                }
+                break;
+            case WAIT_FOR_START_SCORING_AUTO:
+                claw.close();
+                actuation.level();
+                outtake.retract();
+                outtake.slides.setTargetSlidesLength(15);
                 if (startScoringGlobal) {
                     extensionDistance = 7.0;
                     startScoringGlobal = false;
@@ -214,7 +225,7 @@ public class Robot {
                 }
                 outtake.setTargetGlobal(drivePose, polePose, poleHeight);
 
-                if (isAtPoint && outtake.isInPosition()) {
+                if (isAtPoint && (outtake.isInPositionGlobal(drivePose, polePose, 1.5))) {
                     timeSinceClawOpen = System.currentTimeMillis();
                     isAtPoint = false;
                     currentState = STATE.DEPOSIT;
