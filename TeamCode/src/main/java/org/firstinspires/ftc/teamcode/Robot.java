@@ -37,7 +37,7 @@ public class Robot {
     public ArrayList<MotorPriority> motorPriorities = new ArrayList<>();
     public ArrayList<MyServo> servos = new ArrayList<>();
 
-    public enum STATE {IDLE, INIT, INTAKE_RELATIVE, INTAKE_GLOBAL, WAIT_FOR_START_SCORING, SCORING_GLOBAL, SCORING_RELATIVE_WITH_IMU, SCORING_RELATIVE_WITHOUT_IMU, ADJUST, DEPOSIT, RETRACT }
+    public enum STATE {IDLE, INIT, INTAKE_RELATIVE, INTAKE_GLOBAL, WAIT_FOR_START_SCORING, SCORING_GLOBAL, SCORING_RELATIVE_WITH_IMU, ADJUST, DEPOSIT, RETRACT }
     public STATE currentState = STATE.INIT;
 
     public Robot (HardwareMap hardwareMap) {
@@ -183,10 +183,6 @@ public class Robot {
 
                 outtake.setTargetRelative(extensionDistance*Math.cos(relativeAngle),extensionDistance*Math.sin(relativeAngle), this.scoringHeight); // changes dynamically based on driver input
 
-                if (this.scoringHeight <= 5) {
-                    currentState = STATE.SCORING_RELATIVE_WITHOUT_IMU;
-                }
-
                 if (startDeposit) {
 //                    offsetX = 0.0;
 //                    offsetY = 0.0;
@@ -317,29 +313,30 @@ public class Robot {
             this.scoringHeight = scoringHeight;
 //            offsetX = 0.0;
 //            offsetY = 0.0;
-        } else if ((gamepad.left_trigger > 0.5) && (scoringDirection != ScoringDirection.FORWARD_RIGHT)) {
-            scoringDirection = ScoringDirection.FORWARD_RIGHT;
-            if (isBlue) {
-                targetAngle = Math.toRadians(-135);
-            } else {
-                targetAngle = Math.toRadians(45);
-            }
-            extensionDistance = 10.0;
-            this.scoringHeight = scoringHeight;
-//            offsetX = 0.0;
-//            offsetY = 0.0;
-        } else if (gamepad.left_bumper && (scoringDirection != ScoringDirection.FORWARD_LEFT)) {
-            scoringDirection = ScoringDirection.FORWARD_LEFT;
-            if (isBlue) {
-                targetAngle = Math.toRadians(-45);
-            } else {
-                targetAngle = Math.toRadians(135);
-            }
-            extensionDistance = 10.0;
-            this.scoringHeight = scoringHeight;
-//            offsetX = 0.0;
-//            offsetY = 0.0;
         }
+//        else if ((gamepad.left_trigger > 0.5) && (scoringDirection != ScoringDirection.FORWARD_RIGHT)) {
+//            scoringDirection = ScoringDirection.FORWARD_RIGHT;
+//            if (isBlue) {
+//                targetAngle = Math.toRadians(-135);
+//            } else {
+//                targetAngle = Math.toRadians(45);
+//            }
+//            extensionDistance = 10.0;
+//            this.scoringHeight = scoringHeight;
+////            offsetX = 0.0;
+////            offsetY = 0.0;
+//        } else if ((gamepad.left_bumper) && (scoringDirection != ScoringDirection.FORWARD_LEFT)) {
+//            scoringDirection = ScoringDirection.FORWARD_LEFT;
+//            if (isBlue) {
+//                targetAngle = Math.toRadians(-45);
+//            } else {
+//                targetAngle = Math.toRadians(135);
+//            }
+//            extensionDistance = 10.0;
+//            this.scoringHeight = scoringHeight;
+////            offsetX = 0.0;
+////            offsetY = 0.0;
+//        }
 
         // Robot Centric Offsets
         targetAngle -= gamepad.left_stick_x * Math.toRadians(0.8);
