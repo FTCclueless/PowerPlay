@@ -243,6 +243,7 @@ public class Robot {
 
     public void updateTelemetry () {
         TelemetryUtil.packet.put("Current State: ", currentState);
+        TelemetryUtil.packet.put("Loop Time: ", loopTime);
       }
 
 
