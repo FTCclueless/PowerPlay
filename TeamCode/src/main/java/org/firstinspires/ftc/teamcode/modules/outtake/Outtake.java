@@ -80,10 +80,17 @@ public class Outtake {
             slides.setTargetSlidesLength(12);
         }
         else {
-            slides.setTargetSlidesLength(targetSlidesLength);
+            if (extension.currentExtensionLength > 9) { // move extension first
+                extension.setTargetExtensionLength(targetExtensionLength);
+                if (extension.isInPosition(1.5)) {
+                    slides.setTargetSlidesLength(targetSlidesLength);
+                }
+            } else { // just moves slides
+                slides.setTargetSlidesLength(targetSlidesLength);
+            }
         }
         if (currentSlidesLength >= 9 || !turretClips){
-            if (extension.currentExtensionLength > 8.0) { // move extension first
+            if (extension.currentExtensionLength > 9) { // move extension first
                 extension.setTargetExtensionLength(targetExtensionLength);
                 if (extension.isInPosition(1.5)) {
                     turret.setTargetTurretAngle(targetTurretAngle);
@@ -206,7 +213,7 @@ public class Outtake {
         Log.e("targetPose x", targetPose.getX() + "");
         Log.e("targetPose y", targetPose.getY() + "");
 
-        if (Math.abs(globalCoords.getX() - targetPose.getX()) <= threshold && Math.abs(globalCoords.getY() - globalCoords.getY()) <= threshold) {
+        if ((Math.abs(globalCoords.getX() - targetPose.getX()) <= threshold) && (Math.abs(globalCoords.getY() - globalCoords.getY()) <= threshold) && (slides.isInPosition(threshold))) {
             return true;
         } else {
             return false;
