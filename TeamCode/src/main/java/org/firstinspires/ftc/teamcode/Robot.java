@@ -225,20 +225,23 @@ public class Robot {
                 }
 
                 if (isAtPoint) {
+                    Log.e("moving to deposit:", "");
                     outtake.setTargetGlobal(drivePose, polePose, poleHeight);
                 }
                 else {
                     claw.close();
                     actuation.level();
+                    outtake.extension.retractExtension();
                     outtake.slides.setTargetSlidesLength(15);
-                    if (ySign == 1) {
-                        outtake.turret.setTargetTurretAngle(-90);
-                    } else {
-                        outtake.turret.setTargetTurretAngle(90);
+                    if ((ySign == 1) && (outtake.extension.isInPosition(2))) {
+                        Log.e("moving turret to -90", "");
+                        outtake.turret.setTargetTurretAngle(Math.toRadians(-135));
+                    } else if ((ySign == -1) && (outtake.extension.isInPosition(2))) {
+                        outtake.turret.setTargetTurretAngle(Math.toRadians(45));
                     }
                 }
 
-                if (isAtPoint && (outtake.isInPositionGlobal(drivePose, polePose, 1.5))) {
+                if (isAtPoint && (outtake.isInPositionGlobal(drivePose, polePose,3.5))) {
                     timeSinceClawOpen = System.currentTimeMillis();
                     isAtPoint = false;
                     currentState = STATE.DEPOSIT;
@@ -250,7 +253,7 @@ public class Robot {
                     Log.e("Retract Extension", "");
                     outtake.extension.retractExtension();
                     actuation.level();
-                    if(System.currentTimeMillis() - timeSinceClawOpen >= 800) {
+                    if(outtake.extension.isInPosition(3)) {
                         Log.e("Retract Everything", "");
                         currentState = STATE.INTAKE_RELATIVE;
                     }

@@ -134,6 +134,7 @@ public class Auto extends LinearOpMode {
             if (robot.outtake.extension.isInPosition(5)) {
                 robot.claw.intake();
             }
+            robot.update();
 
 //            if (detected) {
 //                telemetry.addLine(String.format("Tag of interest is in sight! ID: %d", parkingNum + 1));
@@ -171,6 +172,10 @@ public class Auto extends LinearOpMode {
             robot.followTrajectorySequence(toDeposit, this);
             robot.update();
             while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
+                robot.update();
+            }
+
+            while (robot.outtake.slides.currentSlidesLength > 15) {
                 robot.update();
             }
         }
