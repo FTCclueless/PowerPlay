@@ -35,7 +35,7 @@ public class OpenCVObjectDetector extends MyOpenCvPipeline {
     public SkystoneLocation location;
 
     public void setTelemetry(Telemetry tele) {
-        Telemetry telemetry = tele;
+        telemetry = tele;
     }
 
 
@@ -135,6 +135,11 @@ public class OpenCVObjectDetector extends MyOpenCvPipeline {
         float[] radiusOut = new float[1];
 
         //convert matOfPoint to matOfPoint2f
+        if (contours.size() == 0)
+        {
+            telemetry.addData("NO contour!", "empty");
+            return input;
+        }
         MatOfPoint temp = contours.get(maxValIdx);
         MatOfPoint2f temp2f = new MatOfPoint2f(temp.toArray());
 

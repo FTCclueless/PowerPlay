@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.vision.OpMode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.util.SafeSleep;
 import org.firstinspires.ftc.teamcode.vision.OpenCVObjectDetector;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -12,26 +14,35 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvInternalCamera2;
-
+import org.openftc.easyopencv.OpenCvWebcam;
+@Config
 @Autonomous(name="OpenCV Object Detector")
 public class OpenCVObjectDetection extends LinearOpMode {
     // Handle hardware stuff...
+    public static boolean useWebCamera = false;
 
     int width = 320;
     int height = 240;
     // store as variable here so we can access the location
     OpenCVObjectDetector detector = new OpenCVObjectDetector(width);
     OpenCvCamera phoneCam;
+    OpenCvWebcam webCamera;
 
     @Override
     public void runOpMode() {
         // robot logic...
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-
+        detector.setTelemetry(telemetry);
+        // Initialize the back-facing camera
         // https://github.com/OpenFTC/EasyOpenCV/blob/master/examples/src/main/java/org/openftc/easyopencv/examples/InternalCameraExample.java
         // Initialize the back-facing camera
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera2(OpenCvInternalCamera2.CameraDirection.BACK, cameraMonitorViewId);
+        if (useWebCamera) {
+            webCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+            phoneCam = webCamera;
+        }
+        else
+            phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera2(OpenCvInternalCamera2.CameraDirection.BACK, cameraMonitorViewId);
         // Connect to the camera
         phoneCam.openCameraDevice();
         // Use the OpenCVObjectDetector pipeline
@@ -119,7 +130,7 @@ public class OpenCVObjectDetection extends LinearOpMode {
              * excess CPU cycles for no reason. (By default, telemetry is only sent to the DS at 4Hz
              * anyway). Of course in a real OpMode you will likely not want to do this.
              */
-            SafeSleep.sleep_milliseconds(this,1);
+            sleep(100);
         }
         /*
          * IMPORTANT NOTE: calling stopStreaming() will indeed stop the stream of images
