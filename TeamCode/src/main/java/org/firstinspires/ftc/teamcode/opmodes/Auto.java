@@ -93,11 +93,11 @@ public class Auto extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(depositPose.getX(),depositPose.getY(), depositPose.getHeading()))
                 .build();
 
-        TrajectorySequence toDeposit = drive.trajectorySequenceBuilder(intakePose)
-                .splineToConstantHeading(new Vector2d(depositPose.getX(),depositPose.getY()), heading) // +3 because it ends at -3
+        TrajectorySequence toDeposit = drive.trajectorySequenceBuilder(new Pose2d(intakePose.getX() - 3, intakePose.getY()))
+                .splineToConstantHeading(new Vector2d(depositPose.getX(),depositPose.getY()), heading)
                 .build();
 
-        TrajectorySequence toIntake = drive.trajectorySequenceBuilder(depositPose)
+        TrajectorySequence toIntake = drive.trajectorySequenceBuilder(new Pose2d(depositPose.getX() + 2, depositPose.getY()))
                 .splineToConstantHeading(new Vector2d(intakePose.getX(), intakePose.getY()), heading)
                 .build();
 
@@ -167,8 +167,8 @@ public class Auto extends LinearOpMode {
 
             robot.drivetrain.setBreakFollowingThresholds(new Pose2d(2.5, 2.5, Math.toRadians(5)), toDeposit.end());
 
+            robot.startScoringGlobal(toDeposit.end(), new Pose2d(24 * xSign,0),36, ySign);
             robot.followTrajectorySequence(toDeposit, this);
-            robot.startScoringGlobal(toDeposit.end(), new Pose2d(24 * xSign,0),36);
             robot.update();
             while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
                 robot.update();

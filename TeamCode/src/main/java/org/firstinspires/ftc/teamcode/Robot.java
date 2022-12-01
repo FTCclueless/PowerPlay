@@ -152,7 +152,7 @@ public class Robot {
                         Log.e("here2", "");
                         isAtPoint = false;
                         hasGrabbed = false;
-                        currentState = STATE.WAIT_FOR_START_SCORING_AUTO;
+                        currentState = STATE.SCORING_GLOBAL;
                     }
                 }
                 break;
@@ -223,7 +223,20 @@ public class Robot {
                     drivePose = drivetrain.getPoseEstimate();
                     isAtPoint = true;
                 }
-                outtake.setTargetGlobal(drivePose, polePose, poleHeight);
+
+                if (isAtPoint) {
+                    outtake.setTargetGlobal(drivePose, polePose, poleHeight);
+                }
+                else {
+                    claw.close();
+                    actuation.level();
+                    outtake.slides.setTargetSlidesLength(15);
+                    if (ySign == 1) {
+                        outtake.turret.setTargetTurretAngle(-90);
+                    } else {
+                        outtake.turret.setTargetTurretAngle(90);
+                    }
+                }
 
                 if (isAtPoint && (outtake.isInPositionGlobal(drivePose, polePose, 1.5))) {
                     timeSinceClawOpen = System.currentTimeMillis();
@@ -353,7 +366,7 @@ public class Robot {
         // Robot Centric Offsets
         targetAngle -= gamepad.left_stick_x * Math.toRadians(0.8);
         targetAngle -= gamepad.right_stick_x * Math.toRadians(0.8);
-        extensionDistance -= gamepad.left_stick_y * 0.1225;
+        extensionDistance -= gamepad.left_stick_y * 0.18375;
         this.scoringHeight -= gamepad.right_stick_y * 0.25; // offsets
 
         extensionDistance = Math.max(6.31103, Math.min(this.extensionDistance, 19.8937145));
@@ -376,10 +389,13 @@ public class Robot {
 
     }
 
-    public void startScoringGlobal (Pose2d drivePose, Pose2d polePose, double poleHeight) {
+    int ySign = 1;
+
+    public void startScoringGlobal (Pose2d drivePose, Pose2d polePose, double poleHeight, int ySign) {
         this.drivePose = drivePose;
         this.polePose = polePose;
         this.poleHeight = poleHeight;
+        this.ySign = ySign;
 
         startScoringGlobal = true;
     }

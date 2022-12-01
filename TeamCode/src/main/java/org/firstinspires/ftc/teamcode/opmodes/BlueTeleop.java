@@ -62,15 +62,15 @@ public class BlueTeleop extends LinearOpMode {
             }
 
             if (gamepad2.a) { // low
-                scoringHeight = 15;
+                scoringHeight = 17;
             }
 
             if (gamepad2.b) { // medium
-                scoringHeight = 20;
+                scoringHeight = 24.5;
             }
 
             if (gamepad2.y) { // high
-                scoringHeight = 28;
+                scoringHeight = 34;
             }
 
             if ((robot.currentState == Robot.STATE.WAIT_FOR_START_SCORING && gamepad2.right_bumper) || robot.currentState == Robot.STATE.SCORING_RELATIVE_WITH_IMU) {
