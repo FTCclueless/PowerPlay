@@ -237,7 +237,7 @@ public class Robot {
                         Log.e("moving turret to -90", "");
                         outtake.turret.setTargetTurretAngle(Math.toRadians(-135));
                     } else if ((ySign == -1) && (outtake.extension.isInPosition(2))) {
-                        outtake.turret.setTargetTurretAngle(Math.toRadians(45));
+                        outtake.turret.setTargetTurretAngle(Math.toRadians(135));
                     }
                 }
 
