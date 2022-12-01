@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode.vision.opmode;
+package org.firstinspires.ftc.teamcode.vision.OpMode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -40,6 +40,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector.Parameters;
 import org.firstinspires.ftc.teamcode.util.RobotLogger;
 
 import java.util.List;
@@ -67,7 +68,7 @@ public class CustomTensorFlowObjectDetection extends LinearOpMode {
      */
     //private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
     private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/CustomTeamModel.tflite";
-    private static final boolean useWebCam = true;
+    private static final boolean useWebCam = false;
     private static final String[] LABELS = {
             "1 tip",
             //"2 top"
@@ -115,6 +116,7 @@ public class CustomTensorFlowObjectDetection extends LinearOpMode {
          **/
         if (tfod != null) {
             tfod.activate();
+
 
             // The TensorFlow software will scale the input images from the camera to a lower resolution.
             // This can result in lower detection accuracy at longer distances (> 55cm or 22").

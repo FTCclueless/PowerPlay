@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.vision.opmode;
+package org.firstinspires.ftc.teamcode.vision.OpMode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -87,7 +87,7 @@ public class OpenCVObjectDetection extends LinearOpMode {
         while (opModeIsActive())
         {
 
-            OpenCVObjectDetector.SkystoneLocation location = detector.getLocation();
+            /*OpenCVObjectDetector.SkystoneLocation location = detector.getLocation();
             if (location != OpenCVObjectDetector.SkystoneLocation.NONE) {
                 // Move to the left / right
             } else {
@@ -104,6 +104,7 @@ public class OpenCVObjectDetection extends LinearOpMode {
             telemetry.addData("Pipeline time ms", phoneCam.getPipelineTimeMs());
             telemetry.addData("Overhead time ms", phoneCam.getOverheadTimeMs());
             telemetry.addData("Theoretical max FPS", phoneCam.getCurrentPipelineMaxFps());
+
             telemetry.update();
 
             /*
@@ -118,7 +119,7 @@ public class OpenCVObjectDetection extends LinearOpMode {
              * excess CPU cycles for no reason. (By default, telemetry is only sent to the DS at 4Hz
              * anyway). Of course in a real OpMode you will likely not want to do this.
              */
-            SafeSleep.sleep_milliseconds(this,100);
+            SafeSleep.sleep_milliseconds(this,1);
         }
         /*
          * IMPORTANT NOTE: calling stopStreaming() will indeed stop the stream of images
