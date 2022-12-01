@@ -236,7 +236,7 @@ public class Robot {
                     if ((ySign == 1) && (outtake.extension.currentExtensionLength < (3 + outtake.extension.baseSlidesExtension))) {
                         Log.e("moving turret to -90", "");
                         outtake.turret.setTargetTurretAngle(Math.toRadians(-135));
-                    } else if ((ySign == -1) && (outtake.extension.isInPosition(2))) {
+                    } else if ((ySign == -1) && (outtake.extension.currentExtensionLength < (3 + outtake.extension.baseSlidesExtension))) {
                         outtake.turret.setTargetTurretAngle(Math.toRadians(135));
                     }
                 }
