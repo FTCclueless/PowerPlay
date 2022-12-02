@@ -163,6 +163,7 @@ public class Robot {
                 outtake.slides.setTargetSlidesLength(5);
                 if (startScoringRelative) {
                     extensionDistance = 7.0;
+                    angleOffset = 0;
                     startScoringRelative = false;
                     currentState = STATE.SCORING_RELATIVE_WITH_IMU;
                 }
@@ -186,17 +187,19 @@ public class Robot {
             case SCORING_RELATIVE_WITH_IMU:
                 // TODO: make auto manage 0 angle
                 double imu = drivetrain.getExternalHeading();
-                relativeAngle = clipAngle(targetAngle - clipAngle(imu));
+                relativeAngle = clipAngle((targetAngle + angleOffset) - clipAngle(imu));
 
-                // field centric offsets (remove the + targetX / targetY)
-//                double targetX = offsetX * Math.cos(imu) + offsetY * Math.sin(imu);
-//                double targetY = offsetY * Math.cos(imu) - offsetX * Math.sin(imu);
+                // field centric offsets
+                //double targetX = offsetX * Math.cos(imu) + offsetY * Math.sin(imu);
+                //double targetY = offsetY * Math.cos(imu) - offsetX * Math.sin(imu);
+                //outtake.setTargetRelative(extensionDistance*Math.cos(relativeAngle) + targetX,extensionDistance*Math.sin(relativeAngle) + targetY, this.scoringHeight);
 
+                // robot centric offsets
                 outtake.setTargetRelative(extensionDistance*Math.cos(relativeAngle),extensionDistance*Math.sin(relativeAngle), this.scoringHeight); // changes dynamically based on driver input
 
                 if (startDeposit) {
-//                    offsetX = 0.0;
-//                    offsetY = 0.0;
+                    offsetX = 0.0;
+                    offsetY = 0.0;
                     startScoringRelative = false;
                     startDeposit = false;
                     timeSinceClawOpen = System.currentTimeMillis();
@@ -292,10 +295,11 @@ public class Robot {
     double extensionDistance = 7.0;
     double lastScoringHeight = 0.0;
 
-//    double offsetX = 0.0;
-//    double offsetY = 0.0;
+    double offsetX = 0.0;
+    double offsetY = 0.0;
+    double angleOffset = 0.0;
+    public void startScoringRelative(Gamepad gamepad, boolean isBlue, double scoringHeight){
 
-    public void startScoringRelative(Gamepad gamepad, boolean isBlue, double scoringHeight) {
         if (!startScoringRelative) {
             if (isBlue) {
                 targetAngle = Math.toRadians(-90);
@@ -306,90 +310,42 @@ public class Robot {
             this.scoringHeight = scoringHeight;
             this.extensionDistance = 7.0;
         }
-
-        // this checks if the lastScoringHeight without offset is not equal to the passed in scoring height without offsets, and if it is true then it will set the scoringHeightWithOffset to the one without offset
-        if (lastScoringHeight != scoringHeight) {
-            this.scoringHeight = scoringHeight;
-            lastScoringHeight = scoringHeight;
-        }
-
-        if (((gamepad.dpad_up && isBlue) || (gamepad.dpad_down && !isBlue)) && (scoringDirection != ScoringDirection.FORWARD)) {
-            scoringDirection = ScoringDirection.FORWARD;
-            targetAngle = Math.toRadians(-90);
-            extensionDistance = 7.0;
-            this.scoringHeight = scoringHeight;
-//            offsetX = 0.0;
-//            offsetY = 0.0;
-        } else if (((gamepad.dpad_down && isBlue) || (gamepad.dpad_up && !isBlue)) && (scoringDirection != ScoringDirection.BACKWARD)) {
-            scoringDirection = ScoringDirection.BACKWARD;
-            targetAngle = Math.toRadians(90);
-            extensionDistance = 7.0;
-            this.scoringHeight = scoringHeight;
-//            offsetX = 0.0;
-//            offsetY = 0.0;
-        } else if (((gamepad.dpad_left && isBlue) || (gamepad.dpad_right && !isBlue)) && (scoringDirection != ScoringDirection.LEFT)) {
-            scoringDirection = ScoringDirection.LEFT;
-            targetAngle = Math.toRadians(0);
-            extensionDistance = 7.0;
-            this.scoringHeight = scoringHeight;
-//            offsetX = 0.0;
-//            offsetY = 0.0;
-        } else if (((gamepad.dpad_right && isBlue) || (gamepad.dpad_left && !isBlue)) && (scoringDirection != ScoringDirection.RIGHT)) {
-            scoringDirection = ScoringDirection.RIGHT;
-            targetAngle = Math.toRadians(180);
-            extensionDistance = 7.0;
-            this.scoringHeight = scoringHeight;
-//            offsetX = 0.0;
-//            offsetY = 0.0;
-        }
-//        else if ((gamepad.left_trigger > 0.5) && (scoringDirection != ScoringDirection.FORWARD_RIGHT)) {
-//            scoringDirection = ScoringDirection.FORWARD_RIGHT;
-//            if (isBlue) {
-//                targetAngle = Math.toRadians(-135);
-//            } else {
-//                targetAngle = Math.toRadians(45);
-//            }
-//            extensionDistance = 10.0;
-//            this.scoringHeight = scoringHeight;
-////            offsetX = 0.0;
-////            offsetY = 0.0;
-//        } else if ((gamepad.left_bumper) && (scoringDirection != ScoringDirection.FORWARD_LEFT)) {
-//            scoringDirection = ScoringDirection.FORWARD_LEFT;
-//            if (isBlue) {
-//                targetAngle = Math.toRadians(-45);
-//            } else {
-//                targetAngle = Math.toRadians(135);
-//            }
-//            extensionDistance = 10.0;
-//            this.scoringHeight = scoringHeight;
-////            offsetX = 0.0;
-////            offsetY = 0.0;
-//        }
-
-        // Robot Centric Offsets
-        targetAngle -= gamepad.left_stick_x * Math.toRadians(0.8);
-        targetAngle -= gamepad.right_stick_x * Math.toRadians(0.8);
-        extensionDistance -= gamepad.left_stick_y * 0.18375;
-        this.scoringHeight -= gamepad.right_stick_y * 0.25; // offsets
-
-        extensionDistance = Math.max(6.31103, Math.min(this.extensionDistance, 19.8937145));
-        this.scoringHeight = Math.max(0,Math.min(this.scoringHeight, 39.08666));
-
         startScoringRelative = true;
 
-        // Field Centric Offsets
-//        double allianceMultiplier;
-//
-//        if (isBlue) {
-//            allianceMultiplier = 1;
-//        } else {
-//            allianceMultiplier = -1;
-//        }
-//
-//        offsetX -= gamepad.left_stick_x * 0.2 * allianceMultiplier;
-//        offsetY -= gamepad.left_stick_y * 0.2 * allianceMultiplier;
+        double m1 = (isBlue ? 1 : -1);
+        double newAngle = 0;
+        if (gamepad.dpad_up){
+            newAngle = Math.toRadians(-90) * m1;
+        }
+        else if (gamepad.dpad_down){
+            newAngle = Math.toRadians(90) * m1;
+        }
+        else if (gamepad.dpad_left){
+            newAngle = Math.toRadians(90 - 90 * m1);
+        }
+        else if (gamepad.dpad_right){
+            newAngle = Math.toRadians(90 + 90 * m1) * m1;
+        }
+        if (targetAngle != newAngle){
+            extensionDistance = 7.0;
+            angleOffset = 0;
+            offsetX = 0;
+            offsetY = 0;
+            this.scoringHeight = scoringHeight;
+        }
 
+        this.scoringHeight -= gamepad.right_stick_y * 0.25;
+        this.scoringHeight = Math.max(0,Math.min(this.scoringHeight, 39.08666));
 
+        //global
+        offsetX -= gamepad.left_stick_x * 0.2 * m1;
+        offsetY -= gamepad.left_stick_y * 0.2 * m1;
+
+        //relative
+        angleOffset -= gamepad.left_stick_x * Math.toRadians(0.8);
+        angleOffset -= gamepad.right_stick_x * Math.toRadians(0.8);
+        extensionDistance -= gamepad.left_stick_y * 0.18375;
+        extensionDistance = Math.max(6.31103, Math.min(this.extensionDistance, 19.8937145));
     }
 
     int ySign = 1;
