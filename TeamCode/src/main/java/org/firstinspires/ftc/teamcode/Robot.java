@@ -237,6 +237,7 @@ public class Robot {
                 if (isAtPoint) {
                     Log.e("moving to deposit:", "");
                     outtake.setTargetGlobal(drivePose, polePose, poleHeight);
+                    actuation.tilt();
                 }
                 else {
                     claw.close();
@@ -251,7 +252,7 @@ public class Robot {
                     }
                 }
 
-                if (isAtPoint && (outtake.isInPositionGlobal(drivePose, polePose,3.5))) {
+                if (isAtPoint && (outtake.isInPositionGlobal(drivePose, polePose,1.5))) {
                     timeSinceClawOpen = System.currentTimeMillis();
                     isAtPoint = false;
                     currentState = STATE.DEPOSIT;
@@ -305,7 +306,6 @@ public class Robot {
     double offsetY = 0.0;
     double angleOffset = 0.0;
     public void startScoringRelative(Gamepad gamepad, boolean isBlue, double scoringHeight){
-
         if (!startScoringRelative) {
             if (isBlue) {
                 targetAngle = Math.toRadians(-90);

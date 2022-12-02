@@ -80,24 +80,24 @@ public class Outtake {
             slides.setTargetSlidesLength(12);
         }
         else {
-            if (extension.currentExtensionLength > 9) { // move extension first
+            if (extension.currentExtensionLength > 9) { // if the extension is far out, move extension first before slides
                 extension.setTargetExtensionLength(targetExtensionLength);
                 if (extension.isInPosition(1.5)) {
                     slides.setTargetSlidesLength(targetSlidesLength);
                 }
-            } else { // just moves slides
+            } else { // if extension is in, then move slides first
                 slides.setTargetSlidesLength(targetSlidesLength);
             }
         }
         if (currentSlidesLength >= 9 || !turretClips){
-            if (extension.currentExtensionLength > 9) { // move extension first
+            if (extension.currentExtensionLength > 9) { // if extension is far out, move extension first before spinning turret
                 extension.setTargetExtensionLength(targetExtensionLength);
                 if (extension.isInPosition(1.5)) {
                     turret.setTargetTurretAngle(targetTurretAngle);
                 }
-            } else { // move turret first
+            } else { // if extension is in, then move turret first
                 turret.setTargetTurretAngle(targetTurretAngle);
-                if (turret.isInPosition(5)) {
+                if (turret.isInPosition(5) && slides.isInPosition(2)) { // once turret is in and slides are in correct position, move extension
                     extension.setTargetExtensionLength(targetExtensionLength);
                 }
             }

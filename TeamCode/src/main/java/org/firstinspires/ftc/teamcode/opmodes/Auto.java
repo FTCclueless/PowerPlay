@@ -107,6 +107,8 @@ public class Auto extends LinearOpMode {
             drive.trajectoryBuilder(toDeposit.end()).strafeTo(new Vector2d(origin.getX() - (25), origin.getY() - (cycleY * ySign))).build()
         };
 
+        robot.resetEncoders();
+
         while (opModeInInit()) {
             telemetry.setMsTransmissionInterval(50);
 
@@ -145,7 +147,6 @@ public class Auto extends LinearOpMode {
 //            telemetry.update();
         }
 
-        robot.resetEncoders();
         waitForStart();
 
         robot.followTrajectorySequence(to, this);
@@ -168,7 +169,7 @@ public class Auto extends LinearOpMode {
 
             robot.drivetrain.setBreakFollowingThresholds(new Pose2d(2.5, 2.5, Math.toRadians(5)), toDeposit.end());
 
-            robot.startScoringGlobal(toDeposit.end(), new Pose2d(24 * xSign,0),36, ySign);
+            robot.startScoringGlobal(toDeposit.end(), new Pose2d(26 * xSign,0),28.5, ySign); // 36
             robot.followTrajectorySequence(toDeposit, this);
             robot.update();
             while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
