@@ -26,6 +26,9 @@ public class Robot {
     LynxModule controlHub, expansionHub;
     HardwareMap hardwareMap;
 
+    //TODO: Change variable for field centric adjust
+    boolean doFieldCentricAdjust = false;
+
     public Drivetrain drivetrain;
     public Outtake outtake;
     public Actuation actuation;
@@ -189,13 +192,17 @@ public class Robot {
                 double imu = drivetrain.getExternalHeading();
                 relativeAngle = clipAngle((targetAngle + angleOffset) - clipAngle(imu));
 
-                // field centric offsets
-                //double targetX = offsetX * Math.cos(imu) + offsetY * Math.sin(imu);
-                //double targetY = offsetY * Math.cos(imu) - offsetX * Math.sin(imu);
-                //outtake.setTargetRelative(extensionDistance*Math.cos(relativeAngle) + targetX,extensionDistance*Math.sin(relativeAngle) + targetY, this.scoringHeight);
 
-                // robot centric offsets
-                outtake.setTargetRelative(extensionDistance*Math.cos(relativeAngle),extensionDistance*Math.sin(relativeAngle), this.scoringHeight); // changes dynamically based on driver input
+                if (doFieldCentricAdjust) {
+                    // field centric offsets
+                    double targetX = offsetX * Math.cos(imu) + offsetY * Math.sin(imu);
+                    double targetY = offsetY * Math.cos(imu) - offsetX * Math.sin(imu);
+                    outtake.setTargetRelative(extensionDistance * Math.cos(relativeAngle) + targetX, extensionDistance * Math.sin(relativeAngle) + targetY, this.scoringHeight);
+                }
+                else {
+                    // robot centric offsets
+                    outtake.setTargetRelative(extensionDistance * Math.cos(relativeAngle), extensionDistance * Math.sin(relativeAngle), this.scoringHeight); // changes dynamically based on driver input
+                }
 
                 if (startDeposit) {
                     offsetX = 0.0;
@@ -293,7 +300,6 @@ public class Robot {
     public ScoringDirection scoringDirection = ScoringDirection.FORWARD;
     double targetAngle = Math.toRadians(-90);
     double extensionDistance = 7.0;
-    double lastScoringHeight = 0.0;
 
     double offsetX = 0.0;
     double offsetY = 0.0;
@@ -321,31 +327,34 @@ public class Robot {
             newAngle = Math.toRadians(90) * m1;
         }
         else if (gamepad.dpad_left){
-            newAngle = Math.toRadians(90 - 90 * m1);
+            newAngle = Math.toRadians(45 - 90 * m1); //use 90 - 90 if you want it to work for straight across (current 45)
         }
         else if (gamepad.dpad_right){
-            newAngle = Math.toRadians(90 + 90 * m1) * m1;
+            newAngle = Math.toRadians(-45 - 90 * m1); // use -90 - 90 if you want it to work for straight across (current 45)
         }
         if (targetAngle != newAngle){
-            extensionDistance = 7.0;
+            extensionDistance = 10.0;
             angleOffset = 0;
             offsetX = 0;
             offsetY = 0;
             this.scoringHeight = scoringHeight;
         }
-
+        //universal
         this.scoringHeight -= gamepad.right_stick_y * 0.25;
         this.scoringHeight = Math.max(0,Math.min(this.scoringHeight, 39.08666));
 
-        //global
-        offsetX -= gamepad.left_stick_x * 0.2 * m1;
-        offsetY -= gamepad.left_stick_y * 0.2 * m1;
-
-        //relative
-        angleOffset -= gamepad.left_stick_x * Math.toRadians(0.8);
-        angleOffset -= gamepad.right_stick_x * Math.toRadians(0.8);
-        extensionDistance -= gamepad.left_stick_y * 0.18375;
-        extensionDistance = Math.max(6.31103, Math.min(this.extensionDistance, 19.8937145));
+        if (doFieldCentricAdjust) {
+            //global
+            offsetX -= gamepad.left_stick_x * 0.2 * m1;
+            offsetY -= gamepad.left_stick_y * 0.2 * m1;
+        }
+        else {
+            //relative
+            angleOffset -= gamepad.left_stick_x * Math.toRadians(0.8);
+            angleOffset -= gamepad.right_stick_x * Math.toRadians(0.8);
+            extensionDistance -= gamepad.left_stick_y * 0.18375;
+            extensionDistance = Math.max(6.31103, Math.min(this.extensionDistance, 19.8937145));
+        }
     }
 
     int ySign = 1;
