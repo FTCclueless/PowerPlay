@@ -73,7 +73,7 @@ public class BlueTeleop extends LinearOpMode {
                 scoringHeight = 34;
             }
 
-            if ((robot.currentState == Robot.STATE.WAIT_FOR_START_SCORING && gamepad2.right_bumper) || robot.currentState == Robot.STATE.SCORING_RELATIVE_WITH_IMU) {
+            if ((robot.currentState == Robot.STATE.WAIT_FOR_START_SCORING && (gamepad1.left_bumper && gamepad2.right_bumper)) || robot.currentState == Robot.STATE.SCORING_RELATIVE_WITH_IMU) {
                 robot.startScoringRelative(gamepad2, isBlue, scoringHeight);
             }
 

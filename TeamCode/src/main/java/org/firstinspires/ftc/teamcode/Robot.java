@@ -182,7 +182,6 @@ public class Robot {
                 double imu = drivetrain.getExternalHeading();
                 relativeAngle = clipAngle((targetAngle + angleOffset) - clipAngle(imu));
 
-
                 if (doFieldCentricAdjust) {
                     // field centric offsets
                     double targetX = offsetX * Math.cos(imu) + offsetY * Math.sin(imu);
@@ -249,17 +248,15 @@ public class Robot {
                 }
                 break;
             case DEPOSIT:
-                if(System.currentTimeMillis() - timeSinceClawOpen >= 250) {
-                    claw.open();
-                    if (System.currentTimeMillis() - timeSinceClawOpen >= 550) {
-                        outtake.slides.setTargetSlidesLength(outtake.slides.currentSlidesLength + 2);
-                        if (System.currentTimeMillis() - timeSinceClawOpen >= 800) {
-                            outtake.extension.retractExtension();
-                            if (outtake.extension.currentExtensionLength == outtake.extension.baseSlidesExtension) {
-                                Log.e("Retract Everything", "");
-                                actuation.level();
-                                currentState = STATE.INTAKE_RELATIVE;
-                            }
+                claw.open();
+                if (System.currentTimeMillis() - timeSinceClawOpen >= 250) {
+                    outtake.slides.setTargetSlidesLength(outtake.slides.currentSlidesLength + 2);
+                    if (System.currentTimeMillis() - timeSinceClawOpen >= 425) {
+                        outtake.extension.retractExtension();
+                        if (outtake.extension.currentExtensionLength == outtake.extension.baseSlidesExtension) {
+                            Log.e("Retract Everything", "");
+                            actuation.level();
+                            currentState = STATE.INTAKE_RELATIVE;
                         }
                     }
                 }
@@ -299,7 +296,8 @@ public class Robot {
     double offsetX = 0.0;
     double offsetY = 0.0;
     double angleOffset = 0.0;
-    public void startScoringRelative(Gamepad gamepad, boolean isBlue, double scoringHeight){
+
+    public void startScoringRelative(Gamepad gamepad, boolean isBlue, double scoringHeight) {
         if (!startScoringRelative) {
             if (isBlue) {
                 targetAngle = Math.toRadians(-90);
@@ -312,35 +310,44 @@ public class Robot {
         }
         startScoringRelative = true;
 
+        boolean amUpdated = false;
+
         double m1 = (isBlue ? 1 : -1);
         double newAngle = 0;
         if (gamepad.dpad_up){
             newAngle = Math.toRadians(-90) * m1;
+            amUpdated = true;
         }
         else if (gamepad.dpad_down){
             newAngle = Math.toRadians(90) * m1;
+            amUpdated = true;
         }
         else if (gamepad.dpad_left){
             newAngle = Math.toRadians(45 - 90 * m1); //use 90 - 90 if you want it to work for straight across (current 45)
+            amUpdated = true;
         }
         else if (gamepad.dpad_right){
             newAngle = Math.toRadians(-45 - 90 * m1); // use -90 - 90 if you want it to work for straight across (current 45)
+            amUpdated = true;
+
         }
-        if (targetAngle != newAngle){
+        if ((targetAngle != newAngle) && amUpdated) {
+            targetAngle = newAngle;
             extensionDistance = 10.0;
             angleOffset = 0;
             offsetX = 0;
             offsetY = 0;
             this.scoringHeight = scoringHeight;
         }
+
         //universal
         this.scoringHeight -= gamepad.right_stick_y * 0.25;
         this.scoringHeight = Math.max(0,Math.min(this.scoringHeight, 39.08666));
 
         if (doFieldCentricAdjust) {
             //global
-            offsetX -= gamepad.left_stick_x * 0.2 * m1;
-            offsetY -= gamepad.left_stick_y * 0.2 * m1;
+            offsetX -= gamepad.left_stick_x * 0.075 * m1;
+            offsetY += gamepad.left_stick_y * 0.075 * m1;
         }
         else {
             //relative
