@@ -41,8 +41,8 @@ public class Auto extends LinearOpMode {
         402.145,
         221.506
     );
-
-    double[] coneStackHeights = new double[] {5.74, 4.0, 2.87, 1.435, 0.0};
+//    double[] coneStackHeights = new double[] {5.74, 4.305, 2.87, 1.435, 0.0};
+    double[] coneStackHeights = new double[] {5.85, 4.1, 2.87, 1.435, 0.0};
 
     @Override
     public void runOpMode() throws InterruptedException {
