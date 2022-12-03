@@ -41,7 +41,8 @@ public class Auto extends LinearOpMode {
         402.145,
         221.506
     );
-    public static final double coneStackAdditionalHeight = 1.435;
+
+    double[] coneStackHeights = new double[] {5.74, 4.0, 2.87, 1.435, 0.0};
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -158,7 +159,7 @@ public class Auto extends LinearOpMode {
             robot.startIntakeGlobal(
                 toIntake.end(),
                 new Pose2d((72 - 4) * xSign,10.0 * ySign),
-                coneStackAdditionalHeight * (4 - i)
+                coneStackHeights[i]
             );
 
             robot.followTrajectorySequence(toIntake, this);
