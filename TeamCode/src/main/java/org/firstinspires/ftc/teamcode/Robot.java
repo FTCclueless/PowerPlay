@@ -40,7 +40,7 @@ public class Robot {
     public ArrayList<MotorPriority> motorPriorities = new ArrayList<>();
     public ArrayList<MyServo> servos = new ArrayList<>();
 
-    public enum STATE {IDLE, INIT, INTAKE_RELATIVE, INTAKE_GLOBAL, WAIT_FOR_START_SCORING, WAIT_FOR_START_SCORING_AUTO, SCORING_GLOBAL, SCORING_RELATIVE_WITH_IMU, ADJUST, DEPOSIT, RETRACT }
+    public enum STATE {IDLE, INIT, INTAKE_RELATIVE, INTAKE_GLOBAL, WAIT_FOR_START_SCORING, SCORING_GLOBAL, SCORING_RELATIVE_WITH_IMU, ADJUST, DEPOSIT, RETRACT }
     public STATE currentState = STATE.INIT;
 
     public Robot (HardwareMap hardwareMap) {
@@ -99,7 +99,7 @@ public class Robot {
             case INIT:
                 actuation.level();
                 outtake.retract();
-                claw.fullOpen();
+                claw.open();
                 break;
             case RETRACT:
                 claw.close();
@@ -117,6 +117,7 @@ public class Robot {
                 }
                 break;
             case INTAKE_RELATIVE:
+                claw.open();
                 actuation.level();
                 outtake.retract();
 
@@ -170,17 +171,6 @@ public class Robot {
                     startScoringRelative = false;
                     currentState = STATE.SCORING_RELATIVE_WITH_IMU;
                 }
-                if (startScoringGlobal) {
-                    extensionDistance = 7.0;
-                    startScoringGlobal = false;
-                    currentState = STATE.SCORING_GLOBAL;
-                }
-                break;
-            case WAIT_FOR_START_SCORING_AUTO:
-                claw.close();
-                actuation.level();
-                outtake.retract();
-                outtake.slides.setTargetSlidesLength(15);
                 if (startScoringGlobal) {
                     extensionDistance = 7.0;
                     startScoringGlobal = false;
@@ -243,7 +233,7 @@ public class Robot {
                     claw.close();
                     actuation.level();
                     outtake.extension.retractExtension();
-                    outtake.slides.setTargetSlidesLength(15);
+                    outtake.slides.setTargetSlidesLength(10);
                     if ((ySign == 1) && (outtake.extension.currentExtensionLength < (3 + outtake.extension.baseSlidesExtension))) {
                         Log.e("moving turret to -90", "");
                         outtake.turret.setTargetTurretAngle(Math.toRadians(-135));
@@ -252,21 +242,25 @@ public class Robot {
                     }
                 }
 
-                if (isAtPoint && (outtake.isInPositionGlobal(drivePose, polePose,1.5))) {
+                if (isAtPoint && (outtake.isInPositionGlobal(drivePose, polePose,1.0))) {
                     timeSinceClawOpen = System.currentTimeMillis();
                     isAtPoint = false;
                     currentState = STATE.DEPOSIT;
                 }
                 break;
             case DEPOSIT:
-                claw.open();
-                if(System.currentTimeMillis() - timeSinceClawOpen >= 300) {
-                    Log.e("Retract Extension", "");
-                    outtake.extension.retractExtension();
-                    actuation.level();
-                    if(outtake.extension.isInPosition(3)) {
-                        Log.e("Retract Everything", "");
-                        currentState = STATE.INTAKE_RELATIVE;
+                if(System.currentTimeMillis() - timeSinceClawOpen >= 250) {
+                    claw.open();
+                    if (System.currentTimeMillis() - timeSinceClawOpen >= 550) {
+                        outtake.slides.setTargetSlidesLength(outtake.slides.currentSlidesLength + 2);
+                        if (System.currentTimeMillis() - timeSinceClawOpen >= 800) {
+                            outtake.extension.retractExtension();
+                            if (outtake.extension.currentExtensionLength == outtake.extension.baseSlidesExtension) {
+                                Log.e("Retract Everything", "");
+                                actuation.level();
+                                currentState = STATE.INTAKE_RELATIVE;
+                            }
+                        }
                     }
                 }
                 break;

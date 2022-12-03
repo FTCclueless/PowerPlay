@@ -41,7 +41,7 @@ public class Auto extends LinearOpMode {
         402.145,
         221.506
     );
-    public static final double coneStackAdditionalHeight = 1.38;
+    public static final double coneStackAdditionalHeight = 1.435;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -78,18 +78,18 @@ public class Auto extends LinearOpMode {
 
         Pose2d intakePose = new Pose2d(
                 55,
-                12
+                9
         );
 
         Pose2d depositPose = new Pose2d(
-                32,
-                12
+                38,
+                9
         );
 
         drive.setPoseEstimate(origin); // FIXME is this needed?
         TrajectorySequence to = drive.trajectorySequenceBuilder(origin)
                 // Move forward extra in order to bump away the signal cone
-                .strafeTo(new Vector2d(origin.getX(), origin.getY() - (52 * ySign)))
+                .strafeTo(new Vector2d(origin.getX(), origin.getY() - (54 * ySign)))
                 .lineToLinearHeading(new Pose2d(depositPose.getX(),depositPose.getY(), depositPose.getHeading()))
                 .build();
 
@@ -157,7 +157,7 @@ public class Auto extends LinearOpMode {
             robot.currentState = Robot.STATE.RETRACT;
             robot.startIntakeGlobal(
                 toIntake.end(),
-                new Pose2d((72 - 4) * xSign,12 * ySign),
+                new Pose2d((72 - 4) * xSign,10.0 * ySign),
                 coneStackAdditionalHeight * (4 - i)
             );
 
@@ -169,7 +169,7 @@ public class Auto extends LinearOpMode {
 
             robot.drivetrain.setBreakFollowingThresholds(new Pose2d(2.5, 2.5, Math.toRadians(5)), toDeposit.end());
 
-            robot.startScoringGlobal(toDeposit.end(), new Pose2d(26 * xSign,0),28.5, ySign); // 36
+            robot.startScoringGlobal(toDeposit.end(), new Pose2d(25.5 * xSign,0),29.25, ySign); // 36
             robot.followTrajectorySequence(toDeposit, this);
             robot.update();
             while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
