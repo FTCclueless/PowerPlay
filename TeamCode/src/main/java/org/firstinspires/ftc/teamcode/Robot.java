@@ -303,11 +303,11 @@ public class Robot {
     double angleOffset = 0.0;
 
     double previousScoringPreset = 30;
-    public double previousCycleAngle = Math.toRadians(-90);
 
     public void startScoringRelative(Gamepad gamepad, boolean isBlue, double scoringHeight) {
         if (!startScoringRelative) {
-            targetAngle = previousCycleAngle;
+            angleOffset = 0.0;
+
             this.scoringHeight = scoringHeight;
             this.extensionDistance = 7.0;
         }
@@ -340,7 +340,6 @@ public class Robot {
 
         }
         if ((targetAngle != newAngle) && amUpdated) {
-            previousCycleAngle = newAngle;
             targetAngle = newAngle;
             extensionDistance = 7.0;
             angleOffset = 0;

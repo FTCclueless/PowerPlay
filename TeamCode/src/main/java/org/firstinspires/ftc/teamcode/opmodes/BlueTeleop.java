@@ -34,11 +34,6 @@ public class BlueTeleop extends LinearOpMode {
 
         ButtonToggle b_left_bumper = new ButtonToggle();
 
-        if (isBlue) {
-            robot.previousCycleAngle = Math.toRadians(-90);
-        } else {
-            robot.previousCycleAngle = Math.toRadians(90);
-        }
 
         waitForStart();
 
