@@ -101,6 +101,10 @@ public class Auto extends LinearOpMode {
                 .splineToConstantHeading(new Vector2d(depositPose.getX(),depositPose.getY()), heading)
                 .build();
 
+        TrajectorySequence toDepositPreload = drive.trajectorySequenceBuilder(new Pose2d(intakePose.getX() - 5, intakePose.getY()))
+                .splineToConstantHeading(new Vector2d(depositPose.getX(),depositPose.getY()), heading)
+                .build();
+
         TrajectorySequence toIntake = drive.trajectorySequenceBuilder(new Pose2d(depositPose.getX() + 2, depositPose.getY()))
                 .splineToConstantHeading(new Vector2d(intakePose.getX(), intakePose.getY()), heading)
                 .build();
@@ -108,7 +112,7 @@ public class Auto extends LinearOpMode {
         Trajectory[] park = new Trajectory[]{
             drive.trajectoryBuilder(toDeposit.end()).strafeTo(new Vector2d(origin.getX() + (23.5 + (tb ? 0 : 1.5)), origin.getY() - (cycleY * ySign))).build(),
             drive.trajectoryBuilder(toDeposit.end()).strafeTo(new Vector2d(origin.getX() - (2 * ySign), origin.getY() - (cycleY * ySign))).build(),
-            drive.trajectoryBuilder(toDeposit.end()).strafeTo(new Vector2d(origin.getX() - (25), origin.getY() - (cycleY * ySign))).build()
+            drive.trajectoryBuilder(toDeposit.end()).strafeTo(new Vector2d(origin.getX() - (27), origin.getY() - (cycleY * ySign))).build()
         };
 
         robot.resetEncoders();
@@ -158,12 +162,12 @@ public class Auto extends LinearOpMode {
         robot.followTrajectorySequence(to, this);
 
         // preload
-        robot.currentState = Robot.STATE.SCORING_GLOBAL;
+//        robot.currentState = Robot.STATE.SCORING_GLOBAL;
 
         robot.drivetrain.setBreakFollowingThresholds(new Pose2d(2.5, 2.5, Math.toRadians(5)), toDeposit.end());
 
-        robot.startScoringGlobal(toDeposit.end(), new Pose2d(25.5 * xSign,0),29.25, ySign); // 36
-        robot.followTrajectorySequence(toDeposit, this);
+        robot.startScoringGlobal(toDepositPreload.end(), new Pose2d(25.5 * xSign,0),29.25, ySign); // 36
+        robot.followTrajectorySequence(toDepositPreload, this);
         robot.update();
         while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
             robot.update();

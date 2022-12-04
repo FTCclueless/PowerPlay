@@ -131,6 +131,7 @@ public class Robot {
                 }
                 break;
             case INTAKE_GLOBAL:
+                outtake.slides.slidesPercentMax = 0.98;
                 if ((Math.abs(drivetrain.getPoseEstimate().getX() - drivePose.getX()) <= 4) && (Math.abs(drivetrain.getPoseEstimate().getY() - drivePose.getY()) <= 4)) {
                     drivePose = drivetrain.getPoseEstimate();
                     isAtPoint = true;
@@ -223,6 +224,7 @@ public class Robot {
 //                }
 //                break;
             case SCORING_GLOBAL:
+                outtake.slides.slidesPercentMax = 0.98;
                 // checks to see if the drivetrain is near the final scoring pose and if it is then give it it's actual drive pose
                 if (Math.abs(drivetrain.getPoseEstimate().getX() - drivePose.getX()) <= 4 && Math.abs(drivetrain.getPoseEstimate().getY() - drivePose.getY()) <= 4) {
                     drivePose = drivetrain.getPoseEstimate();
