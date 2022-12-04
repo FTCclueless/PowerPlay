@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.util.Storage;
 public class BlueTeleop extends LinearOpMode {
 
     boolean isBlue = true;
-    double scoringHeight = 28;
+    double scoringHeight = 30;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -33,6 +33,12 @@ public class BlueTeleop extends LinearOpMode {
         drive.localizer.setPoseEstimate(Storage.currentPose);
 
         ButtonToggle b_left_bumper = new ButtonToggle();
+
+        if (isBlue) {
+            robot.previousCycleAngle = Math.toRadians(-90);
+        } else {
+            robot.previousCycleAngle = Math.toRadians(90);
+        }
 
         waitForStart();
 
@@ -53,27 +59,23 @@ public class BlueTeleop extends LinearOpMode {
             }
 
             if ((robot.currentState == Robot.STATE.WAIT_FOR_START_SCORING) && (gamepad1.right_bumper)) {
+                robot.outtake.slides.slidesPercentMax = 0.25;
                 robot.currentState = Robot.STATE.INTAKE_RELATIVE;
             }
 
-            // Driver B
-            if (gamepad2.x) { // ground
-                scoringHeight = 0;
-            }
-
             if (gamepad2.a) { // low
-                scoringHeight = 17;
+                scoringHeight = 13;
             }
 
             if (gamepad2.b) { // medium
-                scoringHeight = 24.5;
+                scoringHeight = 21.5;
             }
 
-            if (gamepad2.y) { // high
-                scoringHeight = 34;
+            if (gamepad2.y) { // high (NEED TO CHANGE THE DEFAULT HEIGHT TOO)
+                scoringHeight = 30;
             }
 
-            if ((robot.currentState == Robot.STATE.WAIT_FOR_START_SCORING && (gamepad1.left_bumper && gamepad2.right_bumper)) || robot.currentState == Robot.STATE.SCORING_RELATIVE_WITH_IMU) {
+            if ((robot.currentState == Robot.STATE.WAIT_FOR_START_SCORING && (gamepad1.left_bumper || gamepad2.right_bumper)) || robot.currentState == Robot.STATE.SCORING_RELATIVE_WITH_IMU) {
                 robot.startScoringRelative(gamepad2, isBlue, scoringHeight);
             }
 
