@@ -295,7 +295,7 @@ public class Robot {
         startIntakeGlobal = true;
     }
 
-    double targetAngle = Math.toRadians(-90);
+    public double targetAngle = Math.toRadians(-90);
     double extensionDistance = 7.0;
 
     double offsetX = 0.0;

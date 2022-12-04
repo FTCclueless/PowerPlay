@@ -48,20 +48,20 @@ public class Auto extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         Robot robot = new Robot(hardwareMap);
         Drivetrain drive = robot.drivetrain;
-//        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-//        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-//        camera.setPipeline(atdp);
-//        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-//            @Override
-//            public void onOpened() {
-//                camera.startStreaming(640,480, OpenCvCameraRotation.UPRIGHT); // need to change for phone back camera
-//            }
-//
-//            @Override
-//            public void onError(int errorCode) {
-//                Log.e("error with vision", "");
-//            }
-//        });
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        camera.setPipeline(atdp);
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                camera.startStreaming(640,480, OpenCvCameraRotation.UPRIGHT); // need to change for phone back camera
+            }
+
+            @Override
+            public void onError(int errorCode) {
+                Log.e("error with vision", "");
+            }
+        });
 
         // Signs
         int xSign = tb ? 1 : -1;
@@ -113,24 +113,24 @@ public class Auto extends LinearOpMode {
         while (opModeInInit()) {
             telemetry.setMsTransmissionInterval(50);
 
-//            boolean detected = false;
-//            ArrayList<AprilTagDetection> currentDetections = atdp.getLatestDetections();
-//
-//            if (currentDetections.size() != 0) {
-//                for (AprilTagDetection tag : currentDetections) {
-//                    switch (tag.id) {
-//                        case 2:
-//                            parkingNum = 1;
-//                            break;
-//                        case 1:
-//                            parkingNum = 2;
-//                            break;
-//                        default:
-//                            parkingNum = tag.id;
-//                    }
-//                    detected = true;
-//                }
-//            }
+            boolean detected = false;
+            ArrayList<AprilTagDetection> currentDetections = atdp.getLatestDetections();
+
+            if (currentDetections.size() != 0) {
+                for (AprilTagDetection tag : currentDetections) {
+                    switch (tag.id) {
+                        case 2:
+                            parkingNum = 1;
+                            break;
+                        case 1:
+                            parkingNum = 2;
+                            break;
+                        default:
+                            parkingNum = tag.id;
+                    }
+                    detected = true;
+                }
+            }
 
             robot.actuation.level();
             robot.outtake.extension.retractExtension();
@@ -139,13 +139,13 @@ public class Auto extends LinearOpMode {
             }
             robot.update();
 
-//            if (detected) {
-//                telemetry.addLine(String.format("Tag of interest is in sight! ID: %d", parkingNum + 1));
-//            } else {
-//                telemetry.addLine("Could not find april tag! :(");
-//            }
-//
-//            telemetry.update();
+            if (detected) {
+                telemetry.addLine(String.format("Tag of interest is in sight! ID: %d", parkingNum + 1));
+            } else {
+                telemetry.addLine("Could not find april tag! :(");
+            }
+
+            telemetry.update();
         }
 
         waitForStart();
