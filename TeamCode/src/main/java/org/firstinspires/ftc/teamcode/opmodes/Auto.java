@@ -16,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.modules.drive.Drivetrain;
 import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.util.ButtonToggle;
 import org.firstinspires.ftc.teamcode.vision.AprilTagDetectionPipeline;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -29,9 +30,9 @@ public class Auto extends LinearOpMode {
     public static final int cycles = 5;
     public static int parkingNum = 0; // 0-2
     public static final boolean lr = true; // Left : true | Right : false
-    public static final boolean tb = false; // Top : true | Bottom : false
+    public static final boolean tb = true; // Top : true | Bottom : false
     public static OpenCvCamera camera;
-    public static final AprilTagDetectionPipeline atdp = new AprilTagDetectionPipeline(
+    public AprilTagDetectionPipeline atdp = new AprilTagDetectionPipeline(
         0.166, // Size of april tag in meters
         // These 4 values are calibration for the C920 webcam (800x448)
         578.272,
@@ -40,6 +41,7 @@ public class Auto extends LinearOpMode {
         221.506
     );
     public static final double coneStackAdditionalHeight = 1.435;
+    ButtonToggle toggleA = new ButtonToggle();
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -73,13 +75,13 @@ public class Auto extends LinearOpMode {
 
         Pose2d intakePose = new Pose2d(
             55 * xSign,
-            10 * ySign,
+            9 * ySign,
             tb ? 0 : Math.PI
         );
 
         Pose2d depositPose = new Pose2d(
             38 * xSign,
-            10 * ySign,
+            9 * ySign,
             tb ? 0 : Math.PI
         );
 
@@ -101,7 +103,7 @@ public class Auto extends LinearOpMode {
 
         Trajectory[] park = new Trajectory[]{
             drive.trajectoryBuilder(toDeposit.end()).strafeTo(new Vector2d(
-                    origin.getX() + 24,
+                    origin.getX() + 27,
                     intakePose.getY() // deposit or intake would both work for this
             )).build(),
             drive.trajectoryBuilder(toDeposit.end()).strafeTo(new Vector2d(
@@ -109,12 +111,13 @@ public class Auto extends LinearOpMode {
                     intakePose.getY()
             )).build(),
             drive.trajectoryBuilder(toDeposit.end()).strafeTo(new Vector2d(
-                    origin.getX() - 24,
+                    origin.getX() - 27,
                     intakePose.getY()
             )).build()
         };
 
         robot.resetEncoders();
+        robot.claw.open();
 
         while (opModeInInit()) {
             telemetry.setMsTransmissionInterval(50);
@@ -141,9 +144,11 @@ public class Auto extends LinearOpMode {
 
             robot.actuation.level();
             robot.outtake.extension.retractExtension();
-            if (robot.outtake.extension.isInPosition(5)) {
-                robot.claw.intake();
+
+            if (toggleA.isClicked(gamepad1.a)) {
+                robot.claw.close();
             }
+
             robot.update();
 
             telemetry.addLine("Trajectories have been built! Ready to run!");
@@ -159,6 +164,25 @@ public class Auto extends LinearOpMode {
         waitForStart();
 
         robot.followTrajectorySequence(to, this);
+
+        // Preload
+        robot.currentState = Robot.STATE.SCORING_GLOBAL;
+
+        robot.drivetrain.setBreakFollowingThresholds(new Pose2d(2.5, 2.5, Math.toRadians(5)), toDeposit.end());
+
+        robot.startScoringGlobal(toDeposit.end(), new Pose2d(25.5 * xSign,0),29.25, xSign); // 36
+        robot.followTrajectory(toDeposit, this);
+        robot.update();
+
+        while ((robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT)) {
+            robot.update();
+        }
+
+        while (robot.outtake.slides.currentSlidesLength > 15) {
+            robot.update();
+        }
+
+        // cycling
 
         for (int i = 0; i < cycles; i++) {
             robot.drivetrain.setBreakFollowingThresholds(new Pose2d(2.5, 2.5, Math.toRadians(5)), toIntake.end());
@@ -181,9 +205,15 @@ public class Auto extends LinearOpMode {
 
             robot.startScoringGlobal(toDeposit.end(), new Pose2d(25.5 * xSign,0),29.25, xSign); // 36
             robot.followTrajectory(toDeposit, this);
-            do {
+            robot.update();
+
+            while ((robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT)) {
                 robot.update();
-            } while ((robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) && robot.outtake.slides.currentSlidesLength > 15);
+            }
+
+            while (robot.outtake.slides.currentSlidesLength > 15) {
+                robot.update();
+            }
         }
         robot.drivetrain.setBreakFollowingThresholds(new Pose2d(0.1, 0.1, Math.toRadians(2)), park[parkingNum].end());
 

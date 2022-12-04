@@ -99,7 +99,6 @@ public class Robot {
             case INIT:
                 actuation.level();
                 outtake.retract();
-                claw.open();
                 break;
             case RETRACT:
                 claw.close();
@@ -152,8 +151,7 @@ public class Robot {
                     claw.intake();
                     startClawCloseTime = System.currentTimeMillis();
                 }
-
-                if(sensors.clawTouch || System.currentTimeMillis() - startClawCloseTime > 300) { // needs an external claw.close()
+                if (sensors.clawTouch || System.currentTimeMillis() - startClawCloseTime > 300) { // needs an external claw.close()
                     Log.e("here", "");
                     hasGrabbed = true;
                     outtake.slides.setTargetSlidesLength(10);
