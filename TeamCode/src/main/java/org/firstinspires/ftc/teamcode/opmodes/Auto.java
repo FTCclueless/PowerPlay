@@ -158,12 +158,11 @@ public class Auto extends LinearOpMode {
         robot.followTrajectorySequence(to, this);
 
         // preload
-//        robot.currentState = Robot.STATE.SCORING_GLOBAL;
+        robot.currentState = Robot.STATE.SCORING_GLOBAL;
 
         robot.drivetrain.setBreakFollowingThresholds(new Pose2d(2.5, 2.5, Math.toRadians(5)), toDeposit.end());
 
-        robot.startScoringGlobal(toDepositPreload.end(), new Pose2d(25.5 * xSign,0),29.25, ySign); // 36
-        robot.followTrajectorySequence(toDepositPreload, this);
+        robot.startScoringGlobal(to.end(), new Pose2d(25.5 * xSign,0),29.25, ySign); // 36
         robot.update();
         while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
             robot.update();
