@@ -106,20 +106,25 @@ public class Robot {
                 actuation.level();
                 outtake.retract();
                 if (startIntakeRelative) {
+                    outtake.slides.slidesPercentMax = 0.98;
                     startIntakeRelative = false;
                     claw.intake();
                     currentState = STATE.INTAKE_RELATIVE;
                 }
                 if (startIntakeGlobal) {
+                    outtake.slides.slidesPercentMax = 0.98;
                     startIntakeGlobal = false;
                     claw.intake();
                     currentState = STATE.INTAKE_GLOBAL;
                 }
                 break;
             case INTAKE_RELATIVE:
-                claw.open();
                 actuation.level();
                 outtake.retract();
+
+                if (outtake.slides.isInPosition(1.5)) {
+                    claw.open();
+                }
 
                 if (sensors.clawTouch) { // needs an external claw.close()
                     sensors.clawTouch = false;
@@ -161,11 +166,13 @@ public class Robot {
                 }
                 break;
             case WAIT_FOR_START_SCORING:
+                outtake.slides.slidesPercentMax = 0.98;
                 claw.close();
                 actuation.level();
                 outtake.retract();
-                outtake.slides.setTargetSlidesLength(5);
+                outtake.slides.setTargetSlidesLength(3);
                 if (startScoringRelative) {
+                    actuation.tilt();
                     extensionDistance = 7.0;
                     angleOffset = 0;
                     startScoringRelative = false;
@@ -288,8 +295,6 @@ public class Robot {
         startIntakeGlobal = true;
     }
 
-    enum ScoringDirection {FORWARD, BACKWARD, LEFT, RIGHT, FORWARD_LEFT, FORWARD_RIGHT}
-    public ScoringDirection scoringDirection = ScoringDirection.FORWARD;
     double targetAngle = Math.toRadians(-90);
     double extensionDistance = 7.0;
 
@@ -297,18 +302,21 @@ public class Robot {
     double offsetY = 0.0;
     double angleOffset = 0.0;
 
+    double previousScoringPreset = 30;
+
     public void startScoringRelative(Gamepad gamepad, boolean isBlue, double scoringHeight) {
         if (!startScoringRelative) {
-            if (isBlue) {
-                targetAngle = Math.toRadians(-90);
-            } else {
-                targetAngle = Math.toRadians(90);
-            }
-            scoringDirection = ScoringDirection.FORWARD;
+            angleOffset = 0.0;
+
             this.scoringHeight = scoringHeight;
             this.extensionDistance = 7.0;
         }
         startScoringRelative = true;
+
+        if (scoringHeight != previousScoringPreset) {
+            this.scoringHeight = scoringHeight;
+            previousScoringPreset = scoringHeight;
+        }
 
         boolean amUpdated = false;
 
@@ -333,7 +341,7 @@ public class Robot {
         }
         if ((targetAngle != newAngle) && amUpdated) {
             targetAngle = newAngle;
-            extensionDistance = 10.0;
+            extensionDistance = 7.0;
             angleOffset = 0;
             offsetX = 0;
             offsetY = 0;
