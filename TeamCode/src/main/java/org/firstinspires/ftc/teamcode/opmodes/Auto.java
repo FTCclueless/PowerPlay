@@ -35,14 +35,14 @@ public class Auto extends LinearOpMode {
     public static final double cycleY = 48; // Turning can give an offset (+ cone location)
     public static OpenCvCamera camera;
     public AprilTagDetectionPipeline atdp = new AprilTagDetectionPipeline(
-        0.166, // Size of april tag in meters
-        // These 4 values are calibration for the C920 webcam (800x448)
-        578.272,
-        578.272,
-        402.145,
-        221.506
+            0.166, // Size of april tag in meters
+            // These 4 values are calibration for the C920 webcam (800x448)
+            578.272,
+            578.272,
+            402.145,
+            221.506
     );
-//    double[] coneStackHeights = new double[] {5.74, 4.305, 2.87, 1.435, 0.0};
+    //    double[] coneStackHeights = new double[] {5.74, 4.305, 2.87, 1.435, 0.0};
     double[] coneStackHeights = new double[] {5.85, 4.1, 2.87, 1.435, 0.0};
 
     ButtonToggle toggleA = new ButtonToggle();
@@ -71,9 +71,9 @@ public class Auto extends LinearOpMode {
         int ySign = lr ? 1 : -1;
 
         Pose2d origin = new Pose2d(
-            36 * xSign,
-            60 * ySign,
-            Math.PI / 2 * (!lr ? -1 : 1)
+                36 * xSign,
+                60 * ySign,
+                Math.PI / 2 * (!lr ? -1 : 1)
         );
 
         drive.setPoseEstimate(origin);
@@ -106,9 +106,9 @@ public class Auto extends LinearOpMode {
                 .build();
 
         Trajectory[] park = new Trajectory[]{
-            drive.trajectoryBuilder(toDeposit.end()).strafeTo(new Vector2d(origin.getX() + (23.5 + (tb ? 0 : 1.5)), origin.getY() - (cycleY * ySign))).build(),
-            drive.trajectoryBuilder(toDeposit.end()).strafeTo(new Vector2d(origin.getX() - (2 * ySign), origin.getY() - (cycleY * ySign))).build(),
-            drive.trajectoryBuilder(toDeposit.end()).strafeTo(new Vector2d(origin.getX() - (27), origin.getY() - (cycleY * ySign))).build()
+                drive.trajectoryBuilder(toDeposit.end()).strafeTo(new Vector2d(origin.getX() + (23.5 + (tb ? 0 : 1.5)), origin.getY() - (cycleY * ySign))).build(),
+                drive.trajectoryBuilder(toDeposit.end()).strafeTo(new Vector2d(origin.getX() - (2 * ySign), origin.getY() - (cycleY * ySign))).build(),
+                drive.trajectoryBuilder(toDeposit.end()).strafeTo(new Vector2d(origin.getX() - (27), origin.getY() - (cycleY * ySign))).build()
         };
 
         robot.resetEncoders();
@@ -177,9 +177,9 @@ public class Auto extends LinearOpMode {
 
             robot.currentState = Robot.STATE.RETRACT;
             robot.startIntakeGlobal(
-                toIntake.end(),
-                new Pose2d((72 - 4) * xSign,10.0 * ySign),
-                coneStackHeights[i]
+                    toIntake.end(),
+                    new Pose2d((72 - 4) * xSign,10.0 * ySign),
+                    coneStackHeights[i]
             );
 
             robot.followTrajectorySequence(toIntake, this);
