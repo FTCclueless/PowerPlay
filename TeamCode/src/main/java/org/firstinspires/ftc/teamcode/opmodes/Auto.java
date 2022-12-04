@@ -162,7 +162,7 @@ public class Auto extends LinearOpMode {
 
         robot.followTrajectorySequence(to, this);
 
-        robot.startScoringGlobal(toDeposit.end(), new Pose2d(25.5 * xSign,0),29.25, ySign); // 36
+        robot.startScoringGlobal(to.end(), new Pose2d(27 * xSign,0),29.25, ySign); // 36
         robot.update();
         while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
             robot.update();

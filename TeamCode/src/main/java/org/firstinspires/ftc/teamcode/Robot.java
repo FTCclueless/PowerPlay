@@ -156,7 +156,7 @@ public class Robot {
                 if(sensors.clawTouch || System.currentTimeMillis() - startClawCloseTime > 300) { // needs an external claw.close()
                     Log.e("here", "");
                     hasGrabbed = true;
-                    outtake.slides.setTargetSlidesLength(10);
+                    outtake.slides.setTargetSlidesLength(coneHeight + 6);
                     if(sensors.clawTouch || outtake.slides.isInPosition(3)) { // needs an external claw.close()
                         Log.e("here2", "");
                         isAtPoint = false;
@@ -240,7 +240,7 @@ public class Robot {
                     claw.close();
                     actuation.level();
                     outtake.extension.retractExtension();
-                    outtake.slides.setTargetSlidesLength(10);
+                    outtake.slides.setTargetSlidesLength(11.5);
                     if ((ySign == 1) && (outtake.extension.currentExtensionLength < (3 + outtake.extension.baseSlidesExtension))) {
                         Log.e("moving turret to -90", "");
                         outtake.turret.setTargetTurretAngle(Math.toRadians(-135));
@@ -386,8 +386,8 @@ public class Robot {
         try {
             controlHub = hardwareMap.get(LynxModule.class, "Control Hub");
             controlHub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
-//            expansionHub = hardwareMap.get(LynxModule.class, "Expansion Hub 2");
-//            expansionHub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+            expansionHub = hardwareMap.get(LynxModule.class, "Expansion Hub 2");
+            expansionHub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         } catch (RuntimeException e) {
             throw new RuntimeException("One or more of the REV hubs could not be found. More info: " + e);
         }
