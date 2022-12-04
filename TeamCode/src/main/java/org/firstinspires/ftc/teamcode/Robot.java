@@ -99,7 +99,6 @@ public class Robot {
             case INIT:
                 actuation.level();
                 outtake.retract();
-                claw.open();
                 break;
             case RETRACT:
                 claw.close();
@@ -295,7 +294,6 @@ public class Robot {
         startIntakeGlobal = true;
     }
 
-    double targetAngle = Math.toRadians(-90);
     double extensionDistance = 7.0;
 
     double offsetX = 0.0;
@@ -304,10 +302,11 @@ public class Robot {
 
     double previousScoringPreset = 30;
 
+    public double targetAngle = Math.toRadians(-90);
+
     public void startScoringRelative(Gamepad gamepad, boolean isBlue, double scoringHeight) {
         if (!startScoringRelative) {
             angleOffset = 0.0;
-
             this.scoringHeight = scoringHeight;
             this.extensionDistance = 7.0;
         }
