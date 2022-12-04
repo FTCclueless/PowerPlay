@@ -155,6 +155,7 @@ public class Robot {
 
                 if(sensors.clawTouch || System.currentTimeMillis() - startClawCloseTime > 300) { // needs an external claw.close()
                     Log.e("here", "");
+                    claw.close();
                     hasGrabbed = true;
                     outtake.slides.setTargetSlidesLength(coneHeight + 6);
                     if(sensors.clawTouch || outtake.slides.isInPosition(3)) { // needs an external claw.close()
