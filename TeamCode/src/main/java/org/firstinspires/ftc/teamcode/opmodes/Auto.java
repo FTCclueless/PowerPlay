@@ -94,14 +94,10 @@ public class Auto extends LinearOpMode {
         TrajectorySequence to = drive.trajectorySequenceBuilder(origin)
                 // Move forward extra in order to bump away the signal cone
                 .strafeTo(new Vector2d(origin.getX(), origin.getY() - (54 * ySign)))
-                .lineToLinearHeading(new Pose2d(depositPose.getX(),depositPose.getY(), depositPose.getHeading()))
+                .lineToLinearHeading(new Pose2d(depositPose.getX() + 5,depositPose.getY(), depositPose.getHeading()))
                 .build();
 
         TrajectorySequence toDeposit = drive.trajectorySequenceBuilder(new Pose2d(intakePose.getX() - 3, intakePose.getY()))
-                .splineToConstantHeading(new Vector2d(depositPose.getX(),depositPose.getY()), heading)
-                .build();
-
-        TrajectorySequence toDepositPreload = drive.trajectorySequenceBuilder(new Pose2d(intakePose.getX() - 5, intakePose.getY()))
                 .splineToConstantHeading(new Vector2d(depositPose.getX(),depositPose.getY()), heading)
                 .build();
 
