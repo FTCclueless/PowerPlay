@@ -94,11 +94,11 @@ public class Auto extends LinearOpMode {
 
         // splineToConstantHeading will attempt to correct the robot's heading if it is bumped/moved
         Trajectory toIntake = drive.trajectoryBuilder(to.end())
-                .splineToConstantHeading(new Vector2d(intakePose.getX(), intakePose.getY()), 0)
+                .splineToConstantHeading(new Vector2d(intakePose.getX() - 3, intakePose.getY()), 0)
                 .build();
 
         Trajectory toDeposit = drive.trajectoryBuilder(toIntake.end())
-                .splineToConstantHeading(new Vector2d(depositPose.getX(), depositPose.getY()), 0)
+                .splineToConstantHeading(new Vector2d(depositPose.getX() + 2, depositPose.getY()), 0)
                 .build();
 
         Trajectory[] park = new Trajectory[]{
