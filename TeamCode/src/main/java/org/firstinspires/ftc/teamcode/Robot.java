@@ -295,8 +295,6 @@ public class Robot {
         startIntakeGlobal = true;
     }
 
-    enum ScoringDirection {FORWARD, BACKWARD, LEFT, RIGHT, FORWARD_LEFT, FORWARD_RIGHT}
-    public ScoringDirection scoringDirection = ScoringDirection.FORWARD;
     double targetAngle = Math.toRadians(-90);
     double extensionDistance = 7.0;
 
@@ -310,7 +308,6 @@ public class Robot {
     public void startScoringRelative(Gamepad gamepad, boolean isBlue, double scoringHeight) {
         if (!startScoringRelative) {
             targetAngle = previousCycleAngle;
-            scoringDirection = ScoringDirection.FORWARD;
             this.scoringHeight = scoringHeight;
             this.extensionDistance = 7.0;
         }
