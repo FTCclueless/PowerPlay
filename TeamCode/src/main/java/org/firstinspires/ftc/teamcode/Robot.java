@@ -131,6 +131,7 @@ public class Robot {
                 }
                 break;
             case INTAKE_GLOBAL:
+                outtake.slides.slidesPercentMax = 0.98;
                 if ((Math.abs(drivetrain.getPoseEstimate().getX() - drivePose.getX()) <= 4) && (Math.abs(drivetrain.getPoseEstimate().getY() - drivePose.getY()) <= 4)) {
                     drivePose = drivetrain.getPoseEstimate();
                     isAtPoint = true;
@@ -151,7 +152,8 @@ public class Robot {
                     claw.intake();
                     startClawCloseTime = System.currentTimeMillis();
                 }
-                if (sensors.clawTouch || System.currentTimeMillis() - startClawCloseTime > 300) { // needs an external claw.close()
+
+                if(sensors.clawTouch || System.currentTimeMillis() - startClawCloseTime > 300) { // needs an external claw.close()
                     Log.e("here", "");
                     hasGrabbed = true;
                     outtake.slides.setTargetSlidesLength(10);
@@ -222,6 +224,7 @@ public class Robot {
 //                }
 //                break;
             case SCORING_GLOBAL:
+                outtake.slides.slidesPercentMax = 0.98;
                 // checks to see if the drivetrain is near the final scoring pose and if it is then give it it's actual drive pose
                 if (Math.abs(drivetrain.getPoseEstimate().getX() - drivePose.getX()) <= 4 && Math.abs(drivetrain.getPoseEstimate().getY() - drivePose.getY()) <= 4) {
                     drivePose = drivetrain.getPoseEstimate();
@@ -293,7 +296,6 @@ public class Robot {
         startIntakeGlobal = true;
     }
 
-    public double targetAngle = Math.toRadians(-90);
     double extensionDistance = 7.0;
 
     double offsetX = 0.0;
@@ -302,10 +304,11 @@ public class Robot {
 
     double previousScoringPreset = 30;
 
+    public double targetAngle = Math.toRadians(-90);
+
     public void startScoringRelative(Gamepad gamepad, boolean isBlue, double scoringHeight) {
         if (!startScoringRelative) {
             angleOffset = 0.0;
-
             this.scoringHeight = scoringHeight;
             this.extensionDistance = 7.0;
         }
