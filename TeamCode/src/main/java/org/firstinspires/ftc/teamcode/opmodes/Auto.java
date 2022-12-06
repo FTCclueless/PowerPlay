@@ -79,7 +79,8 @@ public class Auto extends LinearOpMode {
 
         Pose2d intakePose = new Pose2d(
             55 * xSign,
-            9 * ySign
+            9 * ySign,
+            tb ? 0 : Math.PI
         );
 
         Pose2d depositPose = new Pose2d(
@@ -93,17 +94,18 @@ public class Auto extends LinearOpMode {
             // Move forward extra in order to bump away the signal cone
             .strafeTo(new Vector2d(origin.getX(), origin.getY() - (54 * ySign)))
             .addDisplacementMarker(12, () -> {
+                robot.ySign = xSign * ySign;
                 robot.currentState = Robot.STATE.SCORING_GLOBAL;
             })
-            .lineToLinearHeading(new Pose2d(depositPose.getX() + 5, depositPose.getY(), depositPose.getHeading()))
+            .lineToLinearHeading(new Pose2d(depositPose.getX() + (5 * xSign), depositPose.getY(), depositPose.getHeading()))
             .build();
 
         // TODO talk to hudson about this weird heading stuff
-        TrajectorySequence toDeposit = drive.trajectorySequenceBuilder(new Pose2d(intakePose.getX() - 3, intakePose.getY()))
+        TrajectorySequence toDeposit = drive.trajectorySequenceBuilder(new Pose2d(intakePose.getX() - (3 * xSign), intakePose.getY(), intakePose.getHeading()))
             .splineToConstantHeading(new Vector2d(depositPose.getX(), depositPose.getY()), depositPose.getHeading())
             .build();
 
-        TrajectorySequence toIntake = drive.trajectorySequenceBuilder(new Pose2d(depositPose.getX() + 2, depositPose.getY()))
+        TrajectorySequence toIntake = drive.trajectorySequenceBuilder(new Pose2d(depositPose.getX() + (2 * xSign), depositPose.getY(), depositPose.getHeading()))
             .splineToConstantHeading(new Vector2d(intakePose.getX(), intakePose.getY()), depositPose.getHeading())
             .build();
 
@@ -175,7 +177,7 @@ public class Auto extends LinearOpMode {
 
         robot.followTrajectorySequence(to, this);
 
-        robot.startScoringGlobal(to.end(), new Pose2d(25.75 * xSign,-0.25 * ySign),29.8, ySign); // 36
+        robot.startScoringGlobal(to.end(), new Pose2d(25.75 * xSign,-0.25 * ySign),29.8, xSign * ySign); // 36
         do {
             robot.update();
         } while (
@@ -183,7 +185,7 @@ public class Auto extends LinearOpMode {
              robot.outtake.slides.currentSlidesLength > 15
         );
 
-        /*for (int i = 0; i < cycles; i++) {
+        for (int i = 0; i < cycles; i++) {
             robot.drivetrain.setBreakFollowingThresholds(new Pose2d(2.5, 2.5, Math.toRadians(5)), toIntake.end());
 
             robot.currentState = Robot.STATE.RETRACT;
@@ -203,7 +205,7 @@ public class Auto extends LinearOpMode {
             robot.drivetrain.setBreakFollowingThresholds(new Pose2d(2.5, 2.5, Math.toRadians(5)), toDeposit.end());
 
             // WITH HUDSON: fix this TODO
-            robot.startScoringGlobal(toDeposit.end(), new Pose2d(25.8 * xSign,0),29.75, ySign); // 36
+            robot.startScoringGlobal(toDeposit.end(), new Pose2d(25.8 * xSign,0),29.75, xSign * ySign); // 36
             robot.followTrajectorySequence(toDeposit, this);
             do {
                 robot.update();
@@ -215,6 +217,6 @@ public class Auto extends LinearOpMode {
         // FIXME this could be a little bit stricter
         robot.drivetrain.setBreakFollowingThresholds(new Pose2d(0.5, 0.5, Math.toRadians(5)), park[parkingNum].end());
 
-        robot.followTrajectory(park[parkingNum], this);*/
+        robot.followTrajectory(park[parkingNum], this);
     }
 }

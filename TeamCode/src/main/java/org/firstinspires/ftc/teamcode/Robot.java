@@ -368,7 +368,7 @@ public class Robot {
         }
     }
 
-    int ySign = 1;
+    public int ySign = 1;
 
     public void startScoringGlobal (Pose2d drivePose, Pose2d polePose, double poleHeight, int ySign) {
         this.drivePose = drivePose;
