@@ -79,13 +79,13 @@ public class Auto extends LinearOpMode {
 
         Pose2d intakePose = new Pose2d(
             55 * xSign,
-            9 * ySign,
+            12 * ySign,
             tb ? 0 : Math.PI
         );
 
         Pose2d depositPose = new Pose2d(
             38 * xSign,
-            9 * ySign,
+            12 * ySign,
             tb ? 0 : Math.PI
         );
 
