@@ -97,16 +97,16 @@ public class Auto extends LinearOpMode {
                 robot.ySign = xSign * ySign;
                 robot.currentState = Robot.STATE.SCORING_GLOBAL;
             })
-            .lineToLinearHeading(new Pose2d(depositPose.getX() + (5 * xSign), depositPose.getY(), depositPose.getHeading()))
+            .lineToLinearHeading(new Pose2d(depositPose.getX() + (4 * xSign), depositPose.getY(), depositPose.getHeading()))
             .build();
 
         // TODO talk to hudson about this weird heading stuff
         TrajectorySequence toDeposit = drive.trajectorySequenceBuilder(new Pose2d(intakePose.getX() - (3 * xSign), intakePose.getY(), intakePose.getHeading()))
-            .splineToConstantHeading(new Vector2d(depositPose.getX(), depositPose.getY()), depositPose.getHeading())
+            .lineToConstantHeading(new Vector2d(depositPose.getX(), depositPose.getY()))
             .build();
 
         TrajectorySequence toIntake = drive.trajectorySequenceBuilder(new Pose2d(depositPose.getX() + (2 * xSign), depositPose.getY(), depositPose.getHeading()))
-            .splineToConstantHeading(new Vector2d(intakePose.getX(), intakePose.getY()), depositPose.getHeading())
+            .lineToConstantHeading(new Vector2d(intakePose.getX(), intakePose.getY()))
             .build();
 
         // TODO clean this up a little? Kinda lookin a little bad
