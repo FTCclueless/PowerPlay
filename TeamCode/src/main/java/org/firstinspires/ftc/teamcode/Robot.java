@@ -153,7 +153,7 @@ public class Robot {
                     startClawCloseTime = System.currentTimeMillis();
                 }
 
-                if(sensors.clawTouch || System.currentTimeMillis() - startClawCloseTime > 300) { // needs an external claw.close()
+                if(sensors.clawTouch || System.currentTimeMillis() - startClawCloseTime > 550) { // needs an external claw.close()
                     Log.e("here", "");
                     claw.close();
                     hasGrabbed = true;
