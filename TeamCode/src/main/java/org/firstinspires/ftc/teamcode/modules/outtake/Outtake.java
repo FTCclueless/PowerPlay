@@ -118,10 +118,10 @@ public class Outtake {
         }
     }
 
-    double a = Math.toRadians(20);
+    double a = Math.toRadians(12);
     double b = Math.toRadians(35);
     double c = Math.toRadians(-35);
-    double d = Math.toRadians(-20);
+    double d = Math.toRadians(-12);
     double e = Math.toRadians(95);
     double f = Math.toRadians(145);
 

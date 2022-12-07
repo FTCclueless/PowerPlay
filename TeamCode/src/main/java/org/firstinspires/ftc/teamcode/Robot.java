@@ -157,7 +157,7 @@ public class Robot {
                     Log.e("here", "");
                     claw.close();
                     hasGrabbed = true;
-                    outtake.slides.setTargetSlidesLength(coneHeight + 6);
+                    outtake.slides.setTargetSlidesLength(coneHeight + 8);
                     if(sensors.clawTouch || outtake.slides.isInPosition(3)) { // needs an external claw.close()
                         Log.e("here2", "");
                         isAtPoint = false;
@@ -244,9 +244,11 @@ public class Robot {
                     outtake.slides.setTargetSlidesLength(11.5);
                     if ((ySign == 1) && (outtake.extension.currentExtensionLength < (3 + outtake.extension.baseSlidesExtension))) {
                         Log.e("moving turret to -90", "");
-                        outtake.turret.setTargetTurretAngle(Math.toRadians(-135));
+//                        outtake.turret.setTargetTurretAngle(Math.toRadians(-135));
+                        outtake.setTargetRelative(extensionDistance * Math.cos(Math.toRadians(-135)), extensionDistance * Math.sin(Math.toRadians(-135)), 5);
                     } else if ((ySign == -1) && (outtake.extension.currentExtensionLength < (3 + outtake.extension.baseSlidesExtension))) {
-                        outtake.turret.setTargetTurretAngle(Math.toRadians(135));
+//                        outtake.turret.setTargetTurretAngle(Math.toRadians(135));
+                        outtake.setTargetRelative(extensionDistance * Math.cos(Math.toRadians(135)), extensionDistance * Math.sin(Math.toRadians(135)), 5);
                     }
                 }
 
@@ -324,23 +326,23 @@ public class Robot {
 
         double m1 = (isBlue ? 1 : -1);
         double newAngle = 0;
-        if (gamepad.dpad_up){
-            newAngle = Math.toRadians(-90) * m1;
+        if (gamepad.dpad_up) { // forward left
+            newAngle = Math.toRadians(-45 * m1); //use 90 - 90 if you want it to work for straight across (current 45)
             amUpdated = true;
         }
-        else if (gamepad.dpad_down){
-            newAngle = Math.toRadians(90) * m1;
+        else if (gamepad.dpad_right) { // forward right
+            newAngle = Math.toRadians(-135 * m1); // use -90 - 90 if you want it to work for straight across (current 45)
             amUpdated = true;
         }
-        else if (gamepad.dpad_left){
-            newAngle = Math.toRadians(45 - 90 * m1); //use 90 - 90 if you want it to work for straight across (current 45)
+        else if (gamepad.dpad_down) { // back right
+            newAngle = Math.toRadians(135 * m1);
             amUpdated = true;
         }
-        else if (gamepad.dpad_right){
-            newAngle = Math.toRadians(-45 - 90 * m1); // use -90 - 90 if you want it to work for straight across (current 45)
+        else if (gamepad.dpad_left) { // back left
+            newAngle = Math.toRadians(45 * m1); //use 90 - 90 if you want it to work for straight across (current 45)
             amUpdated = true;
+        }
 
-        }
         if ((targetAngle != newAngle) && amUpdated) {
             targetAngle = newAngle;
             extensionDistance = 7.0;

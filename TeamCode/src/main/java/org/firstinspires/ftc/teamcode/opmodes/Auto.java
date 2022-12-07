@@ -177,7 +177,7 @@ public class Auto extends LinearOpMode {
 
         robot.followTrajectorySequence(to, this);
 
-        robot.startScoringGlobal(to.end(), new Pose2d(25.75 * xSign,-0.25 * ySign),29.8, xSign * ySign); // 36
+        robot.startScoringGlobal(to.end(), new Pose2d(25.25 * xSign,-0.25 * ySign),28.1, xSign * ySign); // 36
         do {
             robot.update();
         } while (
@@ -192,7 +192,7 @@ public class Auto extends LinearOpMode {
             // TODO verify the x and y sign on this. It should not be like this
             robot.startIntakeGlobal(
                     toIntake.end(),
-                    new Pose2d((72 - 4) * xSign,10.0 * ySign),
+                    new Pose2d((72 - 6) * xSign,12.0 * ySign),
                     coneStackHeights[i]
             );
 
@@ -205,7 +205,7 @@ public class Auto extends LinearOpMode {
             robot.drivetrain.setBreakFollowingThresholds(new Pose2d(2.5, 2.5, Math.toRadians(5)), toDeposit.end());
 
             // WITH HUDSON: fix this TODO
-            robot.startScoringGlobal(toDeposit.end(), new Pose2d(25.8 * xSign,0),29.75, xSign * ySign); // 36
+            robot.startScoringGlobal(toDeposit.end(), new Pose2d(26.25 * xSign,0),28.3, xSign * ySign); // 36
             robot.followTrajectorySequence(toDeposit, this);
             do {
                 robot.update();
