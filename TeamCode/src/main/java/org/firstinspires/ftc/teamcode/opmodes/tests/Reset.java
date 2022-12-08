@@ -22,7 +22,7 @@ public class Reset extends LinearOpMode {
             robot.actuation.level();
             robot.outtake.extension.retractExtension();
             if (robot.outtake.extension.isInPosition(5)) {
-                robot.claw.open();
+                robot.claw.intake();
             }
             robot.update();
         }

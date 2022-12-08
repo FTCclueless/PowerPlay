@@ -26,6 +26,14 @@ public class LocalizationTest extends LinearOpMode {
 
         robot.outtake.resetEncoders();
 
+        Pose2d origin = new Pose2d(
+                36,
+                60,
+                Math.PI / -2
+        );
+
+        drive.setPoseEstimate(origin);
+
         waitForStart();
 
         while (!isStopRequested()) {

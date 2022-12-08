@@ -34,10 +34,10 @@ public class Slides {
     public double targetSlidesVelocity = 0.0;
     public double slidesPower = 0.0;
     public double slidesError = 0.0;
-    public static double slidesPercentMax = 0.98;
+    public double slidesPercentMax = 0.98;
 
     // original: 82.9718558749
-    double maxSlidesSpeed = 82.9718558749; // inches per sec
+    public double maxSlidesSpeed = 82.9718558749 * 0.8; // inches per sec
 
     Outtake outtake;
 

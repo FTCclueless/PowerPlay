@@ -80,17 +80,24 @@ public class Outtake {
             slides.setTargetSlidesLength(12);
         }
         else {
-            slides.setTargetSlidesLength(targetSlidesLength);
+            if (extension.currentExtensionLength > 9) { // if the extension is far out, move extension first before slides
+                extension.setTargetExtensionLength(targetExtensionLength);
+                if (extension.isInPosition(1.5)) {
+                    slides.setTargetSlidesLength(targetSlidesLength);
+                }
+            } else { // if extension is in, then move slides first
+                slides.setTargetSlidesLength(targetSlidesLength);
+            }
         }
         if (currentSlidesLength >= 9 || !turretClips){
-            if (extension.currentExtensionLength > 8.0) { // move extension first
+            if (extension.currentExtensionLength > 9) { // if extension is far out, move extension first before spinning turret
                 extension.setTargetExtensionLength(targetExtensionLength);
                 if (extension.isInPosition(1.5)) {
                     turret.setTargetTurretAngle(targetTurretAngle);
                 }
-            } else { // move turret first
+            } else { // if extension is in, then move turret first
                 turret.setTargetTurretAngle(targetTurretAngle);
-                if (turret.isInPosition(5)) {
+                if (turret.isInPosition(5) && slides.isInPosition(2)) { // once turret is in and slides are in correct position, move extension
                     extension.setTargetExtensionLength(targetExtensionLength);
                 }
             }
@@ -111,10 +118,10 @@ public class Outtake {
         }
     }
 
-    double a = Math.toRadians(20);
+    double a = Math.toRadians(12);
     double b = Math.toRadians(35);
     double c = Math.toRadians(-35);
-    double d = Math.toRadians(-20);
+    double d = Math.toRadians(-12);
     double e = Math.toRadians(95);
     double f = Math.toRadians(145);
 
@@ -206,7 +213,7 @@ public class Outtake {
         Log.e("targetPose x", targetPose.getX() + "");
         Log.e("targetPose y", targetPose.getY() + "");
 
-        if (Math.abs(globalCoords.getX() - targetPose.getX()) <= threshold && Math.abs(globalCoords.getY() - globalCoords.getY()) <= threshold) {
+        if ((Math.abs(globalCoords.getX() - targetPose.getX()) <= threshold) && (Math.abs(globalCoords.getY() - globalCoords.getY()) <= threshold) && (slides.isInPosition(threshold))) {
             return true;
         } else {
             return false;
