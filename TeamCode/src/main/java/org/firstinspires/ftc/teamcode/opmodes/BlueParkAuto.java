@@ -145,7 +145,7 @@ public class BlueParkAuto extends LinearOpMode {
 
         robot.followTrajectory(parks[parkingNum-1], this);
 
-        Storage.currentPose = drive.getPoseEstimate();
+        Storage.autoEndPose = drive.getPoseEstimate();
 
         drive.setMotorPowers(0,0,0,0);
     }

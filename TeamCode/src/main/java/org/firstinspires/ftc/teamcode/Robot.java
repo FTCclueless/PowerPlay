@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.modules.actuation.Actuation;
 import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.util.MyServo;
+import org.firstinspires.ftc.teamcode.util.Storage;
 import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 import org.firstinspires.ftc.teamcode.vision.Vision;
 import org.firstinspires.ftc.teamcode.modules.claw.Claw;
@@ -187,7 +188,7 @@ public class Robot {
                 break;
             case SCORING_RELATIVE_WITH_IMU:
                 // TODO: make auto manage 0 angle
-                double imu = drivetrain.getExternalHeading();
+                double imu = clipAngle(drivetrain.getExternalHeading() + Storage.autoEndPose.getHeading());
                 relativeAngle = clipAngle((targetAngle + angleOffset) - clipAngle(imu));
 
                 if (doFieldCentricAdjust) {

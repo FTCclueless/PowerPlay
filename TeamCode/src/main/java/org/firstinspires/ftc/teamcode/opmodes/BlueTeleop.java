@@ -30,14 +30,12 @@ public class BlueTeleop extends LinearOpMode {
         robot.currentState = Robot.STATE.INTAKE_RELATIVE;
         robot.isRelative = true;
 
-        drive.localizer.setPoseEstimate(Storage.currentPose);
+        drive.localizer.setPoseEstimate(Storage.autoEndPose);
 
         ButtonToggle b_left_bumper = new ButtonToggle();
 
-        if (isBlue) {
-            robot.targetAngle = Math.toRadians(-90);
-        } else {
-            robot.targetAngle = Math.toRadians(90);
+        while(opModeInInit()) {
+            robot.update();
         }
 
         waitForStart();
