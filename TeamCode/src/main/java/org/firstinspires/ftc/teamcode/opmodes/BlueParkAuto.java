@@ -110,9 +110,9 @@ public class BlueParkAuto extends LinearOpMode {
             telemetry.setMsTransmissionInterval(50);
 
             boolean detected = false;
-            ArrayList<AprilTagDetection> currentDetections = atdp.getLatestDetections();
+            ArrayList<AprilTagDetection> currentDetections = atdp.getDetectionsUpdate();
 
-            if (currentDetections.size() != 0) {
+            if (currentDetections != null && currentDetections.size() != 0) {
 
                 for (AprilTagDetection tag : currentDetections) {
                     // Add 1 because its 0-2 values not 1-3
@@ -145,7 +145,7 @@ public class BlueParkAuto extends LinearOpMode {
 
         robot.followTrajectory(parks[parkingNum-1], this);
 
-        Storage.currentPose = drive.getPoseEstimate();
+        Storage.autoEndPose = drive.getPoseEstimate();
 
         drive.setMotorPowers(0,0,0,0);
     }

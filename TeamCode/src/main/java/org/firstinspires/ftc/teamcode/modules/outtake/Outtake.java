@@ -89,7 +89,7 @@ public class Outtake {
                 slides.setTargetSlidesLength(targetSlidesLength);
             }
         }
-        if (currentSlidesLength >= 9 || !turretClips){
+        if (currentSlidesLength >= 9 || !turretClips) {
             if (extension.currentExtensionLength > 9) { // if extension is far out, move extension first before spinning turret
                 extension.setTargetExtensionLength(targetExtensionLength);
                 if (extension.isInPosition(1.5)) {
