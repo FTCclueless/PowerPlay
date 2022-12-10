@@ -199,11 +199,7 @@ public class Robot {
                 }
                 else {
                     // robot centric offsets
-                    if (outtake.turret.isInPosition(10)) {
-                        outtake.setTargetRelative(extensionDistance * Math.cos(relativeAngle), extensionDistance * Math.sin(relativeAngle), this.scoringHeight); // changes dynamically based on driver input
-                    } else {
-                        outtake.setTargetRelative(extensionDistance * Math.cos(relativeAngle), extensionDistance * Math.sin(relativeAngle), 22); // changes dynamically based on driver input
-                    }
+                    outtake.setTargetRelative(extensionDistance * Math.cos(relativeAngle), extensionDistance * Math.sin(relativeAngle), this.scoringHeight); // changes dynamically based on driver input
                 }
 
                 if (startDeposit) {
