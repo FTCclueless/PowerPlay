@@ -242,7 +242,7 @@ public class Robot {
                     claw.close();
                     actuation.level();
                     outtake.extension.retractExtension();
-                    outtake.slides.setTargetSlidesLength(11.5);
+                    outtake.slides.setTargetSlidesLength(15);
                     if ((ySign == 1) && (outtake.extension.currentExtensionLength < (3 + outtake.extension.baseSlidesExtension))) {
                         Log.e("moving turret to -90", "");
 //                        outtake.turret.setTargetTurretAngle(Math.toRadians(-135));
