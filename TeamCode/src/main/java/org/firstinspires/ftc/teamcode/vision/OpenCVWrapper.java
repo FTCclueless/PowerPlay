@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.vision;
 
-import android.hardware.Camera;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -9,15 +7,11 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.util.RobotLogger;
-import org.firstinspires.ftc.teamcode.vision.ConeTracker;
-import org.firstinspires.ftc.teamcode.vision.OpenCVObjectDetector;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvInternalCamera2;
-import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 
@@ -29,12 +23,20 @@ public class OpenCVWrapper {
     MyOpenCvPipeline openCvPipeline;
     boolean useWebCamera;
     ArrayList<AprilTagDetection> detections = new ArrayList<>();
+    double fx = 578.272;
+    double fy = 578.272;
+    double cx = 402.145;
+    double cy = 221.506;
 
-    public OpenCVWrapper(Telemetry tele, HardwareMap hwMap, MyOpenCvPipeline pipeline, boolean webCam) {
+    // UNITS ARE METERS
+    double tagsize = 0.166;
+
+    public OpenCVWrapper(Telemetry tele, HardwareMap hwMap, boolean webCam) {
         telemetry = tele;
         hardwareMap = hwMap;
-        openCvPipeline = pipeline;
         useWebCamera = webCam;
+        openCvPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
+        assert(openCvPipeline != null);
     }
 
     public void init() {
@@ -63,7 +65,7 @@ public class OpenCVWrapper {
         phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                phoneCam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                phoneCam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -81,14 +83,25 @@ public class OpenCVWrapper {
         phoneCam.closeCameraDevice();
     }
 
-    public ArrayList<AprilTagDetection> getLatestDetections() {
+    private ArrayList<AprilTagDetection> getLatestDetections() {
         return openCvPipeline.getLatestDetections();
     }
-    public int getAprilTagID() {
-        ArrayList<AprilTagDetection> currentDetections = getLatestDetections();
+
+    // logic needed by auto client
+    private ArrayList<AprilTagDetection> getDetectionsUpdate() {
+        ArrayList<AprilTagDetection> latestDetections = openCvPipeline.getDetectionsUpdate();
+        if (latestDetections != null && latestDetections.size() > 0)
+            return latestDetections;
+        else {
+            RobotLogger.dd("", "not detecting anything, return the latest instead");
+            return openCvPipeline.getLatestDetections();
+        }
+    }
+
+    private int getAprilTagID() {
+        ArrayList<AprilTagDetection> currentDetections = getDetectionsUpdate();
         int ret = -1;
         if(currentDetections != null && currentDetections.size() != 0) {
-            boolean tagFound = false;
             for (AprilTagDetection tag : currentDetections) {
                 RobotLogger.dd("", "detected num of tagIDs " + currentDetections.size()
                     + " tagID: " + tag.id);
@@ -97,6 +110,23 @@ public class OpenCVWrapper {
             }
         }
         return ret;
+    }
+
+    public int getParkingNum() {
+        int tagId = getAprilTagID();
+        int parkingNum = 0;
+        switch (tagId) {
+            case 2:
+                parkingNum = 1;
+                break;
+            case 1:
+                parkingNum = 2;
+                break;
+            default:
+                parkingNum = 0;  // default parking number???
+        }
+        RobotLogger.dd("", "parking number " + parkingNum);
+        return parkingNum;
     }
     public void zoomCamera(int zoom) {
         //phoneCam.setZoom(zoom);

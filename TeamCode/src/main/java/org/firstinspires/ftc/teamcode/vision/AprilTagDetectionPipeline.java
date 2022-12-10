@@ -131,6 +131,7 @@ public class AprilTagDetectionPipeline extends MyOpenCvPipeline
         return detections;
     }
 
+    @Override
     public ArrayList<AprilTagDetection> getDetectionsUpdate()
     {
         synchronized (detectionsUpdateSync)

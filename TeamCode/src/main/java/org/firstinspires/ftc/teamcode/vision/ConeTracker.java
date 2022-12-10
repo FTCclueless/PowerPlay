@@ -25,6 +25,9 @@ abstract class MyOpenCvPipeline extends OpenCvPipeline {
     public ArrayList<AprilTagDetection> getLatestDetections() {
         return null;
     }
+    public ArrayList<AprilTagDetection> getDetectionsUpdate() {
+        return null;
+    }
 }
 //https://github.com/superarash1/HHH_FTC_PowerPlay_2022-2033/blob/main/Team8109_Rise/src/main/java/org/firstinspires/ftc/team8109_Rise/Hardware/Sensors/Camera/OpenCV/VisionPipelines/ConeTracker.java
 public class ConeTracker extends MyOpenCvPipeline {
