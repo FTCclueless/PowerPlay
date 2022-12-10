@@ -120,7 +120,7 @@ public class RedParkAutoBottom extends LinearOpMode {
         try {
             while (opModeInInit()) {
 
-                currentDetections = atdp.getLatestDetections();
+                currentDetections = atdp.getDetectionsUpdate();
 
                 if (currentDetections != null && currentDetections.size() != 0) {
                     for (AprilTagDetection tag : currentDetections) {

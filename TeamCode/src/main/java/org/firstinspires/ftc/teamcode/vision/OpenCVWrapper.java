@@ -87,7 +87,7 @@ public class OpenCVWrapper {
     public int getAprilTagID() {
         ArrayList<AprilTagDetection> currentDetections = getLatestDetections();
         int ret = -1;
-        if(currentDetections.size() != 0) {
+        if(currentDetections != null && currentDetections.size() != 0) {
             boolean tagFound = false;
             for (AprilTagDetection tag : currentDetections) {
                 RobotLogger.dd("", "detected num of tagIDs " + currentDetections.size()
