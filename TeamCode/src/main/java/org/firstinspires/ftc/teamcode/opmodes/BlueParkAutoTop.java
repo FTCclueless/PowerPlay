@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.modules.drive.Drivetrain;
 import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.util.ButtonToggle;
+import org.firstinspires.ftc.teamcode.util.Storage;
 import org.firstinspires.ftc.teamcode.vision.AprilTagDetectionPipeline;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -27,7 +28,7 @@ import java.util.ArrayList;
 
 // HEY HEY ! DON'T READ THIS CODE! ITS FOR EMERGENCY
 @Autonomous(group = "Test")
-public class AutoLT extends LinearOpMode {
+public class BlueParkAutoTop extends LinearOpMode {
     public static int parkingNum = 0;
     public static final boolean lr = true; // Left : true | Right : false
     public static final boolean tb = true; // Top : true | Bottom : false
@@ -54,7 +55,7 @@ public class AutoLT extends LinearOpMode {
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                camera.startStreaming(640,480, OpenCvCameraRotation.UPRIGHT); // need to change for phone back camera
+                camera.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT); // need to change for phone back camera
             }
 
             @Override
@@ -83,7 +84,7 @@ public class AutoLT extends LinearOpMode {
 
         Pose2d depositPose = new Pose2d(
                 38 * xSign,
-                12 * ySign,
+                10 * ySign,
                 tb ? 0 : Math.PI
         );
 
@@ -99,14 +100,10 @@ public class AutoLT extends LinearOpMode {
                 .lineToConstantHeading(new Vector2d(depositPose.getX(), depositPose.getY()))
                 .build();
 
-        TrajectorySequence toIntake = drive.trajectorySequenceBuilder(new Pose2d(depositPose.getX() + (2 * xSign), depositPose.getY(), depositPose.getHeading()))
-                .lineToConstantHeading(new Vector2d(intakePose.getX(), intakePose.getY()))
-                .build();
-
         // TODO clean this up a little? Kinda lookin a little bad
-        Trajectory[] park = new Trajectory[]{
+        Trajectory[] park = new Trajectory[] {
                 drive.trajectoryBuilder(toDeposit.end()).strafeTo(new Vector2d(
-                        origin.getX() + (23.5 + (tb ? 0 : 1.5)),
+                        origin.getX() + (24 * ySign),
                         depositPose.getY()
                 )).build(),
                 drive.trajectoryBuilder(toDeposit.end()).strafeTo(new Vector2d(
@@ -114,7 +111,7 @@ public class AutoLT extends LinearOpMode {
                         depositPose.getY()
                 )).build(),
                 drive.trajectoryBuilder(toDeposit.end()).strafeTo(new Vector2d(
-                        origin.getX() - (27),
+                        origin.getX() - (26 * ySign),
                         depositPose.getY()
                 )).build()
         };
@@ -122,53 +119,52 @@ public class AutoLT extends LinearOpMode {
         robot.resetEncoders();
         robot.claw.open();
 
-        while (opModeInInit()) {
-            telemetry.setMsTransmissionInterval(50);
+        try {
+            while (opModeInInit()) {
+                telemetry.setMsTransmissionInterval(50);
+ 
+                boolean detected = false;
+                ArrayList<AprilTagDetection> currentDetections = atdp.getLatestDetections();
 
-            boolean detected = false;
-            ArrayList<AprilTagDetection> currentDetections = atdp.getLatestDetections();
-
-            if (currentDetections.size() != 0) {
-                for (AprilTagDetection tag : currentDetections) {
-                    switch (tag.id) {
-                        case 2:
-                            parkingNum = 1;
-                            break;
-                        case 1:
-                            parkingNum = 2;
-                            break;
-                        default:
-                            parkingNum = tag.id;
+                if (currentDetections.size() != 0) {
+                    for (AprilTagDetection tag : currentDetections) {
+                        switch (tag.id) {
+                            case 2:
+                                parkingNum = 1;
+                                break;
+                            case 1:
+                                parkingNum = 2;
+                                break;
+                            default:
+                                parkingNum = tag.id;
+                        }
+                        detected = true;
                     }
-                    detected = true;
                 }
+
+                robot.actuation.level();
+                robot.outtake.extension.retractExtension();
+
+                robot.update();
+
+                if (detected) {
+                    telemetry.addLine(String.format("Tag of interest is in sight! ID: %d", parkingNum + 1));
+                } else {
+                    telemetry.addLine("Could not find april tag! :(");
+                }
+
+                telemetry.update();
             }
-
-            robot.actuation.level();
-            robot.outtake.extension.retractExtension();
-            // Kinda forgot to remove this... it should be fine.. RIGHT?
-            if (toggleA.isClicked(gamepad1.a)) {
-                robot.claw.close();
-            }
-
-            robot.update();
-
-            if (detected) {
-                telemetry.addLine(String.format("Tag of interest is in sight! ID: %d", parkingNum + 1));
-            } else {
-                telemetry.addLine("Could not find april tag! :(");
-            }
-
-            telemetry.update();
-        }
+        } catch (Exception e) {
+        telemetry.addData("issue with init", "");
+        telemetry.update();
+    }
 
         waitForStart();
 
-        robot.drivetrain.setBreakFollowingThresholds(new Pose2d(2.5, 2.5, Math.toRadians(5)), to.end());
         robot.followTrajectorySequence(to, this);
-        robot.drivetrain.setBreakFollowingThresholds(new Pose2d(2.5, 2.5, Math.toRadians(5)), toDeposit.end());
-        robot.startScoringGlobal(toDeposit.end(), new Pose2d(26.25 * xSign,0),28.3, xSign * ySign); // 36
-        robot.drivetrain.setBreakFollowingThresholds(new Pose2d(0.5, 0.5, Math.toRadians(5)), park[parkingNum].end());
         robot.followTrajectory(park[parkingNum], this);
+
+        Storage.autoEndPose = drive.getPoseEstimate();
     }
 }
