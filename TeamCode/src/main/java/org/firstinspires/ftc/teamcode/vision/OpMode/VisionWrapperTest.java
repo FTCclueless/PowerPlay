@@ -89,14 +89,12 @@ public class VisionWrapperTest extends LinearOpMode {
                     SafeSleep.sleep_milliseconds(this, 5000);
                     RobotLogger.dd(TAG, "to stop opencv");
                     start_time = SystemClock.elapsedRealtime();
-                    openCVWrapper.stop();
                     FtcDashboard.getInstance().stopCameraStream();
+                    openCVWrapper.stop();
 
                 }
                 //SafeSleep.sleep_milliseconds(this,5000);
             }
         }
-        FtcDashboard.getInstance().stopCameraStream();
-
     }
 }
