@@ -122,9 +122,9 @@ public class AutoRB extends LinearOpMode {
             telemetry.setMsTransmissionInterval(50);
 
             boolean detected = false;
-            ArrayList<AprilTagDetection> currentDetections = atdp.getLatestDetections();
+            ArrayList<AprilTagDetection> currentDetections = atdp.getDetectionsUpdate();
 
-            if (currentDetections.size() != 0) {
+            if (currentDetections != null && currentDetections.size() != 0) {
                 for (AprilTagDetection tag : currentDetections) {
                     switch (tag.id) {
                         case 2:
