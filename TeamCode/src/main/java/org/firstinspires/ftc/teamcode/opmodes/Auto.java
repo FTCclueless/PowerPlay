@@ -92,7 +92,7 @@ public class Auto extends LinearOpMode {
         drive.setPoseEstimate(origin); // FIXME is this needed?
         TrajectorySequence to = drive.trajectorySequenceBuilder(origin)
             // Move forward extra in order to bump away the signal cone
-            .strafeTo(new Vector2d(origin.getX(), origin.getY() - (54 * ySign)))
+            .strafeTo(new Vector2d(origin.getX(), origin.getY() - (56 * ySign)))
             .addDisplacementMarker(12, () -> {
                 robot.ySign = xSign * ySign;
                 robot.currentState = Robot.STATE.SCORING_GLOBAL;
@@ -128,10 +128,11 @@ public class Auto extends LinearOpMode {
         robot.resetEncoders();
         robot.claw.open();
 
+        boolean detected = false;
+
         while (opModeInInit()) {
             telemetry.setMsTransmissionInterval(50);
 
-            boolean detected = false;
             ArrayList<AprilTagDetection> currentDetections = atdp.getDetectionsUpdate();
 
             if (currentDetections != null && currentDetections.size() != 0) {
