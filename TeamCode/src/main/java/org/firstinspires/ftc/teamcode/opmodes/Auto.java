@@ -30,7 +30,7 @@ public class Auto extends LinearOpMode {
     public static final int cycles = 5;
     public static int parkingNum = 0;
     public static final boolean lr = true; // Left : true | Right : false
-    public static final boolean tb = false; // Top : true | Bottom : false
+    public static final boolean tb = true; // Top : true | Bottom : false
     //public static final double cycleBack = 6; // Once robot gets to cycle position how much it moves backwards
     //public static final double cycleY = 48; // Turning can give an offset (+ cone location)
     public static OpenCvCamera camera;
