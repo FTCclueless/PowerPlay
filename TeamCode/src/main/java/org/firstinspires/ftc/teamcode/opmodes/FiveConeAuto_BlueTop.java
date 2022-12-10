@@ -17,7 +17,9 @@ import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.modules.drive.Drivetrain;
 import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.util.ButtonToggle;
+import org.firstinspires.ftc.teamcode.util.Storage;
 import org.firstinspires.ftc.teamcode.vision.AprilTagDetectionPipeline;
+import org.firstinspires.ftc.teamcode.vision.OpenCVWrapper;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -33,16 +35,9 @@ public class FiveConeAuto_BlueTop extends LinearOpMode {
     public static final boolean tb = true; // Top : true | Bottom : false
     //public static final double cycleBack = 6; // Once robot gets to cycle position how much it moves backwards
     //public static final double cycleY = 48; // Turning can give an offset (+ cone location)
-    public static OpenCvCamera camera;
-    public AprilTagDetectionPipeline atdp = new AprilTagDetectionPipeline(
-        0.166, // Size of april tag in meters
-        // These 4 values are calibration for the C920 webcam (800x448)
-        578.272,
-        578.272,
-        402.145,
-        221.506
-    );
-    //    double[] coneStackHeights = new double[] {5.74, 4.305, 2.87, 1.435, 0.0};
+
+    OpenCVWrapper openCVWrapper;
+
     double[] coneStackHeights = new double[]{5.0, 3.3, 2.4, 1.435, 0.0};
     ButtonToggle toggleA = new ButtonToggle();
 
@@ -50,20 +45,9 @@ public class FiveConeAuto_BlueTop extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         Robot robot = new Robot(hardwareMap);
         Drivetrain drive = robot.drivetrain;
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        camera.setPipeline(atdp);
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-            @Override
-            public void onOpened() {
-                camera.startStreaming(640,480, OpenCvCameraRotation.UPRIGHT); // need to change for phone back camera
-            }
 
-            @Override
-            public void onError(int errorCode) {
-                Log.e("error with vision", "");
-            }
-        });
+        openCVWrapper = new OpenCVWrapper(telemetry, hardwareMap, true);
+        assert(openCVWrapper != null);
 
         // Signs
         int xSign = tb ? 1 : -1;
@@ -96,6 +80,7 @@ public class FiveConeAuto_BlueTop extends LinearOpMode {
             .addDisplacementMarker(12, () -> {
                 robot.ySign = xSign * ySign;
                 robot.currentState = Robot.STATE.SCORING_GLOBAL;
+                robot.startScoringGlobal(new Pose2d(depositPose.getX() + (5 * xSign), depositPose.getY(), depositPose.getHeading()), new Pose2d(28.8 * xSign,0.25 * ySign),27.7, xSign * ySign); // 36
             })
             .lineToLinearHeading(new Pose2d(depositPose.getX() + (5 * xSign), depositPose.getY(), depositPose.getHeading()))
             .build();
@@ -128,28 +113,18 @@ public class FiveConeAuto_BlueTop extends LinearOpMode {
         robot.resetEncoders();
         robot.claw.open();
 
+        openCVWrapper.init();
+        openCVWrapper.start();
 
         while (opModeInInit()) {
             telemetry.setMsTransmissionInterval(50);
 
             boolean detected = false;
-            ArrayList<AprilTagDetection> currentDetections = atdp.getLatestDetections();
 
-            if (currentDetections != null && currentDetections.size() != 0) {
-                for (AprilTagDetection tag : currentDetections) {
-                    switch (tag.id) {
-                        case 2:
-                            parkingNum = 1;
-                            break;
-                        case 1:
-                            parkingNum = 2;
-                            break;
-                        default:
-                            parkingNum = tag.id;
-                    }
-                    detected = true;
-                }
-            }
+            /////
+            parkingNum = openCVWrapper.getParkingNum();
+            detected = true;  //should we always set to true ??? It is only used to send telemetry anyways
+            ///////////
 
             robot.actuation.level();
             robot.outtake.extension.retractExtension();
@@ -170,15 +145,17 @@ public class FiveConeAuto_BlueTop extends LinearOpMode {
 
         waitForStart();
 
+        openCVWrapper.stop();
+
         // preload
 
         robot.currentState = Robot.STATE.RETRACT;
 
-        robot.drivetrain.setBreakFollowingThresholds(new Pose2d(2.5, 2.5, Math.toRadians(5)), to.end());
+        robot.drivetrain.setBreakFollowingThresholds(new Pose2d(0.5, 0.5, Math.toRadians(5)), to.end());
 
         robot.followTrajectorySequence(to, this);
 
-        robot.startScoringGlobal(to.end(), new Pose2d(28.8 * xSign,0.25 * ySign),27.7, xSign * ySign); // 36
+        robot.startScoringGlobal(to.end(), new Pose2d(28.1 * xSign,0.25 * ySign),26.25, xSign * ySign); // 36
         while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
             robot.update();
         }
@@ -188,7 +165,7 @@ public class FiveConeAuto_BlueTop extends LinearOpMode {
         }
 
         for (int i = 0; i < cycles; i++) {
-            robot.drivetrain.setBreakFollowingThresholds(new Pose2d(2.5, 2.5, Math.toRadians(5)), toIntake.end());
+            robot.drivetrain.setBreakFollowingThresholds(new Pose2d(0.5, 0.5, Math.toRadians(5)), toIntake.end());
 
             robot.currentState = Robot.STATE.RETRACT;
             // TODO verify the x and y sign on this. It should not be like this
@@ -204,9 +181,9 @@ public class FiveConeAuto_BlueTop extends LinearOpMode {
                 robot.update();
             }
 
-            robot.drivetrain.setBreakFollowingThresholds(new Pose2d(2.5, 2.5, Math.toRadians(5)), toDeposit.end());
+            robot.drivetrain.setBreakFollowingThresholds(new Pose2d(0.5, 0.5, Math.toRadians(5)), toDeposit.end());
 
-            robot.startScoringGlobal(toDeposit.end(), new Pose2d(27.5 * xSign,0),27.15, xSign * ySign); // 36
+            robot.startScoringGlobal(toDeposit.end(), new Pose2d(27.5 * xSign,0),26.9, xSign * ySign); // 36
             robot.followTrajectorySequence(toDeposit, this);
             while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
                 robot.update();
@@ -220,5 +197,7 @@ public class FiveConeAuto_BlueTop extends LinearOpMode {
         robot.drivetrain.setBreakFollowingThresholds(new Pose2d(0.5, 0.5, Math.toRadians(5)), park[parkingNum].end());
 
         robot.followTrajectory(park[parkingNum], this);
+
+        Storage.autoEndPose = drive.getPoseEstimate();
     }
 }

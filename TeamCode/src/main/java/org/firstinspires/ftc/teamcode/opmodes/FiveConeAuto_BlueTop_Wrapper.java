@@ -138,6 +138,8 @@ public class FiveConeAuto_BlueTop_Wrapper extends LinearOpMode {
 
         waitForStart();
 
+        openCVWrapper.stop();
+
         // preload
 
         robot.currentState = Robot.STATE.RETRACT;

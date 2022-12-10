@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.modules.drive.Drivetrain;
 import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.util.Storage;
 import org.firstinspires.ftc.teamcode.vision.AprilTagDetectionPipeline;
+import org.firstinspires.ftc.teamcode.vision.OpenCVWrapper;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -27,34 +28,15 @@ public class ParkAuto_BlueTop extends LinearOpMode {
     public static int parkingNum = 0;
     public static final boolean lr = true; // Left : true | Right : false
     public static final boolean tb = true; // Top : true | Bottom : false
-    public static OpenCvCamera camera;
-    public AprilTagDetectionPipeline atdp = new AprilTagDetectionPipeline(
-            0.035, // Size of april tag in meters
-            // These 4 values are calibration for the C920 webcam (800x448)
-            578.272,
-            578.272,
-            402.145,
-            221.506
-    );
+
+    OpenCVWrapper openCVWrapper;
 
     @Override
     public void runOpMode() throws InterruptedException {
         Robot robot = new Robot(hardwareMap);
         Drivetrain drive = robot.drivetrain;
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        camera.setPipeline(atdp);
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-            @Override
-            public void onOpened() {
-                camera.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT); // need to change for phone back camera
-            }
-
-            @Override
-            public void onError(int errorCode) {
-                Log.e("error with vision", "");
-            }
-        });
+        openCVWrapper = new OpenCVWrapper(telemetry, hardwareMap, true);
+        assert(openCVWrapper != null);
 
         // Signs
         int xSign = tb ? 1 : -1;
@@ -70,13 +52,13 @@ public class ParkAuto_BlueTop extends LinearOpMode {
 
         Pose2d intakePose = new Pose2d(
                 55 * xSign,
-                12 * ySign,
+                14.5 * ySign,
                 tb ? 0 : Math.PI
         );
 
         Pose2d depositPose = new Pose2d(
                 38 * xSign,
-                8 * ySign,
+                14.5 * ySign,
                 tb ? 0 : Math.PI
         );
 
@@ -111,51 +93,36 @@ public class ParkAuto_BlueTop extends LinearOpMode {
         robot.resetEncoders();
         robot.claw.open();
 
-        boolean detected = false;
-        telemetry.setMsTransmissionInterval(50);
+        openCVWrapper.init();
+        openCVWrapper.start();
 
-        ArrayList<AprilTagDetection> currentDetections;
+        while (opModeInInit()) {
+            telemetry.setMsTransmissionInterval(50);
 
-        try {
-            while (opModeInInit()) {
+            boolean detected = false;
 
-                currentDetections = atdp.getDetectionsUpdate();
+            /////
+            parkingNum = openCVWrapper.getParkingNum();
+            detected = true;  //should we always set to true ??? It is only used to send telemetry anyways
+            ///////////
 
-                if (currentDetections != null && currentDetections.size() != 0) {
-                    for (AprilTagDetection tag : currentDetections) {
-                        switch (tag.id) {
-                            case 2:
-                                parkingNum = 1;
-                                break;
-                            case 1:
-                                parkingNum = 2;
-                                break;
-                            default:
-                                parkingNum = tag.id;
-                        }
-                        detected = true;
-                    }
-                }
+            robot.actuation.level();
+            robot.outtake.extension.retractExtension();
 
-                robot.actuation.level();
-                robot.outtake.extension.retractExtension();
+            robot.update();
 
-                robot.update();
-
-                if (detected) {
-                    telemetry.addLine(String.format("Tag of interest is in sight! ID: %d", parkingNum + 1));
-                } else {
-                    telemetry.addLine("Could not find april tag! :(");
-                }
-
-                telemetry.update();
+            if (detected) {
+                telemetry.addLine(String.format("Tag of interest is in sight! ID: %d", parkingNum + 1));
+            } else {
+                telemetry.addLine("Could not find april tag! :(");
             }
-        } catch (Exception e) {
-            telemetry.addData("issue with init", "");
+
             telemetry.update();
         }
 
         waitForStart();
+
+        openCVWrapper.stop();
 
         robot.followTrajectorySequence(to, this);
         robot.followTrajectory(park[parkingNum], this);

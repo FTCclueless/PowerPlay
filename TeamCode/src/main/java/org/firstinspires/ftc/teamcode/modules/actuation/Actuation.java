@@ -16,7 +16,7 @@ public class Actuation {
     ArrayList<MyServo> servos;
 
     double levelPosition = 0.45499;
-    double tiltedPosition = 0.294;
+    double tiltedPosition = 0.26; // 0.294
     public Actuation(HardwareMap hardwareMap, ArrayList<MyServo> servos) {
         this.servos = servos;
 
