@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.vision;
 
 import static org.checkerframework.checker.units.UnitsTools.h;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+
 import org.firstinspires.ftc.teamcode.util.RobotLogger;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -19,6 +21,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
+@Disabled
 public class OpenCVObjectDetector extends OpenCvPipeline {
     public enum SkystoneLocation {
         LEFT,

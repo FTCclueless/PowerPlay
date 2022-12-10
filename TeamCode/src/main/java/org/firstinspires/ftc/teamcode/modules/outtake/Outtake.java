@@ -207,12 +207,6 @@ public class Outtake {
     public boolean isInPositionGlobal(Pose2d robotPose, Pose2d targetPose, double threshold) {
         Pose2d globalCoords = findGlobalCoordinates(robotPose, x-2.5,y);
 
-        Log.e("GlobalCoords x", globalCoords.getX() + "");
-        Log.e("GlobalCoords y", globalCoords.getY() + "");
-
-        Log.e("targetPose x", targetPose.getX() + "");
-        Log.e("targetPose y", targetPose.getY() + "");
-
         if ((Math.abs(globalCoords.getX() - targetPose.getX()) <= threshold) && (Math.abs(globalCoords.getY() - globalCoords.getY()) <= threshold) && (slides.isInPosition(threshold))) {
             return true;
         } else {

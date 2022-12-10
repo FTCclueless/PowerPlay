@@ -26,7 +26,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 
 @Autonomous(group = "Test")
-public class Auto extends LinearOpMode {
+public class FiveConeAuto_BlueTop extends LinearOpMode {
     public static final int cycles = 5;
     public static int parkingNum = 0;
     public static final boolean lr = true; // Left : true | Right : false
@@ -43,7 +43,7 @@ public class Auto extends LinearOpMode {
         221.506
     );
     //    double[] coneStackHeights = new double[] {5.74, 4.305, 2.87, 1.435, 0.0};
-    double[] coneStackHeights = new double[]{5.85, 4.1, 2.4, 1.435, 0.0};
+    double[] coneStackHeights = new double[]{5.0, 3.3, 2.4, 1.435, 0.0};
     ButtonToggle toggleA = new ButtonToggle();
 
     @Override
@@ -78,26 +78,26 @@ public class Auto extends LinearOpMode {
         drive.setPoseEstimate(origin);
 
         Pose2d intakePose = new Pose2d(
-            55 * xSign,
-            12 * ySign,
+            53.5 * xSign,
+            9.5 * ySign,
             tb ? 0 : Math.PI
         );
 
         Pose2d depositPose = new Pose2d(
             38 * xSign,
-            12 * ySign,
+            9.5 * ySign,
             tb ? 0 : Math.PI
         );
 
         drive.setPoseEstimate(origin); // FIXME is this needed?
         TrajectorySequence to = drive.trajectorySequenceBuilder(origin)
             // Move forward extra in order to bump away the signal cone
-            .strafeTo(new Vector2d(origin.getX(), origin.getY() - (56 * ySign)))
+            .strafeTo(new Vector2d(origin.getX(), origin.getY() - (54 * ySign)))
             .addDisplacementMarker(12, () -> {
                 robot.ySign = xSign * ySign;
                 robot.currentState = Robot.STATE.SCORING_GLOBAL;
             })
-            .lineToLinearHeading(new Pose2d(depositPose.getX() + (4 * xSign), depositPose.getY(), depositPose.getHeading()))
+            .lineToLinearHeading(new Pose2d(depositPose.getX() + (5 * xSign), depositPose.getY(), depositPose.getHeading()))
             .build();
 
         // TODO talk to hudson about this weird heading stuff
@@ -128,12 +128,12 @@ public class Auto extends LinearOpMode {
         robot.resetEncoders();
         robot.claw.open();
 
-        boolean detected = false;
 
         while (opModeInInit()) {
             telemetry.setMsTransmissionInterval(50);
 
-            ArrayList<AprilTagDetection> currentDetections = atdp.getDetectionsUpdate();
+            boolean detected = false;
+            ArrayList<AprilTagDetection> currentDetections = atdp.getLatestDetections();
 
             if (currentDetections != null && currentDetections.size() != 0) {
                 for (AprilTagDetection tag : currentDetections) {
@@ -178,13 +178,14 @@ public class Auto extends LinearOpMode {
 
         robot.followTrajectorySequence(to, this);
 
-        robot.startScoringGlobal(to.end(), new Pose2d(25.25 * xSign,-0.25 * ySign),28.1, xSign * ySign); // 36
-        do {
+        robot.startScoringGlobal(to.end(), new Pose2d(28.8 * xSign,0.25 * ySign),27.7, xSign * ySign); // 36
+        while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
             robot.update();
-        } while (
-            (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) ||
-             robot.outtake.slides.currentSlidesLength > 15
-        );
+        }
+
+        while (robot.outtake.slides.currentSlidesLength > 15) {
+            robot.update();
+        }
 
         for (int i = 0; i < cycles; i++) {
             robot.drivetrain.setBreakFollowingThresholds(new Pose2d(2.5, 2.5, Math.toRadians(5)), toIntake.end());
@@ -193,7 +194,7 @@ public class Auto extends LinearOpMode {
             // TODO verify the x and y sign on this. It should not be like this
             robot.startIntakeGlobal(
                     toIntake.end(),
-                    new Pose2d((72 - 6) * xSign,12.0 * ySign),
+                    new Pose2d((72 - 4) * xSign,10.0 * ySign),
                     coneStackHeights[i]
             );
 
@@ -205,15 +206,15 @@ public class Auto extends LinearOpMode {
 
             robot.drivetrain.setBreakFollowingThresholds(new Pose2d(2.5, 2.5, Math.toRadians(5)), toDeposit.end());
 
-            // WITH HUDSON: fix this TODO
-            robot.startScoringGlobal(toDeposit.end(), new Pose2d(26.25 * xSign,0),28.3, xSign * ySign); // 36
+            robot.startScoringGlobal(toDeposit.end(), new Pose2d(27.5 * xSign,0),27.15, xSign * ySign); // 36
             robot.followTrajectorySequence(toDeposit, this);
-            do {
+            while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
                 robot.update();
-            } while (
-                (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) ||
-                 robot.outtake.slides.currentSlidesLength > 15
-            );
+            }
+
+            while (robot.outtake.slides.currentSlidesLength > 15) {
+                robot.update();
+            }
         }
         // FIXME this could be a little bit stricter
         robot.drivetrain.setBreakFollowingThresholds(new Pose2d(0.5, 0.5, Math.toRadians(5)), park[parkingNum].end());

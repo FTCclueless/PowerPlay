@@ -4,6 +4,7 @@ import android.os.SystemClock;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -18,6 +19,7 @@ import org.openftc.apriltag.AprilTagDetection;
 
 import java.util.ArrayList;
 
+@Disabled
 @TeleOp(name = "VisionWrapperTest", group = "Concept")
 public class VisionWrapperTest extends LinearOpMode {
     TFODWrapper tfodWrapper;

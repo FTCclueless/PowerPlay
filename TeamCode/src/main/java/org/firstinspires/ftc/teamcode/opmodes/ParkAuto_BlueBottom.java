@@ -23,10 +23,10 @@ import java.util.ArrayList;
 
 // HEY HEY ! DON'T READ THIS CODE! ITS FOR EMERGENCY
 @Autonomous(group = "Test")
-public class BlueParkAutoTop extends LinearOpMode {
+public class ParkAuto_BlueBottom extends LinearOpMode {
     public static int parkingNum = 0;
     public static final boolean lr = true; // Left : true | Right : false
-    public static final boolean tb = true; // Top : true | Bottom : false
+    public static final boolean tb = false; // Top : true | Bottom : false
     public static OpenCvCamera camera;
     public AprilTagDetectionPipeline atdp = new AprilTagDetectionPipeline(
             0.035, // Size of april tag in meters

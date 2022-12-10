@@ -12,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.modules.drive.Drivetrain;
 import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.util.ButtonToggle;
 import org.firstinspires.ftc.teamcode.util.Storage;
 import org.firstinspires.ftc.teamcode.vision.AprilTagDetectionPipeline;
 import org.openftc.apriltag.AprilTagDetection;
@@ -23,9 +24,9 @@ import java.util.ArrayList;
 
 // HEY HEY ! DON'T READ THIS CODE! ITS FOR EMERGENCY
 @Autonomous(group = "Test")
-public class BlueParkAutoBottom extends LinearOpMode {
+public class ParkAuto_RedBottom extends LinearOpMode {
     public static int parkingNum = 0;
-    public static final boolean lr = true; // Left : true | Right : false
+    public static final boolean lr = false; // Left : true | Right : false
     public static final boolean tb = false; // Top : true | Bottom : false
     public static OpenCvCamera camera;
     public AprilTagDetectionPipeline atdp = new AprilTagDetectionPipeline(

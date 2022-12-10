@@ -106,13 +106,13 @@ public class Robot {
                 actuation.level();
                 outtake.retract();
                 if (startIntakeRelative) {
-                    outtake.slides.slidesPercentMax = 0.98;
+                    outtake.slides.slidesPercentMax = 0.87;
                     startIntakeRelative = false;
                     claw.intake();
                     currentState = STATE.INTAKE_RELATIVE;
                 }
                 if (startIntakeGlobal) {
-                    outtake.slides.slidesPercentMax = 0.98;
+                    outtake.slides.slidesPercentMax = 0.87;
                     startIntakeGlobal = false;
                     claw.intake();
                     currentState = STATE.INTAKE_GLOBAL;
@@ -132,7 +132,7 @@ public class Robot {
                 }
                 break;
             case INTAKE_GLOBAL:
-                outtake.slides.slidesPercentMax = 0.98;
+                outtake.slides.slidesPercentMax = 0.87;
                 if ((Math.abs(drivetrain.getPoseEstimate().getX() - drivePose.getX()) <= 4) && (Math.abs(drivetrain.getPoseEstimate().getY() - drivePose.getY()) <= 4)) {
                     drivePose = drivetrain.getPoseEstimate();
                     isAtPoint = true;
@@ -168,7 +168,7 @@ public class Robot {
                 }
                 break;
             case WAIT_FOR_START_SCORING:
-                outtake.slides.slidesPercentMax = 0.98;
+                outtake.slides.slidesPercentMax = 0.87;
                 claw.close();
                 actuation.level();
                 outtake.retract();
@@ -226,7 +226,7 @@ public class Robot {
 //                }
 //                break;
             case SCORING_GLOBAL:
-                outtake.slides.slidesPercentMax = 0.98;
+                outtake.slides.slidesPercentMax = 0.87;
                 // checks to see if the drivetrain is near the final scoring pose and if it is then give it it's actual drive pose
                 if (Math.abs(drivetrain.getPoseEstimate().getX() - drivePose.getX()) <= 4 && Math.abs(drivetrain.getPoseEstimate().getY() - drivePose.getY()) <= 4) {
                     drivePose = drivetrain.getPoseEstimate();
@@ -242,14 +242,12 @@ public class Robot {
                     claw.close();
                     actuation.level();
                     outtake.extension.retractExtension();
-                    outtake.slides.setTargetSlidesLength(22);
                     if ((ySign == 1) && (outtake.extension.currentExtensionLength < (3 + outtake.extension.baseSlidesExtension))) {
-                        Log.e("moving turret to -90", "");
 //                        outtake.turret.setTargetTurretAngle(Math.toRadians(-135));
-                        outtake.setTargetRelative(extensionDistance * Math.cos(Math.toRadians(-135)), extensionDistance * Math.sin(Math.toRadians(-135)), 5);
+                        outtake.setTargetRelative(extensionDistance * Math.cos(Math.toRadians(-135)), extensionDistance * Math.sin(Math.toRadians(-135)), 12);
                     } else if ((ySign == -1) && (outtake.extension.currentExtensionLength < (3 + outtake.extension.baseSlidesExtension))) {
 //                        outtake.turret.setTargetTurretAngle(Math.toRadians(135));
-                        outtake.setTargetRelative(extensionDistance * Math.cos(Math.toRadians(135)), extensionDistance * Math.sin(Math.toRadians(135)), 5);
+                        outtake.setTargetRelative(extensionDistance * Math.cos(Math.toRadians(135)), extensionDistance * Math.sin(Math.toRadians(135)), 12);
                     }
                 }
 

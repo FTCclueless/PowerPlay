@@ -23,7 +23,7 @@ import java.util.ArrayList;
 
 // HEY HEY ! DON'T READ THIS CODE! ITS FOR EMERGENCY
 @Autonomous(group = "Test")
-public class RedParkAutoTop extends LinearOpMode {
+public class ParkAuto_RedTop extends LinearOpMode {
     public static int parkingNum = 0;
     public static final boolean lr = false; // Left : true | Right : false
     public static final boolean tb = true; // Top : true | Bottom : false
