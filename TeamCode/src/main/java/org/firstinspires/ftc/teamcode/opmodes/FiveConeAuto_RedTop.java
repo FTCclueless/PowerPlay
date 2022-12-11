@@ -21,14 +21,14 @@ import org.firstinspires.ftc.teamcode.vision.OpenCVWrapper;
 public class FiveConeAuto_RedTop extends LinearOpMode {
     public static final int cycles = 5;
     public static int parkingNum = 0;
-    public static final boolean lr = false; // Left : true | Right : false
+    public static final boolean lr = true; // Left : true | Right : false
     public static final boolean tb = true; // Top : true | Bottom : false
     //public static final double cycleBack = 6; // Once robot gets to cycle position how much it moves backwards
     //public static final double cycleY = 48; // Turning can give an offset (+ cone location)
 
     OpenCVWrapper openCVWrapper;
 
-    double[] coneStackHeights = new double[]{4.0, 3.3, 2.0, 1.0, 0.0};
+    double[] coneStackHeights = new double[]{5.0, 3.3, 2.4, 1.435, 0.0};
     ButtonToggle toggleA = new ButtonToggle();
 
     @Override
@@ -52,21 +52,21 @@ public class FiveConeAuto_RedTop extends LinearOpMode {
         drive.setPoseEstimate(origin);
 
         Pose2d intakePose = new Pose2d(
-            56.5 * xSign,
-            13.7 * ySign,
+            53.5 * xSign,
+            9.5 * ySign,
             tb ? 0 : Math.PI
         );
 
         Pose2d depositPose = new Pose2d(
             38 * xSign,
-            13.7 * ySign,
+            9.5 * ySign,
             tb ? 0 : Math.PI
         );
 
         drive.setPoseEstimate(origin); // FIXME is this needed?
         TrajectorySequence to = drive.trajectorySequenceBuilder(origin)
             // Move forward extra in order to bump away the signal cone
-            .strafeTo(new Vector2d(origin.getX(), origin.getY() - (50.5 * ySign)))
+            .strafeTo(new Vector2d(origin.getX(), origin.getY() - (54 * ySign)))
             .addDisplacementMarker(12, () -> {
                 robot.ySign = xSign * ySign;
                 robot.currentState = Robot.STATE.SCORING_GLOBAL;
@@ -95,7 +95,7 @@ public class FiveConeAuto_RedTop extends LinearOpMode {
                 depositPose.getY()
             )).build(),
             drive.trajectoryBuilder(toDeposit.end()).strafeTo(new Vector2d(
-                origin.getX() - (24),
+                origin.getX() - (27),
                 depositPose.getY()
             )).build()
         };
@@ -145,7 +145,7 @@ public class FiveConeAuto_RedTop extends LinearOpMode {
 
         robot.followTrajectorySequence(to, this);
 
-        robot.startScoringGlobal(to.end(), new Pose2d(28.1 * xSign,0.25 * ySign),23.25, xSign * ySign); // 36
+        robot.startScoringGlobal(to.end(), new Pose2d(28.1 * xSign,0.25 * ySign),26.25, xSign * ySign); // 36
         while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
             robot.update();
         }
@@ -161,7 +161,7 @@ public class FiveConeAuto_RedTop extends LinearOpMode {
             // TODO verify the x and y sign on this. It should not be like this
             robot.startIntakeGlobal(
                     toIntake.end(),
-                    new Pose2d((72 - 2) * xSign,10.0 * ySign),
+                    new Pose2d((72 - 4) * xSign,10.0 * ySign),
                     coneStackHeights[i]
             );
 
@@ -173,7 +173,7 @@ public class FiveConeAuto_RedTop extends LinearOpMode {
 
             robot.drivetrain.setBreakFollowingThresholds(new Pose2d(2.5, 2.5, Math.toRadians(5)), toDeposit.end());
 
-            robot.startScoringGlobal(toDeposit.end(), new Pose2d(26.5 * xSign,0.5 * ySign),25.9, xSign * ySign); // 36
+            robot.startScoringGlobal(toDeposit.end(), new Pose2d(27.5 * xSign,0),26.9, xSign * ySign); // 36
             robot.followTrajectorySequence(toDeposit, this);
             while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
                 robot.update();
