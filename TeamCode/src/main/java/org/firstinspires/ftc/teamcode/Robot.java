@@ -154,7 +154,7 @@ public class Robot {
                     startClawCloseTime = System.currentTimeMillis();
                 }
 
-                if(sensors.clawTouch || System.currentTimeMillis() - startClawCloseTime > 550) { // needs an external claw.close()
+                if(sensors.clawTouch || System.currentTimeMillis() - startClawCloseTime > 400) { // needs an external claw.close()
                     Log.e("here", "");
                     claw.close();
                     hasGrabbed = true;
@@ -241,14 +241,8 @@ public class Robot {
                 else {
                     claw.close();
                     actuation.level();
+                    outtake.setTargetGlobal(drivePose, polePose, 12);
                     outtake.extension.retractExtension();
-                    if ((ySign == 1) && (outtake.extension.currentExtensionLength < (3 + outtake.extension.baseSlidesExtension))) {
-//                        outtake.turret.setTargetTurretAngle(Math.toRadians(-135));
-                        outtake.setTargetRelative(extensionDistance * Math.cos(Math.toRadians(-135)), extensionDistance * Math.sin(Math.toRadians(-135)), 12);
-                    } else if ((ySign == -1) && (outtake.extension.currentExtensionLength < (3 + outtake.extension.baseSlidesExtension))) {
-//                        outtake.turret.setTargetTurretAngle(Math.toRadians(135));
-                        outtake.setTargetRelative(extensionDistance * Math.cos(Math.toRadians(135)), extensionDistance * Math.sin(Math.toRadians(135)), 12);
-                    }
                 }
 
                 if (isAtPoint && (outtake.isInPositionGlobal(drivePose, polePose,1.0))) {
