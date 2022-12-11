@@ -34,14 +34,7 @@ public class FiveConeAuto_BlueTop extends LinearOpMode {
     //public static final double cycleBack = 6; // Once robot gets to cycle position how much it moves backwards
     //public static final double cycleY = 48; // Turning can give an offset (+ cone location)
     public static OpenCvCamera camera;
-    public AprilTagDetectionPipeline atdp = new AprilTagDetectionPipeline(
-        0.166, // Size of april tag in meters
-        // These 4 values are calibration for the C920 webcam (800x448)
-        578.272,
-        578.272,
-        402.145,
-        221.506
-    );
+    public AprilTagDetectionPipeline atdp = AprilTagDetectionPipeline.getAprilTagSingleInstance();
     //    double[] coneStackHeights = new double[] {5.74, 4.305, 2.87, 1.435, 0.0};
     double[] coneStackHeights = new double[]{5.0, 3.3, 2.4, 1.435, 0.0};
     ButtonToggle toggleA = new ButtonToggle();

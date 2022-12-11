@@ -23,20 +23,12 @@ public class OpenCVWrapper {
     MyOpenCvPipeline openCvPipeline;
     boolean useWebCamera;
     ArrayList<AprilTagDetection> detections = new ArrayList<>();
-    double fx = 578.272;
-    double fy = 578.272;
-    double cx = 402.145;
-    double cy = 221.506;
 
-    // UNITS ARE METERS
-    double tagsize = 0.166;
 
     public OpenCVWrapper(Telemetry tele, HardwareMap hwMap, boolean webCam) {
         telemetry = tele;
         hardwareMap = hwMap;
         useWebCamera = webCam;
-        openCvPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
-        assert(openCvPipeline != null);
     }
 
     public void init() {
@@ -46,15 +38,20 @@ public class OpenCVWrapper {
         // https://github.com/OpenFTC/EasyOpenCV/blob/master/examples/src/main/java/org/openftc/easyopencv/examples/InternalCameraExample.java
         // Initialize the back-facing camera
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        RobotLogger.dd(TAG, "getIdentifier " + cameraMonitorViewId);
+
         if (!useWebCamera)
             phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera2(OpenCvInternalCamera2.CameraDirection.BACK, cameraMonitorViewId);
         else
             phoneCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        RobotLogger.dd(TAG, "OpenCvCameraFactory " + phoneCam.toString());
 
         // Connect to the camera
         phoneCam.openCameraDevice();
         // Use the OpenCVObjectDetector pipeline
         // processFrame() will be called to process the frame
+        openCvPipeline = AprilTagDetectionPipeline.getAprilTagSingleInstance();
+        assert(openCvPipeline != null);
         phoneCam.setPipeline(openCvPipeline);
         openCvPipeline.setTelemetry(telemetry);
     }
@@ -80,7 +77,18 @@ public class OpenCVWrapper {
     public void stop() {
         RobotLogger.dd(TAG, "stop OpenCVWrapper");
         phoneCam.stopStreaming();
+        //openCvPipeline.stopPipeline();
+        RobotLogger.dd(TAG, "to closeCameraDevice");
         phoneCam.closeCameraDevice();
+        /*
+        phoneCam.closeCameraDeviceAsync(new OpenCvCamera.AsyncCameraCloseListener() {
+            @Override
+            public void onClose() {
+                RobotLogger.dd(TAG, "closeCameraDeviceAsync onClose");
+            }
+
+        });
+         */
     }
 
     private ArrayList<AprilTagDetection> getLatestDetections() {

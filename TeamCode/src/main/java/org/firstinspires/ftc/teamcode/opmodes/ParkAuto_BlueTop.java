@@ -28,14 +28,7 @@ public class ParkAuto_BlueTop extends LinearOpMode {
     public static final boolean lr = true; // Left : true | Right : false
     public static final boolean tb = true; // Top : true | Bottom : false
     public static OpenCvCamera camera;
-    public AprilTagDetectionPipeline atdp = new AprilTagDetectionPipeline(
-            0.035, // Size of april tag in meters
-            // These 4 values are calibration for the C920 webcam (800x448)
-            578.272,
-            578.272,
-            402.145,
-            221.506
-    );
+    public AprilTagDetectionPipeline atdp = AprilTagDetectionPipeline.getAprilTagSingleInstance();
 
     @Override
     public void runOpMode() throws InterruptedException {
