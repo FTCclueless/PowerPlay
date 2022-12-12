@@ -317,7 +317,8 @@ public class Robot {
 
         boolean amUpdated = false;
 
-        double m1 = (isBlue ? 1 : -1);
+//        double m1 = (isBlue ? 1 : -1);
+        double m1 = 1;
         double newAngle = 0;
         if (gamepad.dpad_up) { // forward left
             newAngle = Math.toRadians(-45 * m1); //use 90 - 90 if you want it to work for straight across (current 45)

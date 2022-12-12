@@ -71,7 +71,7 @@ public class ParkAuto_BlueBottom extends LinearOpMode {
                         depositPose.getY()
                 )).build(),
                 drive.trajectoryBuilder(toDeposit.end()).strafeTo(new Vector2d(
-                        origin.getX() - (2 * ySign),
+                        origin.getX() - (2.000001 * ySign),
                         depositPose.getY()
                 )).build(),
                 drive.trajectoryBuilder(toDeposit.end()).strafeTo(new Vector2d(

@@ -146,7 +146,7 @@ public class FiveConeAuto_RedTop extends LinearOpMode {
         robot.followTrajectorySequence(to, this);
 
         // remember to change the height value in the displacement marker
-        robot.startScoringGlobal(to.end(), new Pose2d(29.1 * xSign,0.25 * ySign),27.7, xSign * ySign); // 36
+        robot.startScoringGlobal(to.end(), new Pose2d(29.35 * xSign,0.25 * ySign),26.25, xSign * ySign); // 36
         while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
             robot.update();
         }
@@ -174,7 +174,7 @@ public class FiveConeAuto_RedTop extends LinearOpMode {
 
             robot.drivetrain.setBreakFollowingThresholds(new Pose2d(2.5, 2.5, Math.toRadians(5)), toDeposit.end());
 
-            robot.startScoringGlobal(toDeposit.end(), new Pose2d(29.1 * xSign,1.5 * ySign),29.15, xSign * ySign); // 36
+            robot.startScoringGlobal(toDeposit.end(), new Pose2d(29.5 * xSign,1.5 * ySign),26.9, xSign * ySign); // 36
             robot.followTrajectorySequence(toDeposit, this);
             while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
                 robot.update();

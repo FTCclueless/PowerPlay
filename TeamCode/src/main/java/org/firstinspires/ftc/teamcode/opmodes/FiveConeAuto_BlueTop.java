@@ -38,7 +38,7 @@ public class FiveConeAuto_BlueTop extends LinearOpMode {
 
     OpenCVWrapper openCVWrapper;
 
-    double[] coneStackHeights = new double[]{5.0, 3.3, 2.4, 1.435, 0.0};
+    double[] coneStackHeights = new double[]{4.15, 3.3, 2.4, 1.435, 0.0};
     ButtonToggle toggleA = new ButtonToggle();
 
     @Override
@@ -101,7 +101,7 @@ public class FiveConeAuto_BlueTop extends LinearOpMode {
                 depositPose.getY()
             )).build(),
             drive.trajectoryBuilder(toDeposit.end()).strafeTo(new Vector2d(
-                origin.getX() - (2.001 * ySign),
+                origin.getX() - (2.000001 * ySign),
                 depositPose.getY()
             )).build(),
             drive.trajectoryBuilder(toDeposit.end()).strafeTo(new Vector2d(
@@ -155,7 +155,7 @@ public class FiveConeAuto_BlueTop extends LinearOpMode {
 
         robot.followTrajectorySequence(to, this);
 
-        robot.startScoringGlobal(to.end(), new Pose2d(28.1 * xSign,0.25 * ySign),26.25, xSign * ySign); // 36
+        robot.startScoringGlobal(to.end(), new Pose2d(27.2 * xSign,0.25 * ySign),25.9, xSign * ySign); // 36
         while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
             robot.update();
         }
@@ -183,7 +183,7 @@ public class FiveConeAuto_BlueTop extends LinearOpMode {
 
             robot.drivetrain.setBreakFollowingThresholds(new Pose2d(2.5, 2.5, Math.toRadians(5)), toDeposit.end());
 
-            robot.startScoringGlobal(toDeposit.end(), new Pose2d(27.5 * xSign,0),26.9, xSign * ySign); // 36
+            robot.startScoringGlobal(toDeposit.end(), new Pose2d(27.5 * xSign,0),26.65, xSign * ySign); // 36
             robot.followTrajectorySequence(toDeposit, this);
             while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
                 robot.update();
