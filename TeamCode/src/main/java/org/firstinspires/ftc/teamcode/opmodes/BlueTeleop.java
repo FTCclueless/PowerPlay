@@ -27,16 +27,17 @@ public class BlueTeleop extends LinearOpMode {
         Actuation actuation = robot.actuation;
         Sensors sensors = robot.sensors;
 
-        robot.currentState = Robot.STATE.INTAKE_RELATIVE;
-        robot.isRelative = true;
-
         drive.localizer.setPoseEstimate(Storage.autoEndPose);
 
         ButtonToggle b_left_bumper = new ButtonToggle();
 
         while(opModeInInit()) {
+            robot.outtake.setTargetRelative(3,0,0);
             robot.update();
         }
+
+        robot.currentState = Robot.STATE.INTAKE_RELATIVE;
+        robot.isRelative = true;
 
         waitForStart();
 

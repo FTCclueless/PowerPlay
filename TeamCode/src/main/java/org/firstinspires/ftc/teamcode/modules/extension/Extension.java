@@ -25,7 +25,7 @@ public class Extension {
         this.servos = servos;
         this.outtake = outtake;
 
-        extension = new MyServo(hardwareMap.servo.get("extension"),"Amazon",1,0.0,1.0, 0.0);
+        extension = new MyServo(hardwareMap.servo.get("extension"),"Amazon",1,0.0,0.586, 0.0);
 
         servos.add(0, extension);
     }
