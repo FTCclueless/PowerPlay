@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.util.SafeSleep;
 import org.firstinspires.ftc.teamcode.vision.OpenCVWrapper;
 import org.firstinspires.ftc.teamcode.vision.TFODWrapper;
 
-@Disabled
+//@Disabled
 @TeleOp(name = "VisionWrapperTest", group = "Concept")
 public class VisionWrapperTest extends LinearOpMode {
     TFODWrapper tfodWrapper;
@@ -33,7 +33,6 @@ public class VisionWrapperTest extends LinearOpMode {
 
         tfodWrapper = new TFODWrapper("/sdcard/FIRST/tflitemodels/CustomTeamModel.tflite", labels, useWebCamera, telemetry, hardwareMap);
         tfodWrapper.setOpMode(this);
-        openCVWrapper = new OpenCVWrapper(telemetry, hardwareMap, useWebCamera);
 
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start op mode");
@@ -69,9 +68,11 @@ public class VisionWrapperTest extends LinearOpMode {
 
                 }
                 if (runAprilTag) {
+                    openCVWrapper = new OpenCVWrapper(telemetry, hardwareMap, useWebCamera);
+
                     openCVWrapper.init();
                     openCVWrapper.start();
-                    FtcDashboard.getInstance().startCameraStream(openCVWrapper.getCamera(), 0);
+                    //FtcDashboard.getInstance().startCameraStream(openCVWrapper.getCamera(), 0);
 
                     printStr = "opencv started, switching takes: " + String.valueOf(SystemClock.elapsedRealtime() - start_time);
                     RobotLogger.dd(TAG, printStr);
@@ -89,9 +90,8 @@ public class VisionWrapperTest extends LinearOpMode {
                     SafeSleep.sleep_milliseconds(this, 5000);
                     RobotLogger.dd(TAG, "to stop opencv");
                     start_time = SystemClock.elapsedRealtime();
-                    FtcDashboard.getInstance().stopCameraStream();
+                    //FtcDashboard.getInstance().stopCameraStream();
                     openCVWrapper.stop();
-
                 }
                 //SafeSleep.sleep_milliseconds(this,5000);
             }

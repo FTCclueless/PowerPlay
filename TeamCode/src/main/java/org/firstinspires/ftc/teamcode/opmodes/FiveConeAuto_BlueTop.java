@@ -36,6 +36,7 @@ public class FiveConeAuto_BlueTop extends LinearOpMode {
     //public static final double cycleBack = 6; // Once robot gets to cycle position how much it moves backwards
     //public static final double cycleY = 48; // Turning can give an offset (+ cone location)
 
+
     OpenCVWrapper openCVWrapper;
 
     double[] coneStackHeights = new double[]{4.15, 3.3, 2.4, 1.435, 0.0};
