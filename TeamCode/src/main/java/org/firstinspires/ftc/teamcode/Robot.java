@@ -41,7 +41,7 @@ public class Robot {
     public ArrayList<MotorPriority> motorPriorities = new ArrayList<>();
     public ArrayList<MyServo> servos = new ArrayList<>();
 
-    public enum STATE {IDLE, INIT, INTAKE_RELATIVE, INTAKE_GLOBAL, WAIT_FOR_START_SCORING, SCORING_GLOBAL, SCORING_RELATIVE_WITH_IMU, ADJUST, DEPOSIT, RETRACT }
+    public enum STATE {IDLE, INIT, INTAKE_RELATIVE, INTAKE_GLOBAL, WAIT_FOR_START_SCORING, SCORING_GLOBAL, SCORING_RELATIVE_WITH_IMU, SCORING_RELATIVE_WITHOUT_IMU, ADJUST, DEPOSIT, RETRACT }
     public STATE currentState = STATE.INIT;
 
     public Robot (HardwareMap hardwareMap) {
@@ -186,21 +186,32 @@ public class Robot {
                     currentState = STATE.SCORING_GLOBAL;
                 }
                 break;
-            case SCORING_RELATIVE_WITH_IMU:
-                // TODO: make auto manage 0 angle
-                double imu = clipAngle(drivetrain.getExternalHeading() + Storage.autoEndPose.getHeading());
-                relativeAngle = clipAngle((targetAngle + angleOffset) - clipAngle(imu));
-
-                if (doFieldCentricAdjust) {
-                    // field centric offsets
-                    double targetX = offsetX * Math.cos(imu) + offsetY * Math.sin(imu);
-                    double targetY = offsetY * Math.cos(imu) - offsetX * Math.sin(imu);
-                    outtake.setTargetRelative(extensionDistance * Math.cos(relativeAngle) + targetX, extensionDistance * Math.sin(relativeAngle) + targetY, this.scoringHeight);
-                }
-                else {
-                    // robot centric offsets
-                    outtake.setTargetRelative(extensionDistance * Math.cos(relativeAngle), extensionDistance * Math.sin(relativeAngle), this.scoringHeight); // changes dynamically based on driver input
-                }
+//            case SCORING_RELATIVE_WITH_IMU:
+//                double imu = clipAngle(drivetrain.getExternalHeading() + Storage.autoEndPose.getHeading());
+//                relativeAngle = clipAngle((targetAngle + angleOffset) - clipAngle(imu));
+//
+//                if (doFieldCentricAdjust) {
+//                    // field centric offsets
+//                    double targetX = offsetX * Math.cos(imu) + offsetY * Math.sin(imu);
+//                    double targetY = offsetY * Math.cos(imu) - offsetX * Math.sin(imu);
+//                    outtake.setTargetRelative(extensionDistance * Math.cos(relativeAngle) + targetX, extensionDistance * Math.sin(relativeAngle) + targetY, this.scoringHeight);
+//                }
+//                else {
+//                    // robot centric offsets
+//                    outtake.setTargetRelative(extensionDistance * Math.cos(relativeAngle), extensionDistance * Math.sin(relativeAngle), this.scoringHeight); // changes dynamically based on driver input
+//                }
+//
+//                if (startDeposit) {
+//                    offsetX = 0.0;
+//                    offsetY = 0.0;
+//                    startScoringRelative = false;
+//                    startDeposit = false;
+//                    timeSinceClawOpen = System.currentTimeMillis();
+//                    currentState = STATE.DEPOSIT;
+//                }
+//                break;
+            case SCORING_RELATIVE_WITH_IMU: // NON IMU
+                outtake.setTargetRelative(extensionDistance*Math.cos(Math.toRadians(180) + angleOffset),extensionDistance*Math.sin(Math.toRadians(180) + angleOffset), this.scoringHeight); // changes dynamically based on driver input
 
                 if (startDeposit) {
                     offsetX = 0.0;
@@ -211,20 +222,6 @@ public class Robot {
                     currentState = STATE.DEPOSIT;
                 }
                 break;
-//            case SCORING_RELATIVE_WITHOUT_IMU:
-//                outtake.setTargetRelative(extensionDistance*Math.cos(outtake.turret.getCurrentTurretAngle()),extensionDistance*Math.sin(outtake.turret.getCurrentTurretAngle()), this.scoringHeight); // changes dynamically based on driver input
-//
-//                if (this.scoringHeight > 5) {
-//                    currentState = STATE.SCORING_RELATIVE_WITH_IMU;
-//                }
-//
-//                if (startDeposit) {
-//                    startScoringRelative = false;
-//                    startDeposit = false;
-//                    timeSinceClawOpen = System.currentTimeMillis();
-//                    currentState = STATE.DEPOSIT;
-//                }
-//                break;
             case SCORING_GLOBAL:
                 outtake.slides.slidesPercentMax = 0.87;
                 // checks to see if the drivetrain is near the final scoring pose and if it is then give it it's actual drive pose

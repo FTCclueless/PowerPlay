@@ -38,7 +38,7 @@ public class Outtake {
     double currentSlidesLength = 0.0;
     double currentExtensionLength = 0.0;
 
-    double turretXOffset = -2.5;
+    double turretXOffset = 0.0;
     double turretYOffset = 0.0;
 
     double x, y, z;
