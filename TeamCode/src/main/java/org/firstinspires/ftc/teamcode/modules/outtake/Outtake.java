@@ -204,8 +204,12 @@ public class Outtake {
         return angle;
     }
 
+    public Pose2d getGlobalArmPose (Pose2d robotPose) {
+        return findGlobalCoordinates(robotPose, x,y);
+    }
+
     public boolean isInPositionGlobal(Pose2d robotPose, Pose2d targetPose, double threshold) {
-        Pose2d globalCoords = findGlobalCoordinates(robotPose, x-2.5,y);
+        Pose2d globalCoords = findGlobalCoordinates(robotPose, x,y);
 
         if ((Math.abs(globalCoords.getX() - targetPose.getX()) <= threshold) && (Math.abs(globalCoords.getY() - globalCoords.getY()) <= threshold) && (slides.isInPosition(threshold))) {
             return true;

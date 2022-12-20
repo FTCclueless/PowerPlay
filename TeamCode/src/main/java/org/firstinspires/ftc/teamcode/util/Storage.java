@@ -9,4 +9,5 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
  */
 public class Storage {
     public static Pose2d autoEndPose = new Pose2d();
+    public static boolean isBlue = true;
 }

@@ -20,7 +20,7 @@ public class ThreeWheelLocalizer implements Localizer {
     long lastTime = System.nanoTime();
     public double x = 0;
     public double y = 0;
-    double heading = 0;
+    public double heading = 0;
 
     MyPose2d currentPose = new MyPose2d(0,0,0);
     MyPose2d currentVel = new MyPose2d(0,0,0);

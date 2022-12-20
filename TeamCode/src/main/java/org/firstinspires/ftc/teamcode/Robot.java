@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.modules.actuation.Actuation;
 import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.util.Field;
 import org.firstinspires.ftc.teamcode.util.MyServo;
 import org.firstinspires.ftc.teamcode.util.Storage;
 import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
@@ -41,7 +42,7 @@ public class Robot {
     public ArrayList<MotorPriority> motorPriorities = new ArrayList<>();
     public ArrayList<MyServo> servos = new ArrayList<>();
 
-    public enum STATE {IDLE, INIT, INTAKE_RELATIVE, INTAKE_GLOBAL, WAIT_FOR_START_SCORING, SCORING_GLOBAL, SCORING_RELATIVE_WITH_IMU, SCORING_RELATIVE_WITHOUT_IMU, ADJUST, DEPOSIT, RETRACT }
+    public enum STATE {IDLE, INIT, INTAKE_RELATIVE, INTAKE_GLOBAL, WAIT_FOR_START_SCORING, SCORING_GLOBAL, SCORING_RELATIVE, SCORING_RELATIVE_AUTO_AIM, DEPOSIT, RETRACT }
     public STATE currentState = STATE.INIT;
 
     public Robot (HardwareMap hardwareMap) {
@@ -65,6 +66,7 @@ public class Robot {
     boolean startIntakeGlobal = false;
 
     boolean startScoringRelative = false;
+    boolean startScoringRelativeAutoAim = false;
     boolean startScoringGlobal = false;
 
     boolean startDeposit = false;
@@ -79,6 +81,9 @@ public class Robot {
 
     Pose2d drivePose = new Pose2d(0,0);
     double scoringHeight = 0.0;
+    public int scoringLevel = 3;
+
+    Field field = new Field();
 
     long timeSinceClawOpen = 0;
 
@@ -87,12 +92,21 @@ public class Robot {
     boolean isAtPoint = false;
     boolean hasGrabbed = false;
 
+    public boolean isTeleop = false;
+
     public void update() {
         loopStart = System.nanoTime();
         updateSubSystems();
         updateTelemetry();
 
         double relativeAngle;
+        Pose2d globalArmPos;
+        Pose2d nearestPole;
+
+        if (isTeleop) {
+            drivetrain.localizer.heading = clipAngle(drivetrain.getExternalHeading() + Storage.autoEndPose.getHeading());;
+        }
+
 
         switch (currentState) {
             case IDLE:
@@ -178,7 +192,14 @@ public class Robot {
                     extensionDistance = 7.0;
                     angleOffset = 0;
                     startScoringRelative = false;
-                    currentState = STATE.SCORING_RELATIVE_WITH_IMU;
+                    currentState = STATE.SCORING_RELATIVE;
+                }
+                if (startScoringRelativeAutoAim) {
+                    actuation.tilt();
+                    extensionDistance = 7.0;
+                    angleOffset = 0;
+                    startScoringRelative = false;
+                    currentState = STATE.SCORING_RELATIVE_AUTO_AIM;
                 }
                 if (startScoringGlobal) {
                     extensionDistance = 7.0;
@@ -210,15 +231,59 @@ public class Robot {
 //                    currentState = STATE.DEPOSIT;
 //                }
 //                break;
-            case SCORING_RELATIVE_WITH_IMU: // NON IMU
+            case SCORING_RELATIVE:
+                globalArmPos = outtake.getGlobalArmPose(drivePose);
+                nearestPole = field.getNearestPole(globalArmPos, scoringLevel);
+
                 outtake.setTargetRelative(extensionDistance*Math.cos(Math.toRadians(180) + angleOffset),extensionDistance*Math.sin(Math.toRadians(180) + angleOffset), this.scoringHeight); // changes dynamically based on driver input
+
+                if (startScoringRelativeAutoAim) {
+                    actuation.tilt();
+                    extensionDistance = 7.0;
+                    angleOffset = 0;
+                    startScoringRelativeAutoAim = false;
+                    currentState = STATE.SCORING_RELATIVE_AUTO_AIM;
+                }
 
                 if (startDeposit) {
                     offsetX = 0.0;
                     offsetY = 0.0;
                     startScoringRelative = false;
+                    startScoringRelativeAutoAim = false;
                     startDeposit = false;
                     timeSinceClawOpen = System.currentTimeMillis();
+
+                    drivetrain.localizer.x += nearestPole.getX() - globalArmPos.getX();
+                    drivetrain.localizer.y += nearestPole.getY() - globalArmPos.getY();
+
+                    currentState = STATE.DEPOSIT;
+                }
+                break;
+            case SCORING_RELATIVE_AUTO_AIM:
+                globalArmPos = outtake.getGlobalArmPose(drivePose);
+                nearestPole = field.getNearestPole(globalArmPos, scoringLevel);
+
+                outtake.setTargetGlobal(drivePose, nearestPole, this.scoringHeight);
+
+                if (startScoringRelative) {
+                    actuation.tilt();
+                    extensionDistance = 7.0;
+                    angleOffset = 0;
+                    startScoringRelative = false;
+                    currentState = STATE.SCORING_RELATIVE;
+                }
+
+                if (startDeposit) {
+                    offsetX = 0.0;
+                    offsetY = 0.0;
+                    startScoringRelative = false;
+                    startScoringRelativeAutoAim = false;
+                    startDeposit = false;
+                    timeSinceClawOpen = System.currentTimeMillis();
+
+                    drivetrain.localizer.x += nearestPole.getX() - globalArmPos.getX();
+                    drivetrain.localizer.y += nearestPole.getY() - globalArmPos.getY();
+
                     currentState = STATE.DEPOSIT;
                 }
                 break;
@@ -258,6 +323,7 @@ public class Robot {
                             Log.e("Retract Everything", "");
                             actuation.level();
                             currentState = STATE.INTAKE_RELATIVE;
+
                         }
                     }
                 }
@@ -359,6 +425,10 @@ public class Robot {
             extensionDistance -= gamepad.left_stick_y * 0.18375;
             extensionDistance = Math.max(6.31103, Math.min(this.extensionDistance, 19.8937145));
         }
+    }
+
+    public void startScoringRelativeAutoAim () {
+        startScoringRelativeAutoAim = true;
     }
 
     public int ySign = 1;

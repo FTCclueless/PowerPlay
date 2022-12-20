@@ -14,9 +14,9 @@ import org.firstinspires.ftc.teamcode.util.ButtonToggle;
 import org.firstinspires.ftc.teamcode.util.Storage;
 
 @TeleOp
-public class RedTeleop extends LinearOpMode {
+public class Teleop extends LinearOpMode {
 
-    boolean isBlue = false;
+    boolean isBlue = true;
     double scoringHeight = 30;
 
     @Override
@@ -38,6 +38,7 @@ public class RedTeleop extends LinearOpMode {
 
         robot.currentState = Robot.STATE.INTAKE_RELATIVE;
         robot.isRelative = true;
+        robot.isTeleop = true;
 
         waitForStart();
 
@@ -57,32 +58,39 @@ public class RedTeleop extends LinearOpMode {
                 sensors.clawTouch = true;
             }
 
-            if ((robot.currentState == Robot.STATE.WAIT_FOR_START_SCORING) && (gamepad1.right_bumper)) {
+            if ((robot.currentState == Robot.STATE.WAIT_FOR_START_SCORING) && (gamepad1.b)) {
                 robot.outtake.slides.slidesPercentMax = 0.25;
                 robot.currentState = Robot.STATE.INTAKE_RELATIVE;
             }
 
             if (gamepad2.a) { // low
                 scoringHeight = 13;
+                robot.scoringLevel = 1;
             }
 
             if (gamepad2.b) { // medium
                 scoringHeight = 21.5;
+                robot.scoringLevel = 2;
             }
 
             if (gamepad2.y) { // high (NEED TO CHANGE THE DEFAULT HEIGHT TOO)
                 scoringHeight = 30;
+                robot.scoringLevel = 3;
             }
 
-            if ((robot.currentState == Robot.STATE.WAIT_FOR_START_SCORING && (gamepad1.left_bumper || gamepad2.right_bumper)) || robot.currentState == Robot.STATE.SCORING_RELATIVE_WITH_IMU) {
-                robot.startScoringRelative(gamepad2, isBlue, scoringHeight);
+            if (((robot.currentState == Robot.STATE.WAIT_FOR_START_SCORING || robot.currentState == Robot.STATE.SCORING_RELATIVE_AUTO_AIM) && (gamepad1.right_bumper || gamepad2.right_bumper)) || (robot.currentState == Robot.STATE.SCORING_RELATIVE)) {
+                robot.startScoringRelative(gamepad2, Storage.isBlue, scoringHeight);
             }
 
-            if (((robot.currentState == Robot.STATE.SCORING_RELATIVE_WITH_IMU) && (gamepad2.right_trigger > 0.5)) || ((robot.currentState == Robot.STATE.ADJUST) && (gamepad2.right_trigger > 0.5))) {
+            if (((robot.currentState == Robot.STATE.WAIT_FOR_START_SCORING || robot.currentState == Robot.STATE.SCORING_RELATIVE) && (gamepad1.left_bumper || gamepad2.left_bumper)) || (robot.currentState == Robot.STATE.SCORING_RELATIVE_AUTO_AIM)) {
+                robot.startScoringRelativeAutoAim();
+            }
+
+            if (((robot.currentState == Robot.STATE.SCORING_RELATIVE || robot.currentState == Robot.STATE.SCORING_RELATIVE_AUTO_AIM) && (gamepad2.right_trigger > 0.5 || gamepad1.left_trigger > 0.5))) {
                 robot.startDepositing();
             }
 
-            if ((b_left_bumper.isClicked(gamepad2.left_bumper)) && (robot.currentState == Robot.STATE.SCORING_RELATIVE_WITH_IMU)) {
+            if ((b_left_bumper.isClicked(gamepad2.left_bumper)) && (robot.currentState == Robot.STATE.SCORING_RELATIVE)) {
                 if (robot.actuation.isLevel()) {
                     Log.e("going to tilted", "");
                     actuation.tilt();

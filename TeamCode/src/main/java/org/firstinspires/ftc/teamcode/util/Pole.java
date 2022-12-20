@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.util;
 
-
 public class Pole {
     public double x;
     public double y;

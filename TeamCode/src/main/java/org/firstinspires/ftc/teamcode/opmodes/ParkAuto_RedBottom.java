@@ -118,5 +118,6 @@ public class ParkAuto_RedBottom extends LinearOpMode {
         robot.followTrajectory(park[parkingNum], this);
 
         Storage.autoEndPose = drive.getPoseEstimate();
+        Storage.isBlue = false;
     }
 }
