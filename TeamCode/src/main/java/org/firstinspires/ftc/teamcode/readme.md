@@ -1,7 +1,8 @@
 ## Wiring
 
 Config Name: RobotConfig
-Wi-fi Password: "ftc11212"
+Wi-fi Name: "11212-RC"
+Wi-fi Password: "CluelessFTC"
 IP Address: 192.168.43.1:5555
 
 ### Control Hub
