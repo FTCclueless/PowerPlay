@@ -80,11 +80,13 @@ public class Teleop extends LinearOpMode {
             if (((robot.currentState == Robot.STATE.WAIT_FOR_START_SCORING || robot.currentState == Robot.STATE.SCORING_RELATIVE_AUTO_AIM) && (gamepad1.right_bumper || gamepad2.right_bumper)) || (robot.currentState == Robot.STATE.SCORING_RELATIVE)) {
                 Log.e("startScoringRelative", "");
                 robot.startScoringRelative(gamepad2, Storage.isBlue, scoringHeight);
+                robot.currentState = Robot.STATE.SCORING_RELATIVE;
             }
 
             if (((robot.currentState == Robot.STATE.WAIT_FOR_START_SCORING || robot.currentState == Robot.STATE.SCORING_RELATIVE) && (gamepad1.left_bumper || gamepad2.left_bumper)) || (robot.currentState == Robot.STATE.SCORING_RELATIVE_AUTO_AIM)) {
                 Log.e("startScoringRelativeAutoAim", "");
                 robot.startScoringRelativeAutoAim();
+                robot.currentState = Robot.STATE.SCORING_RELATIVE_AUTO_AIM;
             }
 
             if (((robot.currentState == Robot.STATE.SCORING_RELATIVE || robot.currentState == Robot.STATE.SCORING_RELATIVE_AUTO_AIM) && (gamepad2.right_trigger > 0.5 || gamepad1.left_trigger > 0.5))) {

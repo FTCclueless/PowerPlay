@@ -20,7 +20,7 @@ public class Slides {
 
     ArrayList<MotorPriority> motorPriorities;
 
-    public PID slidesVelocityPID = new PID (0.02,0.007,0.0);
+    public PID slidesVelocityPID = new PID (0.0325,0.007,0.0);
 
     public double currentSlidesLength = 0.0;
     public double currentSlidesVelocity = 0.0;
@@ -108,34 +108,6 @@ public class Slides {
     public void updateSlidesValues() {
         currentSlidesLength = sensors.getSlidesLength();
         currentSlidesVelocity = sensors.getSlidesVelocity();
-    }
-
-    public void moveToPickup() {
-        setTargetSlidesLength(2.5);
-    }
-
-    public void moveToGround() {
-        setTargetSlidesLength(5.0);
-    }
-
-    public void moveToLow() {
-        setTargetSlidesLength(10.0);
-    }
-
-    public void moveToMedium() {
-        setTargetSlidesLength(20.0);
-    }
-
-    public void moveToHigh() {
-        setTargetSlidesLength(33.0);
-    }
-
-    public void moveUp (double amount) {
-        setTargetSlidesLength(targetSlidesLength += amount);
-    }
-
-    public void moveDown (double amount) {
-        setTargetSlidesLength(targetSlidesLength -= amount);
     }
 
     public void setTargetSlidesLength (double amount) {

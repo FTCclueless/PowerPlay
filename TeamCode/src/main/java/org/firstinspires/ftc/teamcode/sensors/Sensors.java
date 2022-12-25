@@ -62,7 +62,7 @@ public class Sensors {
         }
     }
 
-    double turretTicksToRadian = 190.508466881;
+    double turretTicksToRadian = 504.911622386;
     double slidesTickToInch = 33.5162937069;
 
     public void updateHub2() {

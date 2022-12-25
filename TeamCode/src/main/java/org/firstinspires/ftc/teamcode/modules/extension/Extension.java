@@ -32,7 +32,7 @@ public class Extension {
         this.servos = servos;
         this.outtake = outtake;
 
-        extension = new MyServo(hardwareMap.servo.get("extension"),"Super Speed",1, 0.3559,1.0, 1.0);
+        extension = new MyServo(hardwareMap.servo.get("extension"),"Super Speed",1, 0.3559,1.0, 0.3559);
 
         servos.add(0, extension);
     }

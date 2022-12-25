@@ -107,6 +107,8 @@ public class Robot {
             drivetrain.localizer.heading = clipAngle(drivetrain.getExternalHeading() + Storage.autoEndPose.getHeading());;
         }
 
+        Pose2d drivetrainPoseEstimate = drivetrain.getPoseEstimate();
+
         switch (currentState) {
             case IDLE:
                 break;
@@ -203,8 +205,8 @@ public class Robot {
                 }
                 break;
             case SCORING_RELATIVE:
-                globalArmPos = outtake.getGlobalArmPose(drivetrain.getPoseEstimate());
-                nearestPole = field.getNearestPole(globalArmPos, scoringLevel);
+                globalArmPos = outtake.getGlobalArmPose(drivetrainPoseEstimate);
+                nearestPole = field.getNearestPole(drivetrainPoseEstimate, globalArmPos, scoringLevel);
 
                 Log.e("globalArmPos X", globalArmPos.getX() + "");
                 Log.e("globalArmPos Y", globalArmPos.getY() + "");
@@ -242,8 +244,8 @@ public class Robot {
                 }
                 break;
             case SCORING_RELATIVE_AUTO_AIM:
-                globalArmPos = outtake.getGlobalArmPose(drivetrain.getPoseEstimate());
-                nearestPole = field.getNearestPole(globalArmPos, scoringLevel);
+                globalArmPos = outtake.getGlobalArmPose(drivetrainPoseEstimate);
+                nearestPole = field.getNearestPole(drivetrainPoseEstimate, globalArmPos, scoringLevel);
 
                 outtake.setTargetGlobal(drivetrain.getPoseEstimate(), nearestPole, this.scoringHeight);
 

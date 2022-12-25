@@ -15,12 +15,12 @@ public class Actuation {
     MyServo act;
     ArrayList<MyServo> servos;
 
-    double levelPosition = 0.46299;
-    double tiltedPosition = 0.60599;
+    double levelPosition = 0.414;
+    double tiltedPosition = 0.592;
     public Actuation(HardwareMap hardwareMap, ArrayList<MyServo> servos) {
         this.servos = servos;
 
-        act = new MyServo(hardwareMap.servo.get("act"),"Amazon",1,0.0,1.0, levelPosition);
+        act = new MyServo(hardwareMap.servo.get("act"),"Amazon",1,0,1.0, levelPosition);
 
         servos.add(1, act);
     }

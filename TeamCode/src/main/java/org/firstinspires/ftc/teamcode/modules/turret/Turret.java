@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.modules.turret;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.modules.outtake.Outtake;
@@ -30,7 +31,7 @@ public class Turret {
     public double turretError = 0.0;
     public static double turretPercentMax = 0.98;
 
-    double maxTurretSpeed = 14.5972991985; // radians per sec
+    double maxTurretSpeed = 5.52158708813; // radians per sec
 
     public Turret(HardwareMap hardwareMap, ArrayList<MotorPriority> motorPriorities, Sensors sensors, Outtake outtake) {
         this.motorPriorities = motorPriorities;
@@ -39,6 +40,7 @@ public class Turret {
 
         turret = hardwareMap.get(DcMotorEx.class, "turret");
 
+        turret.setDirection(DcMotorSimple.Direction.REVERSE);
         turret.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         motorPriorities.add(4, new MotorPriority(turret,4,4));
@@ -76,7 +78,7 @@ public class Turret {
         }
 
         turretPower = turretPID.update(turretError);
-        motorPriorities.get(4).setTargetPower(turretPower);
+        motorPriorities.get(4).setTargetPower(-turretPower);
 
         updateTelemetry();
     }

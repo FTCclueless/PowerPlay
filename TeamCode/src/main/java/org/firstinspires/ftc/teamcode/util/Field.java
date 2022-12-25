@@ -31,7 +31,9 @@ public class Field {
         return new Pose2d(closetPole.x, closetPole.y);
     }
 
-    public Pose2d getNearestPole (Pose2d armPose, int heightLevel) {
+    double radius = 23.75547925;
+
+    public Pose2d getNearestPole (Pose2d drivePose, Pose2d armPose, int heightLevel) {
         double armX = armPose.getX();
         double armY = armPose.getY();
 
@@ -41,7 +43,8 @@ public class Field {
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {
                 double currentDistance = Math.pow(armX - poles[i][j].x, 2) + Math.pow(armY - poles[i][j].y, 2);
-                if ((currentDistance < closetDistance) && (poles[i][j].heightLevel == heightLevel)) {
+                double drivetrainDistance = Math.sqrt(Math.pow((drivePose.getX() - poles[i][j].x),2) + Math.pow((drivePose.getY() - poles[i][j].y),2));
+                if ((currentDistance < closetDistance) && (poles[i][j].heightLevel == heightLevel) && (drivetrainDistance <= radius)) {
                     closetDistance = currentDistance;
                     closetPole = poles[i][j];
                 }
