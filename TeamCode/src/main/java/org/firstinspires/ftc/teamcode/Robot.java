@@ -80,7 +80,7 @@ public class Robot {
     double poleHeight = 32.0;
 
     Pose2d drivePose = new Pose2d(0,0);
-    double scoringHeight = 30.0;
+    double scoringHeight = 26.5;
     public int scoringLevel = 3;
 
     Field field = new Field();
@@ -216,7 +216,8 @@ public class Robot {
                 Log.e("angleOffset", angleOffset + "");
                 Log.e("scoringHeight", scoringHeight + "");
 
-                outtake.setTargetRelative(extensionDistance*Math.cos(Math.toRadians(180) + angleOffset),extensionDistance*Math.sin(Math.toRadians(180) + angleOffset), scoringHeight); // changes dynamically based on driver input
+//                outtake.setTargetRelative(extensionDistance*Math.cos(Math.toRadians(180) + angleOffset),extensionDistance*Math.sin(Math.toRadians(180) + angleOffset), scoringHeight); // changes dynamically based on driver input
+                outtake.setTargetRelative(-12,0,26.5);
 
                 if (startScoringRelativeAutoAim) {
                     actuation.tilt();
@@ -269,7 +270,6 @@ public class Robot {
                 }
                 break;
             case SCORING_GLOBAL:
-                outtake.slides.slidesPercentMax = 0.87;
                 // checks to see if the drivetrain is near the final scoring pose and if it is then give it it's actual drive pose
                 if (Math.abs(drivetrain.getPoseEstimate().getX() - drivePose.getX()) <= 4 && Math.abs(drivetrain.getPoseEstimate().getY() - drivePose.getY()) <= 4) {
                     drivePose = drivetrain.getPoseEstimate();
