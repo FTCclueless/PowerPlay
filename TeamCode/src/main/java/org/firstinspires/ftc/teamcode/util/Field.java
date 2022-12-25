@@ -16,7 +16,7 @@ public class Field {
         double armY = armPose.getY();
 
         Pole closetPole = new Pole(0,0,0);
-        double closetDistance = 128;
+        double closetDistance = 16384;
 
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {
@@ -36,7 +36,7 @@ public class Field {
         double armY = armPose.getY();
 
         Pole closetPole = new Pole(0,0,0);
-        double closetDistance = 128;
+        double closetDistance = 16384;
 
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {

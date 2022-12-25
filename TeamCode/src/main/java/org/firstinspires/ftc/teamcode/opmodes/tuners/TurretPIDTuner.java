@@ -7,13 +7,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.modules.actuation.Actuation;
 import org.firstinspires.ftc.teamcode.modules.extension.Extension;
 import org.firstinspires.ftc.teamcode.modules.slides.Slides;
 import org.firstinspires.ftc.teamcode.modules.turret.Turret;
 import org.firstinspires.ftc.teamcode.modules.v4bar.V4Bar;
 import org.firstinspires.ftc.teamcode.util.ButtonToggle;
 
-@Disabled
 @TeleOp
 @Config
 public class TurretPIDTuner extends LinearOpMode {
@@ -22,7 +22,7 @@ public class TurretPIDTuner extends LinearOpMode {
 
     public double error = 0.0;
 
-    public static double p = 0.0;
+    public static double p = 4.0;
     public static double i = 0.0;
     public static double d = 0.0;
 
@@ -34,6 +34,7 @@ public class TurretPIDTuner extends LinearOpMode {
         Slides slides = robot.outtake.slides;
         Turret turret = robot.outtake.turret;
         Extension extension = robot.outtake.extension;
+        Actuation actuation = robot.actuation;
 
         robot.testMode();
         robot.outtake.resetEncoders();
@@ -46,6 +47,7 @@ public class TurretPIDTuner extends LinearOpMode {
 
         slides.setTargetSlidesLength(8);
         turret.setTargetTurretAngle(Math.toRadians(0));
+        actuation.level();
         extension.retractExtension();
 
         while (!isStopRequested()) {

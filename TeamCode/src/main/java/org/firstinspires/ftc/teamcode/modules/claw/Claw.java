@@ -16,10 +16,9 @@ public class Claw {
     public double targetClawPosition = 0.0;
     public double clawPower = 1.0;
 
-    public double intakePosition = 0.275;
-    public double closePosition = 0.0;
-    public double openPosition = 0.26499;
-    public double fullOpenPosition = 0.275;
+    public double intakePosition = 0.49;
+    public double closePosition = 0.2;
+    public double openPosition = 0.438;
 
     public enum STATE {OPEN, INTAKE, CLOSED, FULL_OPEN}
     public STATE currentState = STATE.OPEN;
@@ -46,9 +45,6 @@ public class Claw {
                 break;
             case CLOSED:
                 setTargetClawPosition(closePosition);
-                break;
-            case FULL_OPEN:
-                setTargetClawPosition(fullOpenPosition);
                 break;
         }
 
@@ -77,10 +73,6 @@ public class Claw {
 
     public void intake() {
         currentState = STATE.INTAKE;
-    }
-
-    public void fullOpen() {
-        currentState = STATE.FULL_OPEN;
     }
 
     public boolean isOpen () {

@@ -13,7 +13,6 @@ import org.firstinspires.ftc.teamcode.modules.slides.Slides;
 import org.firstinspires.ftc.teamcode.modules.v4bar.V4Bar;
 import org.firstinspires.ftc.teamcode.util.ButtonToggle;
 
-@Disabled
 @TeleOp
 @Config
 public class SlidesPIDTuner extends LinearOpMode {
@@ -22,8 +21,8 @@ public class SlidesPIDTuner extends LinearOpMode {
 
     public double error = 0.0;
 
-    public static double p = 0.0;
-    public static double i = 0.0;
+    public static double p = 0.0325;
+    public static double i = 0.007;
     public static double d = 0.0;
 
     ButtonToggle a = new ButtonToggle();

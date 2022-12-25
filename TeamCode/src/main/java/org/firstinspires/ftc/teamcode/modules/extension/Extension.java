@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.modules.actuation.Actuation;
 import org.firstinspires.ftc.teamcode.modules.outtake.Outtake;
 import org.firstinspires.ftc.teamcode.util.MyServo;
 import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
@@ -31,7 +32,7 @@ public class Extension {
         this.servos = servos;
         this.outtake = outtake;
 
-        extension = new MyServo(hardwareMap.servo.get("extension"),"Super Speed",1,0.0,0.586, 0.0);
+        extension = new MyServo(hardwareMap.servo.get("extension"),"Super Speed",1, 0.3559,1.0, 1.0);
 
         servos.add(0, extension);
     }

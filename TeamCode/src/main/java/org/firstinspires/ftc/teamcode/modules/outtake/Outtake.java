@@ -66,7 +66,6 @@ public class Outtake {
 
     public void updateTelemetry () {
         TelemetryUtil.packet.put("outtake.isInPosition: ", isInPosition());
-
     }
 
     boolean turretClips = false;
@@ -75,6 +74,10 @@ public class Outtake {
         updateRelativePos();
 
         turretClips = isTurretGoThroughBad();
+
+        if (turretClips) {
+            Log.e("TURRET CLIPS", "");
+        }
 
         if (turretClips && targetSlidesLength < 9){
             slides.setTargetSlidesLength(12);
@@ -165,14 +168,17 @@ public class Outtake {
         targetExtensionLength = targetExtension;
         targetSlidesLength = Math.max(0, targetHeight);
 
-        if (isIntersectingRobot(targetX, targetY, targetZ)) { // checks if the target position is a valid position
-            targetExtensionLength = currentExtensionLength;
-            targetTurretAngle = currentTurretAngle;
-            targetSlidesLength = currentSlidesLength;
+        Log.e("targetTurretAngle", targetTurretAngle + "");
+        Log.e("targetExtensionLength", targetExtensionLength + "");
+        Log.e("targetSlidesLength", targetSlidesLength + "");
 
-            Log.e("INTERSECTION: ", "PLEASE BE AWARE!!");
-        }
-
+//        if (isIntersectingRobot(targetX, targetY, targetZ)) { // checks if the target position is a valid position
+//            targetExtensionLength = currentExtensionLength;
+//            targetTurretAngle = currentTurretAngle;
+//            targetSlidesLength = currentSlidesLength;
+//
+//            Log.e("INTERSECTION: ", "PLEASE BE AWARE!!");
+//        }
     }
 
     public Pose2d findGlobalCoordinates (Pose2d robotPose, double xOffset, double yOffset) {

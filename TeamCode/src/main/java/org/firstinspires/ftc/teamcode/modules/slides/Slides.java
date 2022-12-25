@@ -11,8 +11,6 @@ import org.firstinspires.ftc.teamcode.util.MotorPriority;
 import org.firstinspires.ftc.teamcode.util.PID;
 import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
-import org.firstinspires.ftc.teamcode.util.Storage;
-
 import java.util.ArrayList;
 
 
@@ -22,11 +20,7 @@ public class Slides {
 
     ArrayList<MotorPriority> motorPriorities;
 
-//    public PID slidesPID = new PID(0.0215,0.01,0.0001);
-    public PID slidesVelocityPID = new PID(0.02,0.007,0.0);
-    public PID slidesPositionalPID = new PID(0.035,0.02,0.0);
-
-    public PID slidesPID = new PID (0.0,0.0,0.0);
+    public PID slidesVelocityPID = new PID (0.02,0.007,0.0);
 
     public double currentSlidesLength = 0.0;
     public double currentSlidesVelocity = 0.0;
@@ -37,7 +31,7 @@ public class Slides {
     public double slidesPercentMax = 0.98;
 
     // original: 82.9718558749
-    public double maxSlidesSpeed = 82.9718558749 * 0.8; // inches per sec
+    public double maxSlidesSpeed = 82.9718558749; // inches per sec
 
     Outtake outtake;
 
@@ -104,13 +98,9 @@ public class Slides {
 //            slidesPower = slidesPID.update(targetSlidesVelocity - currentSlidesVelocity);
 //        }
 
-        slidesPID.p = slidesVelocityPID.p; // velocity P value
-        slidesPID.i = slidesVelocityPID.i; // velocity I value
-        slidesPID.d = slidesVelocityPID.d; // velocity D value
-
         targetSlidesVelocity = Math.max(Math.min(slidesError * (maxSlidesSpeed/5), (maxSlidesSpeed*slidesPercentMax)),-maxSlidesSpeed*slidesPercentMax);
-        slidesPower = slidesPID.update(targetSlidesVelocity - currentSlidesVelocity);
-        motorPriorities.get(5).setTargetPower(slidesPower);
+        slidesPower = slidesVelocityPID.update(targetSlidesVelocity - currentSlidesVelocity);
+        motorPriorities.get(5).setTargetPower(-slidesPower);
 
         updateTelemetry();
     }
@@ -162,8 +152,8 @@ public class Slides {
     }
 
     public void updateSlidesPID (double p, double i, double d) {
-        slidesPID.p = p;
-        slidesPID.i = i;
-        slidesPID.d = d;
+        slidesVelocityPID.p = p;
+        slidesVelocityPID.i = i;
+        slidesVelocityPID.d = d;
     }
 }

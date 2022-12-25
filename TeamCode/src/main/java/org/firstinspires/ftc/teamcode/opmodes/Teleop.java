@@ -59,7 +59,6 @@ public class Teleop extends LinearOpMode {
             }
 
             if ((robot.currentState == Robot.STATE.WAIT_FOR_START_SCORING) && (gamepad1.b)) {
-                robot.outtake.slides.slidesPercentMax = 0.25;
                 robot.currentState = Robot.STATE.INTAKE_RELATIVE;
             }
 
@@ -79,14 +78,17 @@ public class Teleop extends LinearOpMode {
             }
 
             if (((robot.currentState == Robot.STATE.WAIT_FOR_START_SCORING || robot.currentState == Robot.STATE.SCORING_RELATIVE_AUTO_AIM) && (gamepad1.right_bumper || gamepad2.right_bumper)) || (robot.currentState == Robot.STATE.SCORING_RELATIVE)) {
+                Log.e("startScoringRelative", "");
                 robot.startScoringRelative(gamepad2, Storage.isBlue, scoringHeight);
             }
 
             if (((robot.currentState == Robot.STATE.WAIT_FOR_START_SCORING || robot.currentState == Robot.STATE.SCORING_RELATIVE) && (gamepad1.left_bumper || gamepad2.left_bumper)) || (robot.currentState == Robot.STATE.SCORING_RELATIVE_AUTO_AIM)) {
+                Log.e("startScoringRelativeAutoAim", "");
                 robot.startScoringRelativeAutoAim();
             }
 
             if (((robot.currentState == Robot.STATE.SCORING_RELATIVE || robot.currentState == Robot.STATE.SCORING_RELATIVE_AUTO_AIM) && (gamepad2.right_trigger > 0.5 || gamepad1.left_trigger > 0.5))) {
+                Log.e("deposit", "");
                 robot.startDepositing();
             }
 

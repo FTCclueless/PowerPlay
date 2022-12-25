@@ -20,7 +20,7 @@ public class Turret {
 
     ArrayList<MotorPriority> motorPriorities;
 
-    public PID turretPID = new PID(6.0, 0.0,0.0);
+    public PID turretPID = new PID(4.0, 0.0,0.0);
 
     public double currentTurretAngle = 0.0;
     public double currentTurretVelocity = 0.0;
@@ -30,7 +30,7 @@ public class Turret {
     public double turretError = 0.0;
     public static double turretPercentMax = 0.98;
 
-    double maxTurretSpeed = 6.87843444154; // radians per sec
+    double maxTurretSpeed = 14.5972991985; // radians per sec
 
     public Turret(HardwareMap hardwareMap, ArrayList<MotorPriority> motorPriorities, Sensors sensors, Outtake outtake) {
         this.motorPriorities = motorPriorities;
@@ -57,7 +57,7 @@ public class Turret {
 //        TelemetryUtil.packet.put("currentTurretVelocity: ", currentTurretVelocity);
 
         TelemetryUtil.packet.put("turretPower: ", turretPower);
-        TelemetryUtil.packet.put("turretError: ", turretError);
+        TelemetryUtil.packet.put("turretError: ", Math.toDegrees(turretError));
     }
 
     public void update() {
