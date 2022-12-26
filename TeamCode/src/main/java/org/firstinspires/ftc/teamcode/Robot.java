@@ -42,7 +42,7 @@ public class Robot {
     public ArrayList<MotorPriority> motorPriorities = new ArrayList<>();
     public ArrayList<MyServo> servos = new ArrayList<>();
 
-    public enum STATE {IDLE, INIT, INTAKE_RELATIVE, INTAKE_GLOBAL, WAIT_FOR_START_SCORING, SCORING_GLOBAL, SCORING_RELATIVE, SCORING_RELATIVE_AUTO_AIM, DEPOSIT, RETRACT }
+    public enum STATE {IDLE, INIT, INTAKE_RELATIVE, INTAKE_GLOBAL, WAIT_FOR_START_SCORING, SCORING_GLOBAL, SCORING_RELATIVE, DEPOSIT, RETRACT }
     public STATE currentState = STATE.INIT;
 
     public Robot (HardwareMap hardwareMap) {
@@ -66,7 +66,6 @@ public class Robot {
     boolean startIntakeGlobal = false;
 
     boolean startScoringRelative = false;
-    boolean startScoringRelativeAutoAim = false;
     boolean startScoringGlobal = false;
 
     boolean startDeposit = false;
@@ -80,12 +79,12 @@ public class Robot {
     double poleHeight = 32.0;
 
     Pose2d drivePose = new Pose2d(0,0);
-    double scoringHeight = 26.5;
+    double scoringHeight = 29;
     public int scoringLevel = 3;
 
     Field field = new Field();
 
-    long timeSinceClawOpen = 0;
+    long timeSinceClawOpen = System.currentTimeMillis();
 
     private long loopStart = System.nanoTime();
 
@@ -93,6 +92,8 @@ public class Robot {
     boolean hasGrabbed = false;
 
     public boolean isTeleop = false;
+    public boolean isAutoAim = false;
+    public boolean isWaitForStartScoring180 = false;
 
     public void update() {
         loopStart = System.nanoTime();
@@ -141,6 +142,7 @@ public class Robot {
 
                 if (sensors.clawTouch) { // needs an external claw.close()
                     sensors.clawTouch = false;
+                    outtake.extension.retractExtension();
                     currentState = STATE.WAIT_FOR_START_SCORING;
                 }
                 break;
@@ -182,21 +184,18 @@ public class Robot {
             case WAIT_FOR_START_SCORING:
                 claw.close();
                 actuation.level();
-                outtake.retract();
-                outtake.slides.setTargetSlidesLength(3);
+                if (isWaitForStartScoring180) {
+                    outtake.setTargetRelative(-10,0,10);
+                } else {
+                    outtake.setTargetRelative(10,0,4);
+                }
                 if (startScoringRelative) {
+                    isWaitForStartScoring180 = false;
                     actuation.tilt();
                     extensionDistance = 12.0;
                     angleOffset = 0;
                     startScoringRelative = false;
                     currentState = STATE.SCORING_RELATIVE;
-                }
-                if (startScoringRelativeAutoAim) {
-                    actuation.tilt();
-                    extensionDistance = 12.0;
-                    angleOffset = 0;
-                    startScoringRelativeAutoAim = false;
-                    currentState = STATE.SCORING_RELATIVE_AUTO_AIM;
                 }
                 if (startScoringGlobal) {
                     extensionDistance = 12.0;
@@ -208,61 +207,18 @@ public class Robot {
                 globalArmPos = outtake.getGlobalArmPose(drivetrainPoseEstimate);
                 nearestPole = field.getNearestPole(drivetrainPoseEstimate, globalArmPos, scoringLevel);
 
-                Log.e("globalArmPos X", globalArmPos.getX() + "");
-                Log.e("globalArmPos Y", globalArmPos.getY() + "");
-
-                Log.e("nearestPole X", nearestPole.getX() + "");
-                Log.e("nearestPole Y", nearestPole.getY() + "");
-
-                Log.e("extensionDistance", extensionDistance + "");
-                Log.e("angleOffset", angleOffset + "");
-                Log.e("scoringHeight", scoringHeight + "");
-
-//                outtake.setTargetRelative(extensionDistance*Math.cos(Math.toRadians(180) + angleOffset),extensionDistance*Math.sin(Math.toRadians(180) + angleOffset), scoringHeight); // changes dynamically based on driver input
-                outtake.setTargetRelative(-12,0,26.5);
-
-                if (startScoringRelativeAutoAim) {
-                    actuation.tilt();
-                    extensionDistance = 12.0;
-                    angleOffset = 0;
-                    startScoringRelativeAutoAim = false;
-                    currentState = STATE.SCORING_RELATIVE_AUTO_AIM;
+                if (isAutoAim) {
+                    outtake.setTargetGlobal(drivetrain.getPoseEstimate(), nearestPole, this.scoringHeight);
+                } else {
+                    outtake.setTargetRelative(extensionDistance*Math.cos(Math.toRadians(180) + angleOffset),extensionDistance*Math.sin(Math.toRadians(180) + angleOffset), scoringHeight); // changes dynamically based on driver input
                 }
 
                 if (startDeposit) {
                     offsetX = 0.0;
                     offsetY = 0.0;
                     startScoringRelative = false;
-                    startScoringRelativeAutoAim = false;
                     startDeposit = false;
-
-                    drivetrain.localizer.x += nearestPole.getX() - globalArmPos.getX();
-                    drivetrain.localizer.y += nearestPole.getY() - globalArmPos.getY();
-
-                    timeSinceClawOpen = System.currentTimeMillis();
-                    currentState = STATE.DEPOSIT;
-                }
-                break;
-            case SCORING_RELATIVE_AUTO_AIM:
-                globalArmPos = outtake.getGlobalArmPose(drivetrainPoseEstimate);
-                nearestPole = field.getNearestPole(drivetrainPoseEstimate, globalArmPos, scoringLevel);
-
-                outtake.setTargetGlobal(drivetrain.getPoseEstimate(), nearestPole, this.scoringHeight);
-
-                if (startScoringRelative) {
-                    actuation.tilt();
-                    extensionDistance = 12.0;
-                    angleOffset = 0;
-                    startScoringRelative = false;
-                    currentState = STATE.SCORING_RELATIVE;
-                }
-
-                if (startDeposit) {
-                    offsetX = 0.0;
-                    offsetY = 0.0;
-                    startScoringRelative = false;
-                    startScoringRelativeAutoAim = false;
-                    startDeposit = false;
+                    isAutoAim = false;
 
                     drivetrain.localizer.x += nearestPole.getX() - globalArmPos.getX();
                     drivetrain.localizer.y += nearestPole.getY() - globalArmPos.getY();
@@ -297,12 +253,16 @@ public class Robot {
                 }
                 break;
             case DEPOSIT:
+                double t1 = 300;
+                double t2 = t1 + 100;
+                double t3 = t2 + 150;
+
                 claw.open();
-                if (System.currentTimeMillis() - timeSinceClawOpen >= 250) {
+                if (System.currentTimeMillis() - timeSinceClawOpen >= t1) {
                     outtake.slides.setTargetSlidesLength(outtake.slides.currentSlidesLength + 2);
-                    if (System.currentTimeMillis() - timeSinceClawOpen >= 425) {
+                    if (System.currentTimeMillis() - timeSinceClawOpen >= t2) {
                         outtake.extension.retractExtension();
-                        if (System.currentTimeMillis() - timeSinceClawOpen >= 500) {
+                        if (System.currentTimeMillis() - timeSinceClawOpen >= t3) {
                             Log.e("Retract Everything", "");
                             actuation.level();
                             currentState = STATE.INTAKE_RELATIVE;
@@ -407,10 +367,6 @@ public class Robot {
             extensionDistance -= gamepad.left_stick_y * 0.18375;
             extensionDistance = Math.max(6.31103, Math.min(this.extensionDistance, 19.8937145));
         }
-    }
-
-    public void startScoringRelativeAutoAim () {
-        startScoringRelativeAutoAim = true;
     }
 
     public int ySign = 1;

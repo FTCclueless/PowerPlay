@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.util.Storage;
 public class Teleop extends LinearOpMode {
 
     boolean isBlue = true;
-    double scoringHeight = 26.5;
+    double scoringHeight = 29;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -29,7 +29,8 @@ public class Teleop extends LinearOpMode {
 
         drive.localizer.setPoseEstimate(Storage.autoEndPose);
 
-        ButtonToggle b_left_bumper = new ButtonToggle();
+        ButtonToggle a_x = new ButtonToggle();
+        ButtonToggle b_left_trigger = new ButtonToggle();
 
         while(opModeInInit()) {
             robot.outtake.setTargetRelative(3,0,0);
@@ -47,7 +48,7 @@ public class Teleop extends LinearOpMode {
             drive.drive(gamepad1);
 
             if (robot.currentState == Robot.STATE.INTAKE_RELATIVE) {
-                if (gamepad1.right_trigger > 0.5 || gamepad2.left_trigger > 0.5 ) {
+                if (gamepad1.right_trigger > 0.5) {
                     claw.close();
                 } else {
                     claw.intake();
@@ -62,6 +63,10 @@ public class Teleop extends LinearOpMode {
                 robot.currentState = Robot.STATE.INTAKE_RELATIVE;
             }
 
+            if (a_x.isClicked(gamepad1.x)) {
+                robot.isWaitForStartScoring180 = !robot.isWaitForStartScoring180;
+            }
+
             if (gamepad2.a) { // low
                 scoringHeight = 13;
                 robot.scoringLevel = 1;
@@ -73,28 +78,30 @@ public class Teleop extends LinearOpMode {
             }
 
             if (gamepad2.y) { // high (NEED TO CHANGE THE DEFAULT HEIGHT TOO)
-                scoringHeight = 26.5;
+                scoringHeight = 29;
                 robot.scoringLevel = 3;
             }
 
-            if (((robot.currentState == Robot.STATE.WAIT_FOR_START_SCORING || robot.currentState == Robot.STATE.SCORING_RELATIVE_AUTO_AIM) && (gamepad1.right_bumper || gamepad2.right_bumper)) || (robot.currentState == Robot.STATE.SCORING_RELATIVE)) {
-                Log.e("startScoringRelative", "");
+            // checking for auto aim
+            if (gamepad1.left_bumper || gamepad2.left_bumper) {
+                robot.isAutoAim = true;
+            }
+
+            if (gamepad1.right_bumper || gamepad2.right_bumper) {
+                robot.isAutoAim = false;
+            }
+
+            // if any buttons of the bumpers are clicked go to scoring relative
+            if ((robot.currentState == Robot.STATE.WAIT_FOR_START_SCORING && (gamepad1.right_bumper || gamepad1.left_bumper || gamepad2.right_bumper || gamepad2.left_bumper)) || (robot.currentState == Robot.STATE.SCORING_RELATIVE)) {
                 robot.startScoringRelative(gamepad2, Storage.isBlue, scoringHeight);
-                robot.currentState = Robot.STATE.SCORING_RELATIVE;
             }
 
-            if (((robot.currentState == Robot.STATE.WAIT_FOR_START_SCORING || robot.currentState == Robot.STATE.SCORING_RELATIVE) && (gamepad1.left_bumper || gamepad2.left_bumper)) || (robot.currentState == Robot.STATE.SCORING_RELATIVE_AUTO_AIM)) {
-                Log.e("startScoringRelativeAutoAim", "");
-                robot.startScoringRelativeAutoAim();
-                robot.currentState = Robot.STATE.SCORING_RELATIVE_AUTO_AIM;
-            }
-
-            if (((robot.currentState == Robot.STATE.SCORING_RELATIVE || robot.currentState == Robot.STATE.SCORING_RELATIVE_AUTO_AIM) && (gamepad2.right_trigger > 0.5 || gamepad1.left_trigger > 0.5))) {
+            if ((robot.currentState == Robot.STATE.SCORING_RELATIVE && (gamepad2.right_trigger > 0.5 || gamepad1.left_trigger > 0.5))) {
                 Log.e("deposit", "");
                 robot.startDepositing();
             }
 
-            if ((b_left_bumper.isClicked(gamepad2.left_bumper)) && (robot.currentState == Robot.STATE.SCORING_RELATIVE)) {
+            if ((b_left_trigger.isClicked(gamepad2.left_trigger > 0.5)) && (robot.currentState == Robot.STATE.SCORING_RELATIVE)) {
                 if (robot.actuation.isLevel()) {
                     Log.e("going to tilted", "");
                     actuation.tilt();
