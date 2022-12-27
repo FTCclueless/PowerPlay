@@ -96,7 +96,7 @@ public class ParkAuto_BlueBottom extends LinearOpMode {
             detected = true;  //should we always set to true ??? It is only used to send telemetry anyways
             ///////////
 
-            robot.actuation.level();
+            robot.outtake.actuation.level();
             robot.outtake.extension.retractExtension();
 
             robot.update();

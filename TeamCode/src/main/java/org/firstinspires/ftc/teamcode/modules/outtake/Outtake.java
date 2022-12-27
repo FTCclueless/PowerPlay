@@ -5,6 +5,8 @@ import android.util.Log;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.checkerframework.checker.units.qual.A;
+import org.firstinspires.ftc.teamcode.modules.actuation.Actuation;
 import org.firstinspires.ftc.teamcode.modules.extension.Extension;
 import org.firstinspires.ftc.teamcode.modules.slides.Slides;
 import org.firstinspires.ftc.teamcode.modules.turret.Turret;
@@ -24,6 +26,7 @@ public class Outtake {
     public Turret turret;
     public Slides slides;
     public Extension extension;
+    public Actuation actuation;
 
     ArrayList<MotorPriority> motorPriorities;
 
@@ -56,7 +59,8 @@ public class Outtake {
 
         turret = new Turret(hardwareMap, motorPriorities, sensors, this);
         slides = new Slides(hardwareMap, motorPriorities, sensors, this);
-        extension = new Extension(hardwareMap, servos, this);
+        actuation = new Actuation(hardwareMap, servos);
+        extension = new Extension(hardwareMap, servos, this, actuation);
     }
 
     public void resetEncoders () {
@@ -112,6 +116,7 @@ public class Outtake {
 
         slides.update();
         turret.update();
+        actuation.update();
         extension.update();
 
         updateTelemetry();

@@ -31,7 +31,7 @@ public class SlidesPIDTuner extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         Robot robot = new Robot(hardwareMap);
         Slides slides = robot.outtake.slides;
-        Actuation actuation = robot.actuation;
+        Actuation actuation = robot.outtake.actuation;
         Extension extension = robot.outtake.extension;
 
         robot.testMode();

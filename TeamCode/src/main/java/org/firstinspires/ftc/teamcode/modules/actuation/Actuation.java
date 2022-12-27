@@ -22,7 +22,7 @@ public class Actuation {
 
         act = new MyServo(hardwareMap.servo.get("act"),"Amazon",1,0,1.0, levelPosition);
 
-        servos.add(1, act);
+        servos.add(0, act);
     }
 
     public void updateTelemetry() {

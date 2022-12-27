@@ -24,7 +24,7 @@ public class Teleop extends LinearOpMode {
         Robot robot = new Robot(hardwareMap);
         Drivetrain drive = robot.drivetrain;
         Claw claw = robot.claw;
-        Actuation actuation = robot.actuation;
+        Actuation actuation = robot.outtake.actuation;
         Sensors sensors = robot.sensors;
 
         drive.localizer.setPoseEstimate(Storage.autoEndPose);
@@ -102,7 +102,7 @@ public class Teleop extends LinearOpMode {
             }
 
             if ((b_left_trigger.isClicked(gamepad2.left_trigger > 0.5)) && (robot.currentState == Robot.STATE.SCORING_RELATIVE)) {
-                if (robot.actuation.isLevel()) {
+                if (actuation.isLevel()) {
                     Log.e("going to tilted", "");
                     actuation.tilt();
                 } else {

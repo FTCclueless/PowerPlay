@@ -127,7 +127,7 @@ public class FiveConeAuto_BlueTop extends LinearOpMode {
             detected = true;  //should we always set to true ??? It is only used to send telemetry anyways
             ///////////
 
-            robot.actuation.level();
+            robot.outtake.actuation.level();
             robot.outtake.extension.retractExtension();
             if (toggleA.isClicked(gamepad1.a)) {
                 robot.claw.close();

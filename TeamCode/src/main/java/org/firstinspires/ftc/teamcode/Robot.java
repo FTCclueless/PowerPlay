@@ -33,7 +33,7 @@ public class Robot {
 
     public Drivetrain drivetrain;
     public Outtake outtake;
-    public Actuation actuation;
+    private Actuation actuation;
     public Claw claw;
 
     public Sensors sensors;
@@ -55,7 +55,7 @@ public class Robot {
         drivetrain = new Drivetrain(hardwareMap, motorPriorities);
         sensors = new Sensors(hardwareMap, motorPriorities, drivetrain.localizer);
         outtake = new Outtake(hardwareMap, motorPriorities, sensors, servos);
-        actuation = new Actuation(hardwareMap, servos);
+        actuation = outtake.actuation;
         claw = new Claw(hardwareMap, servos);
         vision = new Vision();
     }
@@ -101,8 +101,8 @@ public class Robot {
         updateTelemetry();
 
         double relativeAngle;
-        Pose2d globalArmPos;
-        Pose2d nearestPole;
+        Pose2d globalArmPos = new Pose2d(0,0);
+        Pose2d nearestPole = new Pose2d(0,0);
 
         if (isTeleop) {
             drivetrain.localizer.heading = clipAngle(drivetrain.getExternalHeading() + Storage.autoEndPose.getHeading());;
@@ -272,6 +272,9 @@ public class Robot {
                 break;
         }
 
+        drivetrain.trajectorySequenceRunner.globalArmPose = globalArmPos;
+        drivetrain.trajectorySequenceRunner.nearestPole = nearestPole;
+
         TelemetryUtil.sendTelemetry();
     }
 
@@ -436,7 +439,6 @@ public class Robot {
 
         drivetrain.update();
         outtake.update();
-        actuation.update();
         claw.update();
 
         updateMotors();

@@ -19,7 +19,7 @@ public class ActuationTester extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Robot robot = new Robot(hardwareMap);
-        Actuation actuation = robot.actuation;
+        Actuation actuation = robot.outtake.actuation;
         robot.outtake.resetEncoders();
         robot.testMode();
 

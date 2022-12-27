@@ -25,16 +25,19 @@ public class Extension {
 
     MyServo extension;
     ArrayList<MyServo> servos;
-
     Outtake outtake;
+    Actuation actuation;
 
-    public Extension (HardwareMap hardwareMap, ArrayList<MyServo> servos, Outtake outtake) {
+    double actuationTiltDistance = 2.5;
+
+    public Extension (HardwareMap hardwareMap, ArrayList<MyServo> servos, Outtake outtake, Actuation actuation) {
         this.servos = servos;
         this.outtake = outtake;
+        this.actuation = actuation;
 
-        extension = new MyServo(hardwareMap.servo.get("extension"),"Super Speed",1, 0.3559,1.0, 0.3559);
+        extension = new MyServo(hardwareMap.servo.get("extension"),"Super Speed",1, 0.208999,0.966, 0.966);
 
-        servos.add(0, extension);
+        servos.add(1, extension);
     }
 
     public void updateTelemetry() {
@@ -47,7 +50,7 @@ public class Extension {
         updateExtensionValues();
         updateTelemetry();
 
-        extension.setAngle(targetExtensionAngle, extensionPower);
+        extension.setAngle(-targetExtensionAngle, extensionPower);
     }
 
     public double strokeLength = 13.5826845;
@@ -65,6 +68,10 @@ public class Extension {
 
         targetLinkageLength = targetExtensionLength + servoMountingBack - clawForward;
 
+        if (!actuation.isLevel()) {
+            targetExtensionLength -= actuationTiltDistance;
+        }
+
 //        targetExtensionAngle = Math.acos((targetExtensionLength-(baseSlidesExtension+strokeLength/2))/(-strokeLength/2)); // https://www.desmos.com/calculator/aqezyzoq5y
         targetExtensionAngle = Math.acos((Math.pow(smallLinkage, 2) + Math.pow(targetLinkageLength, 2) - Math.pow(bigLinkage, 2))/(2*smallLinkage*targetLinkageLength));
     }
@@ -79,8 +86,11 @@ public class Extension {
 
     public void updateExtensionValues() {
 //        currentExtensionLength = (baseSlidesExtension + (strokeLength/2)) - (strokeLength/2 * Math.cos(-extension.getAngle()));
-        currentExtensionAngle = extension.getAngle();
+        currentExtensionAngle = -extension.getAngle();
         currentExtensionLength = (smallLinkage*Math.cos(currentExtensionAngle) + Math.sqrt(Math.pow(bigLinkage, 2) - Math.pow(smallLinkage, 2) * Math.pow(Math.sin(currentExtensionAngle), 2))) - servoMountingBack + clawForward;
+        if (!actuation.isLevel()) {
+            currentExtensionLength += actuationTiltDistance;
+        }
     }
 
     public boolean isInPosition (double length) {
