@@ -46,8 +46,8 @@ I2C
 ### Expansion Hub 2
 
 Motors
-- Motor Port 0: turret
-- Motor Port 1: 
+- Motor Port 0: 
+- Motor Port 1: turret
 - Motor Port 2: slide1
 - Motor Port 3: slide2
 

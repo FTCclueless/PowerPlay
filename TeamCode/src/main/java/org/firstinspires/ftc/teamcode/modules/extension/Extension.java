@@ -35,7 +35,7 @@ public class Extension {
         this.outtake = outtake;
         this.actuation = actuation;
 
-        extension = new MyServo(hardwareMap.servo.get("extension"),"Super Speed",1, 0.208999,0.966, 0.966);
+        extension = new MyServo(hardwareMap.servo.get("extension"),"Super Speed",1, 0.0,0.727, 0.727);
 
         servos.add(1, extension);
     }
@@ -44,6 +44,7 @@ public class Extension {
         TelemetryUtil.packet.put("targetExtensionLength: ", targetExtensionLength);
         TelemetryUtil.packet.put("targetExtensionAngle: ", Math.toDegrees(targetExtensionAngle));
         TelemetryUtil.packet.put("currentExtensionLength: ", currentExtensionLength);
+        TelemetryUtil.packet.put("currentExtensionAngle: ", currentExtensionAngle);
     }
 
     public void update() {
