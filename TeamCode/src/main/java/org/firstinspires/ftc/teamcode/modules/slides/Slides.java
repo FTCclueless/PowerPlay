@@ -20,7 +20,7 @@ public class Slides {
 
     ArrayList<MotorPriority> motorPriorities;
 
-    public PID slidesVelocityPID = new PID (0.0325,0.007,0.0);
+    public PID slidesVelocityPID = new PID (0.0325,0.0,0.0);
 
     public double currentSlidesLength = 0.0;
     public double currentSlidesVelocity = 0.0;

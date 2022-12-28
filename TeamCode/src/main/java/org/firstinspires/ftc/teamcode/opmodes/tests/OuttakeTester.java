@@ -26,6 +26,7 @@ public class OuttakeTester extends LinearOpMode {
 
         while (!isStopRequested()) {
             robot.update();
+            robot.outtake.actuation.level();
             robot.outtake.setTargetRelative(x,y,z);
         }
     }

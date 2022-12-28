@@ -208,7 +208,7 @@ public class Robot {
                 nearestPole = field.getNearestPole(drivetrainPoseEstimate, globalArmPos, scoringLevel);
 
                 if (isAutoAim) {
-                    outtake.setTargetGlobal(drivetrain.getPoseEstimate(), nearestPole, this.scoringHeight);
+                    outtake.setTargetGlobal(drivetrain.getPoseEstimate(), nearestPole, scoringHeight);
                 } else {
                     outtake.setTargetRelative(extensionDistance*Math.cos(Math.toRadians(180) + angleOffset),extensionDistance*Math.sin(Math.toRadians(180) + angleOffset), scoringHeight); // changes dynamically based on driver input
                 }
@@ -286,7 +286,6 @@ public class Robot {
         TelemetryUtil.packet.put("Current State: ", currentState);
         TelemetryUtil.packet.put("Loop Time: ", loopTime);
       }
-
 
     public void startIntakeRelative() {
         startIntakeRelative = true;
