@@ -75,10 +75,6 @@ public class Outtake {
     boolean turretClips = false;
 
     public void update() {
-        Log.e("UPDATE_targetSlidesLength", targetSlidesLength + "");
-        Log.e("UPDATE_targetTurretAngle", targetTurretAngle + "");
-        Log.e("UPDATE_targetExtensionLength", targetExtensionLength + "");
-
         updateRelativePos();
 
         turretClips = isTurretGoThroughBad();
