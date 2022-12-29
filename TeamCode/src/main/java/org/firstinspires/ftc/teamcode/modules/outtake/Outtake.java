@@ -83,34 +83,52 @@ public class Outtake {
             Log.e("TURRET CLIPS", "");
         }
 
-        if (turretClips && targetSlidesLength < 9) {
-            slides.setTargetSlidesLength(12);
+        boolean extensionIn = currentExtensionLength <= extension.baseSlidesExtension + 2;
+
+        // if we are going to ram into drivetrain or extension is out and the turret is within 9
+        if (!(turretClips && currentSlidesLength <= 9) && (extensionIn || turret.isInPosition(45))) {
+            turret.setTargetTurretAngle(targetTurretAngle);
         }
-        else {
-            Log.e("extension.currentExtensionLength", extension.currentExtensionLength + "");
-            if (extension.currentExtensionLength >= 12) { // if the extension is far out, move extension first before slides
-                extension.setTargetExtensionLength(targetExtensionLength);
-                Log.e("extension.isInPosition", extension.isInPosition(1.5) + "");
-                if (extension.isInPosition(1.5)) {
-                    slides.setTargetSlidesLength(targetSlidesLength);
-                }
-            } else { // if extension is in, then move slides first
+
+        if (turretClips && targetSlidesLength <= 9) {
+            slides.setTargetSlidesLength(12);
+        } else {
+            if(extensionIn || slides.isInPosition(7)) {
                 slides.setTargetSlidesLength(targetSlidesLength);
             }
         }
-        if (currentSlidesLength >= 9 || !turretClips) {
-            if (extension.currentExtensionLength >= 12) { // if extension is far out, move extension first before spinning turret
-                extension.setTargetExtensionLength(targetExtensionLength);
-                if (extension.isInPosition(1.5)) {
-                    turret.setTargetTurretAngle(targetTurretAngle);
-                }
-            } else { // if extension is in, then move turret first
-                turret.setTargetTurretAngle(targetTurretAngle);
-                if (turret.isInPosition(5) && slides.isInPosition(2)) { // once turret is in and slides are in correct position, move extension
-                    extension.setTargetExtensionLength(targetExtensionLength);
-                }
-            }
+
+        if (turret.isInPosition(90) && slides.isInPosition(7)) {
+            extension.setTargetExtensionLength(targetExtensionLength);
+        } else {
+            extension.retractExtension();
         }
+
+//        else {
+//            Log.e("extension.currentExtensionLength", extension.currentExtensionLength + "");
+//            if (extension.currentExtensionLength >= 12) { // if the extension is far out, move extension first before slides
+//                extension.setTargetExtensionLength(targetExtensionLength);
+//                Log.e("extension.isInPosition", extension.isInPosition(1.5) + "");
+//                if (extension.isInPosition(1.5)) {
+//                    slides.setTargetSlidesLength(targetSlidesLength);
+//                }
+//            } else { // if extension is in, then move slides first
+//                slides.setTargetSlidesLength(targetSlidesLength);
+//            }
+//        }
+//        if (currentSlidesLength >= 9 || !turretClips) {
+//            if (extension.currentExtensionLength >= 12) { // if extension is far out, move extension first before spinning turret
+//                extension.setTargetExtensionLength(targetExtensionLength);
+//                if (extension.isInPosition(1.5)) {
+//                    turret.setTargetTurretAngle(targetTurretAngle);
+//                }
+//            } else { // if extension is in, then move turret first
+//                turret.setTargetTurretAngle(targetTurretAngle);
+//                if (turret.isInPosition(5) && slides.isInPosition(2)) { // once turret is in and slides are in correct position, move extension
+//                    extension.setTargetExtensionLength(targetExtensionLength);
+//                }
+//            }
+//        }
 
         slides.update();
         turret.update();

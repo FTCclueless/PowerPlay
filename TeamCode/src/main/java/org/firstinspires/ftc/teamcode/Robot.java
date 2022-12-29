@@ -79,7 +79,7 @@ public class Robot {
     double poleHeight = 32.0;
 
     Pose2d drivePose = new Pose2d(0,0);
-    double scoringHeight = 29;
+    double scoringHeight = 27;
     public int scoringLevel = 3;
 
     Field field = new Field();
@@ -193,6 +193,8 @@ public class Robot {
                     isWaitForStartScoring180 = false;
                     actuation.tilt();
                     extensionDistance = 12.0;
+                    offsetX = 0.0;
+                    offsetY = 0.0;
                     angleOffset = 0;
                     startScoringRelative = false;
                     currentState = STATE.SCORING_RELATIVE;
@@ -254,20 +256,12 @@ public class Robot {
                 break;
             case DEPOSIT:
                 double t1 = 300;
-                double t2 = t1 + 100;
-                double t3 = t2 + 150;
 
                 claw.open();
                 if (System.currentTimeMillis() - timeSinceClawOpen >= t1) {
-                    outtake.slides.setTargetSlidesLength(outtake.slides.currentSlidesLength + 2);
-                    if (System.currentTimeMillis() - timeSinceClawOpen >= t2) {
-                        outtake.extension.retractExtension();
-                        if (System.currentTimeMillis() - timeSinceClawOpen >= t3) {
-                            Log.e("Retract Everything", "");
-                            actuation.level();
-                            currentState = STATE.INTAKE_RELATIVE;
-                        }
-                    }
+                    actuation.level();
+                    currentState = STATE.INTAKE_RELATIVE;
+                        Log.e("Retract Everything", "");
                 }
                 break;
         }
@@ -367,7 +361,7 @@ public class Robot {
             angleOffset -= gamepad.left_stick_x * Math.toRadians(0.8);
             angleOffset -= gamepad.right_stick_x * Math.toRadians(0.8);
             extensionDistance -= gamepad.left_stick_y * 0.18375;
-            extensionDistance = Math.max(6.31103, Math.min(this.extensionDistance, 19.8937145));
+            extensionDistance = Math.max(6.31103, Math.min(this.extensionDistance, 23.67279475));
 
             // adjustments in auto aim
             double globalAngle = drivetrain.localizer.getPoseEstimate().getHeading() + outtake.turret.getCurrentTurretAngle();

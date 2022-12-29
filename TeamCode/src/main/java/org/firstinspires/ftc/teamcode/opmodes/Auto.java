@@ -28,7 +28,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 
 @Autonomous(group = "Test")
-public class FiveConeAuto_BlueTop extends LinearOpMode {
+public class Auto extends LinearOpMode {
     public static final int cycles = 5;
     public static int parkingNum = 0;
     public static final boolean lr = true; // Left : true | Right : false
@@ -56,7 +56,7 @@ public class FiveConeAuto_BlueTop extends LinearOpMode {
 
         Pose2d origin = new Pose2d(
             36 * xSign,
-            60 * ySign,
+            62.25 * ySign,
             Math.PI / 2 * (!lr ? -1 : 1)
         );
 
@@ -64,13 +64,13 @@ public class FiveConeAuto_BlueTop extends LinearOpMode {
 
         Pose2d intakePose = new Pose2d(
             53.5 * xSign,
-            9.5 * ySign,
+            12 * ySign,
             tb ? 0 : Math.PI
         );
 
         Pose2d depositPose = new Pose2d(
             38 * xSign,
-            9.5 * ySign,
+            12 * ySign,
             tb ? 0 : Math.PI
         );
 
@@ -156,7 +156,7 @@ public class FiveConeAuto_BlueTop extends LinearOpMode {
 
         robot.followTrajectorySequence(to, this);
 
-        robot.startScoringGlobal(to.end(), new Pose2d(27.2 * xSign,0.25 * ySign),25.9, xSign * ySign); // 36
+        robot.startScoringGlobal(to.end(), new Pose2d(24 * xSign,0 * ySign),27, xSign * ySign); // 36
         while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
             robot.update();
         }
@@ -172,7 +172,7 @@ public class FiveConeAuto_BlueTop extends LinearOpMode {
             // TODO verify the x and y sign on this. It should not be like this
             robot.startIntakeGlobal(
                     toIntake.end(),
-                    new Pose2d((72 - 4) * xSign,10.0 * ySign),
+                    new Pose2d(70 * xSign,12 * ySign),
                     coneStackHeights[i]
             );
 
@@ -184,7 +184,7 @@ public class FiveConeAuto_BlueTop extends LinearOpMode {
 
             robot.drivetrain.setBreakFollowingThresholds(new Pose2d(2.5, 2.5, Math.toRadians(5)), toDeposit.end());
 
-            robot.startScoringGlobal(toDeposit.end(), new Pose2d(27.5 * xSign,0),26.65, xSign * ySign); // 36
+            robot.startScoringGlobal(new Pose2d(toDeposit.end().getX() + 2, toDeposit.end().getY(), toDeposit.end().getHeading()), new Pose2d(24 * xSign,0),27, xSign * ySign); // 36
             robot.followTrajectorySequence(toDeposit, this);
             while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
                 robot.update();

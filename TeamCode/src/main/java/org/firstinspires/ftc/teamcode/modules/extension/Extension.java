@@ -21,7 +21,7 @@ public class Extension {
     public double extensionPower = 1.0;
 
     public double servoMountingBack = 1.465;
-    public double clawForward = 5.003937;
+    public double clawForward = 4.25;
 
     MyServo extension;
     ArrayList<MyServo> servos;
@@ -35,7 +35,7 @@ public class Extension {
         this.outtake = outtake;
         this.actuation = actuation;
 
-        extension = new MyServo(hardwareMap.servo.get("extension"),"Super Speed",1, 0.05,0.727, 0.727);
+        extension = new MyServo(hardwareMap.servo.get("extension"),"Torque",0.25, 0.1189,0.737, 0.1189);
 
         servos.add(1, extension);
     }
@@ -51,7 +51,7 @@ public class Extension {
         updateExtensionValues();
         updateTelemetry();
 
-        extension.setAngle(-targetExtensionAngle, extensionPower);
+        extension.setAngle(targetExtensionAngle, extensionPower);
     }
 
     public double strokeLength = 13.5826845;
@@ -60,7 +60,7 @@ public class Extension {
     public double bigLinkage = 13.4252;
     public double targetLinkageLength = 0.0;
 
-    public double baseSlidesExtension = bigLinkage - smallLinkage - servoMountingBack + clawForward;
+    public double baseSlidesExtension = bigLinkage - smallLinkage - servoMountingBack + clawForward; // 10.17279475
 
     public void setTargetExtensionLength(double length) {
         length = Math.max(baseSlidesExtension, Math.min(length, strokeLength+baseSlidesExtension));
@@ -87,7 +87,7 @@ public class Extension {
 
     public void updateExtensionValues() {
 //        currentExtensionLength = (baseSlidesExtension + (strokeLength/2)) - (strokeLength/2 * Math.cos(-extension.getAngle()));
-        currentExtensionAngle = -extension.getAngle();
+        currentExtensionAngle = extension.getAngle();
         currentExtensionLength = (smallLinkage*Math.cos(currentExtensionAngle) + Math.sqrt(Math.pow(bigLinkage, 2) - Math.pow(smallLinkage, 2) * Math.pow(Math.sin(currentExtensionAngle), 2))) - servoMountingBack + clawForward;
         if (!actuation.isLevel()) {
             currentExtensionLength += actuationTiltDistance;

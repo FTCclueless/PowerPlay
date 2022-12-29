@@ -31,7 +31,7 @@ public class Field {
         return new Pose2d(closetPole.x, closetPole.y);
     }
 
-    double radius = 23.75547925;
+    double radius = 23.75547925 * 1.5;
 
     public Pose2d getNearestPole (Pose2d drivePose, Pose2d armPose, int heightLevel) {
         double armX = armPose.getX();
