@@ -35,7 +35,7 @@ public class Extension {
         this.outtake = outtake;
         this.actuation = actuation;
 
-        extension = new MyServo(hardwareMap.servo.get("extension"),"Super Speed",1, 0.0,0.727, 0.727);
+        extension = new MyServo(hardwareMap.servo.get("extension"),"Super Speed",1, 0.05,0.727, 0.727);
 
         servos.add(1, extension);
     }
@@ -70,7 +70,7 @@ public class Extension {
         targetLinkageLength = targetExtensionLength + servoMountingBack - clawForward;
 
         if (!actuation.isLevel()) {
-            targetExtensionLength -= actuationTiltDistance;
+            targetExtensionLength += actuationTiltDistance;
         }
 
 //        targetExtensionAngle = Math.acos((targetExtensionLength-(baseSlidesExtension+strokeLength/2))/(-strokeLength/2)); // https://www.desmos.com/calculator/aqezyzoq5y

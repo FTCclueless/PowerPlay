@@ -208,7 +208,7 @@ public class Robot {
                 nearestPole = field.getNearestPole(drivetrainPoseEstimate, globalArmPos, scoringLevel);
 
                 if (isAutoAim) {
-                    outtake.setTargetGlobal(drivetrain.getPoseEstimate(), nearestPole, scoringHeight);
+                    outtake.setTargetGlobal(drivetrain.getPoseEstimate(), nearestPole, scoringHeight, offsetX, offsetY);
                 } else {
                     outtake.setTargetRelative(extensionDistance*Math.cos(Math.toRadians(180) + angleOffset),extensionDistance*Math.sin(Math.toRadians(180) + angleOffset), scoringHeight); // changes dynamically based on driver input
                 }
@@ -368,6 +368,13 @@ public class Robot {
             angleOffset -= gamepad.right_stick_x * Math.toRadians(0.8);
             extensionDistance -= gamepad.left_stick_y * 0.18375;
             extensionDistance = Math.max(6.31103, Math.min(this.extensionDistance, 19.8937145));
+
+            // adjustments in auto aim
+            double globalAngle = drivetrain.localizer.getPoseEstimate().getHeading() + outtake.turret.getCurrentTurretAngle();
+            double relativeX = gamepad.left_stick_y * 0.25 * m1;
+            double relativeY = gamepad.left_stick_x * 0.25 * m1;
+            offsetX -= relativeX*Math.cos(globalAngle) - relativeY*Math.sin(globalAngle);
+            offsetY -= relativeY*Math.cos(globalAngle) + relativeX*Math.sin(globalAngle);
         }
     }
 

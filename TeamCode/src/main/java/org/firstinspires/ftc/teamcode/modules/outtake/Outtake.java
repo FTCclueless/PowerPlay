@@ -87,12 +87,14 @@ public class Outtake {
             Log.e("TURRET CLIPS", "");
         }
 
-        if (turretClips && targetSlidesLength < 9){
+        if (turretClips && targetSlidesLength < 9) {
             slides.setTargetSlidesLength(12);
         }
         else {
-            if (extension.currentExtensionLength > 9) { // if the extension is far out, move extension first before slides
+            Log.e("extension.currentExtensionLength", extension.currentExtensionLength + "");
+            if (extension.currentExtensionLength >= 12) { // if the extension is far out, move extension first before slides
                 extension.setTargetExtensionLength(targetExtensionLength);
+                Log.e("extension.isInPosition", extension.isInPosition(1.5) + "");
                 if (extension.isInPosition(1.5)) {
                     slides.setTargetSlidesLength(targetSlidesLength);
                 }
@@ -101,7 +103,7 @@ public class Outtake {
             }
         }
         if (currentSlidesLength >= 9 || !turretClips) {
-            if (extension.currentExtensionLength > 9) { // if extension is far out, move extension first before spinning turret
+            if (extension.currentExtensionLength >= 12) { // if extension is far out, move extension first before spinning turret
                 extension.setTargetExtensionLength(targetExtensionLength);
                 if (extension.isInPosition(1.5)) {
                     turret.setTargetTurretAngle(targetTurretAngle);
@@ -197,11 +199,15 @@ public class Outtake {
         return new Pose2d(x, y, robotPose.getHeading());
     }
 
-    public void setTargetGlobal (Pose2d robotPose, Pose2d targetPose, double targetZ) {
+    public void setTargetGlobal(Pose2d robotPose, Pose2d targetPose, double targetZ) {
+        setTargetGlobal(robotPose, targetPose, targetZ, 0,0);
+    }
+
+    public void setTargetGlobal (Pose2d robotPose, Pose2d targetPose, double targetZ, double offsetX, double offsetY) {
         Pose2d turretPos = findGlobalCoordinates(robotPose, turretXOffset, turretYOffset);
 
-        double deltaX = targetPose.getX() - turretPos.getX();
-        double deltaY = targetPose.getY() - turretPos.getY();
+        double deltaX = targetPose.getX() - turretPos.getX() + offsetX;
+        double deltaY = targetPose.getY() - turretPos.getY() + offsetY;
 
         double targetX = deltaX * Math.cos(robotPose.getHeading()) + deltaY * Math.sin(robotPose.getHeading());
         double targetY = deltaY * Math.cos(robotPose.getHeading()) - deltaX * Math.sin(robotPose.getHeading());

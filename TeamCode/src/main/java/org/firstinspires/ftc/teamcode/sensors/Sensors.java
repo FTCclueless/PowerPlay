@@ -70,8 +70,8 @@ public class Sensors {
             turretAngle = motorPriorities.get(4).motor[0].getCurrentPosition() / turretTicksToRadian; // radians of turret
             turretVelocity = motorPriorities.get(4).motor[0].getVelocity() / turretTicksToRadian;
 
-            slidesLength = motorPriorities.get(5).motor[1].getCurrentPosition() / slidesTickToInch; // inches of slides
-            slidesVelocity = motorPriorities.get(5).motor[1].getVelocity() / slidesTickToInch;
+            slidesLength = motorPriorities.get(5).motor[1].getCurrentPosition() / slidesTickToInch * -1; // inches of slides
+            slidesVelocity = motorPriorities.get(5).motor[1].getVelocity() / slidesTickToInch * -1;
 
 //            clawTouch = clawLimit.getState();
         } catch (Exception e) {
