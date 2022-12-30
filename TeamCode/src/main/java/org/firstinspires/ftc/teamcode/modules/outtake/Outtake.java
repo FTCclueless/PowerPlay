@@ -70,9 +70,11 @@ public class Outtake {
 
     public void updateTelemetry () {
         TelemetryUtil.packet.put("outtake.isInPosition: ", isInPosition());
+        TelemetryUtil.packet.put("extensionIn", extensionIn + "");
     }
 
     boolean turretClips = false;
+    boolean extensionIn = false;
 
     public void update() {
         updateRelativePos();
@@ -83,26 +85,31 @@ public class Outtake {
             Log.e("TURRET CLIPS", "");
         }
 
-        boolean extensionIn = currentExtensionLength <= extension.baseSlidesExtension + 2;
+        extensionIn = (currentExtensionLength <= (extension.baseSlidesExtension + 5.5));
 
         // if we are going to ram into drivetrain or extension is out and the turret is within 9
-        if (!(turretClips && currentSlidesLength <= 9) && (extensionIn || turret.isInPosition(45))) {
+        if (!(turretClips && currentSlidesLength <= 9) && (extensionIn || turret.isInPosition(45, targetTurretAngle))) {
             turret.setTargetTurretAngle(targetTurretAngle);
         }
 
-        if (turretClips && targetSlidesLength <= 9) {
+        if (turretClips && targetSlidesLength <= 9 && extensionIn) {
             slides.setTargetSlidesLength(12);
         } else {
-            if(extensionIn || slides.isInPosition(7)) {
+            if(extensionIn || slides.isInPosition(4, targetSlidesLength)) {
                 slides.setTargetSlidesLength(targetSlidesLength);
             }
         }
 
-        if (turret.isInPosition(90) && slides.isInPosition(7)) {
+        if (turret.isInPosition(45, targetTurretAngle) && slides.isInPosition(4, targetSlidesLength)) {
             extension.setTargetExtensionLength(targetExtensionLength);
         } else {
             extension.retractExtension();
+            if (slides.targetSlidesLength <= 9 && isTurretGoThroughRange(120, 240)) {
+                Log.e("IM HEREEEEEEEE", "");
+                extension.setTargetExtensionLength(extension.baseSlidesExtension + 5);
+            }
         }
+
 
 //        else {
 //            Log.e("extension.currentExtensionLength", extension.currentExtensionLength + "");
@@ -139,11 +146,7 @@ public class Outtake {
     }
 
     public void retract()  {
-        extension.retractExtension();
-        if (extension.isInPosition(3)) {
-            slides.setTargetSlidesLength(0);
-            turret.setTargetTurretAngle(Math.toRadians(0));
-        }
+        setTargetRelative(extension.baseSlidesExtension,0,0);
     }
 
     double a = Math.toRadians(12);
@@ -169,6 +172,20 @@ public class Outtake {
         if (clipTarget == Math.min(Math.max(clipTarget,e),f)
                 || clipCurrent == Math.min(Math.max(clipCurrent,e),f)
                 || Math.signum(clipAngle(targetTurretAngle - (e+f)/2)) != Math.signum(clipAngle(currentTurretAngle  - (e+f)/2))){
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean isTurretGoThroughRange(double a, double b) {
+        a = Math.toRadians(a);
+        b = Math.toRadians(b);
+        double clipTarget = clipAngle(targetTurretAngle);
+        double clipCurrent = clipAngle(currentTurretAngle);
+        if (clipTarget == Math.min(Math.max(clipTarget,a),b)
+                || clipCurrent == Math.min(Math.max(clipCurrent,a),b)
+                || Math.signum(clipAngle(targetTurretAngle - (a+b)/2)) != Math.signum(clipAngle(currentTurretAngle  - (a+b)/2))){
             return true;
         }
 
@@ -254,7 +271,7 @@ public class Outtake {
     }
 
     public boolean isInPosition() {
-        return (turret.isInPosition(5) && slides.isInPosition(1.5) && extension.isInPosition(2));
+        return (turret.isInPosition(5, targetTurretAngle) && slides.isInPosition(1.5, targetSlidesLength) && extension.isInPosition(2));
     }
 
     public boolean isIntersectingRobot (double targetX, double targetY, double targetZ) {

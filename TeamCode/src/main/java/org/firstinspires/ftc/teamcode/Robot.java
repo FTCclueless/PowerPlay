@@ -42,8 +42,8 @@ public class Robot {
     public ArrayList<MotorPriority> motorPriorities = new ArrayList<>();
     public ArrayList<MyServo> servos = new ArrayList<>();
 
-    public enum STATE {IDLE, INIT, INTAKE_RELATIVE, INTAKE_GLOBAL, WAIT_FOR_START_SCORING, SCORING_GLOBAL, SCORING_RELATIVE, DEPOSIT, RETRACT }
-    public STATE currentState = STATE.INIT;
+    public enum STATE {IDLE, INTAKE_RELATIVE, INTAKE_GLOBAL, WAIT_FOR_START_SCORING, SCORING_GLOBAL, SCORING_RELATIVE, DEPOSIT, RETRACT }
+    public STATE currentState = STATE.IDLE;
 
     public Robot (HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
@@ -113,22 +113,18 @@ public class Robot {
         switch (currentState) {
             case IDLE:
                 break;
-            case INIT:
-                actuation.level();
-                outtake.retract();
-                break;
             case RETRACT:
                 claw.close();
                 actuation.level();
                 outtake.retract();
                 if (startIntakeRelative) {
                     startIntakeRelative = false;
-                    claw.intake();
+                    claw.open();
                     currentState = STATE.INTAKE_RELATIVE;
                 }
                 if (startIntakeGlobal) {
                     startIntakeGlobal = false;
-                    claw.intake();
+                    claw.open();
                     currentState = STATE.INTAKE_GLOBAL;
                 }
                 break;
@@ -160,15 +156,16 @@ public class Robot {
 
                 if (isAtPoint && (outtake.isInPositionGlobal(drivePose, conePose, 1.5) || hasGrabbed)) {
                     Log.e("close claw", "");
+                    hasGrabbed = true;
                     claw.close();
                 }
                 else {
                     Log.e("intake claw", "");
-                    claw.intake();
+                    claw.open();
                     startClawCloseTime = System.currentTimeMillis();
                 }
 
-                if(sensors.clawTouch || System.currentTimeMillis() - startClawCloseTime > 400) { // needs an external claw.close()
+                if(sensors.clawTouch || System.currentTimeMillis() - startClawCloseTime > 300) { // needs an external claw.close()
                     Log.e("here", "");
                     claw.close();
                     hasGrabbed = true;
@@ -395,6 +392,30 @@ public class Robot {
             expansionHub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         } catch (RuntimeException e) {
             throw new RuntimeException("One or more of the REV hubs could not be found. More info: " + e);
+        }
+    }
+
+    public void initPosition () {
+        actuation.init();
+        outtake.extension.retractExtension();
+        claw.open();
+
+        outtake.slides.setTargetSlidesLength(12);
+
+        while (!outtake.slides.isInPosition(0.75)) {
+            update();
+        }
+
+        outtake.turret.setTargetTurretAngle(Math.toRadians(55));
+
+        while (!outtake.turret.isInPosition(2.5)) {
+            update();
+        }
+
+        outtake.slides.setTargetSlidesLength(0.9);
+
+        while (!outtake.slides.isInPosition(0.75)) {
+            update();
         }
     }
 

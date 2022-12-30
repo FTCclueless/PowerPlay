@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.modules.claw.Claw;
-import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
 @Disabled
 @Config
@@ -25,7 +24,6 @@ public class ClawTester extends LinearOpMode {
         Claw claw = robot.claw;
         robot.testMode();
 
-        intakePosition = claw.intakePosition;
         openPosition = claw.openPosition;
         closePosition = claw.closePosition;
 

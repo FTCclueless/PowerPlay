@@ -122,6 +122,10 @@ public class Slides {
         return (Math.abs(targetSlidesLength - currentSlidesLength) <= inches);
     }
 
+    public boolean isInPosition (double inches, double targetSlidesLength) {
+        return (Math.abs(targetSlidesLength - currentSlidesLength) <= inches);
+    }
+
     public void updateSlidesPID (double p, double i, double d) {
         slidesVelocityPID.p = p;
         slidesVelocityPID.i = i;

@@ -21,7 +21,7 @@ public class Turret {
 
     ArrayList<MotorPriority> motorPriorities;
 
-    public PID turretPID = new PID(4.0, 0.0,0.0);
+    public PID turretPID = new PID(4.0, 0.25,0.0);
 
     public double currentTurretAngle = 0.0;
     public double currentTurretVelocity = 0.0;
@@ -108,11 +108,11 @@ public class Turret {
     }
 
     public boolean isInPosition (double angle) {
-        if (Math.abs(clipAngle(targetTurretAngle - currentTurretAngle)) <= Math.toRadians(angle)) {
-            return true;
-        } else {
-            return false;
-        }
+        return Math.abs(clipAngle(targetTurretAngle - currentTurretAngle)) <= Math.toRadians(angle);
+    }
+
+    public boolean isInPosition (double angle, double targetTurretAngle) {
+        return Math.abs(clipAngle(targetTurretAngle - currentTurretAngle)) <= Math.toRadians(angle);
     }
 
     public void updateTurretPID (double p, double i, double d) {

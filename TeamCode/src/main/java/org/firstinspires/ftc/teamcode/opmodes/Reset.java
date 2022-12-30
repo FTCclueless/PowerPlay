@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes.tests;
+package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -22,7 +22,7 @@ public class Reset extends LinearOpMode {
             robot.outtake.actuation.level();
             robot.outtake.extension.retractExtension();
             if (robot.outtake.extension.isInPosition(5)) {
-                robot.claw.intake();
+                robot.claw.open();
             }
             robot.update();
         }
