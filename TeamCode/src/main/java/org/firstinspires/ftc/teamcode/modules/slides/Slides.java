@@ -30,7 +30,7 @@ public class Slides {
     public double slidesError = 0.0;
     public double slidesPercentMax = 1.0;
 
-    public double maxSlidesSpeed = 82.9718558749; // inches per sec
+    double maxSlidesSpeed = 82.9718558749; // inches per sec
 
     Outtake outtake;
 

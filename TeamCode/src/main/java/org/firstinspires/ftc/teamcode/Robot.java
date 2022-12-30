@@ -79,7 +79,7 @@ public class Robot {
     double poleHeight = 32.0;
 
     Pose2d drivePose = new Pose2d(0,0);
-    double scoringHeight = 27;
+    double scoringHeight = 26;
     public int scoringLevel = 3;
 
     Field field = new Field();
@@ -118,11 +118,13 @@ public class Robot {
                 actuation.level();
                 outtake.retract();
                 if (startIntakeRelative) {
+                    outtake.slides.slidesPercentMax = 1.0;
                     startIntakeRelative = false;
                     claw.open();
                     currentState = STATE.INTAKE_RELATIVE;
                 }
                 if (startIntakeGlobal) {
+                    outtake.slides.slidesPercentMax = 1.0;
                     startIntakeGlobal = false;
                     claw.open();
                     currentState = STATE.INTAKE_GLOBAL;
@@ -132,7 +134,7 @@ public class Robot {
                 actuation.level();
                 outtake.retract();
 
-                if (outtake.slides.isInPosition(1.5)) {
+                if (outtake.slides.isInPosition(0.25)) {
                     claw.open();
                 }
 
@@ -182,11 +184,14 @@ public class Robot {
                 claw.close();
                 actuation.level();
                 if (isWaitForStartScoring180) {
+                    outtake.slides.slidesPercentMax = 1.0;
                     outtake.setTargetRelative(-10,0,10);
                 } else {
+                    outtake.slides.slidesPercentMax = 1.0;
                     outtake.setTargetRelative(10,0,4);
                 }
                 if (startScoringRelative) {
+                    outtake.slides.slidesPercentMax = 1.0;
                     isWaitForStartScoring180 = false;
                     actuation.tilt();
                     extensionDistance = 12.0;
@@ -196,13 +201,17 @@ public class Robot {
                     startScoringRelative = false;
                     currentState = STATE.SCORING_RELATIVE;
                 }
+
                 if (startScoringGlobal) {
+                    outtake.slides.slidesPercentMax = 1.0;
                     extensionDistance = 12.0;
                     startScoringGlobal = false;
                     currentState = STATE.SCORING_GLOBAL;
                 }
                 break;
             case SCORING_RELATIVE:
+                outtake.slides.slidesPercentMax = 1.0;
+
                 globalArmPos = outtake.getGlobalArmPose(drivetrainPoseEstimate);
                 nearestPole = field.getNearestPole(drivetrainPoseEstimate, globalArmPos, scoringLevel);
 
@@ -227,6 +236,8 @@ public class Robot {
                 }
                 break;
             case SCORING_GLOBAL:
+                outtake.slides.slidesPercentMax = 1.0;
+
                 // checks to see if the drivetrain is near the final scoring pose and if it is then give it it's actual drive pose
                 if (Math.abs(drivetrain.getPoseEstimate().getX() - drivePose.getX()) <= 4 && Math.abs(drivetrain.getPoseEstimate().getY() - drivePose.getY()) <= 4) {
                     drivePose = drivetrain.getPoseEstimate();
@@ -253,6 +264,7 @@ public class Robot {
                 break;
             case DEPOSIT:
                 double t1 = 300;
+                outtake.slides.slidesPercentMax = 1.0;
 
                 claw.open();
                 if (System.currentTimeMillis() - timeSinceClawOpen >= t1) {

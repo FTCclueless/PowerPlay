@@ -105,7 +105,6 @@ public class Outtake {
         } else {
             extension.retractExtension();
             if (slides.targetSlidesLength <= 9 && isTurretGoThroughRange(120, 240)) {
-                Log.e("IM HEREEEEEEEE", "");
                 extension.setTargetExtensionLength(extension.baseSlidesExtension + 5);
             }
         }
@@ -149,10 +148,10 @@ public class Outtake {
         setTargetRelative(extension.baseSlidesExtension,0,0);
     }
 
-    double a = Math.toRadians(12);
+    double a = Math.toRadians(17);
     double b = Math.toRadians(35);
     double c = Math.toRadians(-35);
-    double d = Math.toRadians(-12);
+    double d = Math.toRadians(-17);
     double e = Math.toRadians(95);
     double f = Math.toRadians(145);
 

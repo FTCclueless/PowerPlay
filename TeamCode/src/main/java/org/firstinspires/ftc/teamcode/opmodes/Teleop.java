@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.util.Storage;
 public class Teleop extends LinearOpMode {
 
     boolean isBlue = true;
-    double scoringHeight = 27;
+    double scoringHeight = 26;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -61,6 +61,7 @@ public class Teleop extends LinearOpMode {
             }
 
             if ((robot.currentState == Robot.STATE.WAIT_FOR_START_SCORING) && (gamepad1.b)) {
+                robot.outtake.slides.slidesPercentMax = 0.1;
                 robot.currentState = Robot.STATE.INTAKE_RELATIVE;
             }
 
@@ -69,7 +70,7 @@ public class Teleop extends LinearOpMode {
             }
 
             if (gamepad2.a) { // low
-                scoringHeight = 13;
+                scoringHeight = 8.3;
                 robot.scoringLevel = 1;
             }
 
@@ -79,7 +80,7 @@ public class Teleop extends LinearOpMode {
             }
 
             if (gamepad2.y) { // high (NEED TO CHANGE THE DEFAULT HEIGHT TOO)
-                scoringHeight = 27;
+                scoringHeight = 26;
                 robot.scoringLevel = 3;
             }
 
