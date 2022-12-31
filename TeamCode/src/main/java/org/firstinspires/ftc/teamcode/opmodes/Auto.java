@@ -38,13 +38,14 @@ public class Auto extends LinearOpMode {
 
     OpenCVWrapper openCVWrapper;
 
-    double[] coneStackHeights = new double[]{4.5, 3.3, 2.4, 1.435, 0.0};
+    double[] coneStackHeights = new double[]{5.0, 4.0, 2.6, 1.435, 0.0};
     ButtonToggle toggleA = new ButtonToggle();
 
     @Override
     public void runOpMode() throws InterruptedException {
         Robot robot = new Robot(hardwareMap);
         Drivetrain drive = robot.drivetrain;
+        Storage.isTeleop = false;
 
         openCVWrapper = new OpenCVWrapper(telemetry, hardwareMap, true);
         assert(openCVWrapper != null);
@@ -55,7 +56,7 @@ public class Auto extends LinearOpMode {
 
         Pose2d origin = new Pose2d(
                 36 * xSign,
-                61 * ySign,
+                60 * ySign,
                 Math.PI / 2 * (!lr ? -1 : 1)
         );
 
@@ -116,8 +117,12 @@ public class Auto extends LinearOpMode {
         openCVWrapper.init();
         openCVWrapper.start();
 
+        Log.e("camera setup", "");
+
         sleep(2000);
         robot.initPosition();
+
+        Log.e("init position", "");
 
         while (opModeInInit()) {
             telemetry.setMsTransmissionInterval(50);
@@ -153,7 +158,7 @@ public class Auto extends LinearOpMode {
 
         robot.followTrajectorySequence(to, this);
 
-        robot.startScoringGlobal(to.end(), new Pose2d(24 * xSign,0 * ySign),25, xSign * ySign); // 36
+        robot.startScoringGlobal(to.end(), new Pose2d(24 * xSign,0 * ySign),26, xSign * ySign); // 36
         while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
             robot.update();
         }
@@ -177,7 +182,7 @@ public class Auto extends LinearOpMode {
 
             robot.drivetrain.setBreakFollowingThresholds(new Pose2d(2.5, 2.5, Math.toRadians(5)), toDeposit.end());
 
-            robot.startScoringGlobal(new Pose2d(toDeposit.end().getX() + 2, toDeposit.end().getY(), toDeposit.end().getHeading()), new Pose2d(24 * xSign,0),25, xSign * ySign); // 36
+            robot.startScoringGlobal(new Pose2d(toDeposit.end().getX() + 2, toDeposit.end().getY(), toDeposit.end().getHeading()), new Pose2d(24 * xSign,0),26.5, xSign * ySign); // 36
             robot.followTrajectorySequence(toDeposit, this);
             while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
                 robot.update();

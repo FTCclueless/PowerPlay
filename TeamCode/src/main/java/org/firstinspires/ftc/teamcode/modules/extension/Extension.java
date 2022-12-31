@@ -28,7 +28,7 @@ public class Extension {
     Outtake outtake;
     Actuation actuation;
 
-    double actuationTiltDistance = 2.5;
+    public double actuationTiltDistance = 2.5;
 
     public Extension (HardwareMap hardwareMap, ArrayList<MyServo> servos, Outtake outtake, Actuation actuation) {
         this.servos = servos;
@@ -64,14 +64,11 @@ public class Extension {
 
     public void setTargetExtensionLength(double length) {
         length = Math.max(baseSlidesExtension, Math.min(length, strokeLength+baseSlidesExtension));
+
         targetExtensionLength = length;
         outtake.targetExtensionLength = length;
 
         targetLinkageLength = targetExtensionLength + servoMountingBack - clawForward;
-
-        if (!actuation.isLevel()) {
-            targetExtensionLength += actuationTiltDistance;
-        }
 
 //        targetExtensionAngle = Math.acos((targetExtensionLength-(baseSlidesExtension+strokeLength/2))/(-strokeLength/2)); // https://www.desmos.com/calculator/aqezyzoq5y
         targetExtensionAngle = Math.acos((Math.pow(smallLinkage, 2) + Math.pow(targetLinkageLength, 2) - Math.pow(bigLinkage, 2))/(2*smallLinkage*targetLinkageLength));
@@ -89,9 +86,6 @@ public class Extension {
 //        currentExtensionLength = (baseSlidesExtension + (strokeLength/2)) - (strokeLength/2 * Math.cos(-extension.getAngle()));
         currentExtensionAngle = extension.getAngle();
         currentExtensionLength = (smallLinkage*Math.cos(currentExtensionAngle) + Math.sqrt(Math.pow(bigLinkage, 2) - Math.pow(smallLinkage, 2) * Math.pow(Math.sin(currentExtensionAngle), 2))) - servoMountingBack + clawForward;
-        if (!actuation.isLevel()) {
-            currentExtensionLength += actuationTiltDistance;
-        }
     }
 
     public boolean isInPosition (double length) {

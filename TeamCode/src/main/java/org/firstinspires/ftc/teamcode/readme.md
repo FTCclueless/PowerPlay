@@ -22,9 +22,9 @@ Encoders
 Servos
 - Servo Port 0: 
 - Servo Port 1: 
-- Servo Port 2: claw
-- Servo Port 3: act
-- Servo Port 4: extension
+- Servo Port 2: extension
+- Servo Port 3: claw
+- Servo Port 4: act
 - Servo Port 5:
 
 Analog Sensors
@@ -83,3 +83,6 @@ I2C
 
 Webcams: 
 - Webcam 1
+
+### Random Notes
+

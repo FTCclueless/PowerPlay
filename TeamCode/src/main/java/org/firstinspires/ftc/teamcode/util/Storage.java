@@ -10,4 +10,5 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 public class Storage {
     public static Pose2d autoEndPose = new Pose2d(12,12,0);
     public static boolean isBlue = true;
+    public static boolean isTeleop = false;
 }

@@ -33,6 +33,8 @@ public class Teleop extends LinearOpMode {
         ButtonToggle b_dpad_up = new ButtonToggle();
         ButtonToggle b_left_trigger = new ButtonToggle();
 
+        Storage.isTeleop = true;
+
         while(opModeInInit()) {
             robot.outtake.setTargetRelative(3,0,0);
             robot.update();

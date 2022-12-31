@@ -268,9 +268,19 @@ public class Robot {
 
                 claw.open();
                 if (System.currentTimeMillis() - timeSinceClawOpen >= t1) {
-                    actuation.level();
-                    currentState = STATE.INTAKE_RELATIVE;
-                        Log.e("Retract Everything", "");
+                    if (Storage.isTeleop) {
+                        Log.e("Teleop", "");
+                        outtake.slides.setTargetSlidesLength(Math.min(scoringHeight + 6, 32));
+                        if ((outtake.slides.isInPosition(2)) || (System.currentTimeMillis() - timeSinceClawOpen >= (t1+400))) {
+                            Log.e("in position", "");
+                            actuation.level();
+                            currentState = STATE.INTAKE_RELATIVE;
+                        }
+                    } else {
+                        Log.e("Auto", "");
+                        actuation.level();
+                        currentState = STATE.INTAKE_RELATIVE;
+                    }
                 }
                 break;
         }
@@ -415,20 +425,26 @@ public class Robot {
         outtake.slides.setTargetSlidesLength(12);
 
         while (!outtake.slides.isInPosition(0.75)) {
+            Log.e("slides", "");
             update();
         }
 
         outtake.turret.setTargetTurretAngle(Math.toRadians(55));
 
-        while (!outtake.turret.isInPosition(2.5)) {
+        while (!outtake.turret.isInPosition(0.75)) {
+            Log.e("turret", "");
             update();
         }
 
-        outtake.slides.setTargetSlidesLength(0.9);
+        outtake.slides.slidesPercentMax = 0.25;
+        outtake.slides.setTargetSlidesLength(1.0);
 
         while (!outtake.slides.isInPosition(0.75)) {
+            Log.e("slides again", "");
             update();
         }
+
+        outtake.slides.slidesPercentMax = 1.0;
     }
 
     double targetLoopLength = 0.015; //Sets the target loop time in milli seconds

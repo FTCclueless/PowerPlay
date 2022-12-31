@@ -85,7 +85,10 @@ public class Outtake {
             Log.e("TURRET CLIPS", "");
         }
 
-        extensionIn = (currentExtensionLength <= (extension.baseSlidesExtension + 5.5));
+        extensionIn = (currentExtensionLength <= (extension.baseSlidesExtension + 3.5));
+        if(slides.targetSlidesLength <= 9 && isTurretGoThroughRange(120, 240)) {
+            extensionIn = (currentExtensionLength <= (extension.baseSlidesExtension + 5.5));
+        }
 
         // if we are going to ram into drivetrain or extension is out and the turret is within 9
         if (!(turretClips && currentSlidesLength <= 9) && (extensionIn || turret.isInPosition(45, targetTurretAngle))) {
@@ -107,6 +110,10 @@ public class Outtake {
             if (slides.targetSlidesLength <= 9 && isTurretGoThroughRange(120, 240)) {
                 extension.setTargetExtensionLength(extension.baseSlidesExtension + 5);
             }
+        }
+
+        if(!actuation.isLevel()) {
+            extension.setTargetExtensionLength(extension.targetExtensionLength-extension.actuationTiltDistance);
         }
 
 
@@ -195,6 +202,9 @@ public class Outtake {
         currentTurretAngle = turret.getCurrentTurretAngle();
         currentSlidesLength = slides.getCurrentSlidesLength();
         currentExtensionLength = extension.getCurrentExtensionLength();
+        if (!actuation.isLevel()) {
+            currentExtensionLength += extension.actuationTiltDistance;
+        }
 
         x = Math.cos(currentTurretAngle) * currentExtensionLength;
         y = Math.sin(currentTurretAngle) * currentExtensionLength;
@@ -203,7 +213,12 @@ public class Outtake {
 
     public void setTargetRelative(double targetX, double targetY, double targetZ) {
         targetHeight = Math.max(0, Math.min(targetZ, 39.08666));
-        targetExtension = Math.min(extension.baseSlidesExtension + extension.strokeLength, Math.max(extension.baseSlidesExtension, Math.sqrt(Math.pow((targetX),2) + Math.pow((targetY),2))));
+
+        if (!actuation.isLevel()) {
+            targetExtension = Math.min(extension.baseSlidesExtension + extension.strokeLength + extension.actuationTiltDistance, Math.max(extension.baseSlidesExtension, Math.sqrt(Math.pow((targetX),2) + Math.pow((targetY),2))));
+        } else {
+            targetExtension = Math.min(extension.baseSlidesExtension + extension.strokeLength, Math.max(extension.baseSlidesExtension, Math.sqrt(Math.pow((targetX),2) + Math.pow((targetY),2))));
+        }
 
         targetTurretAngle = Math.atan2(targetY,targetX);
         targetExtensionLength = targetExtension;
