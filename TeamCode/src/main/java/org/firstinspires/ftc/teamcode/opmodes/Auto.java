@@ -158,7 +158,7 @@ public class Auto extends LinearOpMode {
 
         robot.followTrajectorySequence(to, this);
 
-        robot.startScoringGlobal(to.end(), new Pose2d(24 * xSign,0 * ySign),26, xSign * ySign); // 36
+        robot.startScoringGlobal(new Pose2d(toDeposit.end().getX() + (2.75*xSign), toDeposit.end().getY(), toDeposit.end().getHeading()), new Pose2d(24 * xSign,0),26, xSign * ySign); // 36
         while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
             robot.update();
         }
@@ -182,7 +182,7 @@ public class Auto extends LinearOpMode {
 
             robot.drivetrain.setBreakFollowingThresholds(new Pose2d(2.5, 2.5, Math.toRadians(5)), toDeposit.end());
 
-            robot.startScoringGlobal(new Pose2d(toDeposit.end().getX() + 2, toDeposit.end().getY(), toDeposit.end().getHeading()), new Pose2d(24 * xSign,0),26.5, xSign * ySign); // 36
+            robot.startScoringGlobal(new Pose2d(toDeposit.end().getX() + (2.75*xSign), toDeposit.end().getY(), toDeposit.end().getHeading()), new Pose2d(24 * xSign,0),26.1, xSign * ySign); // 36
             robot.followTrajectorySequence(toDeposit, this);
             while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
                 robot.update();
@@ -192,6 +192,14 @@ public class Auto extends LinearOpMode {
         robot.drivetrain.setBreakFollowingThresholds(new Pose2d(0.5, 0.5, Math.toRadians(5)), park[parkingNum].end());
 
         robot.followTrajectory(park[parkingNum], this);
+
+        long clawStart = System.currentTimeMillis();
+        robot.claw.park();
+
+        while (System.currentTimeMillis() - clawStart <= 300) {
+            robot.claw.park();
+            robot.claw.update();
+        }
 
         Storage.autoEndPose = drive.getPoseEstimate();
         Storage.isBlue = true;
