@@ -12,14 +12,13 @@ import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequenc
 import org.firstinspires.ftc.teamcode.util.Storage;
 import org.firstinspires.ftc.teamcode.vision.OpenCVWrapper;
 
-// HEY HEY ! DON'T READ THIS CODE! ITS FOR EMERGENCY
-@Autonomous(group = "Test")
-public class ParkAuto_BlueBottom extends LinearOpMode {
-    public static int parkingNum = 0;
-    public static final boolean lr = true; // Left : true | Right : false
-    public static final boolean tb = false; // Top : true | Bottom : false
+// runOpMode isn't static. The constructor must be called.
+public class ParkAuto extends LinearOpMode {
+    private int parkingNum = 0;
+    protected boolean lr = true; // Left : true | Right : false
+    protected boolean tb = false; // Top : true | Bottom : false
 
-    OpenCVWrapper openCVWrapper;
+    private OpenCVWrapper openCVWrapper;
 
     @Override
     public void runOpMode() throws InterruptedException {

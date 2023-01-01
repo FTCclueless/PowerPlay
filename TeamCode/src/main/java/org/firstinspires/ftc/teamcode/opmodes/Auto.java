@@ -27,19 +27,16 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@Autonomous(group = "Test")
 public class Auto extends LinearOpMode {
-    public static final int cycles = 5;
-    public static int parkingNum = 0;
-    public static final boolean lr = true; // Left : true | Right : false
-    public static final boolean tb = true; // Top : true | Bottom : false
-    //public static final double cycleBack = 6; // Once robot gets to cycle position how much it moves backwards
-    //public static final double cycleY = 48; // Turning can give an offset (+ cone location)
+    public final int cycles = 5;
+    public int parkingNum = 0;
+    public boolean lr = true; // Left : true | Right : false
+    public boolean tb = true; // Top : true | Bottom : false
 
-    OpenCVWrapper openCVWrapper;
+    public OpenCVWrapper openCVWrapper;
 
-    double[] coneStackHeights = new double[]{5.0, 4.0, 2.6, 1.435, 0.0};
-    ButtonToggle toggleA = new ButtonToggle();
+    public double[] coneStackHeights = new double[]{5.0, 4.0, 2.6, 1.435, 0.0};
+    public ButtonToggle toggleA = new ButtonToggle();
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -48,67 +45,65 @@ public class Auto extends LinearOpMode {
         Storage.isTeleop = false;
 
         openCVWrapper = new OpenCVWrapper(telemetry, hardwareMap, true);
-        assert(openCVWrapper != null);
+        assert (openCVWrapper != null);
 
         // Signs
         int xSign = tb ? 1 : -1;
         int ySign = lr ? 1 : -1;
 
         Pose2d origin = new Pose2d(
-                36 * xSign,
-                60 * ySign,
-                Math.PI / 2 * (!lr ? -1 : 1)
+            36 * xSign,
+            60 * ySign,
+            Math.PI / 2 * ySign
         );
 
         drive.setPoseEstimate(origin);
 
         Pose2d intakePose = new Pose2d(
-                49.5 * xSign,
-                13.5 * ySign,
-                tb ? Math.PI : 0
+            49.5 * xSign,
+            13.5 * ySign,
+            tb ? Math.PI : 0
         );
 
         Pose2d depositPose = new Pose2d(
-                38 * xSign,
-                13.5 * ySign,
-                tb ? Math.PI : 0
+            38 * xSign,
+            13.5 * ySign,
+            tb ? Math.PI : 0
         );
 
         drive.setPoseEstimate(origin); // FIXME is this needed?
         TrajectorySequence to = drive.trajectorySequenceBuilder(origin)
-                // Move forward extra in order to bump away the signal cone
-                .strafeTo(new Vector2d(origin.getX(), origin.getY() - (54 * ySign)))
-                .addDisplacementMarker(12, () -> {
-                    robot.ySign = xSign * ySign;
-                    robot.currentState = Robot.STATE.SCORING_GLOBAL;
-                    robot.startScoringGlobal(new Pose2d(depositPose.getX() + (5 * xSign), depositPose.getY(), depositPose.getHeading()), new Pose2d(28.8 * xSign,0.25 * ySign),27.7, xSign * ySign); // 36
-                })
-                .lineToLinearHeading(new Pose2d(depositPose.getX() + (5 * xSign), depositPose.getY(), depositPose.getHeading()))
-                .build();
+            // Move forward extra in order to bump away the signal cone
+            .strafeTo(new Vector2d(origin.getX(), origin.getY() - (54 * ySign)))
+            .addDisplacementMarker(12, () -> {
+                robot.ySign = xSign * ySign;
+                robot.currentState = Robot.STATE.SCORING_GLOBAL;
+                robot.startScoringGlobal(new Pose2d(depositPose.getX() + (5 * xSign), depositPose.getY(), depositPose.getHeading()), new Pose2d(28.8 * xSign, 0.25 * ySign), 27.7, xSign * ySign); // 36
+            })
+            .lineToLinearHeading(new Pose2d(depositPose.getX() + (5 * xSign), depositPose.getY(), depositPose.getHeading()))
+            .build();
 
-        // TODO talk to hudson about this weird heading stuff
         TrajectorySequence toDeposit = drive.trajectorySequenceBuilder(new Pose2d(intakePose.getX() - (3 * xSign), intakePose.getY(), intakePose.getHeading()))
-                .lineToConstantHeading(new Vector2d(depositPose.getX(), depositPose.getY()))
-                .build();
+            .lineToConstantHeading(new Vector2d(depositPose.getX(), depositPose.getY()))
+            .build();
 
         TrajectorySequence toIntake = drive.trajectorySequenceBuilder(new Pose2d(depositPose.getX() + (2 * xSign), depositPose.getY(), depositPose.getHeading()))
-                .lineToConstantHeading(new Vector2d(intakePose.getX(), intakePose.getY()))
-                .build();
+            .lineToConstantHeading(new Vector2d(intakePose.getX(), intakePose.getY()))
+            .build();
 
-        // TODO clean this up a little? Kinda lookin a little bad
         Trajectory[] park = new Trajectory[]{
-                drive.trajectoryBuilder(toDeposit.end()).strafeTo(new Vector2d(
-                        origin.getX() + (23.5 + (tb ? 0 : 1.5)),
-                        depositPose.getY()
-                )).build(),
-                drive.trajectoryBuilder(toDeposit.end()).strafeTo(new Vector2d(
-                        origin.getX() - (2.000001 * ySign),
-                        depositPose.getY()
-                )).build(),
-                drive.trajectoryBuilder(toDeposit.end()).strafeTo(new Vector2d(
-                        origin.getX() - (27),
-                        depositPose.getY()
-                )).build()
+            drive.trajectoryBuilder(toDeposit.end()).strafeTo(new Vector2d(
+                origin.getX() + (23.5 + (tb ? 0 : 1.5)),
+                depositPose.getY()
+            )).build(),
+            drive.trajectoryBuilder(toDeposit.end()).strafeTo(new Vector2d(
+                origin.getX() - (2.000001 * ySign),
+                depositPose.getY()
+            )).build(),
+            drive.trajectoryBuilder(toDeposit.end()).strafeTo(new Vector2d(
+                origin.getX() - (27),
+                depositPose.getY()
+            )).build()
         };
 
         robot.resetEncoders();
@@ -158,7 +153,7 @@ public class Auto extends LinearOpMode {
 
         robot.followTrajectorySequence(to, this);
 
-        robot.startScoringGlobal(new Pose2d(toDeposit.end().getX() + (2.75*xSign), toDeposit.end().getY(), toDeposit.end().getHeading()), new Pose2d(24 * xSign,0),26, xSign * ySign); // 36
+        robot.startScoringGlobal(new Pose2d(toDeposit.end().getX() + (2.75 * xSign), toDeposit.end().getY(), toDeposit.end().getHeading()), new Pose2d(24 * xSign, 0), 26, xSign * ySign); // 36
         while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
             robot.update();
         }
@@ -167,11 +162,10 @@ public class Auto extends LinearOpMode {
             robot.drivetrain.setBreakFollowingThresholds(new Pose2d(2.5, 2.5, Math.toRadians(5)), toIntake.end());
 
             robot.currentState = INTAKE_GLOBAL;
-            // TODO verify the x and y sign on this. It should not be like this
             robot.startIntakeGlobal(
-                    toIntake.end(),
-                    new Pose2d(70 * xSign,12 * ySign),
-                    coneStackHeights[i]
+                toIntake.end(),
+                new Pose2d(70 * xSign, 12 * ySign),
+                coneStackHeights[i]
             );
 
             robot.followTrajectorySequence(toIntake, this);
@@ -182,13 +176,13 @@ public class Auto extends LinearOpMode {
 
             robot.drivetrain.setBreakFollowingThresholds(new Pose2d(2.5, 2.5, Math.toRadians(5)), toDeposit.end());
 
-            robot.startScoringGlobal(new Pose2d(toDeposit.end().getX() + (2.75*xSign), toDeposit.end().getY(), toDeposit.end().getHeading()), new Pose2d(24 * xSign,0),26.1, xSign * ySign); // 36
+            robot.startScoringGlobal(new Pose2d(toDeposit.end().getX() + (2.75 * xSign), toDeposit.end().getY(), toDeposit.end().getHeading()), new Pose2d(24 * xSign, 0), 26.1, xSign * ySign); // 36
             robot.followTrajectorySequence(toDeposit, this);
             while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
                 robot.update();
             }
         }
-        // FIXME this could be a little bit stricter
+
         robot.drivetrain.setBreakFollowingThresholds(new Pose2d(0.5, 0.5, Math.toRadians(5)), park[parkingNum].end());
 
         robot.followTrajectory(park[parkingNum], this);

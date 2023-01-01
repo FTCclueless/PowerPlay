@@ -263,7 +263,7 @@ public class Robot {
                 }
                 break;
             case DEPOSIT:
-                double t1 = 300;
+                double t1 = 500;
                 outtake.slides.slidesPercentMax = 1.0;
 
                 claw.open();
