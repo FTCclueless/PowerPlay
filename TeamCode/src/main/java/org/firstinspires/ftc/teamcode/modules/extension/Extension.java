@@ -35,9 +35,8 @@ public class Extension {
         this.outtake = outtake;
         this.actuation = actuation;
 
-//        extension = new MyServo(hardwareMap.servo.get("extension"),"Torque",1.0, 0.1189,0.737, 0.1189);
-
-        extension = new MyServo(hardwareMap.servo.get("extension"),"Torque",1.0, 0.1,0.728, 0.1);
+        extension = new MyServo(hardwareMap.servo.get("extension"),"Torque",1.0, 0.1189,0.737, 0.1189);
+//        extension = new MyServo(hardwareMap.servo.get("extension"),"Torque",1.0, 0.1,0.728, 0.1);
 
         servos.add(1, extension);
     }
