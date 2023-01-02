@@ -159,6 +159,7 @@ public class Robot {
                 if (isAtPoint && (outtake.isInPositionGlobal(drivePose, conePose, 1.5) || hasGrabbed)) {
                     Log.e("close claw", "");
                     hasGrabbed = true;
+                    outtake.setTargetGlobal(drivePose, conePose, coneHeight);
                     claw.close();
                 }
                 else {
@@ -171,8 +172,8 @@ public class Robot {
                     Log.e("here", "");
                     claw.close();
                     hasGrabbed = true;
-                    outtake.slides.setTargetSlidesLength(coneHeight + 8);
-                    if(sensors.clawTouch || outtake.slides.isInPosition(3)) { // needs an external claw.close()
+                    outtake.setTargetGlobal(drivePose, conePose, coneHeight + 8);
+                    if(System.currentTimeMillis() - startClawCloseTime > 800) { // needs an external claw.close()
                         Log.e("here2", "");
                         isAtPoint = false;
                         hasGrabbed = false;
@@ -265,6 +266,10 @@ public class Robot {
             case DEPOSIT:
                 double t1 = 300;
                 outtake.slides.slidesPercentMax = 1.0;
+
+                if (!Storage.isTeleop) {
+                    outtake.setTargetGlobal(drivePose, polePose, poleHeight);
+                }
 
                 claw.open();
                 if (System.currentTimeMillis() - timeSinceClawOpen >= t1) {

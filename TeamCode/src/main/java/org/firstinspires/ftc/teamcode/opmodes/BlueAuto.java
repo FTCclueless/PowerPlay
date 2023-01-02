@@ -28,7 +28,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 
 @Autonomous(group = "Test")
-public class Auto extends LinearOpMode {
+public class BlueAuto extends LinearOpMode {
     public static final int cycles = 5;
     public static int parkingNum = 0;
     public static final boolean lr = true; // Left : true | Right : false
@@ -36,7 +36,7 @@ public class Auto extends LinearOpMode {
     //public static final double cycleBack = 6; // Once robot gets to cycle position how much it moves backwards
     //public static final double cycleY = 48; // Turning can give an offset (+ cone location)
 
-    OpenCVWrapper openCVWrapper;
+//    OpenCVWrapper openCVWrapper;
 
     double[] coneStackHeights = new double[]{5.0, 4.0, 2.6, 1.435, 0.0};
     ButtonToggle toggleA = new ButtonToggle();
@@ -47,8 +47,8 @@ public class Auto extends LinearOpMode {
         Drivetrain drive = robot.drivetrain;
         Storage.isTeleop = false;
 
-        openCVWrapper = new OpenCVWrapper(telemetry, hardwareMap, true);
-        assert(openCVWrapper != null);
+//        openCVWrapper = new OpenCVWrapper(telemetry, hardwareMap, true);
+//        assert(openCVWrapper != null);
 
         // Signs
         int xSign = tb ? 1 : -1;
@@ -81,7 +81,7 @@ public class Auto extends LinearOpMode {
                 .addDisplacementMarker(12, () -> {
                     robot.ySign = xSign * ySign;
                     robot.currentState = Robot.STATE.SCORING_GLOBAL;
-                    robot.startScoringGlobal(new Pose2d(depositPose.getX() + (5 * xSign), depositPose.getY(), depositPose.getHeading()), new Pose2d(28.8 * xSign,0.25 * ySign),27.7, xSign * ySign); // 36
+                    robot.startScoringGlobal(new Pose2d(depositPose.getX() + (5 * xSign), depositPose.getY(), depositPose.getHeading()), new Pose2d(24 * xSign,-1 * ySign),27.7, xSign * ySign); // 36
                 })
                 .lineToLinearHeading(new Pose2d(depositPose.getX() + (5 * xSign), depositPose.getY(), depositPose.getHeading()))
                 .build();
@@ -102,7 +102,7 @@ public class Auto extends LinearOpMode {
                         depositPose.getY()
                 )).build(),
                 drive.trajectoryBuilder(toDeposit.end()).strafeTo(new Vector2d(
-                        origin.getX() - (2.000001 * ySign),
+                        origin.getX() - (2.01 * ySign),
                         depositPose.getY()
                 )).build(),
                 drive.trajectoryBuilder(toDeposit.end()).strafeTo(new Vector2d(
@@ -114,8 +114,8 @@ public class Auto extends LinearOpMode {
         robot.resetEncoders();
         robot.claw.open();
 
-        openCVWrapper.init();
-        openCVWrapper.start();
+//        openCVWrapper.init();
+//        openCVWrapper.start();
 
         Log.e("camera setup", "");
 
@@ -129,7 +129,7 @@ public class Auto extends LinearOpMode {
 
             boolean detected = false;
 
-            parkingNum = openCVWrapper.getParkingNum();
+//            parkingNum = openCVWrapper.getParkingNum();
             detected = true;  //should we always set to true ??? It is only used to send telemetry anyways
 
             if (toggleA.isClicked(gamepad1.a)) {
@@ -150,7 +150,7 @@ public class Auto extends LinearOpMode {
         drive.setPoseEstimate(origin);
         waitForStart();
 
-        openCVWrapper.stop();
+//        openCVWrapper.stop();
 
         // preload
 
@@ -158,7 +158,7 @@ public class Auto extends LinearOpMode {
 
         robot.followTrajectorySequence(to, this);
 
-        robot.startScoringGlobal(to.end(), new Pose2d(24 * xSign,0 * ySign),26, xSign * ySign); // 36
+        robot.startScoringGlobal(to.end(), new Pose2d(24 * xSign,0 * ySign),27.5, xSign * ySign); // 36
         while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
             robot.update();
         }
@@ -192,6 +192,14 @@ public class Auto extends LinearOpMode {
         robot.drivetrain.setBreakFollowingThresholds(new Pose2d(0.5, 0.5, Math.toRadians(5)), park[parkingNum].end());
 
         robot.followTrajectory(park[parkingNum], this);
+
+        long clawStart = System.currentTimeMillis();
+        robot.claw.park();
+
+        while (System.currentTimeMillis() - clawStart <= 300) {
+            robot.claw.park();
+            robot.claw.update();
+        }
 
         Storage.autoEndPose = drive.getPoseEstimate();
         Storage.isBlue = true;

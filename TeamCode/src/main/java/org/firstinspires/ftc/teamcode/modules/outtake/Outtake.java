@@ -103,7 +103,7 @@ public class Outtake {
             }
         }
 
-        if (turret.isInPosition(45, targetTurretAngle) && slides.isInPosition(4, targetSlidesLength)) {
+        if (turret.isInPosition(45, targetTurretAngle) && slides.isInPosition(5.5, targetSlidesLength)) {
             extension.setTargetExtensionLength(targetExtensionLength);
         } else {
             extension.retractExtension();
@@ -277,7 +277,7 @@ public class Outtake {
     public boolean isInPositionGlobal(Pose2d robotPose, Pose2d targetPose, double threshold) {
         Pose2d globalCoords = findGlobalCoordinates(robotPose, x,y);
 
-        if ((Math.abs(globalCoords.getX() - targetPose.getX()) <= threshold) && (Math.abs(globalCoords.getY() - globalCoords.getY()) <= threshold) && (slides.isInPosition(threshold))) {
+        if ((Math.abs(globalCoords.getX() - targetPose.getX()) <= threshold) && (Math.abs(globalCoords.getY() - targetPose.getY()) <= threshold) && (slides.isInPosition(threshold))) {
             return true;
         } else {
             return false;

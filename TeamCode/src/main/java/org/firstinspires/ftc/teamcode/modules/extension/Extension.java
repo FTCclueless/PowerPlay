@@ -35,7 +35,7 @@ public class Extension {
         this.outtake = outtake;
         this.actuation = actuation;
 
-        extension = new MyServo(hardwareMap.servo.get("extension"),"Torque",1.0, 0.1189,0.737, 0.1189);
+        extension = new MyServo(hardwareMap.servo.get("extension"),"Amazon",1.0, 0.0,0.601, 0.601);
 
         servos.add(1, extension);
     }
@@ -51,7 +51,7 @@ public class Extension {
         updateExtensionValues();
         updateTelemetry();
 
-        extension.setAngle(targetExtensionAngle, extensionPower);
+        extension.setAngle(-targetExtensionAngle, extensionPower);
     }
 
     public double strokeLength = 13.5826845;
