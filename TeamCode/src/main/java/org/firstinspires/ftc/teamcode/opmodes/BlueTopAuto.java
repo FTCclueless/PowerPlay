@@ -60,7 +60,7 @@ public class BlueTopAuto extends LinearOpMode {
         );
 
         Pose2d cyclePose = new Pose2d(
-            47,
+            45.5,
             12,
                 tb ? Math.toRadians(180) : Math.toRadians(0)
         );
