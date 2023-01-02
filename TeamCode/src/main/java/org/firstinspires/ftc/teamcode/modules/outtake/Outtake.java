@@ -86,35 +86,37 @@ public class Outtake {
         }
 
         extensionIn = (currentExtensionLength <= (extension.baseSlidesExtension + 3.5));
-        if(slides.targetSlidesLength <= 9 && isTurretGoThroughRange(120, 240)) {
-            extensionIn = (currentExtensionLength <= (extension.baseSlidesExtension + 5.5));
+        if(slides.targetSlidesLength <= 9 && (isTurretGoThroughRange(120, 180) || isTurretGoThroughRange(-180, -120))) {
+            extensionIn = (currentExtensionLength <= (extension.baseSlidesExtension + 8.2));
         }
 
         // if we are going to ram into drivetrain or extension is out and the turret is within 9
-        if (!(turretClips && currentSlidesLength <= 9) && (extensionIn || turret.isInPosition(45, targetTurretAngle))) {
+        if (!(turretClips && currentSlidesLength <= 9) && (extensionIn || turret.isInPosition(15, targetTurretAngle))) {
             turret.setTargetTurretAngle(targetTurretAngle);
         }
 
         if (turretClips && targetSlidesLength <= 9 && extensionIn) {
             slides.setTargetSlidesLength(12);
         } else {
-            if(extensionIn || slides.isInPosition(4, targetSlidesLength)) {
+            if(extensionIn || slides.isInPosition(6.2, targetSlidesLength)) {
                 slides.setTargetSlidesLength(targetSlidesLength);
             }
         }
-
-        if (turret.isInPosition(45, targetTurretAngle) && slides.isInPosition(5.5, targetSlidesLength)) {
-            extension.setTargetExtensionLength(targetExtensionLength);
+        double targetExtent = 0;
+        if (turret.isInPosition(15, targetTurretAngle) && slides.isInPosition(6.2, targetSlidesLength)) {
+            targetExtent = targetExtensionLength;
         } else {
-            extension.retractExtension();
-            if (slides.targetSlidesLength <= 9 && isTurretGoThroughRange(120, 240)) {
-                extension.setTargetExtensionLength(extension.baseSlidesExtension + 5);
+            targetExtent = extension.baseSlidesExtension;
+            if (slides.targetSlidesLength <= 9 && (isTurretGoThroughRange(120, 180) || isTurretGoThroughRange(-180, -120))) {
+                Log.e("prevent hitting self", "ok");
+                targetExtent = extension.baseSlidesExtension + 8;
             }
         }
 
         if(!actuation.isLevel()) {
-            extension.setTargetExtensionLength(extension.targetExtensionLength-extension.actuationTiltDistance);
+            targetExtent -= extension.actuationTiltDistance;
         }
+        extension.setTargetExtensionLength(targetExtent);
 
 
 //        else {
@@ -215,7 +217,8 @@ public class Outtake {
         targetHeight = Math.max(0, Math.min(targetZ, 39.08666));
 
         if (!actuation.isLevel()) {
-            targetExtension = Math.min(extension.baseSlidesExtension + extension.strokeLength + extension.actuationTiltDistance, Math.max(extension.baseSlidesExtension, Math.sqrt(Math.pow((targetX),2) + Math.pow((targetY),2))));
+            Log.e("wkefjlwjefwe", "wefwefweflkwenlknwelkg");
+            targetExtension = Math.min(extension.baseSlidesExtension + extension.strokeLength + extension.actuationTiltDistance-0.1, Math.max(extension.baseSlidesExtension, Math.sqrt(Math.pow((targetX),2) + Math.pow((targetY),2))));
         } else {
             targetExtension = Math.min(extension.baseSlidesExtension + extension.strokeLength, Math.max(extension.baseSlidesExtension, Math.sqrt(Math.pow((targetX),2) + Math.pow((targetY),2))));
         }

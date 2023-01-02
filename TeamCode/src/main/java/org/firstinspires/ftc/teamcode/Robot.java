@@ -62,7 +62,7 @@ public class Robot {
 
     public boolean isRelative = false;
 
-    boolean startIntakeRelative = false;
+    public boolean startIntakeRelative = false;
     boolean startIntakeGlobal = false;
 
     boolean startScoringRelative = false;
@@ -149,7 +149,6 @@ public class Robot {
                     drivePose = drivetrain.getPoseEstimate();
                     isAtPoint = true;
                 }
-                outtake.setTargetGlobal(drivePose, conePose, coneHeight);
 
                 // TODO: Add in external claw.close when the outtake global pose is near the cone pose
 
@@ -159,7 +158,6 @@ public class Robot {
                 if (isAtPoint && (outtake.isInPositionGlobal(drivePose, conePose, 1.5) || hasGrabbed)) {
                     Log.e("close claw", "");
                     hasGrabbed = true;
-                    outtake.setTargetGlobal(drivePose, conePose, coneHeight);
                     claw.close();
                 }
                 else {
@@ -172,13 +170,17 @@ public class Robot {
                     Log.e("here", "");
                     claw.close();
                     hasGrabbed = true;
-                    outtake.setTargetGlobal(drivePose, conePose, coneHeight + 8);
-                    if(System.currentTimeMillis() - startClawCloseTime > 800) { // needs an external claw.close()
+                    actuation.tilt();
+                    outtake.setTargetGlobal(drivePose, conePose, coneHeight + 6);
+                    if(outtake.slides.isInPosition(3)) { // needs an external claw.close()
                         Log.e("here2", "");
                         isAtPoint = false;
                         hasGrabbed = false;
                         currentState = STATE.SCORING_GLOBAL;
                     }
+                }
+                else{
+                    outtake.setTargetGlobal(drivePose, conePose, coneHeight);
                 }
                 break;
             case WAIT_FOR_START_SCORING:
@@ -238,6 +240,8 @@ public class Robot {
                 break;
             case SCORING_GLOBAL:
                 outtake.slides.slidesPercentMax = 1.0;
+                globalArmPos = outtake.getGlobalArmPose(drivetrainPoseEstimate);
+                nearestPole = field.getNearestPole(drivetrainPoseEstimate, globalArmPos, scoringLevel);
 
                 // checks to see if the drivetrain is near the final scoring pose and if it is then give it it's actual drive pose
                 if (Math.abs(drivetrain.getPoseEstimate().getX() - drivePose.getX()) <= 4 && Math.abs(drivetrain.getPoseEstimate().getY() - drivePose.getY()) <= 4) {
@@ -396,13 +400,10 @@ public class Robot {
         }
     }
 
-    public int ySign = 1;
-
-    public void startScoringGlobal (Pose2d drivePose, Pose2d polePose, double poleHeight, int ySign) {
+    public void startScoringGlobal (Pose2d drivePose, Pose2d polePose, double poleHeight) {
         this.drivePose = drivePose;
         this.polePose = polePose;
         this.poleHeight = poleHeight;
-        this.ySign = ySign;
 
         startScoringGlobal = true;
     }

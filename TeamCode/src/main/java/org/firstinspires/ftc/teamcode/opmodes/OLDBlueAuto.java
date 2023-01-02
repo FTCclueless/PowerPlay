@@ -10,6 +10,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -27,8 +28,9 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
+@Disabled
 @Autonomous(group = "Test")
-public class BlueAuto extends LinearOpMode {
+public class OLDBlueAuto extends LinearOpMode {
     public static final int cycles = 5;
     public static int parkingNum = 0;
     public static final boolean lr = true; // Left : true | Right : false
@@ -36,7 +38,7 @@ public class BlueAuto extends LinearOpMode {
     //public static final double cycleBack = 6; // Once robot gets to cycle position how much it moves backwards
     //public static final double cycleY = 48; // Turning can give an offset (+ cone location)
 
-//    OpenCVWrapper openCVWrapper;
+    OpenCVWrapper openCVWrapper;
 
     double[] coneStackHeights = new double[]{5.0, 4.0, 2.6, 1.435, 0.0};
     ButtonToggle toggleA = new ButtonToggle();
@@ -47,8 +49,8 @@ public class BlueAuto extends LinearOpMode {
         Drivetrain drive = robot.drivetrain;
         Storage.isTeleop = false;
 
-//        openCVWrapper = new OpenCVWrapper(telemetry, hardwareMap, true);
-//        assert(openCVWrapper != null);
+        openCVWrapper = new OpenCVWrapper(telemetry, hardwareMap, true);
+        assert(openCVWrapper != null);
 
         // Signs
         int xSign = tb ? 1 : -1;
@@ -57,7 +59,7 @@ public class BlueAuto extends LinearOpMode {
         Pose2d origin = new Pose2d(
                 36 * xSign,
                 60 * ySign,
-                Math.PI / 2 * (!lr ? -1 : 1)
+                lr ? Math.PI/2 : -Math.PI/2
         );
 
         drive.setPoseEstimate(origin);
@@ -79,9 +81,8 @@ public class BlueAuto extends LinearOpMode {
                 // Move forward extra in order to bump away the signal cone
                 .strafeTo(new Vector2d(origin.getX(), origin.getY() - (54 * ySign)))
                 .addDisplacementMarker(12, () -> {
-                    robot.ySign = xSign * ySign;
                     robot.currentState = Robot.STATE.SCORING_GLOBAL;
-                    robot.startScoringGlobal(new Pose2d(depositPose.getX() + (5 * xSign), depositPose.getY(), depositPose.getHeading()), new Pose2d(24 * xSign,-1 * ySign),27.7, xSign * ySign); // 36
+                    robot.startScoringGlobal(new Pose2d(depositPose.getX() + (5 * xSign), depositPose.getY(), depositPose.getHeading()), new Pose2d(24 * xSign,0 * ySign),27.7); // 36
                 })
                 .lineToLinearHeading(new Pose2d(depositPose.getX() + (5 * xSign), depositPose.getY(), depositPose.getHeading()))
                 .build();
@@ -114,8 +115,8 @@ public class BlueAuto extends LinearOpMode {
         robot.resetEncoders();
         robot.claw.open();
 
-//        openCVWrapper.init();
-//        openCVWrapper.start();
+        openCVWrapper.init();
+        openCVWrapper.start();
 
         Log.e("camera setup", "");
 
@@ -129,8 +130,8 @@ public class BlueAuto extends LinearOpMode {
 
             boolean detected = false;
 
-//            parkingNum = openCVWrapper.getParkingNum();
-            detected = true;  //should we always set to true ??? It is only used to send telemetry anyways
+            parkingNum = openCVWrapper.getParkingNum();
+            detected = true;
 
             if (toggleA.isClicked(gamepad1.a)) {
                 robot.claw.close();
@@ -150,7 +151,7 @@ public class BlueAuto extends LinearOpMode {
         drive.setPoseEstimate(origin);
         waitForStart();
 
-//        openCVWrapper.stop();
+        openCVWrapper.stop();
 
         // preload
 
@@ -158,7 +159,7 @@ public class BlueAuto extends LinearOpMode {
 
         robot.followTrajectorySequence(to, this);
 
-        robot.startScoringGlobal(to.end(), new Pose2d(24 * xSign,0 * ySign),27.5, xSign * ySign); // 36
+        robot.startScoringGlobal(to.end(), new Pose2d(24 * xSign,0 * ySign),27.5); // 36
         while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
             robot.update();
         }
@@ -182,7 +183,7 @@ public class BlueAuto extends LinearOpMode {
 
             robot.drivetrain.setBreakFollowingThresholds(new Pose2d(2.5, 2.5, Math.toRadians(5)), toDeposit.end());
 
-            robot.startScoringGlobal(new Pose2d(toDeposit.end().getX() + 2, toDeposit.end().getY(), toDeposit.end().getHeading()), new Pose2d(24 * xSign,0),26.5, xSign * ySign); // 36
+            robot.startScoringGlobal(new Pose2d(toDeposit.end().getX() + 2, toDeposit.end().getY(), toDeposit.end().getHeading()), new Pose2d(24 * xSign,0),26.5); // 36
             robot.followTrajectorySequence(toDeposit, this);
             while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
                 robot.update();
