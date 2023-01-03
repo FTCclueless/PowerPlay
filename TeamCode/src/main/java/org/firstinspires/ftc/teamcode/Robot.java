@@ -150,7 +150,7 @@ public class Robot {
                     isAtPoint = true;
                 }
 
-                if (isAtPoint && (outtake.isInPositionGlobal(drivePose, conePose, 2) || hasGrabbed)) {
+                if (isAtPoint && (outtake.isInPositionGlobal(drivePose, conePose, 1.5) || hasGrabbed)) {
                     hasGrabbed = true;
                     claw.close();
                 }
@@ -250,7 +250,7 @@ public class Robot {
                     outtake.extension.retractExtension();
                 }
 
-                if (isAtPoint && (outtake.isInPositionGlobal(drivePose, polePose,1.0))) {
+                if (isAtPoint && (outtake.isInPositionGlobal(drivePose, polePose,1.5))) {
                     timeSinceClawOpen = System.currentTimeMillis();
                     isAtPoint = false;
                     currentState = STATE.DEPOSIT;

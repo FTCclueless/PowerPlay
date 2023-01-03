@@ -149,7 +149,7 @@ public class BlueTopAuto extends LinearOpMode {
             robot.startIntakeGlobal(
                     to.end(),
                     new Pose2d(70 * xSign,12 * ySign),
-                    coneStackHeights[i]
+                    coneStackHeights[i]+0.25
             );
 
             while (robot.currentState == INTAKE_GLOBAL) {

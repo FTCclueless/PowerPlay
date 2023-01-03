@@ -37,6 +37,7 @@ import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
 import org.firstinspires.ftc.teamcode.util.MotorPriority;
 import org.firstinspires.ftc.teamcode.util.PID;
 import org.firstinspires.ftc.teamcode.util.Storage;
+import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -271,6 +272,13 @@ public class Drivetrain extends MecanumDrive {
         double xError = deltaX * Math.cos(robotPose.getHeading()) + deltaY * Math.sin(robotPose.getHeading());
         double yError = deltaY * Math.cos(robotPose.getHeading()) - deltaX * Math.sin(robotPose.getHeading());
         double headingError = targetPose.getHeading() - robotPose.getHeading();
+        while(Math.abs(headingError) > Math.PI ){
+            headingError -= Math.PI * 2 * Math.signum(headingError);
+        }
+//        double headingError = robotPose.getHeading() - targetPose.getHeading();
+        TelemetryUtil.packet.put("targetHeading: ", targetPose.getHeading());
+        TelemetryUtil.packet.put("robotHeading: ", robotPose.getHeading());
+        TelemetryUtil.packet.put("headingError: ", headingError);
 
         double forward = xPID.update(xError);
         double left = yPID.update(yError);

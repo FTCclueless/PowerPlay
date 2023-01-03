@@ -46,7 +46,7 @@ public class RedTopAuto extends LinearOpMode {
 
         Pose2d origin = new Pose2d(
                 36 * xSign,
-                60 * ySign,
+                63 * ySign,
                 lr ? Math.toRadians(90) : Math.toRadians(-90)
         );
 
@@ -57,8 +57,8 @@ public class RedTopAuto extends LinearOpMode {
         );
 
         Pose2d cyclePose = new Pose2d(
-                46 * xSign,
-                12 * ySign,
+                47.5 * xSign,
+                13 * ySign,
                 tb ? Math.toRadians(180) : Math.toRadians(0)
         );
 
@@ -82,11 +82,11 @@ public class RedTopAuto extends LinearOpMode {
                         cyclePose.getY()
                 )).build(),
                 drive.trajectoryBuilder(cyclePose).strafeTo(new Vector2d( // parking position 2
-                        34 * xSign,
+                        36 * xSign,
                         cyclePose.getY()
                 )).build(),
                 drive.trajectoryBuilder(cyclePose).strafeTo(new Vector2d( // parking position 3
-                        9 * xSign,
+                        12 * xSign,
                         cyclePose.getY()
                 )).build()
         };
@@ -145,7 +145,7 @@ public class RedTopAuto extends LinearOpMode {
             // TODO verify the x and y sign on this. It should not be like this
             robot.startIntakeGlobal(
                     to.end(),
-                    new Pose2d(70 * xSign,12 * ySign),
+                    new Pose2d(71 * xSign,12 * ySign),
                     coneStackHeights[i]
             );
 
