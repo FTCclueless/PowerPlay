@@ -30,6 +30,8 @@ public class Extension {
 
     public double actuationTiltDistance = 2.5;
 
+    public double momentOfInertiaConstant = 0.1;
+
     public Extension (HardwareMap hardwareMap, ArrayList<MyServo> servos, Outtake outtake, Actuation actuation) {
         this.servos = servos;
         this.outtake = outtake;
@@ -52,6 +54,8 @@ public class Extension {
         updateTelemetry();
 
         extension.setAngle(-targetExtensionAngle, extensionPower);
+
+
     }
 
     public double strokeLength = 13.5826845;

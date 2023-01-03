@@ -81,10 +81,6 @@ public class Outtake {
 
         turretClips = isTurretGoThroughBad();
 
-        if (turretClips) {
-            Log.e("TURRET CLIPS", "");
-        }
-
         extensionIn = (currentExtensionLength <= (extension.baseSlidesExtension + 3.5));
         if(slides.targetSlidesLength <= 9 && (isTurretGoThroughRange(120, 180) || isTurretGoThroughRange(-180, -120))) {
             extensionIn = (currentExtensionLength <= (extension.baseSlidesExtension + 8.2));
@@ -109,7 +105,11 @@ public class Outtake {
             targetExtent = extension.baseSlidesExtension;
             if (slides.targetSlidesLength <= 9 && (isTurretGoThroughRange(120, 180) || isTurretGoThroughRange(-180, -120))) {
                 Log.e("prevent hitting self", "ok");
-                targetExtent = extension.baseSlidesExtension + 8;
+                slides.setTargetSlidesLength(targetSlidesLength + 4);
+                targetExtent += 8;
+                if (extension.isInPosition(2)) {
+                    slides.setTargetSlidesLength(targetSlidesLength);
+                }
             }
         }
 
@@ -217,7 +217,6 @@ public class Outtake {
         targetHeight = Math.max(0, Math.min(targetZ, 39.08666));
 
         if (!actuation.isLevel()) {
-            Log.e("wkefjlwjefwe", "wefwefweflkwenlknwelkg");
             targetExtension = Math.min(extension.baseSlidesExtension + extension.strokeLength + extension.actuationTiltDistance-0.1, Math.max(extension.baseSlidesExtension, Math.sqrt(Math.pow((targetX),2) + Math.pow((targetY),2))));
         } else {
             targetExtension = Math.min(extension.baseSlidesExtension + extension.strokeLength, Math.max(extension.baseSlidesExtension, Math.sqrt(Math.pow((targetX),2) + Math.pow((targetY),2))));
@@ -227,9 +226,7 @@ public class Outtake {
         targetExtensionLength = targetExtension;
         targetSlidesLength = Math.max(0, targetHeight);
 
-        Log.e("targetTurretAngle", targetTurretAngle + "");
         Log.e("targetExtensionLength", targetExtensionLength + "");
-        Log.e("targetSlidesLength", targetSlidesLength + "");
 
 //        if (isIntersectingRobot(targetX, targetY, targetZ)) { // checks if the target position is a valid position
 //            targetExtensionLength = currentExtensionLength;

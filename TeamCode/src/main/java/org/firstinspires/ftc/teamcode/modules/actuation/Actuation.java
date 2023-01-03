@@ -15,8 +15,9 @@ public class Actuation {
     MyServo act;
     ArrayList<MyServo> servos;
 
-    double levelPosition = 0.41499;
+    double levelPosition = 0.43;
     double tiltedPosition = 0.2689;
+    double downTiltPosition = 0.479;
     double initPosition = 0.033;
 
     public Actuation(HardwareMap hardwareMap, ArrayList<MyServo> servos) {
@@ -62,6 +63,11 @@ public class Actuation {
     public void tilt() {
         targetActPosition = tiltedPosition;
     }
+
+    public void downTilt() {
+        targetActPosition = downTiltPosition;
+    }
+
 
     public void init() {
         targetActPosition = initPosition;

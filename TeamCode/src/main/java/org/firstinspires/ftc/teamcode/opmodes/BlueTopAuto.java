@@ -32,7 +32,7 @@ public class BlueTopAuto extends LinearOpMode {
 
 //    OpenCVWrapper openCVWrapper;
 
-    double[] coneStackHeights = new double[]{4.15, 3.3, 2.25, 1.1, 0.0};
+    double[] coneStackHeights = new double[]{4.15, 3.3, 2.25, 0.5, -0.5};
     ButtonToggle toggleA = new ButtonToggle();
 
     @Override
@@ -60,18 +60,20 @@ public class BlueTopAuto extends LinearOpMode {
         );
 
         Pose2d cyclePose = new Pose2d(
-            45.5,
+            46,
             12,
                 tb ? Math.toRadians(180) : Math.toRadians(0)
         );
+
+        robot.stayInPlacePose = cyclePose;
 
         TrajectorySequence to = drive.trajectorySequenceBuilder(origin)
             .setReversed(true)
             .lineToConstantHeading(new Vector2d(toPose.getX(), toPose.getY()))
             .splineTo(new Vector2d(cyclePose.getX(), cyclePose.getY()), Math.toRadians(0))
-            .addDisplacementMarker(40, () -> {
+            .addDisplacementMarker(45, () -> {
                 robot.currentState = Robot.STATE.SCORING_GLOBAL;
-                robot.startScoringGlobal(new Pose2d(toPose.getX(), toPose.getY(), toPose.getHeading()), new Pose2d(24 * xSign,ySign),28); // 36
+                robot.startScoringGlobal(new Pose2d(toPose.getX(), toPose.getY(), toPose.getHeading()), new Pose2d(24 * xSign,0.5),27.7); // 36
             })
             .build();
 
@@ -135,6 +137,7 @@ public class BlueTopAuto extends LinearOpMode {
 //        openCVWrapper.stop();
 
         robot.followTrajectorySequence(to, this);
+        robot.updateStayInPlacePID = true;
 
         while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
             robot.update();
@@ -153,7 +156,7 @@ public class BlueTopAuto extends LinearOpMode {
                 robot.update();
             }
 
-            robot.startScoringGlobal(new Pose2d(to.end().getX() + 2, to.end().getY(), to.end().getHeading()), new Pose2d(24 * xSign,0),28); // 36
+            robot.startScoringGlobal(new Pose2d(to.end().getX(), to.end().getY(), to.end().getHeading()), new Pose2d(24 * xSign,0.5),27.7); // 36
             while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
                 robot.update();
             }
@@ -165,6 +168,8 @@ public class BlueTopAuto extends LinearOpMode {
         while (!robot.outtake.isInPosition()) {
             robot.update();
         }
+
+        robot.updateStayInPlacePID = false;
         robot.followTrajectory(park[parkingNum], this);
 
         long clawStart = System.currentTimeMillis();

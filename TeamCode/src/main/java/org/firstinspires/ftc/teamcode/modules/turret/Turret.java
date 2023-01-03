@@ -21,7 +21,7 @@ public class Turret {
 
     ArrayList<MotorPriority> motorPriorities;
 
-    public PID turretPID = new PID(4.0, 0.15,0.0);
+    public PID turretPID = new PID(4.0, 0.0,0.0);
 
     public double currentTurretAngle = 0.0;
     public double currentTurretVelocity = 0.0;
@@ -78,6 +78,8 @@ public class Turret {
         }
 
         turretPower = turretPID.update(turretError);
+        turretPower *= (outtake.extension.currentExtensionLength - 10)/15 * 0.5 + 1;
+
         motorPriorities.get(4).setTargetPower(-turretPower);
 
         updateTelemetry();
