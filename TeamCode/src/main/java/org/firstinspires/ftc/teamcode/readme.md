@@ -1,7 +1,8 @@
 ## Wiring
 
 Config Name: RobotConfig
-Wi-fi Password: "ftc11212"
+Wi-fi Name: "11212-RC"
+Wi-fi Password: "CluelessFTC"
 IP Address: 192.168.43.1:5555
 
 ### Control Hub
@@ -21,9 +22,9 @@ Encoders
 Servos
 - Servo Port 0: 
 - Servo Port 1: 
-- Servo Port 2: claw
-- Servo Port 3: act
-- Servo Port 4: extension
+- Servo Port 2: extension
+- Servo Port 3: claw
+- Servo Port 4: act
 - Servo Port 5:
 
 Analog Sensors
@@ -45,8 +46,8 @@ I2C
 ### Expansion Hub 2
 
 Motors
-- Motor Port 0: turret
-- Motor Port 1: 
+- Motor Port 0: 
+- Motor Port 1: turret
 - Motor Port 2: slide1
 - Motor Port 3: slide2
 
@@ -82,3 +83,6 @@ I2C
 
 Webcams: 
 - Webcam 1
+
+### Random Notes
+

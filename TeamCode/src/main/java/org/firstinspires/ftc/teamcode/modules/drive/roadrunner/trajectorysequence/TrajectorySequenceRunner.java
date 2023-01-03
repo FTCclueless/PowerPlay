@@ -51,6 +51,9 @@ public class TrajectorySequenceRunner {
     private int currentSegmentIndex;
     private int lastSegmentIndex;
 
+    public Pose2d globalArmPose = new Pose2d(0,0);
+    public Pose2d nearestPole = new Pose2d(0,0);
+
     private Pose2d lastPoseError = new Pose2d();
 
     List<TrajectoryMarker> remainingMarkers = new ArrayList<>();
@@ -192,6 +195,11 @@ public class TrajectorySequenceRunner {
 //        TelemetryUtil.packet.put("xError", getLastPoseError().getX());
 //        TelemetryUtil.packet.put("yError", getLastPoseError().getY());
 //        TelemetryUtil.packet.put("headingError (deg)", Math.toDegrees(getLastPoseError().getHeading()));
+        fieldOverlay.setStroke("#F7F300");
+        fieldOverlay.fillCircle(nearestPole.getX(), nearestPole.getY(), 4);
+
+        fieldOverlay.setStroke("#0800F7");
+        fieldOverlay.fillCircle(globalArmPose.getX(), globalArmPose.getY(), 2);
 
         draw(fieldOverlay, currentTrajectorySequence, currentSegment, targetPose, poseEstimate);
 

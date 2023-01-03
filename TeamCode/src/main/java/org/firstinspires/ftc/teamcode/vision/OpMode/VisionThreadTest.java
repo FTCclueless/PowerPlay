@@ -5,6 +5,7 @@ import android.os.SystemClock;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -17,6 +18,8 @@ import org.firstinspires.ftc.teamcode.vision.TFODWrapper;
 import org.firstinspires.ftc.teamcode.vision.VisionThread;
 
 import java.util.List;
+
+@Disabled
 @Config
 @TeleOp(name = "VisionThreadTest", group = "Vision")
 public class VisionThreadTest extends LinearOpMode {

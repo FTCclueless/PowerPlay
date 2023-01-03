@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmodes.tuners;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -20,8 +21,8 @@ public class SlidesPIDTuner extends LinearOpMode {
 
     public double error = 0.0;
 
-    public static double p = 0.0;
-    public static double i = 0.0;
+    public static double p = 0.0275;
+    public static double i = 0.003;
     public static double d = 0.0;
 
     ButtonToggle a = new ButtonToggle();
@@ -30,7 +31,7 @@ public class SlidesPIDTuner extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         Robot robot = new Robot(hardwareMap);
         Slides slides = robot.outtake.slides;
-        Actuation actuation = robot.actuation;
+        Actuation actuation = robot.outtake.actuation;
         Extension extension = robot.outtake.extension;
 
         robot.testMode();

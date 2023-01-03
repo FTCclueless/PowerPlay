@@ -1,11 +1,8 @@
 package org.firstinspires.ftc.teamcode.modules.claw;
 
-import android.util.Log;
-
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.util.MyServo;
-import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
 import java.util.ArrayList;
 
@@ -16,12 +13,11 @@ public class Claw {
     public double targetClawPosition = 0.0;
     public double clawPower = 1.0;
 
-    public double intakePosition = 0.275;
-    public double closePosition = 0.0;
-    public double openPosition = 0.26499;
-    public double fullOpenPosition = 0.275;
+    public double closePosition = 0.1129;
+    public double openPosition = 0.30699;
+    public double parkPosition = 0.492;
 
-    public enum STATE {OPEN, INTAKE, CLOSED, FULL_OPEN}
+    public enum STATE {OPEN, CLOSED, PARK}
     public STATE currentState = STATE.OPEN;
 
     ArrayList<MyServo> servos;
@@ -29,7 +25,7 @@ public class Claw {
     public Claw(HardwareMap hardwareMap, ArrayList<MyServo> servos) {
         this.servos = servos;
 
-        claw = new MyServo(hardwareMap.servo.get("claw"),"Amazon",1,0,1);
+        claw = new MyServo(hardwareMap.servo.get("claw"),"Amazon",1,0.0,1.0, openPosition);
 
         servos.add(2, claw);
     }
@@ -41,14 +37,11 @@ public class Claw {
             case OPEN:
                 setTargetClawPosition(openPosition);
                 break;
-            case INTAKE:
-                setTargetClawPosition(intakePosition);
-                break;
             case CLOSED:
                 setTargetClawPosition(closePosition);
                 break;
-            case FULL_OPEN:
-                setTargetClawPosition(fullOpenPosition);
+            case PARK:
+                setTargetClawPosition(parkPosition);
                 break;
         }
 
@@ -75,12 +68,8 @@ public class Claw {
         currentState = STATE.CLOSED;
     }
 
-    public void intake() {
-        currentState = STATE.INTAKE;
-    }
-
-    public void fullOpen() {
-        currentState = STATE.FULL_OPEN;
+    public void park() {
+        currentState = STATE.PARK;
     }
 
     public boolean isOpen () {

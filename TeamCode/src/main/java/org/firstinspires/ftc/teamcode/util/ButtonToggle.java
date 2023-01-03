@@ -10,4 +10,5 @@ public class ButtonToggle {
         lastButton = button;
         return a;
     }
+
 }

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.modules.turret;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.modules.outtake.Outtake;
@@ -20,7 +21,7 @@ public class Turret {
 
     ArrayList<MotorPriority> motorPriorities;
 
-    public PID turretPID = new PID(6.0, 0.0,0.0);
+    public PID turretPID = new PID(4.0, 0.0,0.0);
 
     public double currentTurretAngle = 0.0;
     public double currentTurretVelocity = 0.0;
@@ -30,7 +31,7 @@ public class Turret {
     public double turretError = 0.0;
     public static double turretPercentMax = 0.98;
 
-    double maxTurretSpeed = 6.87843444154; // radians per sec
+    double maxTurretSpeed = 5.52158708813; // radians per sec
 
     public Turret(HardwareMap hardwareMap, ArrayList<MotorPriority> motorPriorities, Sensors sensors, Outtake outtake) {
         this.motorPriorities = motorPriorities;
@@ -39,6 +40,7 @@ public class Turret {
 
         turret = hardwareMap.get(DcMotorEx.class, "turret");
 
+        turret.setDirection(DcMotorSimple.Direction.REVERSE);
         turret.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         motorPriorities.add(4, new MotorPriority(turret,4,4));
@@ -57,7 +59,7 @@ public class Turret {
 //        TelemetryUtil.packet.put("currentTurretVelocity: ", currentTurretVelocity);
 
         TelemetryUtil.packet.put("turretPower: ", turretPower);
-        TelemetryUtil.packet.put("turretError: ", turretError);
+        TelemetryUtil.packet.put("turretError: ", Math.toDegrees(turretError));
     }
 
     public void update() {
@@ -76,7 +78,9 @@ public class Turret {
         }
 
         turretPower = turretPID.update(turretError);
-        motorPriorities.get(4).setTargetPower(turretPower);
+        turretPower *= (outtake.extension.currentExtensionLength - 10)/15 * 0.5 + 1;
+
+        motorPriorities.get(4).setTargetPower(-turretPower);
 
         updateTelemetry();
     }
@@ -106,11 +110,11 @@ public class Turret {
     }
 
     public boolean isInPosition (double angle) {
-        if (Math.abs(clipAngle(targetTurretAngle - currentTurretAngle)) <= Math.toRadians(angle)) {
-            return true;
-        } else {
-            return false;
-        }
+        return Math.abs(clipAngle(targetTurretAngle - currentTurretAngle)) <= Math.toRadians(angle);
+    }
+
+    public boolean isInPosition (double angle, double targetTurretAngle) {
+        return Math.abs(clipAngle(targetTurretAngle - currentTurretAngle)) <= Math.toRadians(angle);
     }
 
     public void updateTurretPID (double p, double i, double d) {

@@ -21,13 +21,19 @@ import java.util.ArrayList;
 
 public class AprilTagDetectionPipeline extends MyOpenCvPipeline
 {
+    private static AprilTagDetectionPipeline singleAprilTagDetectionPipeline = null;
     private long nativeApriltagPtr;
     private Mat grey = new Mat();
     private ArrayList<AprilTagDetection> detections = new ArrayList<>();
-
     private ArrayList<AprilTagDetection> detectionsUpdate = new ArrayList<>();
     private final Object detectionsUpdateSync = new Object();
+    double fx = 578.272;
+    double fy = 578.272;
+    double cx = 402.145;
+    double cy = 221.506;
 
+    // UNITS ARE METERS
+    double tagsize = 0.166;
     Mat cameraMatrix;
 
     Scalar blue = new Scalar(7,197,235,255);
@@ -35,21 +41,20 @@ public class AprilTagDetectionPipeline extends MyOpenCvPipeline
     Scalar green = new Scalar(0,255,0,255);
     Scalar white = new Scalar(255,255,255,255);
 
-    double fx;
-    double fy;
-    double cx;
-    double cy;
-
-    // UNITS ARE METERS
-    double tagsize;
     double tagsizeX;
     double tagsizeY;
 
     private float decimation;
     private boolean needToSetDecimation;
     private final Object decimationSync = new Object();
+    private boolean stopped = false;
 
-    public AprilTagDetectionPipeline(double tagsize, double fx, double fy, double cx, double cy)
+    public static AprilTagDetectionPipeline getAprilTagSingleInstance() {
+        if (singleAprilTagDetectionPipeline == null)
+            singleAprilTagDetectionPipeline = new AprilTagDetectionPipeline();
+        return singleAprilTagDetectionPipeline;
+    }
+    public AprilTagDetectionPipeline()
     {
         this.tagsize = tagsize;
         this.tagsizeX = tagsize;
@@ -62,9 +67,13 @@ public class AprilTagDetectionPipeline extends MyOpenCvPipeline
         constructMatrix();
 
         // Allocate a native context object. See the corresponding deletion in the finalizer
+        System.out.println("to createApriltagDetector");
         nativeApriltagPtr = AprilTagDetectorJNI.createApriltagDetector(AprilTagDetectorJNI.TagFamily.TAG_36h11.string, 3, 3);
     }
-
+    public void stopPipeline() {
+        stopped = true;
+        finalize();
+    }
     @Override
     public void finalize()
     {
@@ -72,6 +81,7 @@ public class AprilTagDetectionPipeline extends MyOpenCvPipeline
         if(nativeApriltagPtr != 0)
         {
             // Delete the native context we created in the constructor
+            System.out.println("to releaseApriltagDetector");
             AprilTagDetectorJNI.releaseApriltagDetector(nativeApriltagPtr);
             nativeApriltagPtr = 0;
         }
@@ -84,6 +94,10 @@ public class AprilTagDetectionPipeline extends MyOpenCvPipeline
     @Override
     public Mat processFrame(Mat input)
     {
+        if (stopped) {
+            System.out.println("ignore frame, as pipeline already stopped");
+            return input;
+        }
         // Convert to greyscale
         Imgproc.cvtColor(input, grey, Imgproc.COLOR_RGBA2GRAY);
 
@@ -97,6 +111,7 @@ public class AprilTagDetectionPipeline extends MyOpenCvPipeline
         }
 
         // Run AprilTag
+
         detections = AprilTagDetectorJNI.runAprilTagDetectorSimple(nativeApriltagPtr, grey, tagsize, fx, fy, cx, cy);
 
         synchronized (detectionsUpdateSync)
@@ -106,7 +121,7 @@ public class AprilTagDetectionPipeline extends MyOpenCvPipeline
 
         // For fun, use OpenCV to draw 6DOF markers on the image. We actually recompute the pose using
         // OpenCV because I haven't yet figured out how to re-use AprilTag's pose in OpenCV.
-        if (detections.size() > 0) {
+        if (detections != null && detections.size() > 0) {
             for (AprilTagDetection detection : detections) {
                 Pose pose = poseFromTrapezoid(detection.corners, cameraMatrix, tagsizeX, tagsizeY);
                 drawAxisMarker(input, tagsizeY / 2.0, 6, pose.rvec, pose.tvec, cameraMatrix);
@@ -131,6 +146,7 @@ public class AprilTagDetectionPipeline extends MyOpenCvPipeline
         return detections;
     }
 
+    @Override
     public ArrayList<AprilTagDetection> getDetectionsUpdate()
     {
         synchronized (detectionsUpdateSync)

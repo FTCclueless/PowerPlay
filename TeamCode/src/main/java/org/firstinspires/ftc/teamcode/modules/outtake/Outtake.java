@@ -5,6 +5,8 @@ import android.util.Log;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.checkerframework.checker.units.qual.A;
+import org.firstinspires.ftc.teamcode.modules.actuation.Actuation;
 import org.firstinspires.ftc.teamcode.modules.extension.Extension;
 import org.firstinspires.ftc.teamcode.modules.slides.Slides;
 import org.firstinspires.ftc.teamcode.modules.turret.Turret;
@@ -24,6 +26,7 @@ public class Outtake {
     public Turret turret;
     public Slides slides;
     public Extension extension;
+    public Actuation actuation;
 
     ArrayList<MotorPriority> motorPriorities;
 
@@ -38,7 +41,7 @@ public class Outtake {
     double currentSlidesLength = 0.0;
     double currentExtensionLength = 0.0;
 
-    double turretXOffset = -2.5;
+    double turretXOffset = 0.0;
     double turretYOffset = 0.0;
 
     double x, y, z;
@@ -56,7 +59,8 @@ public class Outtake {
 
         turret = new Turret(hardwareMap, motorPriorities, sensors, this);
         slides = new Slides(hardwareMap, motorPriorities, sensors, this);
-        extension = new Extension(hardwareMap, servos, this);
+        actuation = new Actuation(hardwareMap, servos);
+        extension = new Extension(hardwareMap, servos, this, actuation);
     }
 
     public void resetEncoders () {
@@ -66,62 +70,97 @@ public class Outtake {
 
     public void updateTelemetry () {
         TelemetryUtil.packet.put("outtake.isInPosition: ", isInPosition());
-
+        TelemetryUtil.packet.put("extensionIn", extensionIn + "");
     }
 
     boolean turretClips = false;
+    boolean extensionIn = false;
 
     public void update() {
         updateRelativePos();
 
         turretClips = isTurretGoThroughBad();
 
-        if (turretClips && targetSlidesLength < 9){
-            slides.setTargetSlidesLength(12);
+        extensionIn = (currentExtensionLength <= (extension.baseSlidesExtension + 3.5));
+        if(slides.targetSlidesLength <= 9 && (isTurretGoThroughRange(120, 180) || isTurretGoThroughRange(-180, -120))) {
+            extensionIn = (currentExtensionLength <= (extension.baseSlidesExtension + 8.2));
         }
-        else {
-            if (extension.currentExtensionLength > 9) { // if the extension is far out, move extension first before slides
-                extension.setTargetExtensionLength(targetExtensionLength);
-                if (extension.isInPosition(1.5)) {
-                    slides.setTargetSlidesLength(targetSlidesLength);
-                }
-            } else { // if extension is in, then move slides first
+
+        // if we are going to ram into drivetrain or extension is out and the turret is within 9
+        if (!(turretClips && currentSlidesLength <= 9) && (extensionIn || turret.isInPosition(15, targetTurretAngle))) {
+            turret.setTargetTurretAngle(targetTurretAngle);
+        }
+
+        if (turretClips && targetSlidesLength <= 9 && extensionIn) {
+            slides.setTargetSlidesLength(12);
+        } else {
+            if(extensionIn || slides.isInPosition(6.2, targetSlidesLength)) {
                 slides.setTargetSlidesLength(targetSlidesLength);
             }
         }
-        if (currentSlidesLength >= 9 || !turretClips) {
-            if (extension.currentExtensionLength > 9) { // if extension is far out, move extension first before spinning turret
-                extension.setTargetExtensionLength(targetExtensionLength);
-                if (extension.isInPosition(1.5)) {
-                    turret.setTargetTurretAngle(targetTurretAngle);
-                }
-            } else { // if extension is in, then move turret first
-                turret.setTargetTurretAngle(targetTurretAngle);
-                if (turret.isInPosition(5) && slides.isInPosition(2)) { // once turret is in and slides are in correct position, move extension
-                    extension.setTargetExtensionLength(targetExtensionLength);
+        double targetExtent = 0;
+        if (turret.isInPosition(15, targetTurretAngle) && slides.isInPosition(6.2, targetSlidesLength)) {
+            targetExtent = targetExtensionLength;
+        } else {
+            targetExtent = extension.baseSlidesExtension;
+            if (slides.targetSlidesLength <= 9 && (isTurretGoThroughRange(120, 180) || isTurretGoThroughRange(-180, -120))) {
+                Log.e("prevent hitting self", "ok");
+                slides.setTargetSlidesLength(targetSlidesLength + 4);
+                targetExtent += 8;
+                if (extension.isInPosition(2)) {
+                    slides.setTargetSlidesLength(targetSlidesLength);
                 }
             }
         }
 
+        if(!actuation.isLevel()) {
+            targetExtent -= extension.actuationTiltDistance;
+        }
+        extension.setTargetExtensionLength(targetExtent);
+
+
+//        else {
+//            Log.e("extension.currentExtensionLength", extension.currentExtensionLength + "");
+//            if (extension.currentExtensionLength >= 12) { // if the extension is far out, move extension first before slides
+//                extension.setTargetExtensionLength(targetExtensionLength);
+//                Log.e("extension.isInPosition", extension.isInPosition(1.5) + "");
+//                if (extension.isInPosition(1.5)) {
+//                    slides.setTargetSlidesLength(targetSlidesLength);
+//                }
+//            } else { // if extension is in, then move slides first
+//                slides.setTargetSlidesLength(targetSlidesLength);
+//            }
+//        }
+//        if (currentSlidesLength >= 9 || !turretClips) {
+//            if (extension.currentExtensionLength >= 12) { // if extension is far out, move extension first before spinning turret
+//                extension.setTargetExtensionLength(targetExtensionLength);
+//                if (extension.isInPosition(1.5)) {
+//                    turret.setTargetTurretAngle(targetTurretAngle);
+//                }
+//            } else { // if extension is in, then move turret first
+//                turret.setTargetTurretAngle(targetTurretAngle);
+//                if (turret.isInPosition(5) && slides.isInPosition(2)) { // once turret is in and slides are in correct position, move extension
+//                    extension.setTargetExtensionLength(targetExtensionLength);
+//                }
+//            }
+//        }
+
         slides.update();
         turret.update();
+        actuation.update();
         extension.update();
 
         updateTelemetry();
     }
 
     public void retract()  {
-        extension.retractExtension();
-        if (extension.isInPosition(3)) {
-            slides.setTargetSlidesLength(0);
-            turret.setTargetTurretAngle(Math.toRadians(0));
-        }
+        setTargetRelative(extension.baseSlidesExtension,0,0);
     }
 
-    double a = Math.toRadians(12);
+    double a = Math.toRadians(17);
     double b = Math.toRadians(35);
     double c = Math.toRadians(-35);
-    double d = Math.toRadians(-12);
+    double d = Math.toRadians(-17);
     double e = Math.toRadians(95);
     double f = Math.toRadians(145);
 
@@ -147,10 +186,27 @@ public class Outtake {
         return false;
     }
 
+    public boolean isTurretGoThroughRange(double a, double b) {
+        a = Math.toRadians(a);
+        b = Math.toRadians(b);
+        double clipTarget = clipAngle(targetTurretAngle);
+        double clipCurrent = clipAngle(currentTurretAngle);
+        if (clipTarget == Math.min(Math.max(clipTarget,a),b)
+                || clipCurrent == Math.min(Math.max(clipCurrent,a),b)
+                || Math.signum(clipAngle(targetTurretAngle - (a+b)/2)) != Math.signum(clipAngle(currentTurretAngle  - (a+b)/2))){
+            return true;
+        }
+
+        return false;
+    }
+
     public void updateRelativePos() {
         currentTurretAngle = turret.getCurrentTurretAngle();
         currentSlidesLength = slides.getCurrentSlidesLength();
         currentExtensionLength = extension.getCurrentExtensionLength();
+        if (!actuation.isLevel()) {
+            currentExtensionLength += extension.actuationTiltDistance;
+        }
 
         x = Math.cos(currentTurretAngle) * currentExtensionLength;
         y = Math.sin(currentTurretAngle) * currentExtensionLength;
@@ -159,20 +215,26 @@ public class Outtake {
 
     public void setTargetRelative(double targetX, double targetY, double targetZ) {
         targetHeight = Math.max(0, Math.min(targetZ, 39.08666));
-        targetExtension = Math.min(extension.baseSlidesExtension + extension.strokeLength, Math.max(extension.baseSlidesExtension, Math.sqrt(Math.pow((targetX),2) + Math.pow((targetY),2))));
+
+        if (!actuation.isLevel()) {
+            targetExtension = Math.min(extension.baseSlidesExtension + extension.strokeLength + extension.actuationTiltDistance-0.1, Math.max(extension.baseSlidesExtension, Math.sqrt(Math.pow((targetX),2) + Math.pow((targetY),2))));
+        } else {
+            targetExtension = Math.min(extension.baseSlidesExtension + extension.strokeLength, Math.max(extension.baseSlidesExtension, Math.sqrt(Math.pow((targetX),2) + Math.pow((targetY),2))));
+        }
 
         targetTurretAngle = Math.atan2(targetY,targetX);
         targetExtensionLength = targetExtension;
         targetSlidesLength = Math.max(0, targetHeight);
 
-        if (isIntersectingRobot(targetX, targetY, targetZ)) { // checks if the target position is a valid position
-            targetExtensionLength = currentExtensionLength;
-            targetTurretAngle = currentTurretAngle;
-            targetSlidesLength = currentSlidesLength;
+        Log.e("targetExtensionLength", targetExtensionLength + "");
 
-            Log.e("INTERSECTION: ", "PLEASE BE AWARE!!");
-        }
-
+//        if (isIntersectingRobot(targetX, targetY, targetZ)) { // checks if the target position is a valid position
+//            targetExtensionLength = currentExtensionLength;
+//            targetTurretAngle = currentTurretAngle;
+//            targetSlidesLength = currentSlidesLength;
+//
+//            Log.e("INTERSECTION: ", "PLEASE BE AWARE!!");
+//        }
     }
 
     public Pose2d findGlobalCoordinates (Pose2d robotPose, double xOffset, double yOffset) {
@@ -182,11 +244,15 @@ public class Outtake {
         return new Pose2d(x, y, robotPose.getHeading());
     }
 
-    public void setTargetGlobal (Pose2d robotPose, Pose2d targetPose, double targetZ) {
+    public void setTargetGlobal(Pose2d robotPose, Pose2d targetPose, double targetZ) {
+        setTargetGlobal(robotPose, targetPose, targetZ, 0,0);
+    }
+
+    public void setTargetGlobal (Pose2d robotPose, Pose2d targetPose, double targetZ, double offsetX, double offsetY) {
         Pose2d turretPos = findGlobalCoordinates(robotPose, turretXOffset, turretYOffset);
 
-        double deltaX = targetPose.getX() - turretPos.getX();
-        double deltaY = targetPose.getY() - turretPos.getY();
+        double deltaX = targetPose.getX() - turretPos.getX() + offsetX;
+        double deltaY = targetPose.getY() - turretPos.getY() + offsetY;
 
         double targetX = deltaX * Math.cos(robotPose.getHeading()) + deltaY * Math.sin(robotPose.getHeading());
         double targetY = deltaY * Math.cos(robotPose.getHeading()) - deltaX * Math.sin(robotPose.getHeading());
@@ -204,16 +270,14 @@ public class Outtake {
         return angle;
     }
 
+    public Pose2d getGlobalArmPose (Pose2d robotPose) {
+        return findGlobalCoordinates(robotPose, x,y);
+    }
+
     public boolean isInPositionGlobal(Pose2d robotPose, Pose2d targetPose, double threshold) {
-        Pose2d globalCoords = findGlobalCoordinates(robotPose, x-2.5,y);
+        Pose2d globalCoords = findGlobalCoordinates(robotPose, x,y);
 
-        Log.e("GlobalCoords x", globalCoords.getX() + "");
-        Log.e("GlobalCoords y", globalCoords.getY() + "");
-
-        Log.e("targetPose x", targetPose.getX() + "");
-        Log.e("targetPose y", targetPose.getY() + "");
-
-        if ((Math.abs(globalCoords.getX() - targetPose.getX()) <= threshold) && (Math.abs(globalCoords.getY() - globalCoords.getY()) <= threshold) && (slides.isInPosition(threshold))) {
+        if ((Math.abs(globalCoords.getX() - targetPose.getX()) <= threshold) && (Math.abs(globalCoords.getY() - targetPose.getY()) <= threshold) && (slides.isInPosition(threshold))) {
             return true;
         } else {
             return false;
@@ -221,7 +285,7 @@ public class Outtake {
     }
 
     public boolean isInPosition() {
-        return (turret.isInPosition(5) && slides.isInPosition(1.5) && extension.isInPosition(2));
+        return (turret.isInPosition(5, targetTurretAngle) && slides.isInPosition(1.5, targetSlidesLength) && extension.isInPosition(2));
     }
 
     public boolean isIntersectingRobot (double targetX, double targetY, double targetZ) {

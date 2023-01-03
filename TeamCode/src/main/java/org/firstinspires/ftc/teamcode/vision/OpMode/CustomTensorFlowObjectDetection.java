@@ -27,10 +27,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode.vision.OpMode;
+package org.firstinspires.ftc.teamcode.vision.opmode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -40,7 +42,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
-import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector.Parameters;
 import org.firstinspires.ftc.teamcode.util.RobotLogger;
 
 import java.util.List;
@@ -55,8 +56,9 @@ import java.util.List;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
+@Disabled
 @TeleOp(name = "Custom TensorFlow Object Detection", group = "Concept")
-//@Disabled
+@Config
 public class CustomTensorFlowObjectDetection extends LinearOpMode {
 
     /*
@@ -66,9 +68,22 @@ public class CustomTensorFlowObjectDetection extends LinearOpMode {
      * has been downloaded to the Robot Controller's SD FLASH memory, it must to be loaded using loadModelFromFile()
      * Here we assume it's an Asset.    Also see method initTfod() below .
      */
+
+    public static boolean useWebCam = true;
+    public static double zoom = 1.0;
+    public static boolean useObjectTracker = true;
+    public static boolean isModelQuantized = true;
+    public static int numExecutorThreads = 4;
+    public static int maxNumDetections = 2;
+    public static double maxFrameRate = 30;
+    public static double minResultConfidence = 0.4f;  // has to be double for dashboard???
+    public static double trackerMaxOverlap = 0.2f;
+    public static double trackerMinSize = 16.0f;
+    public static double trackerMarginalCorrelation = 0.75f;
+    public static double trackerMinCorrelation = 0.3f;
+
     //private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
     private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/CustomTeamModel.tflite";
-    private static final boolean useWebCam = false;
     private static final String[] LABELS = {
             "1 tip",
             //"2 top"
@@ -117,14 +132,13 @@ public class CustomTensorFlowObjectDetection extends LinearOpMode {
         if (tfod != null) {
             tfod.activate();
 
-
             // The TensorFlow software will scale the input images from the camera to a lower resolution.
             // This can result in lower detection accuracy at longer distances (> 55cm or 22").
             // If your target is at distance greater than 50 cm (20") you can increase the magnification value
             // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
             // should be set to the value of the images used to create the TensorFlow Object Detection model
             // (typically 16/9).
-            tfod.setZoom(1.0, 16.0/9.0);
+            tfod.setZoom(zoom, 16.0/9.0);
 
         }
 
@@ -161,6 +175,7 @@ public class CustomTensorFlowObjectDetection extends LinearOpMode {
                         }
                         telemetry.update();
                     }
+                    //sleep(30);
                 }
             }
             FtcDashboard.getInstance().stopCameraStream();
@@ -194,8 +209,17 @@ public class CustomTensorFlowObjectDetection extends LinearOpMode {
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
         tfodParameters.minResultConfidence = 0.75f;
+        tfodParameters.inputSize = 320;
         tfodParameters.isModelTensorFlow2 = true;
-        tfodParameters.inputSize = 300;
+        tfodParameters.useObjectTracker = useObjectTracker;
+        tfodParameters.isModelQuantized = isModelQuantized;
+        tfodParameters.maxNumDetections = maxNumDetections;
+        tfodParameters.numExecutorThreads = numExecutorThreads;
+        tfodParameters.minResultConfidence = (float)minResultConfidence;
+        tfodParameters.trackerMaxOverlap = (float)trackerMaxOverlap;
+        tfodParameters.trackerMinSize = (float)trackerMinSize;
+        tfodParameters.trackerMarginalCorrelation = (float)trackerMarginalCorrelation;
+        tfodParameters.trackerMinCorrelation = (float)trackerMinCorrelation;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
 
         // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio

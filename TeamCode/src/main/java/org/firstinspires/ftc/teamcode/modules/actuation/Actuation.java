@@ -15,14 +15,17 @@ public class Actuation {
     MyServo act;
     ArrayList<MyServo> servos;
 
-    double levelPosition = 0.45499;
-    double tiltedPosition = 0.294;
+    double levelPosition = 0.43;
+    double tiltedPosition = 0.2689;
+    double downTiltPosition = 0.479;
+    double initPosition = 0.033;
+
     public Actuation(HardwareMap hardwareMap, ArrayList<MyServo> servos) {
         this.servos = servos;
 
-        act = new MyServo(hardwareMap.servo.get("act"),"Amazon",1,0.638,0.0);
+        act = new MyServo(hardwareMap.servo.get("act"),"Amazon",1,0,1.0, levelPosition);
 
-        servos.add(1, act);
+        servos.add(0, act);
     }
 
     public void updateTelemetry() {
@@ -59,6 +62,15 @@ public class Actuation {
 
     public void tilt() {
         targetActPosition = tiltedPosition;
+    }
+
+    public void downTilt() {
+        targetActPosition = downTiltPosition;
+    }
+
+
+    public void init() {
+        targetActPosition = initPosition;
     }
 
     public boolean isLevel () {

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.tests;
 import android.util.Log;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -25,6 +26,7 @@ public class OuttakeTester extends LinearOpMode {
 
         while (!isStopRequested()) {
             robot.update();
+            robot.outtake.actuation.level();
             robot.outtake.setTargetRelative(x,y,z);
         }
     }

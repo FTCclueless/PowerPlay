@@ -35,6 +35,7 @@ import org.firstinspires.ftc.teamcode.util.AxisDirection;
 import org.firstinspires.ftc.teamcode.util.BNO055IMUUtil;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
 import org.firstinspires.ftc.teamcode.util.MotorPriority;
+import org.firstinspires.ftc.teamcode.util.PID;
 import org.firstinspires.ftc.teamcode.util.Storage;
 
 import java.util.ArrayList;
@@ -69,7 +70,7 @@ public class Drivetrain extends MecanumDrive {
     public static double VY_WEIGHT = 1;
     public static double OMEGA_WEIGHT = 1;
 
-    private TrajectorySequenceRunner trajectorySequenceRunner;
+    public TrajectorySequenceRunner trajectorySequenceRunner;
 
     private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(MAX_VEL, MAX_ANG_VEL, TRACK_WIDTH);
     private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(MAX_ACCEL);
@@ -85,6 +86,8 @@ public class Drivetrain extends MecanumDrive {
     ArrayList<MotorPriority> motorPriorities;
 
     public ThreeWheelLocalizer localizer;
+
+    public PID autoPID = new PID(0.0, 0.0,0.0);
 
     public Drivetrain(HardwareMap hardwareMap, ArrayList<MotorPriority> motorPriorities) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
@@ -148,6 +151,10 @@ public class Drivetrain extends MecanumDrive {
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
     }
 
+    public void resetOdoReadings() {
+        localizer.updateEncoders(new int[]{0,0,0});
+    }
+
     public void drive (Gamepad gamepad) {
         double forward = -0.4*Math.tan(((gamepad.left_stick_y * -1 ) / 0.85));
         double left = -0.4*(Math.tan(gamepad.left_stick_x / 0.85)) * 0.8;
@@ -158,10 +165,6 @@ public class Drivetrain extends MecanumDrive {
         double p3 = forward+left-turn;
         double p4 = forward-left-turn;
         setMotorPowers(p1, p2, p3, p4);
-
-//        Log.e("left_stick_y:", gamepad.left_stick_y + "");
-//        Log.e("left_stick_x:", gamepad.left_stick_x + "");
-//        Log.e("right_stick_x:", gamepad.right_stick_x + "");
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
@@ -239,10 +242,6 @@ public class Drivetrain extends MecanumDrive {
             double left = (signal.getVel().getY() * kV + signal.getAccel().getY() * kA) * LATERAL_MULTIPLIER * -1.0; left += Math.signum(left) * kStatic;
             double turn = signal.getVel().getHeading() * kV + signal.getAccel().getHeading() * kA; turn *= (0.5 * TRACK_WIDTH); turn += Math.signum(turn) * kStatic;
 
-//            Log.e("FORWARD:",forward + "");
-//            Log.e("LEFT:",left + "");
-//            Log.e("TURN:",turn + "");
-
             motorPriorities.get(0).setTargetPower(forward+left-turn);
             motorPriorities.get(1).setTargetPower(forward-left-turn);
             motorPriorities.get(2).setTargetPower(forward+left+turn);
@@ -258,6 +257,29 @@ public class Drivetrain extends MecanumDrive {
         }
 
         updateTelemetry();
+    }
+
+    public PID xPID = new PID(0.2, 0.0,0.0);
+    public PID yPID = new PID(-0.2, 0.0,0.0);
+    public PID headingPID = new PID(0.4, 0.0,0.0);
+
+    public void updatePID(Pose2d targetPose) {
+        Pose2d robotPose = localizer.getPoseEstimate();
+        double deltaX = targetPose.getX() - robotPose.getX();
+        double deltaY = targetPose.getY() - robotPose.getY();
+
+        double xError = deltaX * Math.cos(robotPose.getHeading()) + deltaY * Math.sin(robotPose.getHeading());
+        double yError = deltaY * Math.cos(robotPose.getHeading()) - deltaX * Math.sin(robotPose.getHeading());
+        double headingError = targetPose.getHeading() - robotPose.getHeading();
+
+        double forward = xPID.update(xError);
+        double left = yPID.update(yError);
+        double turn = headingPID.update(headingError);
+
+        motorPriorities.get(0).setTargetPower(forward+left-turn);
+        motorPriorities.get(1).setTargetPower(forward-left-turn);
+        motorPriorities.get(2).setTargetPower(forward+left+turn);
+        motorPriorities.get(3).setTargetPower(forward-left+turn);
     }
 
     boolean breakFollowing = false;

@@ -20,7 +20,7 @@ public class ThreeWheelLocalizer implements Localizer {
     long lastTime = System.nanoTime();
     public double x = 0;
     public double y = 0;
-    double heading = 0;
+    public double heading = 0;
 
     MyPose2d currentPose = new MyPose2d(0,0,0);
     MyPose2d currentVel = new MyPose2d(0,0,0);
@@ -38,8 +38,8 @@ public class ThreeWheelLocalizer implements Localizer {
 
         encoders[0] = new MyEncoder(new MyPose2d(0,7.65280377185),  -1); // left (y = 7.6861797267140135)
         encoders[1] = new MyEncoder(new MyPose2d(0,-5.63952182112),1); // right (y = -5.664117306820334)
-        encoders[2] = new MyEncoder(new MyPose2d(-1.9304662534597792, 0),  -1); // back
-//        encoders[2] = new MyEncoder(new MyPose2d(-3.8609325069195584, 0),  -1); // back
+        encoders[2] = new MyEncoder(new MyPose2d(-2.16505140605, 0),  -1); // back
+//        encoders[2] = new MyEncoder(new MyPose2d(-1.9304662534597792, 0),  -1); // back
     }
 
     public void getIMU(BNO055IMU imu){

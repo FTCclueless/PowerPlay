@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.tests;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -21,6 +22,7 @@ public class ExtensionTester extends LinearOpMode {
         waitForStart();
 
         while (!isStopRequested()) {
+            robot.outtake.actuation.level();
             robot.outtake.extension.setTargetExtensionLength(robot.outtake.extension.baseSlidesExtension + length);
             robot.update();
         }
