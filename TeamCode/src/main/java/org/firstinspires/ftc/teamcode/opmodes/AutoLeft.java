@@ -24,7 +24,6 @@ public class AutoLeft extends LinearOpMode {
     public static final int cycles = 5;
     public static int parkingNum = 1;
     public static final boolean lr = true; // Left : true | Right : false
-    public static final boolean tb = true; // Top : true | Bottom : false
 
 //    OpenCVWrapper openCVWrapper;
 
@@ -40,25 +39,24 @@ public class AutoLeft extends LinearOpMode {
 //        assert(openCVWrapper != null);
 
         // Signs
-        int xSign = tb ? 1 : -1;
         int ySign = lr ? 1 : -1;
 
         Pose2d origin = new Pose2d(
-                36 * xSign,
+                36,
                 60 * ySign,
                 lr ? Math.toRadians(90) : Math.toRadians(-90)
         );
 
         Pose2d toPose = new Pose2d(
-                36 * xSign,
+                36,
                 18 * ySign,
                 lr ? Math.toRadians(90) : Math.toRadians(-90)
         );
 
         Pose2d cyclePose = new Pose2d(
-                47 * xSign,
+                47,
                 12 * ySign,
-                tb ? Math.toRadians(180) : Math.toRadians(0)
+                Math.toRadians(180)
         );
 
         robot.stayInPlacePose = cyclePose;
@@ -69,7 +67,7 @@ public class AutoLeft extends LinearOpMode {
                 .splineTo(new Vector2d(cyclePose.getX(), cyclePose.getY()), Math.toRadians(0))
                 .addDisplacementMarker(45, () -> {
                     robot.currentState = Robot.STATE.SCORING_GLOBAL;
-                    robot.startScoringGlobal(new Pose2d(toPose.getX(), toPose.getY(), toPose.getHeading()), new Pose2d(24 * xSign,0.5 * ySign),29.6); // 36
+                    robot.startScoringGlobal(new Pose2d(toPose.getX(), toPose.getY(), toPose.getHeading()), new Pose2d(24,0.5 * ySign),29.6); // 36
                 })
                 .build();
 
@@ -77,15 +75,15 @@ public class AutoLeft extends LinearOpMode {
 
         Trajectory[] park = new Trajectory[]{
                 drive.trajectoryBuilder(cyclePose).strafeTo(new Vector2d( // parking position 1
-                        59.5 * xSign,
+                        59.5,
                         cyclePose.getY()
                 )).build(),
                 drive.trajectoryBuilder(cyclePose).strafeTo(new Vector2d( // parking position 2
-                        34 * xSign,
+                        34,
                         cyclePose.getY()
                 )).build(),
                 drive.trajectoryBuilder(cyclePose).strafeTo(new Vector2d( // parking position 3
-                        9 * xSign,
+                        9,
                         cyclePose.getY()
                 )).build()
         };
@@ -118,7 +116,7 @@ public class AutoLeft extends LinearOpMode {
             robot.update();
 
             if (detected) {
-                telemetry.addLine(String.format("Tag of interest is in sight! ID: %d", parkingNum + 1));
+                telemetry.addLine("Tag of interest is in sight! ID: " + parkingNum + 1);
             } else {
                 telemetry.addLine("Could not find april tag! :(");
             }
@@ -144,7 +142,7 @@ public class AutoLeft extends LinearOpMode {
             // TODO verify the x and y sign on this. It should not be like this
             robot.startIntakeGlobal(
                     to.end(),
-                    new Pose2d(71 * xSign,12 * ySign),
+                    new Pose2d(71,12 * ySign),
                     coneStackHeights[i]
             );
 
@@ -152,7 +150,7 @@ public class AutoLeft extends LinearOpMode {
                 robot.update();
             }
 
-            robot.startScoringGlobal(new Pose2d(to.end().getX(), to.end().getY(), to.end().getHeading()), new Pose2d(24 * xSign,0.5 * ySign),27.5); // 36
+            robot.startScoringGlobal(new Pose2d(to.end().getX(), to.end().getY(), to.end().getHeading()), new Pose2d(24,0.5 * ySign),27.5); // 36
             while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
                 robot.update();
             }
