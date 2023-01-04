@@ -19,8 +19,8 @@ import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequenc
 import org.firstinspires.ftc.teamcode.util.ButtonToggle;
 import org.firstinspires.ftc.teamcode.util.Storage;
 
-@Autonomous(group = "Test")
-public class RedTopAuto extends LinearOpMode {
+@Autonomous(group = "Auto")
+public class AutoRight extends LinearOpMode {
     public static final int cycles = 5;
     public static int parkingNum = 1;
     public static final boolean lr = false; // Left : true | Right : false
@@ -28,7 +28,7 @@ public class RedTopAuto extends LinearOpMode {
 
 //    OpenCVWrapper openCVWrapper;
 
-    double[] coneStackHeights = new double[]{4.15, 3.3, 2.25, 0.5, -0.5};
+    double[] coneStackHeights = new double[]{4.4, 2.25, 1.25, 0.5, -0.55};//{4.15, 3.3, 2.25, 0.5, -0.5};
     ButtonToggle toggleA = new ButtonToggle();
 
     @Override
@@ -57,7 +57,7 @@ public class RedTopAuto extends LinearOpMode {
         );
 
         Pose2d cyclePose = new Pose2d(
-                47.5 * xSign,
+                47 * xSign,
                 13 * ySign,
                 tb ? Math.toRadians(180) : Math.toRadians(0)
         );

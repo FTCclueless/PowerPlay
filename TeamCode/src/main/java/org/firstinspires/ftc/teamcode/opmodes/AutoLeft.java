@@ -3,9 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes;
 import static org.firstinspires.ftc.teamcode.Robot.STATE.DEPOSIT;
 import static org.firstinspires.ftc.teamcode.Robot.STATE.INTAKE_GLOBAL;
 import static org.firstinspires.ftc.teamcode.Robot.STATE.INTAKE_RELATIVE;
-import static org.firstinspires.ftc.teamcode.Robot.STATE.RETRACT;
 import static org.firstinspires.ftc.teamcode.Robot.STATE.SCORING_GLOBAL;
-import static org.firstinspires.ftc.teamcode.Robot.STATE.WAIT_FOR_START_SCORING;
 
 import android.util.Log;
 
@@ -13,7 +11,6 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Robot;
@@ -21,10 +18,9 @@ import org.firstinspires.ftc.teamcode.modules.drive.Drivetrain;
 import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.util.ButtonToggle;
 import org.firstinspires.ftc.teamcode.util.Storage;
-import org.firstinspires.ftc.teamcode.vision.OpenCVWrapper;
 
-@Autonomous(group = "Test")
-public class BlueTopAuto extends LinearOpMode {
+@Autonomous(group = "Auto")
+public class AutoLeft extends LinearOpMode {
     public static final int cycles = 5;
     public static int parkingNum = 1;
     public static final boolean lr = true; // Left : true | Right : false
@@ -32,7 +28,7 @@ public class BlueTopAuto extends LinearOpMode {
 
 //    OpenCVWrapper openCVWrapper;
 
-    double[] coneStackHeights = new double[]{4.15, 2, 1, 0.25, -0.8};
+    double[] coneStackHeights = new double[]{4.4, 2.25, 1.25, 0.5, -0.55};
     ButtonToggle toggleA = new ButtonToggle();
 
     @Override
@@ -60,7 +56,7 @@ public class BlueTopAuto extends LinearOpMode {
         );
 
         Pose2d cyclePose = new Pose2d(
-                46 * xSign,
+                47 * xSign,
                 12 * ySign,
                 tb ? Math.toRadians(180) : Math.toRadians(0)
         );
@@ -148,8 +144,8 @@ public class BlueTopAuto extends LinearOpMode {
             // TODO verify the x and y sign on this. It should not be like this
             robot.startIntakeGlobal(
                     to.end(),
-                    new Pose2d(70 * xSign,12 * ySign),
-                    coneStackHeights[i]+0.25
+                    new Pose2d(71 * xSign,12 * ySign),
+                    coneStackHeights[i]
             );
 
             while (robot.currentState == INTAKE_GLOBAL) {
