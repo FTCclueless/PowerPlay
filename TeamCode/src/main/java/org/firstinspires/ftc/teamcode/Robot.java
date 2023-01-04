@@ -62,7 +62,7 @@ public class Robot {
 
     public boolean isRelative = false;
 
-    boolean startIntakeRelative = false;
+    public boolean startIntakeRelative = false;
     boolean startIntakeGlobal = false;
 
     boolean startScoringRelative = false;
@@ -149,35 +149,28 @@ public class Robot {
                     drivePose = drivetrain.getPoseEstimate();
                     isAtPoint = true;
                 }
-                outtake.setTargetGlobal(drivePose, conePose, coneHeight);
-
-                // TODO: Add in external claw.close when the outtake global pose is near the cone pose
-
-                Log.e("outtake.isInPosition(): ", outtake.isInPositionGlobal(drivePose, polePose, 1.5) + "");
-                Log.e("isAtPoint: ", isAtPoint + "");
 
                 if (isAtPoint && (outtake.isInPositionGlobal(drivePose, conePose, 1.5) || hasGrabbed)) {
-                    Log.e("close claw", "");
                     hasGrabbed = true;
                     claw.close();
                 }
                 else {
-                    Log.e("intake claw", "");
                     claw.open();
                     startClawCloseTime = System.currentTimeMillis();
                 }
 
                 if(sensors.clawTouch || System.currentTimeMillis() - startClawCloseTime > 300) { // needs an external claw.close()
-                    Log.e("here", "");
                     claw.close();
                     hasGrabbed = true;
-                    outtake.slides.setTargetSlidesLength(coneHeight + 8);
-                    if(sensors.clawTouch || outtake.slides.isInPosition(3)) { // needs an external claw.close()
-                        Log.e("here2", "");
+                    outtake.setTargetGlobal(drivePose, conePose, coneHeight + 6);
+                    if(outtake.slides.isInPosition(3)) { // needs an external claw.close()
                         isAtPoint = false;
                         hasGrabbed = false;
                         currentState = STATE.SCORING_GLOBAL;
                     }
+                }
+                else{
+                    outtake.setTargetGlobal(drivePose, conePose, coneHeight);
                 }
                 break;
             case WAIT_FOR_START_SCORING:
@@ -237,6 +230,8 @@ public class Robot {
                 break;
             case SCORING_GLOBAL:
                 outtake.slides.slidesPercentMax = 1.0;
+                globalArmPos = outtake.getGlobalArmPose(drivetrainPoseEstimate);
+                nearestPole = field.getNearestPole(drivetrainPoseEstimate, globalArmPos, scoringLevel);
 
                 // checks to see if the drivetrain is near the final scoring pose and if it is then give it it's actual drive pose
                 if (Math.abs(drivetrain.getPoseEstimate().getX() - drivePose.getX()) <= 4 && Math.abs(drivetrain.getPoseEstimate().getY() - drivePose.getY()) <= 4) {
@@ -245,7 +240,6 @@ public class Robot {
                 }
 
                 if (isAtPoint) {
-                    Log.e("moving to deposit:", "");
                     outtake.setTargetGlobal(drivePose, polePose, poleHeight);
                     actuation.tilt();
                 }
@@ -256,28 +250,29 @@ public class Robot {
                     outtake.extension.retractExtension();
                 }
 
-                if (isAtPoint && (outtake.isInPositionGlobal(drivePose, polePose,1.0))) {
+                if (isAtPoint && (outtake.isInPositionGlobal(drivePose, polePose,1.5))) {
                     timeSinceClawOpen = System.currentTimeMillis();
                     isAtPoint = false;
                     currentState = STATE.DEPOSIT;
                 }
                 break;
             case DEPOSIT:
-                double t1 = 500;
+                double t1 = 300;
                 outtake.slides.slidesPercentMax = 1.0;
+
+                if (!Storage.isTeleop) {
+                    outtake.setTargetGlobal(drivePose, polePose, poleHeight);
+                }
 
                 claw.open();
                 if (System.currentTimeMillis() - timeSinceClawOpen >= t1) {
                     if (Storage.isTeleop) {
-                        Log.e("Teleop", "");
                         outtake.slides.setTargetSlidesLength(Math.min(scoringHeight + 6, 32));
                         if ((outtake.slides.isInPosition(2)) || (System.currentTimeMillis() - timeSinceClawOpen >= (t1+400))) {
-                            Log.e("in position", "");
                             actuation.level();
                             currentState = STATE.INTAKE_RELATIVE;
                         }
                     } else {
-                        Log.e("Auto", "");
                         actuation.level();
                         currentState = STATE.INTAKE_RELATIVE;
                     }
@@ -391,13 +386,10 @@ public class Robot {
         }
     }
 
-    public int ySign = 1;
-
-    public void startScoringGlobal (Pose2d drivePose, Pose2d polePose, double poleHeight, int ySign) {
+    public void startScoringGlobal (Pose2d drivePose, Pose2d polePose, double poleHeight) {
         this.drivePose = drivePose;
         this.polePose = polePose;
         this.poleHeight = poleHeight;
-        this.ySign = ySign;
 
         startScoringGlobal = true;
     }
@@ -424,15 +416,13 @@ public class Robot {
 
         outtake.slides.setTargetSlidesLength(12);
 
-        while (!outtake.slides.isInPosition(0.75)) {
-            Log.e("slides", "");
+        while (!outtake.slides.isInPosition(1.5)) {
             update();
         }
 
         outtake.turret.setTargetTurretAngle(Math.toRadians(55));
 
         while (!outtake.turret.isInPosition(0.75)) {
-            Log.e("turret", "");
             update();
         }
 
@@ -440,7 +430,6 @@ public class Robot {
         outtake.slides.setTargetSlidesLength(1.0);
 
         while (!outtake.slides.isInPosition(0.75)) {
-            Log.e("slides again", "");
             update();
         }
 
@@ -482,6 +471,9 @@ public class Robot {
         loopTime = (System.nanoTime() - loopStart) / 1000000000.0; // converts from nano secs to secs
     }
 
+    public boolean updateStayInPlacePID = false;
+    public Pose2d stayInPlacePose = new Pose2d(0,0,0);
+
     public void updateSubSystems() {
         sensors.updateHub1();
         sensors.updateHub2();
@@ -489,6 +481,10 @@ public class Robot {
         drivetrain.update();
         outtake.update();
         claw.update();
+
+        if (updateStayInPlacePID) {
+            drivetrain.updatePID(stayInPlacePose);
+        }
 
         updateMotors();
     }

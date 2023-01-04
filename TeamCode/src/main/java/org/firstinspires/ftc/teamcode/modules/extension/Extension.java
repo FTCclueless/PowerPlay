@@ -30,13 +30,14 @@ public class Extension {
 
     public double actuationTiltDistance = 2.5;
 
+    public double momentOfInertiaConstant = 0.1;
+
     public Extension (HardwareMap hardwareMap, ArrayList<MyServo> servos, Outtake outtake, Actuation actuation) {
         this.servos = servos;
         this.outtake = outtake;
         this.actuation = actuation;
 
-        extension = new MyServo(hardwareMap.servo.get("extension"),"Torque",1.0, 0.1189,0.737, 0.1189);
-//        extension = new MyServo(hardwareMap.servo.get("extension"),"Torque",1.0, 0.1,0.728, 0.1);
+        extension = new MyServo(hardwareMap.servo.get("extension"),"Amazon",1.0, 0.0,0.601, 0.601);
 
         servos.add(1, extension);
     }
@@ -52,7 +53,9 @@ public class Extension {
         updateExtensionValues();
         updateTelemetry();
 
-        extension.setAngle(targetExtensionAngle, extensionPower);
+        extension.setAngle(-targetExtensionAngle, extensionPower);
+
+
     }
 
     public double strokeLength = 13.5826845;
@@ -91,5 +94,8 @@ public class Extension {
 
     public boolean isInPosition (double length) {
         return Math.abs(targetExtensionLength - currentExtensionLength) <= length;
+    }
+    public boolean isInPosition (double target, double length) {
+        return Math.abs(target - currentExtensionLength) <= length;
     }
 }
