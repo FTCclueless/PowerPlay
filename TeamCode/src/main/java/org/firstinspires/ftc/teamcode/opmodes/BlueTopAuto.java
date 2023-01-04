@@ -156,7 +156,7 @@ public class BlueTopAuto extends LinearOpMode {
                 robot.update();
             }
 
-            robot.startScoringGlobal(new Pose2d(to.end().getX(), to.end().getY(), to.end().getHeading()), new Pose2d(24 * xSign,0.5 * ySign),27.7); // 36
+            robot.startScoringGlobal(new Pose2d(to.end().getX(), to.end().getY(), to.end().getHeading()), new Pose2d(24 * xSign,0.5 * ySign),27.5); // 36
             while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
                 robot.update();
             }
