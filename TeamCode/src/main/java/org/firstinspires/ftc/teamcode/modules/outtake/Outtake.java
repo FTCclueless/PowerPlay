@@ -89,19 +89,19 @@ public class Outtake {
         }
 
         // if we are going to ram into drivetrain or extension is out and the turret is within 9
-        if (!(turretClips && currentSlidesLength <= 9) && (extensionIn || turret.isInPosition(20, targetTurretAngle))) {
+        if (!(turretClips && currentSlidesLength <= 9) && (extensionIn || turret.isInPosition(8, targetTurretAngle))) {
             turret.setTargetTurretAngle(targetTurretAngle);
         }
 
         if (turretClips && targetSlidesLength <= 9 && extensionIn) {
             slides.setTargetSlidesLength(12);
         } else {
-            if(extensionIn || slides.isInPosition(6.2, targetSlidesLength)) {
+            if(extensionIn || slides.isInPosition(4, targetSlidesLength)) {
                 slides.setTargetSlidesLength(targetSlidesLength);
             }
         }
         double targetExtent = 0;
-        if (turret.isInPosition(20, targetTurretAngle) && slides.isInPosition(6.2, targetSlidesLength)) {
+        if (turret.isInPosition(8, targetTurretAngle) && slides.isInPosition(4, targetSlidesLength)) {
             targetExtent = targetExtensionLength;
         } else {
             targetExtent = extension.baseSlidesExtension;
@@ -121,7 +121,6 @@ public class Outtake {
             targetExtent -= extension.actuationTiltDistance;
         }
         extension.setTargetExtensionLength(targetExtent);
-
 
 //        else {
 //            Log.e("extension.currentExtensionLength", extension.currentExtensionLength + "");

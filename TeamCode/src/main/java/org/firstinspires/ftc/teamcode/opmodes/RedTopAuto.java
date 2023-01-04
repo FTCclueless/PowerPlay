@@ -178,5 +178,6 @@ public class RedTopAuto extends LinearOpMode {
         }
 
         Storage.autoEndPose = drive.getPoseEstimate();
+        Storage.isBlue = false;
     }
 }

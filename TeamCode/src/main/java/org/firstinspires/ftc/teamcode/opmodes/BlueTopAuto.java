@@ -32,7 +32,7 @@ public class BlueTopAuto extends LinearOpMode {
 
 //    OpenCVWrapper openCVWrapper;
 
-    double[] coneStackHeights = new double[]{4.15, 3.3, 2.25, 0.5, -0.5};
+    double[] coneStackHeights = new double[]{4.15, 2, 1, 0.25, -0.8};
     ButtonToggle toggleA = new ButtonToggle();
 
     @Override
@@ -73,7 +73,7 @@ public class BlueTopAuto extends LinearOpMode {
                 .splineTo(new Vector2d(cyclePose.getX(), cyclePose.getY()), Math.toRadians(0))
                 .addDisplacementMarker(45, () -> {
                     robot.currentState = Robot.STATE.SCORING_GLOBAL;
-                    robot.startScoringGlobal(new Pose2d(toPose.getX(), toPose.getY(), toPose.getHeading()), new Pose2d(24 * xSign,0.5 * ySign),27.7); // 36
+                    robot.startScoringGlobal(new Pose2d(toPose.getX(), toPose.getY(), toPose.getHeading()), new Pose2d(24 * xSign,0.5 * ySign),29.6); // 36
                 })
                 .build();
 
@@ -179,9 +179,6 @@ public class BlueTopAuto extends LinearOpMode {
             robot.claw.park();
             robot.claw.update();
         }
-
-        Storage.autoEndPose = drive.getPoseEstimate();
-        Storage.isBlue = true;
 
         Storage.autoEndPose = drive.getPoseEstimate();
         Storage.isBlue = true;
