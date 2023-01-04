@@ -124,7 +124,6 @@ public class AutoLeft extends LinearOpMode {
             telemetry.update();
         }
 
-        robot.drivetrain.setBreakFollowingThresholds(new Pose2d(0.5, 0.5, Math.toRadians(5)), park[parkingNum].end());
         drive.setPoseEstimate(origin);
         waitForStart();
 
@@ -137,7 +136,7 @@ public class AutoLeft extends LinearOpMode {
             robot.update();
         }
 
-        for (int i = 0; i < cycles; i++) {
+        for (int i = 0; i < cycles && opModeIsActive(); i++) {
             robot.currentState = INTAKE_GLOBAL;
             // TODO verify the x and y sign on this. It should not be like this
             robot.startIntakeGlobal(
@@ -146,12 +145,12 @@ public class AutoLeft extends LinearOpMode {
                     coneStackHeights[i]
             );
 
-            while (robot.currentState == INTAKE_GLOBAL) {
+            while (robot.currentState == INTAKE_GLOBAL && opModeIsActive()) {
                 robot.update();
             }
 
             robot.startScoringGlobal(new Pose2d(to.end().getX(), to.end().getY(), to.end().getHeading()), new Pose2d(24,0.5 * ySign),27.5); // 36
-            while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
+            while ((robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) && opModeIsActive()) {
                 robot.update();
             }
         }
@@ -164,12 +163,13 @@ public class AutoLeft extends LinearOpMode {
         }
 
         robot.updateStayInPlacePID = false;
+        robot.drivetrain.setBreakFollowingThresholds(new Pose2d(0.5, 0.5, Math.toRadians(5)), park[parkingNum].end());
         robot.followTrajectory(park[parkingNum], this);
 
         long clawStart = System.currentTimeMillis();
         robot.claw.park();
 
-        while (System.currentTimeMillis() - clawStart <= 300) {
+        while (System.currentTimeMillis() - clawStart <= 300 && opModeIsActive()) {
             robot.claw.park();
             robot.claw.update();
         }
