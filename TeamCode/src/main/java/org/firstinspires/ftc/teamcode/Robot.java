@@ -442,8 +442,6 @@ public class Robot {
         double numMotorsUpdated = 0;
         double bestMotorUpdate = 1;
 
-        numMotorsUpdated = 0;
-
         while (bestMotorUpdate > 0 && loopTime <= targetLoopLength) { // updates the motors while still time remaining in the loop
             int bestIndex = 0;
             bestMotorUpdate = motorPriorities.get(0).getPriority(targetLoopLength - loopTime);

@@ -67,7 +67,10 @@ public class AutoRight extends LinearOpMode {
                 .splineTo(new Vector2d(cyclePose.getX(), cyclePose.getY()), Math.toRadians(0))
                 .addDisplacementMarker(45, () -> {
                     robot.currentState = Robot.STATE.SCORING_GLOBAL;
-                    robot.startScoringGlobal(new Pose2d(toPose.getX(), toPose.getY(), toPose.getHeading()), new Pose2d(26.3,-1.2 * ySign),26.25); // 36
+                    robot.startScoringGlobal(
+                            new Pose2d(toPose.getX(), toPose.getY(), toPose.getHeading()),
+                            new Pose2d(26.3,-1.2 * ySign),
+                            26.25); // 36
                 })
                 .build();
 
@@ -150,7 +153,10 @@ public class AutoRight extends LinearOpMode {
                 robot.update();
             }
 
-            robot.startScoringGlobal(new Pose2d(to.end().getX(), to.end().getY(), to.end().getHeading()), new Pose2d(24,0.0 * ySign),26.25); // 36
+            robot.startScoringGlobal(
+                    new Pose2d(to.end().getX(), to.end().getY(), to.end().getHeading()),
+                    new Pose2d(24,0.0 * ySign),
+                    26.25); // 36
             while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
                 robot.update();
             }
