@@ -97,7 +97,7 @@ public class AutoLeft extends LinearOpMode {
         Log.e("camera setup", "");
 
         sleep(1000);
-        robot.initPosition();
+        robot.initPosition(true);
 
         Log.e("init position", "");
 

@@ -409,7 +409,7 @@ public class Robot {
         }
     }
 
-    public void initPosition () {
+    public void initPosition (boolean left) {
         actuation.init();
         outtake.extension.retractExtension();
         claw.open();
@@ -419,8 +419,8 @@ public class Robot {
         while (!outtake.slides.isInPosition(1.5)) {
             update();
         }
-
-        outtake.turret.setTargetTurretAngle(Math.toRadians(55));
+        double m1 = left ? 1 : -1;
+        outtake.turret.setTargetTurretAngle(Math.toRadians(55) * m1);
 
         while (!outtake.turret.isInPosition(0.75)) {
             update();

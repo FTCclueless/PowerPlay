@@ -25,6 +25,6 @@ public class InitAuto extends LinearOpMode {
         waitForStart();
 
         robot.resetEncoders();
-        robot.initPosition();
+        robot.initPosition(true);
     }
 }
