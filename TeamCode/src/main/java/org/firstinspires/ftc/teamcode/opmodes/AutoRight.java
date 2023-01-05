@@ -27,7 +27,7 @@ public class AutoRight extends LinearOpMode {
 
 //    OpenCVWrapper openCVWrapper;
 
-    double[] coneStackHeights = new double[]{4.4, 2.25, 1.25, 0.5, -0.55};//{4.15, 3.3, 2.25, 0.5, -0.5};
+    double[] coneStackHeights = new double[]{5.65, 4.25, 2.75, 2.0, 0.5};//{4.4, 2.25, 1.25, 0.5, -0.55} {4.15, 3.3, 2.25, 0.5, -0.5};
     ButtonToggle toggleA = new ButtonToggle();
 
     @Override
@@ -54,8 +54,8 @@ public class AutoRight extends LinearOpMode {
         );
 
         Pose2d cyclePose = new Pose2d(
-                47,
-                13 * ySign,
+                48,
+                12 * ySign,
                 Math.toRadians(180)
         );
 
@@ -67,7 +67,7 @@ public class AutoRight extends LinearOpMode {
                 .splineTo(new Vector2d(cyclePose.getX(), cyclePose.getY()), Math.toRadians(0))
                 .addDisplacementMarker(45, () -> {
                     robot.currentState = Robot.STATE.SCORING_GLOBAL;
-                    robot.startScoringGlobal(new Pose2d(toPose.getX(), toPose.getY(), toPose.getHeading()), new Pose2d(24,0.5 * ySign),27.7); // 36
+                    robot.startScoringGlobal(new Pose2d(toPose.getX(), toPose.getY(), toPose.getHeading()), new Pose2d(26.3,-1.2 * ySign),26.25); // 36
                 })
                 .build();
 
@@ -124,6 +124,7 @@ public class AutoRight extends LinearOpMode {
             telemetry.update();
         }
 
+        robot.drivetrain.setBreakFollowingThresholds(new Pose2d(0.5, 0.5, Math.toRadians(5)), park[parkingNum].end());
         drive.setPoseEstimate(origin);
         waitForStart();
 
@@ -136,7 +137,7 @@ public class AutoRight extends LinearOpMode {
             robot.update();
         }
 
-        for (int i = 0; i < cycles && opModeIsActive(); i++) {
+        for (int i = 0; i < cycles; i++) {
             robot.currentState = INTAKE_GLOBAL;
             // TODO verify the x and y sign on this. It should not be like this
             robot.startIntakeGlobal(
@@ -145,12 +146,12 @@ public class AutoRight extends LinearOpMode {
                     coneStackHeights[i]
             );
 
-            while (robot.currentState == INTAKE_GLOBAL && opModeIsActive()) {
+            while (robot.currentState == INTAKE_GLOBAL) {
                 robot.update();
             }
 
-            robot.startScoringGlobal(new Pose2d(to.end().getX(), to.end().getY(), to.end().getHeading()), new Pose2d(24,0.5 * ySign),27.7); // 36
-            while ((robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) && opModeIsActive()) {
+            robot.startScoringGlobal(new Pose2d(to.end().getX(), to.end().getY(), to.end().getHeading()), new Pose2d(24,0.0 * ySign),26.25); // 36
+            while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
                 robot.update();
             }
         }
@@ -163,13 +164,12 @@ public class AutoRight extends LinearOpMode {
         }
 
         robot.updateStayInPlacePID = false;
-        robot.drivetrain.setBreakFollowingThresholds(new Pose2d(0.5, 0.5, Math.toRadians(5)), park[parkingNum].end());
         robot.followTrajectory(park[parkingNum], this);
 
         long clawStart = System.currentTimeMillis();
         robot.claw.park();
 
-        while (System.currentTimeMillis() - clawStart <= 300 && opModeIsActive()) {
+        while (System.currentTimeMillis() - clawStart <= 300) {
             robot.claw.park();
             robot.claw.update();
         }
