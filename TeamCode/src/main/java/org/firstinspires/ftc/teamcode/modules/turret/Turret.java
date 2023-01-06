@@ -29,6 +29,7 @@ public class Turret {
     public double targetTurretVelocity = 0.0;
     public double turretPower = 0.0;
     public double turretError = 0.0;
+    double kstatic = 0.08;
     public static double turretPercentMax = 0.98;
 
     double maxTurretSpeed = 5.52158708813; // radians per sec
@@ -83,6 +84,7 @@ public class Turret {
 
         turretPower = turretPID.update(turretError);
         turretPower *= (outtake.extension.currentExtensionLength - 10)/15 * 0.5 + 1;
+        turretPower += ((Math.abs(Math.toDegrees(turretError)) > 0.5) ? kstatic : 0) * Math.signum(turretPower);
 
         motorPriorities.get(4).setTargetPower(-turretPower);
 

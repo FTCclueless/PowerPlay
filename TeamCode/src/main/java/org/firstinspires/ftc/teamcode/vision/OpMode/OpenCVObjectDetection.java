@@ -32,7 +32,7 @@ public class OpenCVObjectDetection extends LinearOpMode {
     public void runOpMode() {
         // robot logic...
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        detector.setTelemetry(telemetry);
+        //detector.setTelemetry(telemetry);
         // Initialize the back-facing camera
         // https://github.com/OpenFTC/EasyOpenCV/blob/master/examples/src/main/java/org/openftc/easyopencv/examples/InternalCameraExample.java
         // Initialize the back-facing camera
