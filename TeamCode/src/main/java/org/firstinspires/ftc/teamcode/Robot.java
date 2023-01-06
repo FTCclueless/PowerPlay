@@ -150,7 +150,7 @@ public class Robot {
                     isAtPoint = true;
                 }
 
-                if (isAtPoint && (outtake.isInPositionGlobal(drivePose, conePose, 2) || hasGrabbed)) {
+                if (isAtPoint && (outtake.isInPositionGlobal(drivePose, conePose, 1.5) || hasGrabbed)) {
                     hasGrabbed = true;
                     claw.close();
                 }
@@ -250,7 +250,7 @@ public class Robot {
                     outtake.extension.retractExtension();
                 }
 
-                if (isAtPoint && (outtake.isInPositionGlobal(drivePose, polePose,1.0))) {
+                if (isAtPoint && (outtake.isInPositionGlobal(drivePose, polePose,1.5))) {
                     timeSinceClawOpen = System.currentTimeMillis();
                     isAtPoint = false;
                     currentState = STATE.DEPOSIT;
@@ -409,7 +409,7 @@ public class Robot {
         }
     }
 
-    public void initPosition () {
+    public void initPosition (boolean left) {
         actuation.init();
         outtake.extension.retractExtension();
         claw.open();
@@ -419,8 +419,8 @@ public class Robot {
         while (!outtake.slides.isInPosition(1.5)) {
             update();
         }
-
-        outtake.turret.setTargetTurretAngle(Math.toRadians(55));
+        double m1 = left ? 1 : -1;
+        outtake.turret.setTargetTurretAngle(Math.toRadians(55) * m1);
 
         while (!outtake.turret.isInPosition(0.75)) {
             update();
@@ -441,8 +441,6 @@ public class Robot {
     public void updateMotors() {
         double numMotorsUpdated = 0;
         double bestMotorUpdate = 1;
-
-        numMotorsUpdated = 0;
 
         while (bestMotorUpdate > 0 && loopTime <= targetLoopLength) { // updates the motors while still time remaining in the loop
             int bestIndex = 0;

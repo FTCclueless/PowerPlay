@@ -121,7 +121,7 @@ public class OLDBlueAuto extends LinearOpMode {
         Log.e("camera setup", "");
 
         sleep(2000);
-        robot.initPosition();
+        robot.initPosition(true);
 
         Log.e("init position", "");
 

@@ -16,7 +16,7 @@ public class Actuation {
     ArrayList<MyServo> servos;
 
     double levelPosition = 0.43;
-    double tiltedPosition = 0.2689;
+    double tiltedPosition = 0.25; //0.2689
     double downTiltPosition = 0.479;
     double initPosition = 0.033;
 

@@ -4,7 +4,6 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Robot;
@@ -13,14 +12,13 @@ import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequenc
 import org.firstinspires.ftc.teamcode.util.Storage;
 import org.firstinspires.ftc.teamcode.vision.OpenCVWrapper;
 
-@Disabled
-@Autonomous(group = "Test")
-public class ParkAuto_RedBottom extends LinearOpMode {
-    public static int parkingNum = 0;
-    public static final boolean lr = false; // Left : true | Right : false
-    public static final boolean tb = false; // Top : true | Bottom : false
+// runOpMode isn't static. The constructor must be called.
+public class ParkAuto extends LinearOpMode {
+    private int parkingNum = 0;
+    protected boolean lr = true; // Left : true | Right : false
+    protected boolean tb = false; // Top : true | Bottom : false
 
-    OpenCVWrapper openCVWrapper;
+    private OpenCVWrapper openCVWrapper;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -119,6 +117,6 @@ public class ParkAuto_RedBottom extends LinearOpMode {
         robot.followTrajectory(park[parkingNum], this);
 
         Storage.autoEndPose = drive.getPoseEstimate();
-        Storage.isBlue = false;
+        Storage.isBlue = true;
     }
 }

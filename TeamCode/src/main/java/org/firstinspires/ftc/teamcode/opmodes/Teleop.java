@@ -47,7 +47,7 @@ public class Teleop extends LinearOpMode {
         waitForStart();
 
         while (!isStopRequested()) {
-            robot.outtake.turret.updateTurretPID(10,0.1,0.0);
+            robot.outtake.turret.updateTurretPID(10.0,0.1,0);
             // Driver A
             drive.drive(gamepad1);
 
@@ -64,6 +64,7 @@ public class Teleop extends LinearOpMode {
             }
 
             if ((robot.currentState == Robot.STATE.WAIT_FOR_START_SCORING) && (gamepad1.b)) {
+                robot.outtake.slides.slidesPercentMax = 1.0;
                 robot.currentState = Robot.STATE.INTAKE_RELATIVE;
             }
 

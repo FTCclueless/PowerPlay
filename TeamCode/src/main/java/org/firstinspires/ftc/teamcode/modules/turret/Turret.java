@@ -21,7 +21,7 @@ public class Turret {
 
     ArrayList<MotorPriority> motorPriorities;
 
-    public PID turretPID = new PID(4.0, 0.0,0.0);
+    public PID turretPID = new PID(1.91, 0.5,0.0);//3.7
 
     public double currentTurretAngle = 0.0;
     public double currentTurretVelocity = 0.0;
@@ -75,6 +75,10 @@ public class Turret {
         // THIS CODE MAKES SURE THE WIRES DON"T TWIST TOO MUCH
         if (Math.abs(currentTurretAngle + turretError) > Math.toRadians(630)) {
             turretError = targetTurretAngle - currentTurretAngle;
+        }
+
+        if (Math.abs(turretError) >= Math.toRadians(180)) {
+            turretPID.resetIntegral();
         }
 
         turretPower = turretPID.update(turretError);

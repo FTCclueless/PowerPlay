@@ -37,6 +37,7 @@ import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
 import org.firstinspires.ftc.teamcode.util.MotorPriority;
 import org.firstinspires.ftc.teamcode.util.PID;
 import org.firstinspires.ftc.teamcode.util.Storage;
+import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -259,9 +260,9 @@ public class Drivetrain extends MecanumDrive {
         updateTelemetry();
     }
 
-    public PID xPID = new PID(0.2, 0.0,0.0);
-    public PID yPID = new PID(-0.2, 0.0,0.0);
-    public PID headingPID = new PID(0.4, 0.0,0.0);
+    public PID xPID = new PID(0.25, 0.12,0.0);
+    public PID yPID = new PID(-0.3, -0.15,0.0);
+    public PID headingPID = new PID(0.8, 0.1,0.0);
 
     public void updatePID(Pose2d targetPose) {
         Pose2d robotPose = localizer.getPoseEstimate();
@@ -271,6 +272,13 @@ public class Drivetrain extends MecanumDrive {
         double xError = deltaX * Math.cos(robotPose.getHeading()) + deltaY * Math.sin(robotPose.getHeading());
         double yError = deltaY * Math.cos(robotPose.getHeading()) - deltaX * Math.sin(robotPose.getHeading());
         double headingError = targetPose.getHeading() - robotPose.getHeading();
+        while(Math.abs(headingError) > Math.PI ){
+            headingError -= Math.PI * 2 * Math.signum(headingError);
+        }
+//        double headingError = robotPose.getHeading() - targetPose.getHeading();
+        TelemetryUtil.packet.put("targetHeading: ", targetPose.getHeading());
+        TelemetryUtil.packet.put("robotHeading: ", robotPose.getHeading());
+        TelemetryUtil.packet.put("headingError: ", headingError);
 
         double forward = xPID.update(xError);
         double left = yPID.update(yError);

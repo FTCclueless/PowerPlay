@@ -95,4 +95,7 @@ public class Extension {
     public boolean isInPosition (double length) {
         return Math.abs(targetExtensionLength - currentExtensionLength) <= length;
     }
+    public boolean isInPosition (double target, double length) {
+        return Math.abs(target - currentExtensionLength) <= length;
+    }
 }
