@@ -22,7 +22,7 @@ public class TurretPIDTuner extends LinearOpMode {
 
     public double error = 0.0;
 
-    public static double p = 4.0;
+    public static double p = 3.2;
     public static double i = 0.0;
     public static double d = 0.0;
 
@@ -44,10 +44,6 @@ public class TurretPIDTuner extends LinearOpMode {
         robot.outtake.resetEncoders();
 
         waitForStart();
-
-        p = turret.turretPID.p;
-        i = turret.turretPID.i;
-        d = turret.turretPID.d;
 
         slides.setTargetSlidesLength(8);
         turret.setTargetTurretAngle(Math.toRadians(0));
