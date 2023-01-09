@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.modules.turret;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
 import java.util.ArrayList;
 
+@Config
 public class Turret {
     public DcMotorEx turret;
     Sensors sensors;
@@ -21,7 +23,7 @@ public class Turret {
 
     ArrayList<MotorPriority> motorPriorities;
 
-    public PID turretPID = new PID(2.21, 0.5,0.0);//3.7
+    public PID turretPID = new PID(3.2, 0.0,0.0);
 
     public double currentTurretAngle = 0.0;
     public double currentTurretVelocity = 0.0;
@@ -29,6 +31,7 @@ public class Turret {
     public double targetTurretVelocity = 0.0;
     public double turretPower = 0.0;
     public double turretError = 0.0;
+    public static double kstatic = 0.08;
     public static double turretPercentMax = 0.98;
 
     double maxTurretSpeed = 5.52158708813; // radians per sec
@@ -83,6 +86,7 @@ public class Turret {
 
         turretPower = turretPID.update(turretError);
         turretPower *= (outtake.extension.currentExtensionLength - 10)/15 * 0.5 + 1;
+//        turretPower += ((Math.abs(Math.toDegrees(turretError)) > 0.5) ? kstatic : 0) * Math.signum(turretPower);
 
         motorPriorities.get(4).setTargetPower(-turretPower);
 

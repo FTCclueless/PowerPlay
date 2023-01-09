@@ -81,6 +81,10 @@ public class Outtake {
 
         turretClips = isTurretGoThroughBad();
 
+        if (turretClips) {
+            Log.e("TURRET CLIPS", "");
+        }
+
         extensionIn = (currentExtensionLength <= (extension.baseSlidesExtension + 3.5));
         Log.e("variables", Math.toDegrees(currentTurretAngle) + " " + Math.toDegrees(targetTurretAngle) + " " + isTurretGoThroughRange(120, 185) + " " + isTurretGoThroughRange(-185, -120));
         boolean backExtendCheck = targetSlidesLength <= 9 && (isTurretGoThroughRange(120, 185) || isTurretGoThroughRange(-185, -120));

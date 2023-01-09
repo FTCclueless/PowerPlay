@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
-import static org.firstinspires.ftc.teamcode.Robot.STATE.DEPOSIT;
+import static org.firstinspires.ftc.teamcode.Robot.STATE.DEPOSIT_AUTO;
 import static org.firstinspires.ftc.teamcode.Robot.STATE.INTAKE_GLOBAL;
 import static org.firstinspires.ftc.teamcode.Robot.STATE.INTAKE_RELATIVE;
 import static org.firstinspires.ftc.teamcode.Robot.STATE.SCORING_GLOBAL;
@@ -27,7 +27,7 @@ public class AutoRight extends LinearOpMode {
 
 //    OpenCVWrapper openCVWrapper;
 
-    double[] coneStackHeights = new double[]{5.65, 4.25, 2.75, 2.0, 0.5};//{4.4, 2.25, 1.25, 0.5, -0.55} {4.15, 3.3, 2.25, 0.5, -0.5};
+    double[] coneStackHeights = new double[]{6.15, 4.9, 3.25, 2.0, 0.75}; //5.65, 4.4, 2.75, 2.0, 0.5
     ButtonToggle toggleA = new ButtonToggle();
 
     @Override
@@ -42,19 +42,19 @@ public class AutoRight extends LinearOpMode {
         int ySign = lr ? 1 : -1;
 
         Pose2d origin = new Pose2d(
-                36,
+                33.75,
                 63 * ySign,
                 lr ? Math.toRadians(90) : Math.toRadians(-90)
         );
 
         Pose2d toPose = new Pose2d(
-                36,
+                33.75,
                 18 * ySign,
                 lr ? Math.toRadians(90) : Math.toRadians(-90)
         );
 
         Pose2d cyclePose = new Pose2d(
-                48,
+                46.5,
                 12 * ySign,
                 Math.toRadians(180)
         );
@@ -69,8 +69,8 @@ public class AutoRight extends LinearOpMode {
                     robot.currentState = Robot.STATE.SCORING_GLOBAL;
                     robot.startScoringGlobal(
                             new Pose2d(toPose.getX(), toPose.getY(), toPose.getHeading()),
-                            new Pose2d(26.3,-1.2 * ySign),
-                            26.25); // 36
+                            new Pose2d(24,0.0 * ySign),
+                            29); // 36
                 })
                 .build();
 
@@ -82,11 +82,11 @@ public class AutoRight extends LinearOpMode {
                         cyclePose.getY()
                 )).build(),
                 drive.trajectoryBuilder(cyclePose).strafeTo(new Vector2d( // parking position 2
-                        36,
+                        34,
                         cyclePose.getY()
                 )).build(),
                 drive.trajectoryBuilder(cyclePose).strafeTo(new Vector2d( // parking position 3
-                        12,
+                        9,
                         cyclePose.getY()
                 )).build()
         };
@@ -136,7 +136,7 @@ public class AutoRight extends LinearOpMode {
         robot.followTrajectorySequence(to, this);
         robot.updateStayInPlacePID = true;
 
-        while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
+        while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) {
             robot.update();
         }
 
@@ -145,7 +145,7 @@ public class AutoRight extends LinearOpMode {
             // TODO verify the x and y sign on this. It should not be like this
             robot.startIntakeGlobal(
                     to.end(),
-                    new Pose2d(71,12 * ySign),
+                    new Pose2d(70,12 * ySign),
                     coneStackHeights[i]
             );
 
@@ -155,9 +155,9 @@ public class AutoRight extends LinearOpMode {
 
             robot.startScoringGlobal(
                     new Pose2d(to.end().getX(), to.end().getY(), to.end().getHeading()),
-                    new Pose2d(24,0.0 * ySign),
-                    26.25); // 36
-            while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
+                    new Pose2d(24,1.0 * ySign),
+                    29);
+            while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) {
                 robot.update();
             }
         }
