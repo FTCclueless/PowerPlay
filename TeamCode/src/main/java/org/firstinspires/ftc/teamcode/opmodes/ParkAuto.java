@@ -18,14 +18,14 @@ public class ParkAuto extends LinearOpMode {
     protected boolean lr = true; // Left : true | Right : false
     protected boolean tb = false; // Top : true | Bottom : false
 
-    private OpenCVWrapper openCVWrapper;
+    //private OpenCVWrapper openCVWrapper;
 
     @Override
     public void runOpMode() throws InterruptedException {
         Robot robot = new Robot(hardwareMap);
         Drivetrain drive = robot.drivetrain;
-        openCVWrapper = new OpenCVWrapper(telemetry, hardwareMap, true);
-        assert(openCVWrapper != null);
+        //openCVWrapper = new OpenCVWrapper(telemetry, hardwareMap, true);
+        //assert(openCVWrapper != null);
 
         // Signs
         int xSign = tb ? 1 : -1;
@@ -39,50 +39,48 @@ public class ParkAuto extends LinearOpMode {
 
         drive.setPoseEstimate(origin);
 
-        Pose2d intakePose = new Pose2d(
-                55 * xSign,
-                14.5 * ySign,
-                tb ? 0 : Math.PI
-        );
-
-        Pose2d depositPose = new Pose2d(
-                38 * xSign,
-                14.5 * ySign,
-                tb ? 0 : Math.PI
-        );
-
         drive.setPoseEstimate(origin); // FIXME is this needed?
         TrajectorySequence to = drive.trajectorySequenceBuilder(origin)
-                // Move forward extra in order to bump away the signal cone
-                .strafeTo(new Vector2d(origin.getX(), origin.getY() - (54 * ySign)))
-                .lineToLinearHeading(new Pose2d(depositPose.getX() + (4 * xSign), depositPose.getY(), depositPose.getHeading()))
-                .build();
-
-        // TODO talk to hudson about this weird heading stuff
-        TrajectorySequence toDeposit = drive.trajectorySequenceBuilder(new Pose2d(intakePose.getX() - (3 * xSign), intakePose.getY(), intakePose.getHeading()))
-                .lineToConstantHeading(new Vector2d(depositPose.getX(), depositPose.getY()))
-                .build();
+            .strafeTo(new Vector2d(
+                origin.getX(),
+                33 * ySign
+            ))
+            .build();
 
         // TODO clean this up a little? Kinda lookin a little bad
         Trajectory[] park = new Trajectory[] {
-                drive.trajectoryBuilder(toDeposit.end()).strafeTo(new Vector2d(
+                drive.trajectoryBuilder(to.end()).strafeTo(new Vector2d(
                         origin.getX() + (24 * ySign),
-                        depositPose.getY()
+                        33 * ySign
                 )).build(),
-                drive.trajectoryBuilder(toDeposit.end()).strafeTo(new Vector2d(
-                        origin.getX() - (2.000001 * ySign),
-                        depositPose.getY()
+                drive.trajectoryBuilder(to.end()).strafeTo(new Vector2d(
+                    origin.getX() - (2 * ySign),
+                    33 * ySign
                 )).build(),
-                drive.trajectoryBuilder(toDeposit.end()).strafeTo(new Vector2d(
+                drive.trajectoryBuilder(to.end()).strafeTo(new Vector2d(
                         origin.getX() - (26 * ySign),
-                        depositPose.getY()
+                        33 * ySign
                 )).build()
         };
 
+        long clawStart = System.currentTimeMillis();
         robot.resetEncoders();
-        robot.claw.open();
+        robot.outtake.actuation.level();
+        robot.outtake.extension.retractExtension();
+        robot.claw.park();
+        robot.update();
+        while (System.currentTimeMillis() - clawStart <= 650) {
+            robot.update();
+        }
+        /*long clawStart = System.currentTimeMillis();
+        robot.claw.park();
 
-        openCVWrapper.init();
+        while (System.currentTimeMillis() - clawStart <= 300) {
+            robot.claw.park();
+            robot.claw.update();
+        }*/
+
+        /*openCVWrapper.init();
         openCVWrapper.start();
 
         while (opModeInInit()) {
@@ -107,14 +105,16 @@ public class ParkAuto extends LinearOpMode {
             }
 
             telemetry.update();
-        }
+        }*/
 
         waitForStart();
 
-        openCVWrapper.stop();
+        //openCVWrapper.stop();
 
         robot.followTrajectorySequence(to, this);
-        robot.followTrajectory(park[parkingNum], this);
+        if (park[parkingNum] != null) {
+            robot.followTrajectory(park[parkingNum], this);
+        }
 
         Storage.autoEndPose = drive.getPoseEstimate();
         Storage.isBlue = true;
