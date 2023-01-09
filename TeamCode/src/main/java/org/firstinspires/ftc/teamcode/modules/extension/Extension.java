@@ -22,22 +22,20 @@ public class Extension {
 
     public double servoMountingBack = 1.465;
     public double clawForward = 4.25;
+    public double actuationTiltDistance = 2.5;
+    public double momentOfInertiaConstant = 0.1;
 
     MyServo extension;
     ArrayList<MyServo> servos;
     Outtake outtake;
     Actuation actuation;
 
-    public double actuationTiltDistance = 2.5;
-
-    public double momentOfInertiaConstant = 0.1;
-
     public Extension (HardwareMap hardwareMap, ArrayList<MyServo> servos, Outtake outtake, Actuation actuation) {
         this.servos = servos;
         this.outtake = outtake;
         this.actuation = actuation;
 
-        extension = new MyServo(hardwareMap.servo.get("extension"),"Amazon",1.0, 0.0,0.601, 0.601);
+        extension = new MyServo(hardwareMap.servo.get("extension"),"Amazon",0.7, 0.0,0.601, 0.601);
 
         servos.add(1, extension);
     }

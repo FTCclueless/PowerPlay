@@ -42,7 +42,7 @@ public class Robot {
     public ArrayList<MotorPriority> motorPriorities = new ArrayList<>();
     public ArrayList<MyServo> servos = new ArrayList<>();
 
-    public enum STATE {IDLE, INTAKE_RELATIVE, INTAKE_GLOBAL, WAIT_FOR_START_SCORING, SCORING_GLOBAL, SCORING_RELATIVE, DEPOSIT, RETRACT }
+    public enum STATE {IDLE, INTAKE_RELATIVE, INTAKE_GLOBAL, WAIT_FOR_START_SCORING, SCORING_GLOBAL, SCORING_RELATIVE, DEPOSIT_TELEOP, DEPOSIT_AUTO, RETRACT }
     public STATE currentState = STATE.IDLE;
 
     public Robot (HardwareMap hardwareMap) {
@@ -150,7 +150,7 @@ public class Robot {
                     isAtPoint = true;
                 }
 
-                if (isAtPoint && (outtake.isInPositionGlobal(drivePose, conePose, 1.5) || hasGrabbed)) {
+                if ((isAtPoint && (outtake.isInPositionGlobal(drivePose, conePose, 1.5)  && outtake.extension.isInPosition(0.01)) || hasGrabbed)) {
                     hasGrabbed = true;
                     claw.close();
                 }
@@ -225,7 +225,7 @@ public class Robot {
                     drivetrain.localizer.y += nearestPole.getY() - globalArmPos.getY();
 
                     timeSinceClawOpen = System.currentTimeMillis();
-                    currentState = STATE.DEPOSIT;
+                    currentState = STATE.DEPOSIT_TELEOP;
                 }
                 break;
             case SCORING_GLOBAL:
@@ -250,34 +250,36 @@ public class Robot {
                     outtake.extension.retractExtension();
                 }
 
-                if (isAtPoint && (outtake.isInPositionGlobal(drivePose, polePose,1.5))) {
+                if (isAtPoint && (outtake.isInPositionGlobal(drivePose, polePose,1.25) && (outtake.extension.isInPosition(0.01)))) {
                     timeSinceClawOpen = System.currentTimeMillis();
                     isAtPoint = false;
-                    currentState = STATE.DEPOSIT;
+                    currentState = STATE.DEPOSIT_AUTO;
                 }
                 break;
-            case DEPOSIT:
-                double t1 = 300;
+            case DEPOSIT_AUTO:
                 outtake.slides.slidesPercentMax = 1.0;
+                outtake.setTargetGlobal(drivePose, polePose, poleHeight);
 
-                if (!Storage.isTeleop) {
-                    outtake.setTargetGlobal(drivePose, polePose, poleHeight);
-                }
-
-                claw.open();
-                if (System.currentTimeMillis() - timeSinceClawOpen >= t1) {
-                    if (Storage.isTeleop) {
-                        outtake.slides.setTargetSlidesLength(Math.min(scoringHeight + 6, 32));
-                        if ((outtake.slides.isInPosition(2)) || (System.currentTimeMillis() - timeSinceClawOpen >= (t1+400))) {
-                            actuation.level();
-                            currentState = STATE.INTAKE_RELATIVE;
-                        }
-                    } else {
-                        actuation.level();
+                actuation.level();
+                if (System.currentTimeMillis() - timeSinceClawOpen >= 200) {
+                    claw.open();
+                    if (System.currentTimeMillis() - timeSinceClawOpen >= (350)){
                         currentState = STATE.INTAKE_RELATIVE;
                     }
                 }
                 break;
+            case DEPOSIT_TELEOP:
+                outtake.slides.slidesPercentMax = 1.0;
+
+                claw.open();
+                if (System.currentTimeMillis() - timeSinceClawOpen >= 300) {
+                    outtake.slides.setTargetSlidesLength(Math.min(scoringHeight + 6, 32));
+                    if ((outtake.slides.isInPosition(2)) || (System.currentTimeMillis() - timeSinceClawOpen >= (700))) {
+                        actuation.level();
+                        currentState = STATE.INTAKE_RELATIVE;
+                    }
+                    break;
+                }
         }
 
         drivetrain.trajectorySequenceRunner.globalArmPose = globalArmPos;
@@ -410,6 +412,8 @@ public class Robot {
     }
 
     public void initPosition (boolean left) {
+        double turnSign = left ? 1 : -1;
+
         actuation.init();
         outtake.extension.retractExtension();
         claw.open();
@@ -417,12 +421,13 @@ public class Robot {
         outtake.slides.setTargetSlidesLength(12);
 
         while (!outtake.slides.isInPosition(1.5)) {
+            Log.e("stuck1", "");
             update();
         }
-        double m1 = left ? 1 : -1;
-        outtake.turret.setTargetTurretAngle(Math.toRadians(55) * m1);
+        outtake.turret.setTargetTurretAngle(Math.toRadians(55) * turnSign);
 
         while (!outtake.turret.isInPosition(0.75)) {
+            Log.e("stuck2", "");
             update();
         }
 
@@ -430,7 +435,9 @@ public class Robot {
         outtake.slides.setTargetSlidesLength(1.0);
 
         while (!outtake.slides.isInPosition(0.75)) {
+            Log.e("stuck3", "");
             update();
+            outtake.slides.setTargetSlidesLength(1.0);
         }
 
         outtake.slides.slidesPercentMax = 1.0;

@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
-import static org.firstinspires.ftc.teamcode.Robot.STATE.DEPOSIT;
+import static org.firstinspires.ftc.teamcode.Robot.STATE.DEPOSIT_TELEOP;
 import static org.firstinspires.ftc.teamcode.Robot.STATE.INTAKE_GLOBAL;
 import static org.firstinspires.ftc.teamcode.Robot.STATE.SCORING_GLOBAL;
 
@@ -160,7 +160,7 @@ public class OLDBlueAuto extends LinearOpMode {
         robot.followTrajectorySequence(to, this);
 
         robot.startScoringGlobal(to.end(), new Pose2d(24 * xSign,0 * ySign),27.5); // 36
-        while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
+        while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_TELEOP) {
             robot.update();
         }
 
@@ -185,7 +185,7 @@ public class OLDBlueAuto extends LinearOpMode {
 
             robot.startScoringGlobal(new Pose2d(toDeposit.end().getX() + 2, toDeposit.end().getY(), toDeposit.end().getHeading()), new Pose2d(24 * xSign,0),26.5); // 36
             robot.followTrajectorySequence(toDeposit, this);
-            while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT) {
+            while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_TELEOP) {
                 robot.update();
             }
         }
