@@ -22,7 +22,7 @@ public class TurretPIDTuner extends LinearOpMode {
 
     public double error = 0.0;
 
-    public static double p = 3.2;
+    public static double p = 0.8;
     public static double i = 0.0;
     public static double d = 0.0;
 

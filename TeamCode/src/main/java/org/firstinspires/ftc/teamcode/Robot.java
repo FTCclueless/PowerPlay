@@ -79,7 +79,7 @@ public class Robot {
     double poleHeight = 32.0;
 
     Pose2d drivePose = new Pose2d(0,0);
-    double scoringHeight = 27;
+    double scoringHeight = 28;
     public int scoringLevel = 3;
 
     Field field = new Field();

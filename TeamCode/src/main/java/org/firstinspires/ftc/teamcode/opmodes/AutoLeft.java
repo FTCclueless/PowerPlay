@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.modules.drive.Drivetrain;
 import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.util.ButtonToggle;
 import org.firstinspires.ftc.teamcode.util.Storage;
+import org.firstinspires.ftc.teamcode.vision.OpenCVWrapper;
 
 @Autonomous(group = "Auto")
 public class AutoLeft extends LinearOpMode {
@@ -110,7 +111,7 @@ public class AutoLeft extends LinearOpMode {
             boolean detected = false;
 
 //            parkingNum = openCVWrapper.getParkingNum();
-            detected = true;
+//            detected = true;
 
             if (toggleA.isClicked(gamepad1.a)) {
                 robot.claw.close();

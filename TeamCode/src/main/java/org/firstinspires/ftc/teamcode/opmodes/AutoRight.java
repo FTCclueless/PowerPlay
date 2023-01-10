@@ -110,7 +110,7 @@ public class AutoRight extends LinearOpMode {
             boolean detected = false;
 
 //            parkingNum = openCVWrapper.getParkingNum();
-            detected = true;
+//            detected = true;
 
             if (toggleA.isClicked(gamepad1.a)) {
                 robot.claw.close();
