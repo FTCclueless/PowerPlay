@@ -96,7 +96,10 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
         while (!isStarted() && !isStopRequested())
         {
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getDetectionsUpdate();
-            RobotLogger.dd("", "num of tags detected: " + currentDetections.size());
+            if (currentDetections != null)
+                RobotLogger.dd("", "num of tags detected: " + currentDetections.size());
+            else
+                RobotLogger.dd("", "num of tags detected: 0");
 
             if(currentDetections != null && currentDetections.size() != 0)
             {
