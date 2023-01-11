@@ -174,9 +174,11 @@ public class AutoRight extends LinearOpMode {
 
         long clawStart = System.currentTimeMillis();
         robot.claw.park();
+        robot.outtake.actuation.level();
 
         while (System.currentTimeMillis() - clawStart <= 300) {
             robot.claw.park();
+            robot.outtake.actuation.level();
             robot.claw.update();
         }
 
