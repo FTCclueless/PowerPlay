@@ -14,18 +14,18 @@ import org.firstinspires.ftc.teamcode.vision.OpenCVWrapper;
 
 // runOpMode isn't static. The constructor must be called.
 public class ParkAuto extends LinearOpMode {
-    private int parkingNum = 0;
+    private int parkingNum = 2;
     protected boolean lr = true; // Left : true | Right : false
     protected boolean tb = false; // Top : true | Bottom : false
 
-    //private OpenCVWrapper openCVWrapper;
+    private OpenCVWrapper openCVWrapper;
 
     @Override
     public void runOpMode() throws InterruptedException {
         Robot robot = new Robot(hardwareMap);
         Drivetrain drive = robot.drivetrain;
-        //openCVWrapper = new OpenCVWrapper(telemetry, hardwareMap, true);
-        //assert(openCVWrapper != null);
+        openCVWrapper = new OpenCVWrapper(telemetry, hardwareMap, true);
+        assert(openCVWrapper != null);
 
         // Signs
         int xSign = tb ? 1 : -1;
@@ -72,15 +72,8 @@ public class ParkAuto extends LinearOpMode {
         while (System.currentTimeMillis() - clawStart <= 650) {
             robot.update();
         }
-        /*long clawStart = System.currentTimeMillis();
-        robot.claw.park();
 
-        while (System.currentTimeMillis() - clawStart <= 300) {
-            robot.claw.park();
-            robot.claw.update();
-        }*/
-
-        /*openCVWrapper.init();
+        openCVWrapper.init();
         openCVWrapper.start();
 
         while (opModeInInit()) {
@@ -105,11 +98,11 @@ public class ParkAuto extends LinearOpMode {
             }
 
             telemetry.update();
-        }*/
+        }
 
         waitForStart();
 
-        //openCVWrapper.stop();
+        openCVWrapper.stop();
 
         robot.followTrajectorySequence(to, this);
         if (park[parkingNum] != null) {
