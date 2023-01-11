@@ -27,7 +27,7 @@ public class AutoRight extends LinearOpMode {
 
 //    OpenCVWrapper openCVWrapper;
 
-    double[] coneStackHeights = new double[]{6.15, 4.9, 3.25, 2.0, 0.75}; //5.65, 4.4, 2.75, 2.0, 0.5
+    double[] coneStackHeights = new double[]{6.15, 4.9, 3.5, 2.0, 0.75}; //5.65, 4.4, 2.75, 2.0, 0.5
     ButtonToggle toggleA = new ButtonToggle();
 
     @Override
@@ -69,8 +69,8 @@ public class AutoRight extends LinearOpMode {
                     robot.currentState = Robot.STATE.SCORING_GLOBAL;
                     robot.startScoringGlobal(
                             new Pose2d(toPose.getX(), toPose.getY(), toPose.getHeading()),
-                            new Pose2d(24,0.0 * ySign),
-                            29); // 36
+                            new Pose2d(24,0 * ySign),
+                            29); // 24, 0
                 })
                 .build();
 
@@ -145,7 +145,7 @@ public class AutoRight extends LinearOpMode {
             // TODO verify the x and y sign on this. It should not be like this
             robot.startIntakeGlobal(
                     to.end(),
-                    new Pose2d(70,12 * ySign),
+                    new Pose2d(70.5,12 * ySign), //70
                     coneStackHeights[i]
             );
 
