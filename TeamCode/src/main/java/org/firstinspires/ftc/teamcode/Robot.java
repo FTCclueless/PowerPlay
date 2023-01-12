@@ -411,6 +411,8 @@ public class Robot {
         }
     }
 
+    long slides1, turret, slides2 = System.currentTimeMillis();
+
     public void initPosition (boolean left) {
         double turnSign = left ? 1 : -1;
 
@@ -418,23 +420,27 @@ public class Robot {
         outtake.extension.retractExtension();
         claw.open();
 
+        slides1 = System.currentTimeMillis();
         outtake.slides.setTargetSlidesLength(12);
 
-        while (!outtake.slides.isInPosition(1.5)) {
+        while ((!outtake.slides.isInPosition(2.5)) || (System.currentTimeMillis() - slides1 >= 1000)) {
             Log.e("stuck1", "");
             update();
         }
+
+        turret = System.currentTimeMillis();
         outtake.turret.setTargetTurretAngle(Math.toRadians(55) * turnSign);
 
-        while (!outtake.turret.isInPosition(0.75)) {
+        while ((!outtake.turret.isInPosition(5)) || (System.currentTimeMillis() - turret >= 1000)) {
             Log.e("stuck2", "");
             update();
         }
 
         outtake.slides.slidesPercentMax = 0.25;
+        slides2 = System.currentTimeMillis();
         outtake.slides.setTargetSlidesLength(1.0);
 
-        while (!outtake.slides.isInPosition(0.75)) {
+        while ((!outtake.slides.isInPosition(2.5)) || (System.currentTimeMillis() - slides2 >= 1000)) {
             Log.e("stuck3", "");
             update();
             outtake.slides.setTargetSlidesLength(1.0);
