@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.modules.extension.Extension;
 import org.firstinspires.ftc.teamcode.modules.outtake.Outtake;
 import org.firstinspires.ftc.teamcode.sensors.Sensors;
 import org.firstinspires.ftc.teamcode.util.MotorPriority;
@@ -85,7 +86,7 @@ public class Turret {
         }
 
         turretPower = turretPID.update(turretError);
-        turretPower *= (outtake.extension.currentExtensionLength - 10)/15 * 0.5 + 1;
+        turretPower *= (outtake.extension.currentExtensionLength - outtake.extension.baseSlidesExtension)/outtake.extension.strokeLength * 0.25 + 1;
         turretPower += ((Math.abs(Math.toDegrees(turretError)) > 0.3) ? kstatic : 0) * Math.signum(turretPower);
 
         motorPriorities.get(4).setTargetPower(-turretPower);
