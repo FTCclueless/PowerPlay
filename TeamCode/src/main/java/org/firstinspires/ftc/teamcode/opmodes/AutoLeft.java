@@ -23,10 +23,10 @@ import org.firstinspires.ftc.teamcode.vision.OpenCVWrapper;
 @Autonomous(group = "Auto")
 public class AutoLeft extends LinearOpMode {
     public static final int cycles = 5;
-    public static int parkingNum = 1;
+    public static int parkingNum = 0;
     public static final boolean lr = true; // Left : true | Right : false
 
-//    OpenCVWrapper openCVWrapper;
+    OpenCVWrapper openCVWrapper;
 
     double[] coneStackHeights = new double[]{6.15, 4.9, 3.5, 2.25, 0.75}; //5.65, 4.4, 2.75, 2.0, 0.5
     ButtonToggle toggleA = new ButtonToggle();
@@ -36,8 +36,8 @@ public class AutoLeft extends LinearOpMode {
         Robot robot = new Robot(hardwareMap);
         Drivetrain drive = robot.drivetrain;
 
-//        openCVWrapper = new OpenCVWrapper(telemetry, hardwareMap, true);
-//        assert(openCVWrapper != null);
+        openCVWrapper = new OpenCVWrapper(telemetry, hardwareMap, true);
+        assert(openCVWrapper != null);
 
         // Signs
         int ySign = lr ? 1 : -1;
@@ -70,7 +70,7 @@ public class AutoLeft extends LinearOpMode {
                     robot.currentState = Robot.STATE.SCORING_GLOBAL;
                     robot.startScoringGlobal(
                             new Pose2d(toPose.getX(), toPose.getY(), toPose.getHeading()),
-                            new Pose2d(24,0.0 * ySign),
+                            new Pose2d(23.75,0.0 * ySign),
                             29);
                 })
                 .build();
@@ -87,7 +87,7 @@ public class AutoLeft extends LinearOpMode {
                         cyclePose.getY()
                 )).build(),
                 drive.trajectoryBuilder(cyclePose).strafeTo(new Vector2d( // parking position 3
-                        9,
+                        11.5,
                         cyclePose.getY()
                 )).build()
         };
@@ -95,8 +95,8 @@ public class AutoLeft extends LinearOpMode {
         robot.resetEncoders();
         robot.claw.open();
 
-//        openCVWrapper.init();
-//        openCVWrapper.start();
+        openCVWrapper.init();
+        openCVWrapper.start();
 
         Log.e("camera setup", "");
 
@@ -110,8 +110,8 @@ public class AutoLeft extends LinearOpMode {
 
             boolean detected = false;
 
-//            parkingNum = openCVWrapper.getParkingNum();
-//            detected = true;
+            parkingNum = openCVWrapper.getParkingNum();
+            detected = true;
 
             if (toggleA.isClicked(gamepad1.a)) {
                 robot.claw.close();
@@ -120,7 +120,7 @@ public class AutoLeft extends LinearOpMode {
             robot.update();
 
             if (detected) {
-                telemetry.addLine("Tag of interest is in sight! ID: " + parkingNum + 1);
+                telemetry.addLine("Tag of interest is in sight! ID: " + (parkingNum + 1));
             } else {
                 telemetry.addLine("Could not find april tag! :(");
             }
@@ -132,10 +132,11 @@ public class AutoLeft extends LinearOpMode {
         drive.setPoseEstimate(origin);
         waitForStart();
 
-//        openCVWrapper.stop();
+        openCVWrapper.stop();
 
         robot.followTrajectorySequence(to, this);
         robot.updateStayInPlacePID = true;
+
 
         while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) {
             robot.update();
@@ -146,7 +147,7 @@ public class AutoLeft extends LinearOpMode {
             // TODO verify the x and y sign on this. It should not be like this
             robot.startIntakeGlobal(
                     to.end(),
-                    new Pose2d(71,12 * ySign),
+                    new Pose2d(71,10.75 * ySign),
                     coneStackHeights[i]
             );
 
@@ -156,8 +157,9 @@ public class AutoLeft extends LinearOpMode {
 
             robot.startScoringGlobal(
                     new Pose2d(to.end().getX(), to.end().getY(), to.end().getHeading()),
-                    new Pose2d(24,0.0 * ySign),
+                    new Pose2d(23.75,0.0 * ySign),
                     29);
+
             while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) {
                 robot.update();
             }

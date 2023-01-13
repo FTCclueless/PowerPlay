@@ -89,7 +89,7 @@ public class Robot {
     private long loopStart = System.nanoTime();
 
     boolean isAtPoint = false;
-    boolean hasGrabbed = false;
+    public boolean hasGrabbed = false;
 
     public boolean isTeleop = false;
     public boolean isAutoAim = false;
@@ -150,7 +150,7 @@ public class Robot {
                     isAtPoint = true;
                 }
 
-                if ((isAtPoint && (outtake.isInPositionGlobal(drivePose, conePose, 1.5)  && outtake.extension.isInPosition(0.01)) || hasGrabbed)) {
+                if ((isAtPoint && (outtake.isInPositionGlobal(drivePose, conePose, 3.5)  && outtake.extension.isInPosition(0.1)) || hasGrabbed)) {
                     hasGrabbed = true;
                     claw.close();
                 }
@@ -250,7 +250,7 @@ public class Robot {
                     outtake.extension.retractExtension();
                 }
 
-                if (isAtPoint && (outtake.isInPositionGlobal(drivePose, polePose,1.25) && (outtake.extension.isInPosition(0.01)))) {
+                if (isAtPoint && (outtake.isInPositionGlobal(drivePose, polePose,3.5) && (outtake.extension.isInPosition(0.01)))) {
                     timeSinceClawOpen = System.currentTimeMillis();
                     isAtPoint = false;
                     currentState = STATE.DEPOSIT_AUTO;

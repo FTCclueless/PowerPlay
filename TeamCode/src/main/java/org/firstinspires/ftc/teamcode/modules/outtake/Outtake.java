@@ -69,7 +69,6 @@ public class Outtake {
     }
 
     public void updateTelemetry () {
-        TelemetryUtil.packet.put("outtake.isInPosition: ", isInPosition());
         TelemetryUtil.packet.put("extensionIn", extensionIn + "");
     }
 
