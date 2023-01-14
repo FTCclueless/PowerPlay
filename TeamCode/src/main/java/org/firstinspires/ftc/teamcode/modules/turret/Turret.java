@@ -24,7 +24,7 @@ public class Turret {
 
     ArrayList<MotorPriority> motorPriorities;
 
-    public PID turretPID = new PID(0.8, 0.0,0.0);
+    public PID turretPID = new PID(1.6, 0.0,0.0);
 
     public double currentTurretAngle = 0.0;
     public double currentTurretVelocity = 0.0;
@@ -35,7 +35,7 @@ public class Turret {
     public static double kstatic = 0.08;
     public static double turretPercentMax = 0.98;
 
-    double maxTurretSpeed = 5.52158708813; // radians per sec
+    double maxTurretSpeed = 8.28238063219; // radians per sec
 
     public Turret(HardwareMap hardwareMap, ArrayList<MotorPriority> motorPriorities, Sensors sensors, Outtake outtake) {
         this.motorPriorities = motorPriorities;
