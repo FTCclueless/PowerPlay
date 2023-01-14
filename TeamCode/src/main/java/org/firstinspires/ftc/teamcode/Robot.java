@@ -104,9 +104,9 @@ public class Robot {
         Pose2d globalArmPos = new Pose2d(0,0);
         Pose2d nearestPole = new Pose2d(0,0);
 
-        if (isTeleop) {
-            drivetrain.localizer.heading = clipAngle(drivetrain.getExternalHeading() + Storage.autoEndPose.getHeading());;
-        }
+//        if (isTeleop) {
+//            drivetrain.localizer.heading = clipAngle(drivetrain.getExternalHeading() + Storage.autoEndPose.getHeading());;
+//        }
 
         Pose2d drivetrainPoseEstimate = drivetrain.getPoseEstimate();
 
