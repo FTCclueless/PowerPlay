@@ -260,12 +260,9 @@ public class Robot {
                 outtake.slides.slidesPercentMax = 1.0;
                 outtake.setTargetGlobal(drivePose, polePose, poleHeight);
 
-                actuation.level();
-                if (System.currentTimeMillis() - timeSinceClawOpen >= 200) {
-                    claw.open();
-                    if (System.currentTimeMillis() - timeSinceClawOpen >= (350)){
-                        currentState = STATE.INTAKE_RELATIVE;
-                    }
+                claw.open();
+                if (System.currentTimeMillis() - timeSinceClawOpen >= 300) {
+                    currentState = STATE.INTAKE_RELATIVE;
                 }
                 break;
             case DEPOSIT_TELEOP:
