@@ -262,6 +262,7 @@ public class Robot {
 
                 claw.open();
                 if (System.currentTimeMillis() - timeSinceClawOpen >= 300) {
+                    actuation.level();
                     currentState = STATE.INTAKE_RELATIVE;
                 }
                 break;

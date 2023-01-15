@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.modules.drive;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.localization.Localizer;
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -14,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
+@Config
 public class ThreeWheelLocalizer implements Localizer {
 
     public MyEncoder[] encoders;
@@ -33,12 +35,14 @@ public class ThreeWheelLocalizer implements Localizer {
 
     BNO055IMU imu;
 
+    public static double backOdoX = -2.78;
+
     public ThreeWheelLocalizer(HardwareMap hardwareMap) {
         encoders = new MyEncoder[3];
 
         encoders[0] = new MyEncoder(new MyPose2d(0,7.65280377185),  -1); // left (y = 7.6861797267140135)
         encoders[1] = new MyEncoder(new MyPose2d(0,-5.63952182112),1); // right (y = -5.664117306820334)
-        encoders[2] = new MyEncoder(new MyPose2d(-2.782117708650203, 0),  -1); // back (x = -2.16505140605)
+        encoders[2] = new MyEncoder(new MyPose2d(backOdoX, 0),  -1); // back (x = -2.16505140605)
 //        encoders[2] = new MyEncoder(new MyPose2d(-1.9304662534597792, 0),  -1); // back
     }
 
@@ -119,6 +123,8 @@ public class ThreeWheelLocalizer implements Localizer {
         loopTimes.add(0,loopTime);
         poseHistory.add(0,currentPose);
         updateVelocity();
+
+        encoders[2].x = backOdoX;
     }
 
 //    MyPose2d lastPose = new MyPose2d(0,0,0);
