@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.vision.OpenCVWrapper;
 @Autonomous(group = "Test")
 public class ParkAutoBottomLeft extends ParkAuto {
     public ParkAutoBottomLeft() {
+        super();
         super.lr = true;
         super.tb = false;
     }

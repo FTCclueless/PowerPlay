@@ -105,9 +105,7 @@ public class ParkAuto extends LinearOpMode {
         openCVWrapper.stop();
 
         robot.followTrajectorySequence(to, this);
-        if (park[parkingNum] != null) {
-            robot.followTrajectory(park[parkingNum], this);
-        }
+        robot.followTrajectory(park[parkingNum], this);
 
         Storage.autoEndPose = drive.getPoseEstimate();
         Storage.isBlue = true;

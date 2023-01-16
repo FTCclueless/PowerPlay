@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 @Autonomous(group = "Test")
 public class ParkAutoTopRight extends ParkAuto {
     public ParkAutoTopRight() {
+        super();
         super.lr = false;
         super.tb = true;
     }
