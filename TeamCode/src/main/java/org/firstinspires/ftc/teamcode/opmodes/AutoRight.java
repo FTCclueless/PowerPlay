@@ -28,7 +28,7 @@ public class AutoRight extends LinearOpMode {
 
     OpenCVWrapper openCVWrapper;
 
-    double[] coneStackHeights = new double[]{6.15, 4.9, 3.25, 2.25, 0.75}; //5.65, 4.4, 2.75, 2.0, 0.5
+    double[] coneStackHeights = new double[]{5.65, 4.4, 3.25, 1.75, 0.75}; //5.65, 4.4, 2.75, 2.0, 0.5
     ButtonToggle toggleA = new ButtonToggle();
 
     @Override
@@ -43,19 +43,19 @@ public class AutoRight extends LinearOpMode {
         int ySign = lr ? 1 : -1;
 
         Pose2d origin = new Pose2d(
-                33.75,
-                63 * ySign,
+                36,
+                62 * ySign,
                 lr ? Math.toRadians(90) : Math.toRadians(-90)
         );
 
         Pose2d toPose = new Pose2d(
-                33.75,
+                36,
                 18 * ySign,
                 lr ? Math.toRadians(90) : Math.toRadians(-90)
         );
 
         Pose2d cyclePose = new Pose2d(
-                47.5,
+                47.1,
                 12 * ySign,
                 Math.toRadians(180)
         );
@@ -70,24 +70,24 @@ public class AutoRight extends LinearOpMode {
                     robot.currentState = Robot.STATE.SCORING_GLOBAL;
                     robot.startScoringGlobal(
                             new Pose2d(toPose.getX(), toPose.getY(), toPose.getHeading()),
-                            new Pose2d(22,0.0 * ySign), // 24, 0
-                            28.25);
+                            new Pose2d(24.5,-3.0 * ySign), // 24, 0
+                            27.3);
                 })
                 .build();
 
         drive.setPoseEstimate(origin);
 
         Trajectory[] park = new Trajectory[]{
-                drive.trajectoryBuilder(cyclePose).strafeTo(new Vector2d( // parking position 1
-                        59.5,
+                drive.trajectoryBuilder(cyclePose).strafeTo(new Vector2d( // parking position 3
+                        11.5,
                         cyclePose.getY()
                 )).build(),
                 drive.trajectoryBuilder(cyclePose).strafeTo(new Vector2d( // parking position 2
                         34,
                         cyclePose.getY()
                 )).build(),
-                drive.trajectoryBuilder(cyclePose).strafeTo(new Vector2d( // parking position 3
-                        11.5,
+                drive.trajectoryBuilder(cyclePose).strafeTo(new Vector2d( // parking position 1
+                        59.5,
                         cyclePose.getY()
                 )).build()
         };
@@ -146,7 +146,7 @@ public class AutoRight extends LinearOpMode {
             // TODO verify the x and y sign on this. It should not be like this
             robot.startIntakeGlobal(
                     to.end(),
-                    new Pose2d(73.5,12 * ySign), //70.5
+                    new Pose2d(70.5,12 * ySign), //70.5
                     coneStackHeights[i]
             );
 
@@ -156,8 +156,8 @@ public class AutoRight extends LinearOpMode {
 
             robot.startScoringGlobal(
                     new Pose2d(to.end().getX(), to.end().getY(), to.end().getHeading()),
-                    new Pose2d(24.5,1.0 * ySign), //24, 1.0
-                    28.25);
+                    new Pose2d(24.5,-3.0 * ySign), //24, 1.0
+                    27.3);
 
             while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) {
                 robot.update();

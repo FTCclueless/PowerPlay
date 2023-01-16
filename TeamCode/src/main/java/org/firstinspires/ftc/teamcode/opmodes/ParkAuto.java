@@ -48,18 +48,18 @@ public class ParkAuto extends LinearOpMode {
             .build();
 
         // TODO clean this up a little? Kinda lookin a little bad
-        Trajectory[] park = new Trajectory[] {
-                drive.trajectoryBuilder(to.end()).strafeTo(new Vector2d(
-                        origin.getX() + (24 * ySign),
-                        33 * ySign
+        Trajectory[] park = new Trajectory[]{
+                drive.trajectoryBuilder(origin).strafeTo(new Vector2d( // parking position 1
+                        59.5,
+                        12 * ySign
                 )).build(),
-                drive.trajectoryBuilder(to.end()).strafeTo(new Vector2d(
-                    origin.getX() - (2 * ySign),
-                    33 * ySign
+                drive.trajectoryBuilder(origin).strafeTo(new Vector2d( // parking position 2
+                        34,
+                        12 * ySign
                 )).build(),
-                drive.trajectoryBuilder(to.end()).strafeTo(new Vector2d(
-                        origin.getX() - (26 * ySign),
-                        33 * ySign
+                drive.trajectoryBuilder(origin).strafeTo(new Vector2d( // parking position 3
+                        11.5,
+                        12 * ySign
                 )).build()
         };
 
