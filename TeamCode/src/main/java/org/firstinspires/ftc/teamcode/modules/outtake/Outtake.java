@@ -91,7 +91,7 @@ public class Outtake {
         }
 
         // if we are going to ram into drivetrain or extension is out and the turret is within 9
-        if (!(turretClips && currentSlidesLength <= 9) && (extensionIn || turret.isInPosition(8, targetTurretAngle))) {
+        if (!(turretClips && currentSlidesLength <= 9) && (extensionIn || turret.isInPosition(15, targetTurretAngle))) {
             turret.setTargetTurretAngle(targetTurretAngle);
         }
 
@@ -103,7 +103,7 @@ public class Outtake {
             }
         }
         double targetExtent = 0;
-        if (turret.isInPosition(8, targetTurretAngle) && slides.isInPosition(4, targetSlidesLength)) {
+        if (turret.isInPosition(15, targetTurretAngle) && slides.isInPosition(4, targetSlidesLength)) {
             targetExtent = targetExtensionLength;
         } else {
             targetExtent = extension.baseSlidesExtension;

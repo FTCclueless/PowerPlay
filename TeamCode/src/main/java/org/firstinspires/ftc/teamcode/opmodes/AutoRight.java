@@ -28,7 +28,7 @@ public class AutoRight extends LinearOpMode {
 
     OpenCVWrapper openCVWrapper;
 
-    double[] coneStackHeights = new double[]{5.65, 4.4, 3.25, 1.75, 0.75}; //5.65, 4.4, 2.75, 2.0, 0.5
+    double[] coneStackHeights = new double[]{5.4, 4.15, 3.0, 1.5, 0.0}; //5.65, 4.4, 2.75, 2.0, 0.5
     ButtonToggle toggleA = new ButtonToggle();
 
     @Override
@@ -43,7 +43,7 @@ public class AutoRight extends LinearOpMode {
         int ySign = lr ? 1 : -1;
 
         Pose2d origin = new Pose2d(
-                36,
+                34.5,
                 62 * ySign,
                 lr ? Math.toRadians(90) : Math.toRadians(-90)
         );
@@ -70,8 +70,8 @@ public class AutoRight extends LinearOpMode {
                     robot.currentState = Robot.STATE.SCORING_GLOBAL;
                     robot.startScoringGlobal(
                             new Pose2d(toPose.getX(), toPose.getY(), toPose.getHeading()),
-                            new Pose2d(24.5,-3.0 * ySign), // 24, 0
-                            27.3);
+                            new Pose2d(23.5,0.0 * ySign), // 24, 0
+                            27.8);
                 })
                 .build();
 
@@ -79,7 +79,7 @@ public class AutoRight extends LinearOpMode {
 
         Trajectory[] park = new Trajectory[]{
                 drive.trajectoryBuilder(cyclePose).strafeTo(new Vector2d( // parking position 3
-                        11.5,
+                        13,
                         cyclePose.getY()
                 )).build(),
                 drive.trajectoryBuilder(cyclePose).strafeTo(new Vector2d( // parking position 2
@@ -156,8 +156,8 @@ public class AutoRight extends LinearOpMode {
 
             robot.startScoringGlobal(
                     new Pose2d(to.end().getX(), to.end().getY(), to.end().getHeading()),
-                    new Pose2d(24.5,-3.0 * ySign), //24, 1.0
-                    27.3);
+                    new Pose2d(23.5,0.0 * ySign), //24, 1.0
+                    29);
 
             while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) {
                 robot.update();

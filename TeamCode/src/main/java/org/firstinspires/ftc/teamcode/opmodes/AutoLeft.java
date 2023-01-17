@@ -87,7 +87,7 @@ public class AutoLeft extends LinearOpMode {
                         cyclePose.getY()
                 )).build(),
                 drive.trajectoryBuilder(cyclePose).strafeTo(new Vector2d( // parking position 3
-                        11.5,
+                        13,
                         cyclePose.getY()
                 )).build()
         };
@@ -157,7 +157,7 @@ public class AutoLeft extends LinearOpMode {
 
             robot.startScoringGlobal(
                     new Pose2d(to.end().getX(), to.end().getY(), to.end().getHeading()),
-                    new Pose2d(23.5,-3.5 * ySign),
+                    new Pose2d(23.5,-1.5 * ySign),
                     28.25);
 
             while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) {

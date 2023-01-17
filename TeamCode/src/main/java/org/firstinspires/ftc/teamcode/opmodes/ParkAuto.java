@@ -58,7 +58,7 @@ public class ParkAuto extends LinearOpMode {
                         12 * ySign
                 )).build(),
                 drive.trajectoryBuilder(origin).strafeTo(new Vector2d( // parking position 3
-                        11.5,
+                        13,
                         12 * ySign
                 )).build()
         };
