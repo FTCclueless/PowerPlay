@@ -196,6 +196,7 @@ public class Robot {
                     offsetX = 0.0;
                     offsetY = 0.0;
                     angleOffset = 0;
+                    intakeHeight = 0.0;
                     startScoringRelative = false;
                     currentState = STATE.SCORING_RELATIVE;
                 }
@@ -203,6 +204,7 @@ public class Robot {
                 if (startScoringGlobal) {
                     outtake.slides.slidesPercentMax = 1.0;
                     extensionDistance = 12.0;
+                    intakeHeight = 0.0;
                     startScoringGlobal = false;
                     currentState = STATE.SCORING_GLOBAL;
                 }
