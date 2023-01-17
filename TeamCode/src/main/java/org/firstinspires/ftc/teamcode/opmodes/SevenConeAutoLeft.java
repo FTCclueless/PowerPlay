@@ -21,14 +21,15 @@ import org.firstinspires.ftc.teamcode.util.Storage;
 import org.firstinspires.ftc.teamcode.vision.OpenCVWrapper;
 
 @Autonomous(group = "Auto")
-public class AutoRight extends LinearOpMode {
+public class SevenConeAutoLeft extends LinearOpMode {
     public static final int cycles = 5;
+    public static final int cycles2 = 2;
     public static int parkingNum = 0;
-    public static final boolean lr = false; // Left : true | Right : false
+    public static final boolean lr = true; // Left : true | Right : false
 
     OpenCVWrapper openCVWrapper;
 
-    double[] coneStackHeights = new double[]{5.4, 4.15, 3.0, 1.5, 0.0}; //5.65, 4.4, 2.75, 2.0, 0.5
+    double[] coneStackHeights = new double[]{6.15, 4.9, 3.5, 2.25, 0.75}; //5.65, 4.4, 2.75, 2.0, 0.5
     ButtonToggle toggleA = new ButtonToggle();
 
     @Override
@@ -43,7 +44,7 @@ public class AutoRight extends LinearOpMode {
         int ySign = lr ? 1 : -1;
 
         Pose2d origin = new Pose2d(
-                34.5,
+                36,
                 62 * ySign,
                 lr ? Math.toRadians(90) : Math.toRadians(-90)
         );
@@ -60,6 +61,12 @@ public class AutoRight extends LinearOpMode {
                 Math.toRadians(180)
         );
 
+        Pose2d cyclePose2 = new Pose2d(
+                -47.1,
+                12 * ySign,
+                Math.toRadians(0)
+        );
+
         robot.stayInPlacePose = cyclePose;
 
         TrajectorySequence to = drive.trajectorySequenceBuilder(origin)
@@ -70,24 +77,28 @@ public class AutoRight extends LinearOpMode {
                     robot.currentState = Robot.STATE.SCORING_GLOBAL;
                     robot.startScoringGlobal(
                             new Pose2d(cyclePose.getX(), cyclePose.getY(), cyclePose.getHeading()),
-                            new Pose2d(23.5,0.0 * ySign), // 24, 0
-                            27.8);
+                            new Pose2d(23.5,-1.5 * ySign),
+                            28);
                 })
+                .build();
+
+        TrajectorySequence moveToOppositeSide = drive.trajectorySequenceBuilder(new Pose2d(cyclePose.getX(), cyclePose.getY(), Math.toRadians(0)))
+                .splineTo(new Vector2d(cyclePose2.getX(), cyclePose2.getY()), Math.toRadians(0))
                 .build();
 
         drive.setPoseEstimate(origin);
 
         Trajectory[] park = new Trajectory[]{
-                drive.trajectoryBuilder(cyclePose).strafeTo(new Vector2d( // parking position 3
-                        13,
+                drive.trajectoryBuilder(cyclePose).strafeTo(new Vector2d( // parking position 1
+                        -59.5,
                         cyclePose.getY()
                 )).build(),
                 drive.trajectoryBuilder(cyclePose).strafeTo(new Vector2d( // parking position 2
-                        34,
+                        -34,
                         cyclePose.getY()
                 )).build(),
-                drive.trajectoryBuilder(cyclePose).strafeTo(new Vector2d( // parking position 1
-                        59.5,
+                drive.trajectoryBuilder(cyclePose).strafeTo(new Vector2d( // parking position 3
+                        -13,
                         cyclePose.getY()
                 )).build()
         };
@@ -101,7 +112,7 @@ public class AutoRight extends LinearOpMode {
         Log.e("camera setup", "");
 
         sleep(1000);
-        robot.initPosition(false);
+        robot.initPosition(true);
 
         Log.e("init position", "");
 
@@ -146,7 +157,7 @@ public class AutoRight extends LinearOpMode {
             // TODO verify the x and y sign on this. It should not be like this
             robot.startIntakeGlobal(
                     to.end(),
-                    new Pose2d(70.5,12 * ySign), //70.5
+                    new Pose2d(70,12 * ySign),
                     coneStackHeights[i]
             );
 
@@ -156,8 +167,8 @@ public class AutoRight extends LinearOpMode {
 
             robot.startScoringGlobal(
                     new Pose2d(to.end().getX(), to.end().getY(), to.end().getHeading()),
-                    new Pose2d(23.5,0.0 * ySign), //24, 1.0
-                    29);
+                    new Pose2d(23.5,-1.5 * ySign),
+                    28.25);
 
             while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) {
                 robot.update();
@@ -172,6 +183,47 @@ public class AutoRight extends LinearOpMode {
         }
 
         robot.updateStayInPlacePID = false;
+
+        // going over to other side of field
+
+        robot.followTrajectorySequence(moveToOppositeSide, this);
+        robot.stayInPlacePose = cyclePose2;
+        robot.updateStayInPlacePID = true;
+
+        for (int i = 0; i < cycles2; i++) {
+            robot.currentState = INTAKE_GLOBAL;
+            // TODO verify the x and y sign on this. It should not be like this
+            robot.startIntakeGlobal(
+                    to.end(),
+                    new Pose2d(-70,12 * ySign),
+                    coneStackHeights[i]
+            );
+
+            while (robot.currentState == INTAKE_GLOBAL) {
+                robot.update();
+            }
+
+            robot.startScoringGlobal(
+                    new Pose2d(to.end().getX(), to.end().getY(), to.end().getHeading()),
+                    new Pose2d(-23.5,-1.5 * ySign),
+                    28.25);
+
+            while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) {
+                robot.update();
+            }
+        }
+
+        robot.currentState = INTAKE_RELATIVE;
+
+        robot.update();
+        while (!robot.outtake.isInPosition()) {
+            robot.update();
+        }
+
+        robot.updateStayInPlacePID = false;
+
+        // parking
+
         robot.followTrajectory(park[parkingNum], this);
 
         long clawStart = System.currentTimeMillis();
@@ -185,6 +237,6 @@ public class AutoRight extends LinearOpMode {
         }
 
         Storage.autoEndPose = drive.getPoseEstimate();
-        Storage.isBlue = false;
+        Storage.isBlue = true;
     }
 }

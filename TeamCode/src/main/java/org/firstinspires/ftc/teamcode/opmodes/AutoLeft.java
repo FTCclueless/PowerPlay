@@ -69,7 +69,7 @@ public class AutoLeft extends LinearOpMode {
                 .addDisplacementMarker(45, () -> {
                     robot.currentState = Robot.STATE.SCORING_GLOBAL;
                     robot.startScoringGlobal(
-                            new Pose2d(toPose.getX(), toPose.getY(), toPose.getHeading()),
+                            new Pose2d(cyclePose.getX(), cyclePose.getY(), cyclePose.getHeading()),
                             new Pose2d(23.5,-1.5 * ySign),
                             28);
                 })
@@ -136,7 +136,6 @@ public class AutoLeft extends LinearOpMode {
 
         robot.followTrajectorySequence(to, this);
         robot.updateStayInPlacePID = true;
-
 
         while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) {
             robot.update();

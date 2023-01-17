@@ -82,6 +82,8 @@ public class Robot {
     double scoringHeight = 28;
     public int scoringLevel = 3;
 
+    public double intakeHeight = 0.0;
+
     Field field = new Field();
 
     long timeSinceClawOpen = System.currentTimeMillis();
@@ -132,7 +134,10 @@ public class Robot {
                 break;
             case INTAKE_RELATIVE:
                 actuation.level();
-                outtake.retract();
+
+                intakeHeight = Math.max(0, Math.min(intakeHeight, 10));
+
+                outtake.setTargetRelative(outtake.extension.baseSlidesExtension,0,intakeHeight);
 
                 if (outtake.slides.isInPosition(0.25)) {
                     claw.open();
@@ -181,7 +186,7 @@ public class Robot {
                     outtake.setTargetRelative(-10,0,10);
                 } else {
                     outtake.slides.slidesPercentMax = 1.0;
-                    outtake.setTargetRelative(10,0,4);
+                    outtake.setTargetRelative(10,0,6+intakeHeight);
                 }
                 if (startScoringRelative) {
                     outtake.slides.slidesPercentMax = 1.0;
