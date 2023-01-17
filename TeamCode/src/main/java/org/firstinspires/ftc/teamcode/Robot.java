@@ -124,6 +124,7 @@ public class Robot {
                     startIntakeRelative = false;
                     claw.open();
                     currentState = STATE.INTAKE_RELATIVE;
+                    intakeHeight = 0.0;
                 }
                 if (startIntakeGlobal) {
                     outtake.slides.slidesPercentMax = 1.0;
