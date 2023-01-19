@@ -49,14 +49,14 @@ public class AutoLeft extends LinearOpMode {
         );
 
         Pose2d toPose = new Pose2d(
-                36,
+                32,
                 18 * ySign,
                 lr ? Math.toRadians(90) : Math.toRadians(-90)
         );
 
         Pose2d cyclePose = new Pose2d(
                 47.1,
-                12 * ySign,
+                11 * ySign,
                 Math.toRadians(180)
         );
 
@@ -70,8 +70,8 @@ public class AutoLeft extends LinearOpMode {
                     robot.currentState = Robot.STATE.SCORING_GLOBAL;
                     robot.startScoringGlobal(
                             new Pose2d(cyclePose.getX(), cyclePose.getY(), cyclePose.getHeading()),
-                            new Pose2d(23.5,-1.5 * ySign),
-                            28);
+                            new Pose2d(23,0.0 * ySign),
+                            29);
                 })
                 .build();
 
@@ -156,8 +156,8 @@ public class AutoLeft extends LinearOpMode {
 
             robot.startScoringGlobal(
                     new Pose2d(to.end().getX(), to.end().getY(), to.end().getHeading()),
-                    new Pose2d(23.5,-1.5 * ySign),
-                    28.25);
+                    new Pose2d(23,0.0 * ySign),
+                    29);
 
             while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) {
                 robot.update();

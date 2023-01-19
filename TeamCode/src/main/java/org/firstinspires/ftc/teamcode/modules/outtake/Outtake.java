@@ -110,7 +110,7 @@ public class Outtake {
             if (backExtendCheck) {
                 Log.e("prevent hitting self", "ok");
 //                slides.setTargetSlidesLength(5);
-                targetExtent += 2.5;
+                targetExtent += 4.5;
 //                if (extension.isInPosition(targetExtent,0.5)) {
 //                    slides.setTargetSlidesLength(targetSlidesLength);
 //                }
