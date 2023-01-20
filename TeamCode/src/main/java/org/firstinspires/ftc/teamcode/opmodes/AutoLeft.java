@@ -43,14 +43,14 @@ public class AutoLeft extends LinearOpMode {
         int ySign = lr ? 1 : -1;
 
         Pose2d origin = new Pose2d(
-                36,
+                34,
                 62 * ySign,
                 lr ? Math.toRadians(90) : Math.toRadians(-90)
         );
 
         Pose2d toPose = new Pose2d(
                 32,
-                18 * ySign,
+                16 * ySign,
                 lr ? Math.toRadians(90) : Math.toRadians(-90)
         );
 
@@ -146,7 +146,7 @@ public class AutoLeft extends LinearOpMode {
             // TODO verify the x and y sign on this. It should not be like this
             robot.startIntakeGlobal(
                     to.end(),
-                    new Pose2d(70,12 * ySign),
+                    new Pose2d(70,10.5 * ySign),
                     coneStackHeights[i]
             );
 

@@ -69,14 +69,14 @@ public class Teleop extends LinearOpMode {
 
             if (a_x.isClicked(gamepad1.x) || b_dpad_up.isClicked(gamepad2.dpad_up)) {
                 robot.isWaitForStartScoring180 = !robot.isWaitForStartScoring180;
-            }
+            } 
 
             if (gamepad1.dpad_up && robot.currentState == Robot.STATE.INTAKE_RELATIVE) {
-                robot.intakeHeight += 0.15;
+                robot.intakeHeight += 0.3;
             }
 
             if (gamepad1.dpad_down && robot.currentState == Robot.STATE.INTAKE_RELATIVE) {
-                robot.intakeHeight -= 0.15;
+                robot.intakeHeight -= 0.3;
             }
 
             // Driver B
