@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.util.Model;
 import org.firstinspires.ftc.teamcode.util.MotorPriority;
 import org.firstinspires.ftc.teamcode.util.MyServo;
 import org.firstinspires.ftc.teamcode.util.Pose3D;
+import org.firstinspires.ftc.teamcode.util.Storage;
 import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
 import java.util.ArrayList;
@@ -110,7 +111,11 @@ public class Outtake {
             if (backExtendCheck) {
                 Log.e("prevent hitting self", "ok");
 //                slides.setTargetSlidesLength(5);
-                targetExtent += 4.5;
+                if (!Storage.isTeleop) {
+                    targetExtent += 4.5;
+                } else {
+                    targetExtent += 1.25;
+                }
 //                if (extension.isInPosition(targetExtent,0.5)) {
 //                    slides.setTargetSlidesLength(targetSlidesLength);
 //                }

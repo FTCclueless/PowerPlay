@@ -72,11 +72,11 @@ public class Teleop extends LinearOpMode {
             }
 
             if (gamepad1.dpad_up && robot.currentState == Robot.STATE.INTAKE_RELATIVE) {
-                robot.intakeHeight += 0.075;
+                robot.intakeHeight += 0.15;
             }
 
             if (gamepad1.dpad_down && robot.currentState == Robot.STATE.INTAKE_RELATIVE) {
-                robot.intakeHeight -= 0.075;
+                robot.intakeHeight -= 0.15;
             }
 
             // Driver B
