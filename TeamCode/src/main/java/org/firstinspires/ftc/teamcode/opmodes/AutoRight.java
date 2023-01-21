@@ -43,20 +43,20 @@ public class AutoRight extends LinearOpMode {
         int ySign = lr ? 1 : -1;
 
         Pose2d origin = new Pose2d(
-                34.5,
-                63 * ySign,
+                36,
+                62 * ySign,
                 lr ? Math.toRadians(90) : Math.toRadians(-90)
         );
 
         Pose2d toPose = new Pose2d(
-                32,
-                18 * ySign,
+                origin.getX()-2,
+                20 * ySign,
                 lr ? Math.toRadians(90) : Math.toRadians(-90)
         );
 
         Pose2d cyclePose = new Pose2d(
                 47.1,
-                11 * ySign,
+                13 * ySign,
                 Math.toRadians(180)
         );
 

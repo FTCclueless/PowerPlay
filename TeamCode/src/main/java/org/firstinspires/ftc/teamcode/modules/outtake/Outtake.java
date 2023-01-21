@@ -112,7 +112,7 @@ public class Outtake {
                 Log.e("prevent hitting self", "ok");
 //                slides.setTargetSlidesLength(5);
                 if (!Storage.isTeleop) {
-                    targetExtent += 4.5;
+                    targetExtent += 5.0;
                 } else {
                     targetExtent += 1.25;
                 }
