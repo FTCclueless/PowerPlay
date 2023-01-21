@@ -44,27 +44,27 @@ public class SevenConeAutoLeft extends LinearOpMode {
         int ySign = lr ? 1 : -1;
 
         Pose2d origin = new Pose2d(
-                36,
+                37,
                 62 * ySign,
                 lr ? Math.toRadians(90) : Math.toRadians(-90)
         );
 
         Pose2d toPose = new Pose2d(
-                36,
-                18 * ySign,
+                origin.getX()-2,
+                20 * ySign,
                 lr ? Math.toRadians(90) : Math.toRadians(-90)
         );
 
         Pose2d cyclePose = new Pose2d(
                 47.1,
-                12 * ySign,
+                13 * ySign,
                 Math.toRadians(180)
         );
 
         Pose2d cyclePose2 = new Pose2d(
-                -47.1,
-                12 * ySign,
-                Math.toRadians(0)
+                -cyclePose.getX(),
+                cyclePose.getY(),
+                Math.toRadians(180)
         );
 
         robot.stayInPlacePose = cyclePose;
@@ -73,32 +73,33 @@ public class SevenConeAutoLeft extends LinearOpMode {
                 .setReversed(true)
                 .lineToConstantHeading(new Vector2d(toPose.getX(), toPose.getY()))
                 .splineTo(new Vector2d(cyclePose.getX(), cyclePose.getY()), Math.toRadians(0))
-                .addDisplacementMarker(45, () -> {
+                .addDisplacementMarker(38, () -> {
                     robot.currentState = Robot.STATE.SCORING_GLOBAL;
                     robot.startScoringGlobal(
                             new Pose2d(cyclePose.getX(), cyclePose.getY(), cyclePose.getHeading()),
-                            new Pose2d(23.5,-1.5 * ySign),
-                            28);
+                            new Pose2d(23,-1.0 * ySign),
+                            29);
                 })
                 .build();
 
         TrajectorySequence moveToOppositeSide = drive.trajectorySequenceBuilder(new Pose2d(cyclePose.getX(), cyclePose.getY(), Math.toRadians(0)))
-                .splineTo(new Vector2d(cyclePose2.getX(), cyclePose2.getY()), Math.toRadians(0))
+                .setReversed(true)
+                .splineTo(new Vector2d(cyclePose2.getX(), cyclePose2.getY()), Math.toRadians(180))
                 .build();
 
         drive.setPoseEstimate(origin);
 
         Trajectory[] park = new Trajectory[]{
-                drive.trajectoryBuilder(cyclePose).strafeTo(new Vector2d( // parking position 1
-                        -59.5,
+                drive.trajectoryBuilder(cyclePose).strafeTo(new Vector2d( // parking position 3
+                        -13,
                         cyclePose.getY()
                 )).build(),
                 drive.trajectoryBuilder(cyclePose).strafeTo(new Vector2d( // parking position 2
                         -34,
                         cyclePose.getY()
                 )).build(),
-                drive.trajectoryBuilder(cyclePose).strafeTo(new Vector2d( // parking position 3
-                        -13,
+                drive.trajectoryBuilder(cyclePose).strafeTo(new Vector2d( // parking position 1
+                        -59.5,
                         cyclePose.getY()
                 )).build()
         };
@@ -157,7 +158,7 @@ public class SevenConeAutoLeft extends LinearOpMode {
             // TODO verify the x and y sign on this. It should not be like this
             robot.startIntakeGlobal(
                     to.end(),
-                    new Pose2d(70,12 * ySign),
+                    new Pose2d(70,10 * ySign),
                     coneStackHeights[i]
             );
 
@@ -167,8 +168,8 @@ public class SevenConeAutoLeft extends LinearOpMode {
 
             robot.startScoringGlobal(
                     new Pose2d(to.end().getX(), to.end().getY(), to.end().getHeading()),
-                    new Pose2d(23.5,-1.5 * ySign),
-                    28.25);
+                    new Pose2d(23,-1.0 * ySign),
+                    29);
 
             while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) {
                 robot.update();
@@ -178,7 +179,7 @@ public class SevenConeAutoLeft extends LinearOpMode {
         robot.currentState = INTAKE_RELATIVE;
 
         robot.update();
-        while (!robot.outtake.isInPosition()) {
+        while (!robot.outtake.isInPosition(5)) {
             robot.update();
         }
 
@@ -195,7 +196,7 @@ public class SevenConeAutoLeft extends LinearOpMode {
             // TODO verify the x and y sign on this. It should not be like this
             robot.startIntakeGlobal(
                     to.end(),
-                    new Pose2d(-70,12 * ySign),
+                    new Pose2d(-70,10 * ySign),
                     coneStackHeights[i]
             );
 
@@ -205,8 +206,8 @@ public class SevenConeAutoLeft extends LinearOpMode {
 
             robot.startScoringGlobal(
                     new Pose2d(to.end().getX(), to.end().getY(), to.end().getHeading()),
-                    new Pose2d(-23.5,-1.5 * ySign),
-                    28.25);
+                    new Pose2d(-23,-1.0 * ySign),
+                    29);
 
             while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) {
                 robot.update();

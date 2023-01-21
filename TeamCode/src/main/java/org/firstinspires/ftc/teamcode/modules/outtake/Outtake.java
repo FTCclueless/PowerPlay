@@ -295,6 +295,10 @@ public class Outtake {
     }
 
     public boolean isInPosition() {
+        return isInPosition(3);
+    }
+
+    public boolean isInPosition(double slidesThreshold) {
         return (turret.isInPosition(5, targetTurretAngle) && slides.isInPosition(3, targetSlidesLength) && extension.isInPosition(2));
     }
 
