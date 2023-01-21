@@ -157,7 +157,7 @@ public class AutoLeft extends LinearOpMode {
             robot.startScoringGlobal(
                     new Pose2d(to.end().getX(), to.end().getY(), to.end().getHeading()),
                     new Pose2d(23,-1.0 * ySign),
-                    29);
+                    29.5);
 
             while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) {
                 robot.update();

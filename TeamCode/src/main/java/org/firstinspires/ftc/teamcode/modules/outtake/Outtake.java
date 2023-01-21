@@ -299,7 +299,7 @@ public class Outtake {
     }
 
     public boolean isInPosition(double slidesThreshold) {
-        return (turret.isInPosition(5, targetTurretAngle) && slides.isInPosition(3, targetSlidesLength) && extension.isInPosition(2));
+        return (turret.isInPosition(5, targetTurretAngle) && slides.isInPosition(slidesThreshold, targetSlidesLength) && extension.isInPosition(2));
     }
 
     public boolean isIntersectingRobot (double targetX, double targetY, double targetZ) {

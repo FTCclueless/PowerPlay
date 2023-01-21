@@ -63,7 +63,7 @@ public class SevenConeAutoLeft extends LinearOpMode {
 
         Pose2d cyclePose2 = new Pose2d(
                 -cyclePose.getX(),
-                cyclePose.getY(),
+                12,
                 Math.toRadians(180)
         );
 
@@ -82,9 +82,9 @@ public class SevenConeAutoLeft extends LinearOpMode {
                 })
                 .build();
 
-        TrajectorySequence moveToOppositeSide = drive.trajectorySequenceBuilder(new Pose2d(cyclePose.getX(), cyclePose.getY(), Math.toRadians(0)))
+        TrajectorySequence moveToOppositeSide = drive.trajectorySequenceBuilder(new Pose2d(cyclePose.getX(), cyclePose.getY(), Math.toRadians(180)))
                 .setReversed(true)
-                .splineTo(new Vector2d(cyclePose2.getX(), cyclePose2.getY()), Math.toRadians(180))
+                .lineToConstantHeading(new Vector2d(cyclePose2.getX(), cyclePose2.getY()))
                 .build();
 
         drive.setPoseEstimate(origin);
@@ -140,7 +140,7 @@ public class SevenConeAutoLeft extends LinearOpMode {
             telemetry.update();
         }
 
-        robot.drivetrain.setBreakFollowingThresholds(new Pose2d(0.5, 0.5, Math.toRadians(5)), park[parkingNum].end());
+        robot.drivetrain.setBreakFollowingThresholds(new Pose2d(0.5, 0.5, Math.toRadians(5)), to.end());
         drive.setPoseEstimate(origin);
         waitForStart();
 
@@ -169,7 +169,7 @@ public class SevenConeAutoLeft extends LinearOpMode {
             robot.startScoringGlobal(
                     new Pose2d(to.end().getX(), to.end().getY(), to.end().getHeading()),
                     new Pose2d(23,-1.0 * ySign),
-                    29);
+                    29.5);
 
             while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) {
                 robot.update();
@@ -184,6 +184,7 @@ public class SevenConeAutoLeft extends LinearOpMode {
         }
 
         robot.updateStayInPlacePID = false;
+        robot.drivetrain.setBreakFollowingThresholds(new Pose2d(0.5, 0.5, Math.toRadians(5)), moveToOppositeSide.end());
 
         // going over to other side of field
 
@@ -195,7 +196,7 @@ public class SevenConeAutoLeft extends LinearOpMode {
             robot.currentState = INTAKE_GLOBAL;
             // TODO verify the x and y sign on this. It should not be like this
             robot.startIntakeGlobal(
-                    to.end(),
+                    moveToOppositeSide.end(),
                     new Pose2d(-70,10 * ySign),
                     coneStackHeights[i]
             );
@@ -205,9 +206,9 @@ public class SevenConeAutoLeft extends LinearOpMode {
             }
 
             robot.startScoringGlobal(
-                    new Pose2d(to.end().getX(), to.end().getY(), to.end().getHeading()),
+                    new Pose2d(moveToOppositeSide.end().getX(), moveToOppositeSide.end().getY(), moveToOppositeSide.end().getHeading()),
                     new Pose2d(-23,-1.0 * ySign),
-                    29);
+                    29.5);
 
             while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) {
                 robot.update();

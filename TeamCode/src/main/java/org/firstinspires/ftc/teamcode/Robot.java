@@ -269,7 +269,7 @@ public class Robot {
                 outtake.setTargetGlobal(drivePose, polePose, poleHeight);
 
                 claw.open();
-                if (System.currentTimeMillis() - timeSinceClawOpen >= 300) {
+                if (System.currentTimeMillis() - timeSinceClawOpen >= 200) {
                     actuation.level();
                     currentState = STATE.INTAKE_RELATIVE;
                 }
@@ -299,9 +299,12 @@ public class Robot {
     }
 
     public void updateTelemetry () {
-        TelemetryUtil.packet.put("Current State: ", currentState);
-        TelemetryUtil.packet.put("Loop Time: ", loopTime);
-      }
+        TelemetryUtil.packet.put("Current State", currentState);
+        TelemetryUtil.packet.put("Loop Time", loopTime);
+        TelemetryUtil.packet.put("isAtPoint", isAtPoint);
+        TelemetryUtil.packet.put("outtake.isInPositionGlobal", outtake.isInPositionGlobal(drivePose, conePose, 3.5)  && outtake.extension.isInPosition(0.1));
+
+    }
 
     public void startIntakeRelative() {
         startIntakeRelative = true;
