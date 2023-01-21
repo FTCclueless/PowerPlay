@@ -43,13 +43,13 @@ public class AutoRight extends LinearOpMode {
         int ySign = lr ? 1 : -1;
 
         Pose2d origin = new Pose2d(
-                36,
+                34.5,
                 62 * ySign,
                 lr ? Math.toRadians(90) : Math.toRadians(-90)
         );
 
         Pose2d toPose = new Pose2d(
-                origin.getX()-2,
+                origin.getX(),
                 20 * ySign,
                 lr ? Math.toRadians(90) : Math.toRadians(-90)
         );
@@ -70,8 +70,8 @@ public class AutoRight extends LinearOpMode {
                     robot.currentState = Robot.STATE.SCORING_GLOBAL;
                     robot.startScoringGlobal(
                             new Pose2d(cyclePose.getX(), cyclePose.getY(), cyclePose.getHeading()),
-                            new Pose2d(23,0.0 * ySign), // 24, 0
-                            29);
+                            new Pose2d(23,-0.5 * ySign), // 24, 0
+                            28.5);
                 })
                 .build();
 
@@ -156,8 +156,8 @@ public class AutoRight extends LinearOpMode {
 
             robot.startScoringGlobal(
                     new Pose2d(to.end().getX(), to.end().getY(), to.end().getHeading()),
-                    new Pose2d(23,0.0 * ySign), //24, 1.0
-                    29);
+                    new Pose2d(23,-0.5 * ySign), //24, 1.0
+                    28.5);
 
             while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) {
                 robot.update();
