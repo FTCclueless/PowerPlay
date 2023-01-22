@@ -101,6 +101,13 @@ public class Slides {
         slidesPower = slidesVelocityPID.update(targetSlidesVelocity - currentSlidesVelocity);
         motorPriorities.get(5).setTargetPower(slidesPower);
 
+//        targetSlidesVelocity = Math.max(Math.min(slidesError * (maxSlidesSpeed/5), (maxSlidesSpeed*slidesPercentMax)),-maxSlidesSpeed*slidesPercentMax);
+//        targetSlidesPower = slidesVelocityPID.update(targetSlidesVelocity - currentSlidesVelocity);
+//        currentSlidesPower = Math.max(Math.min(currentSlidesPower, 1.0), -1.0);
+//        currentSlidesPower += Math.min(Math.abs(targetSlidesPower - currentSlidesPower), slidesVelocityPID.loopTime * 2.0) * Math.signum(targetSlidesPower - currentSlidesPower);
+//        motorPriorities.get(5).setTargetPower(currentSlidesPower);
+
+
         updateTelemetry();
     }
 

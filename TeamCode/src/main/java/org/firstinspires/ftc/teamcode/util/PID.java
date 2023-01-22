@@ -15,16 +15,19 @@ public class PID {
     long lastLoopTime = System.nanoTime();
     double lastError = 0;
     int counter = 0;
+    public double loopTime = 0.0;
+
     public void resetIntegral() {
         integral = 0;
     }
+
     public double update(double error){
         if (counter == 0) {
             lastLoopTime = System.nanoTime() - 10000000;
         }
 
         long currentTime = System.nanoTime();
-        double loopTime = (currentTime - lastLoopTime)/1000000000.0;
+        loopTime = (currentTime - lastLoopTime)/1000000000.0;
         lastLoopTime = currentTime; // lastLoopTime's start time
 
         double proportion = p * error;

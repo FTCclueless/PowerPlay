@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
 import static org.firstinspires.ftc.teamcode.Robot.STATE.DEPOSIT_AUTO;
+import static org.firstinspires.ftc.teamcode.Robot.STATE.IDLE;
 import static org.firstinspires.ftc.teamcode.Robot.STATE.INTAKE_GLOBAL;
 import static org.firstinspires.ftc.teamcode.Robot.STATE.INTAKE_RELATIVE;
 import static org.firstinspires.ftc.teamcode.Robot.STATE.SCORING_GLOBAL;
@@ -29,7 +30,7 @@ public class SevenConeAutoLeft extends LinearOpMode {
 
     OpenCVWrapper openCVWrapper;
 
-    double[] coneStackHeights = new double[]{6.15, 4.9, 3.5, 2.25, 0.75}; //5.65, 4.4, 2.75, 2.0, 0.5
+    double[] coneStackHeights = new double[]{6.15, 4.5, 3.5, 2.25, 0.75}; //5.65, 4.4, 2.75, 2.0, 0.5
     ButtonToggle toggleA = new ButtonToggle();
 
     @Override
@@ -143,6 +144,7 @@ public class SevenConeAutoLeft extends LinearOpMode {
         robot.drivetrain.setBreakFollowingThresholds(new Pose2d(0.5, 0.5, Math.toRadians(5)), to.end());
         drive.setPoseEstimate(origin);
         waitForStart();
+        long startTime = System.currentTimeMillis();
 
         openCVWrapper.stop();
 
@@ -169,7 +171,7 @@ public class SevenConeAutoLeft extends LinearOpMode {
             robot.startScoringGlobal(
                     new Pose2d(to.end().getX(), to.end().getY(), to.end().getHeading()),
                     new Pose2d(23,-1.0 * ySign),
-                    29.5);
+                    29);
 
             while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) {
                 robot.update();
@@ -179,7 +181,7 @@ public class SevenConeAutoLeft extends LinearOpMode {
         robot.currentState = INTAKE_RELATIVE;
 
         robot.update();
-        while (!robot.outtake.isInPosition(5)) {
+        while (!robot.outtake.isInPosition(20)) {
             robot.update();
         }
 
@@ -194,10 +196,9 @@ public class SevenConeAutoLeft extends LinearOpMode {
 
         for (int i = 0; i < cycles2; i++) {
             robot.currentState = INTAKE_GLOBAL;
-            // TODO verify the x and y sign on this. It should not be like this
             robot.startIntakeGlobal(
                     moveToOppositeSide.end(),
-                    new Pose2d(-70,10 * ySign),
+                    new Pose2d(-71,10 * ySign),
                     coneStackHeights[i]
             );
 
@@ -208,7 +209,7 @@ public class SevenConeAutoLeft extends LinearOpMode {
             robot.startScoringGlobal(
                     new Pose2d(moveToOppositeSide.end().getX(), moveToOppositeSide.end().getY(), moveToOppositeSide.end().getHeading()),
                     new Pose2d(-23,-1.0 * ySign),
-                    29.5);
+                    29);
 
             while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) {
                 robot.update();
@@ -218,25 +219,21 @@ public class SevenConeAutoLeft extends LinearOpMode {
         robot.currentState = INTAKE_RELATIVE;
 
         robot.update();
-        while (!robot.outtake.isInPosition()) {
+        while (!robot.outtake.isInPosition(20)) {
             robot.update();
         }
 
         robot.updateStayInPlacePID = false;
+        robot.drivetrain.setBreakFollowingThresholds(new Pose2d(0.5, 0.5, Math.toRadians(5)), park[parkingNum].end());
+        robot.currentState = IDLE;
 
         // parking
 
-        robot.followTrajectory(park[parkingNum], this);
-
-        long clawStart = System.currentTimeMillis();
         robot.claw.park();
         robot.outtake.actuation.level();
+        robot.update();
 
-        while (System.currentTimeMillis() - clawStart <= 300) {
-            robot.claw.park();
-            robot.outtake.actuation.level();
-            robot.claw.update();
-        }
+        robot.followTrajectory(park[parkingNum], this);
 
         Storage.autoEndPose = drive.getPoseEstimate();
         Storage.isBlue = true;

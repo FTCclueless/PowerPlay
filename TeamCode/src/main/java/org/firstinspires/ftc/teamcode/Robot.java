@@ -269,7 +269,7 @@ public class Robot {
                 outtake.setTargetGlobal(drivePose, polePose, poleHeight);
 
                 claw.open();
-                if (System.currentTimeMillis() - timeSinceClawOpen >= 200) {
+                if (System.currentTimeMillis() - timeSinceClawOpen >= 125) {
                     actuation.level();
                     currentState = STATE.INTAKE_RELATIVE;
                 }
@@ -525,6 +525,13 @@ public class Robot {
             update();
         }
     }
+
+//    public void followTrajectory(Trajectory trajectory, LinearOpMode opMode, long startTime) {
+//        drivetrain.followTrajectoryAsync(trajectory);
+//        while(drivetrain.isBusy() && (opMode.opModeIsActive() || (System.currentTimeMillis() - startTime >= 29500 && System.currentTimeMillis() - startTime <= 30800))) {
+//            update();
+//        }
+//    }
 
     public void followTrajectorySequence(TrajectorySequence trajectorySequence, LinearOpMode opMode) {
         drivetrain.followTrajectorySequenceAsync(trajectorySequence);

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
 import static org.firstinspires.ftc.teamcode.Robot.STATE.DEPOSIT_AUTO;
+import static org.firstinspires.ftc.teamcode.Robot.STATE.IDLE;
 import static org.firstinspires.ftc.teamcode.Robot.STATE.INTAKE_GLOBAL;
 import static org.firstinspires.ftc.teamcode.Robot.STATE.INTAKE_RELATIVE;
 import static org.firstinspires.ftc.teamcode.Robot.STATE.SCORING_GLOBAL;
@@ -28,7 +29,7 @@ public class AutoLeft extends LinearOpMode {
 
     OpenCVWrapper openCVWrapper;
 
-    double[] coneStackHeights = new double[]{6.15, 4.9, 3.5, 2.25, 0.75}; //5.65, 4.4, 2.75, 2.0, 0.5
+    double[] coneStackHeights = new double[]{5.4, 4.15, 3.0, 1.5, 0.0}; //5.65, 4.4, 2.75, 2.0, 0.5
     ButtonToggle toggleA = new ButtonToggle();
 
     @Override
@@ -66,11 +67,11 @@ public class AutoLeft extends LinearOpMode {
                 .setReversed(true)
                 .lineToConstantHeading(new Vector2d(toPose.getX(), toPose.getY()))
                 .splineTo(new Vector2d(cyclePose.getX(), cyclePose.getY()), Math.toRadians(0))
-                .addDisplacementMarker(38, () -> {
+                .addDisplacementMarker(32, () -> {
                     robot.currentState = Robot.STATE.SCORING_GLOBAL;
                     robot.startScoringGlobal(
                             new Pose2d(cyclePose.getX(), cyclePose.getY(), cyclePose.getHeading()),
-                            new Pose2d(23,-1.0 * ySign),
+                            new Pose2d(23,0.0 * ySign),
                             29);
                 })
                 .build();
@@ -128,7 +129,7 @@ public class AutoLeft extends LinearOpMode {
             telemetry.update();
         }
 
-        robot.drivetrain.setBreakFollowingThresholds(new Pose2d(0.5, 0.5, Math.toRadians(5)), park[parkingNum].end());
+        robot.drivetrain.setBreakFollowingThresholds(new Pose2d(0.5, 0.5, Math.toRadians(5)), to.end());
         drive.setPoseEstimate(origin);
         waitForStart();
 
@@ -156,8 +157,8 @@ public class AutoLeft extends LinearOpMode {
 
             robot.startScoringGlobal(
                     new Pose2d(to.end().getX(), to.end().getY(), to.end().getHeading()),
-                    new Pose2d(23,-1.0 * ySign),
-                    29.5);
+                    new Pose2d(23,0.0 * ySign),
+                    29);
 
             while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) {
                 robot.update();
@@ -167,11 +168,13 @@ public class AutoLeft extends LinearOpMode {
         robot.currentState = INTAKE_RELATIVE;
 
         robot.update();
-        while (!robot.outtake.isInPosition()) {
+        while (!robot.outtake.isInPosition(5)) {
             robot.update();
         }
 
         robot.updateStayInPlacePID = false;
+        robot.drivetrain.setBreakFollowingThresholds(new Pose2d(0.5, 0.5, Math.toRadians(5)), park[parkingNum].end());
+
         robot.followTrajectory(park[parkingNum], this);
 
         long clawStart = System.currentTimeMillis();

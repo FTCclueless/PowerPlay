@@ -69,7 +69,7 @@ public class SlidesPIDTuner extends LinearOpMode {
             }
 
             telemetry.addData("currentState: ", currentState);
-            telemetry.addData("slides power: ", slides.slidesPower);
+            telemetry.addData("targetSlidesPower: ", slides.slidesPower);
             telemetry.update();
         }
     }
