@@ -22,15 +22,15 @@ import org.firstinspires.ftc.teamcode.util.Storage;
 import org.firstinspires.ftc.teamcode.vision.OpenCVWrapper;
 
 @Autonomous(group = "Auto")
-public class SevenConeAutoLeft extends LinearOpMode {
+public class SixConeAutoLeft extends LinearOpMode {
     public static final int cycles = 5;
-    public static final int cycles2 = 2;
+    public static final int cycles2 = 1;
     public static int parkingNum = 0;
     public static final boolean lr = true; // Left : true | Right : false
 
     OpenCVWrapper openCVWrapper;
 
-    double[] coneStackHeights = new double[]{6.15, 4.5, 3.5, 2.25, 0.75}; //5.65, 4.4, 2.75, 2.0, 0.5
+    double[] coneStackHeights = new double[]{5.4, 4.15, 3.0, 1.5, 0.0}; //5.65, 4.4, 2.75, 2.0, 0.5
     ButtonToggle toggleA = new ButtonToggle();
 
     @Override
@@ -64,7 +64,7 @@ public class SevenConeAutoLeft extends LinearOpMode {
 
         Pose2d cyclePose2 = new Pose2d(
                 -cyclePose.getX(),
-                12,
+                12.75,
                 Math.toRadians(180)
         );
 
@@ -91,15 +91,15 @@ public class SevenConeAutoLeft extends LinearOpMode {
         drive.setPoseEstimate(origin);
 
         Trajectory[] park = new Trajectory[]{
-                drive.trajectoryBuilder(cyclePose).strafeTo(new Vector2d( // parking position 3
+                drive.trajectoryBuilder(cyclePose2).strafeTo(new Vector2d( // parking position 3
                         -13,
                         cyclePose.getY()
                 )).build(),
-                drive.trajectoryBuilder(cyclePose).strafeTo(new Vector2d( // parking position 2
+                drive.trajectoryBuilder(cyclePose2).strafeTo(new Vector2d( // parking position 2
                         -34,
                         cyclePose.getY()
                 )).build(),
-                drive.trajectoryBuilder(cyclePose).strafeTo(new Vector2d( // parking position 1
+                drive.trajectoryBuilder(cyclePose2).strafeTo(new Vector2d( // parking position 1
                         -59.5,
                         cyclePose.getY()
                 )).build()
@@ -225,7 +225,6 @@ public class SevenConeAutoLeft extends LinearOpMode {
 
         robot.updateStayInPlacePID = false;
         robot.drivetrain.setBreakFollowingThresholds(new Pose2d(0.5, 0.5, Math.toRadians(5)), park[parkingNum].end());
-        robot.currentState = IDLE;
 
         // parking
 
@@ -233,7 +232,7 @@ public class SevenConeAutoLeft extends LinearOpMode {
         robot.outtake.actuation.level();
         robot.update();
 
-        robot.followTrajectory(park[parkingNum], this);
+        robot.followTrajectory(park[parkingNum], this, startTime);
 
         Storage.autoEndPose = drive.getPoseEstimate();
         Storage.isBlue = true;
