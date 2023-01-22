@@ -71,8 +71,8 @@ public class AutoLeft extends LinearOpMode {
                     robot.currentState = Robot.STATE.SCORING_GLOBAL;
                     robot.startScoringGlobal(
                             new Pose2d(cyclePose.getX(), cyclePose.getY(), cyclePose.getHeading()),
-                            new Pose2d(23,0.0 * ySign),
-                            29);
+                            new Pose2d(23, -1.0 * ySign), // 23, -1
+                            28.5);
                 })
                 .build();
 
@@ -147,7 +147,7 @@ public class AutoLeft extends LinearOpMode {
             // TODO verify the x and y sign on this. It should not be like this
             robot.startIntakeGlobal(
                     to.end(),
-                    new Pose2d(70,10 * ySign),
+                    new Pose2d(70,12 * ySign),
                     coneStackHeights[i]
             );
 
@@ -157,8 +157,8 @@ public class AutoLeft extends LinearOpMode {
 
             robot.startScoringGlobal(
                     new Pose2d(to.end().getX(), to.end().getY(), to.end().getHeading()),
-                    new Pose2d(23,0.0 * ySign),
-                    29);
+                    new Pose2d(23, -1.0 * ySign), // 23, -1
+                    28.5);
 
             while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) {
                 robot.update();

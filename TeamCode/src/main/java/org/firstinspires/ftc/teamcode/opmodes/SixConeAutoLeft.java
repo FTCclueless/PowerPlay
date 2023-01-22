@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.modules.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.modules.drive.Drivetrain;
 import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.util.ButtonToggle;
@@ -37,6 +38,7 @@ public class SixConeAutoLeft extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         Robot robot = new Robot(hardwareMap);
         Drivetrain drive = robot.drivetrain;
+        DriveConstants.MAX_ACCEL = 58;
 
         openCVWrapper = new OpenCVWrapper(telemetry, hardwareMap, true);
         assert(openCVWrapper != null);
@@ -160,7 +162,7 @@ public class SixConeAutoLeft extends LinearOpMode {
             // TODO verify the x and y sign on this. It should not be like this
             robot.startIntakeGlobal(
                     to.end(),
-                    new Pose2d(70,10 * ySign),
+                    new Pose2d(70,12 * ySign),
                     coneStackHeights[i]
             );
 
@@ -198,7 +200,7 @@ public class SixConeAutoLeft extends LinearOpMode {
             robot.currentState = INTAKE_GLOBAL;
             robot.startIntakeGlobal(
                     moveToOppositeSide.end(),
-                    new Pose2d(-71,10 * ySign),
+                    new Pose2d(-71,12 * ySign),
                     coneStackHeights[i]
             );
 

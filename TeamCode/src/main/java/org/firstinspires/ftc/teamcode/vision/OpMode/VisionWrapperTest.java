@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.util.SafeSleep;
 import org.firstinspires.ftc.teamcode.vision.OpenCVWrapper;
 import org.firstinspires.ftc.teamcode.vision.TFODWrapper;
 
-//@Disabled
+@Disabled
 @TeleOp(name = "VisionWrapperTest", group = "Concept")
 public class VisionWrapperTest extends LinearOpMode {
     TFODWrapper tfodWrapper;

@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.modules.outtake.Outtake;
 
+@Disabled
 @Config
 @TeleOp(group = "Test")
 public class OuttakeTester extends LinearOpMode {
