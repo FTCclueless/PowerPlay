@@ -86,7 +86,7 @@ public class Turret {
         }
 
         turretPower = turretPID.update(turretError);
-//        turretPower *= (outtake.extension.currentExtensionLength - outtake.extension.baseSlidesExtension)/outtake.extension.strokeLength * 0.1 + 1;
+        turretPower *= (outtake.extension.currentExtensionLength - outtake.extension.baseSlidesExtension)/outtake.extension.strokeLength * -0.2 + 1;
         turretPower += ((Math.abs(Math.toDegrees(turretError)) > 0.3) ? kstatic : 0) * Math.signum(turretPower);
 
         motorPriorities.get(4).setTargetPower(-turretPower);
