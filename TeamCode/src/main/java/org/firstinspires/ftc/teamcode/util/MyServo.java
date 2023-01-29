@@ -33,6 +33,10 @@ public class MyServo {
                 speed = Math.toRadians(60) / 0.13;
                 positionPerRadian = 0.2122065908; // different since operating range is 270 degrees
             break;
+            case "ProModeler":
+                speed = Math.toRadians(60) / 0.139;
+                positionPerRadian = 0.32698; // different since operating range is 270 degrees
+                break;
         }
         speed *= loadMultiplier;
     }

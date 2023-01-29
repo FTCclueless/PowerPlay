@@ -84,7 +84,7 @@ public class Outtake {
             Log.e("TURRET CLIPS", "");
         }
 
-        extensionIn = (currentExtensionLength <= (extension.baseSlidesExtension + 3.5));
+        extensionIn = (currentExtensionLength <= (11));
         Log.e("variables", Math.toDegrees(currentTurretAngle) + " " + Math.toDegrees(targetTurretAngle) + " " + isTurretGoThroughRange(120, 185) + " " + isTurretGoThroughRange(-185, -120));
         boolean backExtendCheck = targetSlidesLength <= 9 && (isTurretGoThroughRange(120, 185) || isTurretGoThroughRange(-185, -120));
         if(backExtendCheck) {
@@ -127,7 +127,12 @@ public class Outtake {
         if(!actuation.isLevel()) {
             targetExtent -= extension.actuationTiltDistance;
         }
-        extension.setTargetExtensionLength(targetExtent);
+
+        if ((targetExtent <= extension.baseSlidesExtension + 1) && ((targetSlidesLength <= 3) || (slides.currentSlidesLength < 3))) {
+            extension.setTargetExtensionLength(10);
+        } else {
+            extension.setTargetExtensionLength(targetExtent);
+        }
 
 //        else {
 //            Log.e("extension.currentExtensionLength", extension.currentExtensionLength + "");

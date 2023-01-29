@@ -138,7 +138,7 @@ public class Robot {
 
                 intakeHeight = Math.max(0, Math.min(intakeHeight, 10));
 
-                outtake.setTargetRelative(outtake.extension.baseSlidesExtension,0,intakeHeight);
+                outtake.setTargetRelative(10,0,intakeHeight);
 
                 if (outtake.slides.isInPosition(0.25)) {
                     claw.open();
@@ -184,10 +184,10 @@ public class Robot {
                 actuation.level();
                 if (isWaitForStartScoring180) {
                     outtake.slides.slidesPercentMax = 1.0;
-                    outtake.setTargetRelative(-10,0,10);
+                    outtake.setTargetRelative(-outtake.extension.baseSlidesExtension,0,15);
                 } else {
                     outtake.slides.slidesPercentMax = 1.0;
-                    outtake.setTargetRelative(10,0,6+intakeHeight);
+                    outtake.setTargetRelative(outtake.extension.baseSlidesExtension,0,10+intakeHeight);
                 }
                 if (startScoringRelative) {
                     outtake.slides.slidesPercentMax = 1.0;
@@ -258,7 +258,7 @@ public class Robot {
                     outtake.extension.retractExtension();
                 }
 
-                if (isAtPoint && (outtake.isInPositionGlobal(drivePose, polePose,3.5) && (outtake.extension.isInPosition(0.01)))) {
+                if (isAtPoint && (outtake.isInPositionGlobal(drivePose, polePose,3.5) && (outtake.extension.isInPosition(0.5)))) {
                     timeSinceClawOpen = System.currentTimeMillis();
                     isAtPoint = false;
                     currentState = STATE.DEPOSIT_AUTO;
@@ -438,7 +438,7 @@ public class Robot {
         }
 
         turret = System.currentTimeMillis();
-        outtake.turret.setTargetTurretAngle(Math.toRadians(55) * turnSign);
+        outtake.turret.setTargetTurretAngle(Math.toRadians(55) * turnSign); // TODO: Might change angle to 125 so we don't need to turn turret as much for preload
 
         while ((!outtake.turret.isInPosition(5)) || (System.currentTimeMillis() - turret >= 1000)) {
             Log.e("stuck2", "");

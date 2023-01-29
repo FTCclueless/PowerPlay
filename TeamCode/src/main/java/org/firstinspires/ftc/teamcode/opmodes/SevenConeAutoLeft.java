@@ -23,9 +23,9 @@ import org.firstinspires.ftc.teamcode.util.Storage;
 import org.firstinspires.ftc.teamcode.vision.OpenCVWrapper;
 
 @Autonomous(group = "Auto")
-public class SixConeAutoLeft extends LinearOpMode {
-    public static final int cycles = 5;
-    public static final int cycles2 = 1;
+public class SevenConeAutoLeft extends LinearOpMode {
+    public static final int cycles = 4;
+    public static final int cycles2 = 2;
     public static int parkingNum = 0;
     public static final boolean lr = true; // Left : true | Right : false
 
@@ -76,18 +76,25 @@ public class SixConeAutoLeft extends LinearOpMode {
                 .setReversed(true)
                 .lineToConstantHeading(new Vector2d(toPose.getX(), toPose.getY()))
                 .splineTo(new Vector2d(cyclePose.getX(), cyclePose.getY()), Math.toRadians(0))
-                .addDisplacementMarker(38, () -> {
+                .addDisplacementMarker(0, () -> {
                     robot.currentState = Robot.STATE.SCORING_GLOBAL;
                     robot.startScoringGlobal(
-                            new Pose2d(cyclePose.getX(), cyclePose.getY(), cyclePose.getHeading()),
-                            new Pose2d(23,-1.0 * ySign),
-                            29);
+                            new Pose2d(toPose.getX(), toPose.getY()+10, toPose.getHeading()),
+                            new Pose2d(23, -1.0 * ySign), // 23, -1
+                            28.5);
                 })
                 .build();
 
         TrajectorySequence moveToOppositeSide = drive.trajectorySequenceBuilder(new Pose2d(cyclePose.getX(), cyclePose.getY(), Math.toRadians(180)))
                 .setReversed(true)
                 .lineToConstantHeading(new Vector2d(cyclePose2.getX(), cyclePose2.getY()))
+                .addDisplacementMarker(0, () -> {
+                    robot.currentState = Robot.STATE.SCORING_GLOBAL;
+                    robot.startScoringGlobal(
+                            new Pose2d(0.0, cyclePose2.getY(), cyclePose2.getHeading()),
+                            new Pose2d(-23, -1.0 * ySign),
+                            28.5);
+                })
                 .build();
 
         drive.setPoseEstimate(origin);
@@ -180,9 +187,20 @@ public class SixConeAutoLeft extends LinearOpMode {
             }
         }
 
-        robot.currentState = INTAKE_RELATIVE;
+        // hold onto last cone
 
-        robot.update();
+        robot.currentState = INTAKE_GLOBAL;
+        // TODO verify the x and y sign on this. It should not be like this
+        robot.startIntakeGlobal(
+                to.end(),
+                new Pose2d(70,12 * ySign),
+                coneStackHeights[4]
+        );
+
+        while (robot.currentState == INTAKE_GLOBAL) {
+            robot.update();
+        }
+
         while (!robot.outtake.isInPosition(20)) {
             robot.update();
         }
@@ -195,6 +213,7 @@ public class SixConeAutoLeft extends LinearOpMode {
         robot.followTrajectorySequence(moveToOppositeSide, this);
         robot.stayInPlacePose = cyclePose2;
         robot.updateStayInPlacePID = true;
+        robot.outtake.actuation.level();
 
         for (int i = 0; i < cycles2; i++) {
             robot.currentState = INTAKE_GLOBAL;
@@ -216,13 +235,6 @@ public class SixConeAutoLeft extends LinearOpMode {
             while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) {
                 robot.update();
             }
-        }
-
-        robot.currentState = INTAKE_RELATIVE;
-
-        robot.update();
-        while (!robot.outtake.isInPosition(20)) {
-            robot.update();
         }
 
         robot.updateStayInPlacePID = false;
