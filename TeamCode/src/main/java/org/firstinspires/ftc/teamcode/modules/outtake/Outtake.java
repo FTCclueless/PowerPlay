@@ -92,11 +92,11 @@ public class Outtake {
         }
 
         // if we are going to ram into drivetrain or extension is out and the turret is within 9
-        if (!(turretClips && currentSlidesLength <= 9) && (extensionIn || turret.isInPosition(15, targetTurretAngle))) {
+        if (!(turretClips && currentSlidesLength <= 9) && (extensionIn || turret.isInPosition(30, targetTurretAngle))) {
             turret.setTargetTurretAngle(targetTurretAngle);
         }
 
-        if (turretClips && targetSlidesLength <= 9 && extensionIn) {
+        if ((turretClips && targetSlidesLength <= 9 && extensionIn) || (targetSlidesLength <= 6 && currentExtensionLength <= 9.5)) {
             slides.setTargetSlidesLength(12);
         } else {
             if(extensionIn || slides.isInPosition(4, targetSlidesLength)) {
@@ -122,17 +122,26 @@ public class Outtake {
             }
         }
 
-        Log.e("targetExtent", targetExtent + "");
-
         if(!actuation.isLevel()) {
             targetExtent -= extension.actuationTiltDistance;
         }
 
-        if ((targetExtent <= extension.baseSlidesExtension + 1) && ((targetSlidesLength <= 3) || (slides.currentSlidesLength < 3))) {
+        Log.e("targetExtent", targetExtent + "");
+        Log.e("targetSlidesLength", targetSlidesLength + "");
+        Log.e("slides.currentSlidesLength", slides.currentSlidesLength + "");
+        Log.e("extension.currentExtensionLength", extension.currentExtensionLength + "");
+        Log.e("extension.targetExtensionLength", extension.targetExtensionLength + "");
+
+        if ((targetExtent <= 10) && ((targetSlidesLength <= 6) || (slides.currentSlidesLength < 6))) {
             extension.setTargetExtensionLength(10);
+            Log.e("preventing motor clip",  "HERE");
         } else {
+            Log.e("setting extension to targetExtent",  "");
             extension.setTargetExtensionLength(targetExtent);
         }
+
+        Log.e("AFTERWARDS extension.targetExtensionLength", extension.targetExtensionLength + "");
+
 
 //        else {
 //            Log.e("extension.currentExtensionLength", extension.currentExtensionLength + "");

@@ -146,7 +146,6 @@ public class Robot {
 
                 if (sensors.clawTouch) { // needs an external claw.close()
                     sensors.clawTouch = false;
-                    outtake.extension.retractExtension();
                     currentState = STATE.WAIT_FOR_START_SCORING;
                 }
                 break;
@@ -175,7 +174,7 @@ public class Robot {
                         currentState = STATE.SCORING_GLOBAL;
                     }
                 }
-                else{
+                else {
                     outtake.setTargetGlobal(drivePose, conePose, coneHeight);
                 }
                 break;
@@ -278,7 +277,7 @@ public class Robot {
                 outtake.slides.slidesPercentMax = 1.0;
 
                 claw.open();
-                if (System.currentTimeMillis() - timeSinceClawOpen >= 300) {
+                if (System.currentTimeMillis() - timeSinceClawOpen >= 500) {
                     outtake.slides.setTargetSlidesLength(Math.min(scoringHeight + 6, 32));
                     if ((outtake.slides.isInPosition(2)) || (System.currentTimeMillis() - timeSinceClawOpen >= (700))) {
                         actuation.level();
