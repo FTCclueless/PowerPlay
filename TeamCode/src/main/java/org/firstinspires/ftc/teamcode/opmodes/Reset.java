@@ -13,11 +13,10 @@ public class Reset extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Robot robot = new Robot(hardwareMap);
-        robot.testMode();
+        robot.currentState = Robot.STATE.INTAKE_RELATIVE;
+        robot.resetEncoders();
 
         waitForStart();
-
-        robot.resetEncoders();
 
         while(!isStopRequested()) {
             robot.outtake.actuation.level();

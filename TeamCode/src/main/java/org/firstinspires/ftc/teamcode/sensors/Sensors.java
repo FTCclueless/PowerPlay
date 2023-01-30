@@ -20,9 +20,6 @@ public class Sensors {
     HardwareMap hardwareMap;
     ThreeWheelLocalizer localizer;
 
-    public DigitalChannel rollerLimit;
-    public DigitalChannel clawLimit;
-
     public double slidesLength, slidesVelocity;
     public double turretAngle, turretVelocity;
 
@@ -41,10 +38,6 @@ public class Sensors {
         for (LynxModule hub : allHubs) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
-
-        // init sensors
-        rollerLimit = hardwareMap.get(DigitalChannel.class, "rollerLimit");
-        clawLimit = hardwareMap.get(DigitalChannel.class, "clawLimit");
 
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
     }

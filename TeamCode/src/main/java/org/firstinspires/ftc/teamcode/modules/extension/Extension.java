@@ -24,6 +24,7 @@ public class Extension {
     public double clawForward = 2.786; // forward from the center of the cone to where the linkage end mount is
     public double actuationTiltDistance = 2.5;
     public double momentOfInertiaConstant = 0.1;
+    public double minDistToNotHitMotor = 8.5;
 
     MyServo extension;
     ArrayList<MyServo> servos;
@@ -78,7 +79,7 @@ public class Extension {
     }
 
     public void retractExtension() {
-        setTargetExtensionLength(10);
+        setTargetExtensionLength(minDistToNotHitMotor);
     }
 
     public double getCurrentExtensionLength() {
@@ -97,4 +98,5 @@ public class Extension {
     public boolean isInPosition (double target, double length) {
         return Math.abs(target - currentExtensionLength) <= length;
     }
+
 }

@@ -36,6 +36,7 @@ public class AutoRight extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         Robot robot = new Robot(hardwareMap);
         Drivetrain drive = robot.drivetrain;
+        robot.currentState = IDLE;
 
         openCVWrapper = new OpenCVWrapper(telemetry, hardwareMap, true);
         assert(openCVWrapper != null);

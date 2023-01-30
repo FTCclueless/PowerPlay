@@ -39,18 +39,14 @@ public class MyServo {
                 break;
         }
         speed *= loadMultiplier;
+
+        currentPosition = basePos;
     }
 
     double currentAngle = 0;
-    double currentPosition = 0;
+    double currentPosition;
     double offset = 0; // ex: makes deposit bucket level
     long lastUpdateTime = System.nanoTime();
-
-    double lastPos = 0.0;
-    double currentPos = 0.0;
-    long timeSinceNewPos = System.currentTimeMillis();
-    boolean isMoving = false;
-    double approxTime = 0.0;
 
     public void setPosition(double targetPosition, double power) {
         targetPosition += offset;
@@ -89,30 +85,9 @@ public class MyServo {
         return (currentAngle) + (offset-basePos)/positionPerRadian;
     }
 
-    public void setPositionTimeBased(double position) {
-        if(position != currentPos && !isMoving) {
-            timeSinceNewPos = System.currentTimeMillis();
-
-            double setPosition = ((max-min) * position + min);
-
-            servo.setPosition(setPosition);
-            isMoving = true;
-
-            approxTime = 1500*(Math.abs(position - lastPos));
-        }
-
-        if(((System.currentTimeMillis() - timeSinceNewPos) >= approxTime) && position != currentPos) {
-            currentPos = position;
-            lastPos = position;
-            isMoving = false;
-        }
-    }
-
     public double getCurrentPosition() {
-        return currentPos;
+        return currentPosition;
     }
-
-    public double getLastPos() { return lastPos; }
 
 //    public double clipAngle (double angle) {
 //        while (angle > 2*Math.PI) {

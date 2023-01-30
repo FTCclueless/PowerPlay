@@ -138,7 +138,7 @@ public class Robot {
 
                 intakeHeight = Math.max(0, Math.min(intakeHeight, 10));
 
-                outtake.setTargetRelative(10,0,intakeHeight);
+                outtake.setTargetRelative(outtake.extension.minDistToNotHitMotor,0,intakeHeight);
 
                 if (outtake.slides.isInPosition(0.25)) {
                     claw.open();
@@ -276,8 +276,9 @@ public class Robot {
             case DEPOSIT_TELEOP:
                 outtake.slides.slidesPercentMax = 1.0;
 
+                outtake.setTargetRelative(extensionDistance*Math.cos(Math.toRadians(180) + angleOffset),extensionDistance*Math.sin(Math.toRadians(180) + angleOffset), scoringHeight); // changes dynamically based on driver input
                 claw.open();
-                if (System.currentTimeMillis() - timeSinceClawOpen >= 500) {
+                if (System.currentTimeMillis() - timeSinceClawOpen >= 150) {
                     outtake.slides.setTargetSlidesLength(Math.min(scoringHeight + 6, 32));
                     if ((outtake.slides.isInPosition(2)) || (System.currentTimeMillis() - timeSinceClawOpen >= (700))) {
                         actuation.level();
@@ -425,13 +426,14 @@ public class Robot {
         double turnSign = left ? 1 : -1;
 
         actuation.init();
-        outtake.extension.retractExtension();
+        outtake.extension.setTargetExtensionLength(15);
         claw.open();
 
         slides1 = System.currentTimeMillis();
         outtake.slides.setTargetSlidesLength(12);
 
         while ((!outtake.slides.isInPosition(2.5)) || (System.currentTimeMillis() - slides1 <= 1000)) {
+            outtake.extension.setTargetExtensionLength(15);
             Log.e("stuck1", "");
             update();
         }
@@ -440,18 +442,20 @@ public class Robot {
         outtake.turret.setTargetTurretAngle(Math.toRadians(55) * turnSign); // TODO: Might change angle to 125 so we don't need to turn turret as much for preload
 
         while ((!outtake.turret.isInPosition(5)) || (System.currentTimeMillis() - turret <= 1000)) {
+            outtake.extension.setTargetExtensionLength(15);
             Log.e("stuck2", "");
             update();
         }
 
         outtake.slides.slidesPercentMax = 0.25;
         slides2 = System.currentTimeMillis();
-        outtake.slides.setTargetSlidesLength(1.5);
+        outtake.slides.setTargetSlidesLength(0.0);
 
         while ((!outtake.slides.isInPosition(2.5)) || (System.currentTimeMillis() - slides2 <= 1000)) {
+            outtake.extension.setTargetExtensionLength(15);
             Log.e("stuck3", "");
             update();
-            outtake.slides.setTargetSlidesLength(1.5);
+            outtake.slides.setTargetSlidesLength(0.0);
         }
 
         outtake.slides.slidesPercentMax = 1.0;

@@ -39,6 +39,7 @@ public class SevenConeAutoLeft extends LinearOpMode {
         Robot robot = new Robot(hardwareMap);
         Drivetrain drive = robot.drivetrain;
         DriveConstants.MAX_ACCEL = 58;
+        robot.currentState = IDLE;
 
         openCVWrapper = new OpenCVWrapper(telemetry, hardwareMap, true);
         assert(openCVWrapper != null);
