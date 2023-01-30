@@ -96,7 +96,8 @@ public class Outtake {
             turret.setTargetTurretAngle(targetTurretAngle);
         }
 
-        if ((turretClips && targetSlidesLength <= 9 && extensionIn) || (targetSlidesLength <= 6 && currentExtensionLength <= 9.5)) {
+        if ((turretClips && targetSlidesLength <= 9 && extensionIn) || (targetSlidesLength <= (actuation.isLevel()?6:1.3) && currentExtensionLength <= 9.5)) { // 1.3
+            Log.e("setting target slides length to 12", "");
             slides.setTargetSlidesLength(12);
         } else {
             if(extensionIn || slides.isInPosition(4, targetSlidesLength)) {
@@ -132,7 +133,7 @@ public class Outtake {
         Log.e("extension.currentExtensionLength", extension.currentExtensionLength + "");
         Log.e("extension.targetExtensionLength", extension.targetExtensionLength + "");
 
-        if ((targetExtent <= 10) && ((targetSlidesLength <= 6) || (slides.currentSlidesLength < 6))) {
+        if ((targetExtent <= 10) && ((targetSlidesLength <= (actuation.isLevel()?6:1.3)) || (slides.currentSlidesLength < (actuation.isLevel()?6:1.3)))) {
             extension.setTargetExtensionLength(10);
             Log.e("preventing motor clip",  "HERE");
         } else {

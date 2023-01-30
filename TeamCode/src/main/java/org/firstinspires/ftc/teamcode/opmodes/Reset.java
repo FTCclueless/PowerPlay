@@ -17,10 +17,12 @@ public class Reset extends LinearOpMode {
 
         waitForStart();
 
+        robot.resetEncoders();
+
         while(!isStopRequested()) {
-            robot.resetEncoders();
             robot.outtake.actuation.level();
             robot.outtake.extension.retractExtension();
+            robot.outtake.slides.setTargetSlidesLength(0);
             if (robot.outtake.extension.isInPosition(5)) {
                 robot.claw.open();
             }

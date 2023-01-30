@@ -431,7 +431,7 @@ public class Robot {
         slides1 = System.currentTimeMillis();
         outtake.slides.setTargetSlidesLength(12);
 
-        while ((!outtake.slides.isInPosition(2.5)) || (System.currentTimeMillis() - slides1 >= 1000)) {
+        while ((!outtake.slides.isInPosition(2.5)) || (System.currentTimeMillis() - slides1 <= 1000)) {
             Log.e("stuck1", "");
             update();
         }
@@ -439,19 +439,19 @@ public class Robot {
         turret = System.currentTimeMillis();
         outtake.turret.setTargetTurretAngle(Math.toRadians(55) * turnSign); // TODO: Might change angle to 125 so we don't need to turn turret as much for preload
 
-        while ((!outtake.turret.isInPosition(5)) || (System.currentTimeMillis() - turret >= 1000)) {
+        while ((!outtake.turret.isInPosition(5)) || (System.currentTimeMillis() - turret <= 1000)) {
             Log.e("stuck2", "");
             update();
         }
 
         outtake.slides.slidesPercentMax = 0.25;
         slides2 = System.currentTimeMillis();
-        outtake.slides.setTargetSlidesLength(1.0);
+        outtake.slides.setTargetSlidesLength(1.5);
 
-        while ((!outtake.slides.isInPosition(2.5)) || (System.currentTimeMillis() - slides2 >= 1000)) {
+        while ((!outtake.slides.isInPosition(2.5)) || (System.currentTimeMillis() - slides2 <= 1000)) {
             Log.e("stuck3", "");
             update();
-            outtake.slides.setTargetSlidesLength(1.0);
+            outtake.slides.setTargetSlidesLength(1.5);
         }
 
         outtake.slides.slidesPercentMax = 1.0;

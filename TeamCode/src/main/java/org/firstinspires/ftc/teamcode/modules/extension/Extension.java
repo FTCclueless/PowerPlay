@@ -78,7 +78,7 @@ public class Extension {
     }
 
     public void retractExtension() {
-        setTargetExtensionLength(baseSlidesExtension);
+        setTargetExtensionLength(10);
     }
 
     public double getCurrentExtensionLength() {
