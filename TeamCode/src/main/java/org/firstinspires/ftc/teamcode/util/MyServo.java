@@ -41,9 +41,10 @@ public class MyServo {
         speed *= loadMultiplier;
 
         currentPosition = basePos;
+        currentAngle = basePos/positionPerRadian;
     }
 
-    double currentAngle = 0;
+    double currentAngle;
     double currentPosition;
     double offset = 0; // ex: makes deposit bucket level
     long lastUpdateTime = System.nanoTime();
@@ -65,7 +66,7 @@ public class MyServo {
         if (power == 1.0) {
             servo.setPosition(targetPosition);
         }
-        else{
+        else {
             servo.setPosition(currentPosition);
         }
     }

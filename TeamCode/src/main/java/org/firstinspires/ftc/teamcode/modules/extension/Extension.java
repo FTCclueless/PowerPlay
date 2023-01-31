@@ -12,10 +12,10 @@ import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 import java.util.ArrayList;
 
 public class Extension {
-    public double currentExtensionLength = 0.0;
+    public double currentExtensionLength = 10.0;
     public double currentExtensionAngle = 0.0;
 
-    public double targetExtensionLength = 20.0;
+    public double targetExtensionLength = 8.5;
     public double targetExtensionAngle = 0.0;
 
     public double extensionPower = 1.0;
@@ -36,7 +36,7 @@ public class Extension {
         this.outtake = outtake;
         this.actuation = actuation;
 
-        extension = new MyServo(hardwareMap.servo.get("extension"),"ProModeler",0.9, 0.113,0.965, 0.965); // base pos is when extension is all the way out
+        extension = new MyServo(hardwareMap.servo.get("extension"),"Amazon",0.9, 0.113,0.965, 0.965); // base pos is when extension is all the way out
 //        extension = new MyServo(hardwareMap.servo.get("extension"),"Amazon",0.7, 0.0559,0.8809, 0.0559);
 
         servos.add(1, extension);
@@ -75,7 +75,6 @@ public class Extension {
 
 //        targetExtensionAngle = Math.acos((targetExtensionLength-(baseSlidesExtension+strokeLength/2))/(-strokeLength/2)); // https://www.desmos.com/calculator/aqezyzoq5y
         targetExtensionAngle = Math.acos((Math.pow(smallLinkage, 2) + Math.pow(targetLinkageLength, 2) - Math.pow(bigLinkage, 2))/(2*smallLinkage*targetLinkageLength));
-        Log.e("targetExtensionAngle", targetExtensionAngle + "");
     }
 
     public void retractExtension() {
@@ -89,7 +88,9 @@ public class Extension {
     public void updateExtensionValues() {
 //        currentExtensionLength = (baseSlidesExtension + (strokeLength/2)) - (strokeLength/2 * Math.cos(-extension.getAngle()));
         currentExtensionAngle = extension.getAngle();
+        Log.e("currentExtensionAngle", currentExtensionAngle + "");
         currentExtensionLength = (smallLinkage*Math.cos(currentExtensionAngle) + Math.sqrt(Math.pow(bigLinkage, 2) - Math.pow(smallLinkage, 2) * Math.pow(Math.sin(currentExtensionAngle), 2))) + servoMountingBack + clawForward;
+        Log.e("currentExtensionLength", currentExtensionLength + "");
     }
 
     public boolean isInPosition (double length) {

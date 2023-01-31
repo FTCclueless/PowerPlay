@@ -85,7 +85,6 @@ public class Outtake {
         }
 
         extensionIn = (currentExtensionLength <= (extension.minDistToNotHitMotor + 3));
-        Log.e("variables", Math.toDegrees(currentTurretAngle) + " " + Math.toDegrees(targetTurretAngle) + " " + isTurretGoThroughRange(120, 185) + " " + isTurretGoThroughRange(-185, -120));
         boolean backExtendCheck = targetSlidesLength <= 9 && (isTurretGoThroughRange(120, 185) || isTurretGoThroughRange(-185, -120));
         if(backExtendCheck) {
             extensionIn = (currentExtensionLength <= (extension.minDistToNotHitMotor + 5));
@@ -110,7 +109,6 @@ public class Outtake {
         } else {
             targetExtent = extension.baseSlidesExtension;
             if (backExtendCheck) {
-                Log.e("prevent hitting self", "ok");
 //                slides.setTargetSlidesLength(5);
                 if (!Storage.isTeleop) {
                     targetExtent += 5.0;
@@ -123,21 +121,15 @@ public class Outtake {
             }
         }
 
+        Log.e("extension.currentExtensionLenght", extension.currentExtensionLength + "");
+
         if(!actuation.isLevel()) {
             targetExtent -= extension.actuationTiltDistance;
         }
 
-        Log.e("targetExtent", targetExtent + "");
-        Log.e("targetSlidesLength", targetSlidesLength + "");
-        Log.e("slides.currentSlidesLength", slides.currentSlidesLength + "");
-        Log.e("extension.currentExtensionLength", extension.currentExtensionLength + "");
-        Log.e("extension.targetExtensionLength", extension.targetExtensionLength + "");
-
         if ((targetExtent <= extension.minDistToNotHitMotor) && ((targetSlidesLength <= (actuation.isLevel()?6:1.3) && slides.currentSlidesLength <= 14) || (slides.currentSlidesLength < (actuation.isLevel()?6:1.3)))) {
             extension.retractExtension();
-            Log.e("preventing motor clip",  "HERE");
         } else {
-            Log.e("setting extension to targetExtent",  "");
             extension.setTargetExtensionLength(targetExtent);
         }
 
