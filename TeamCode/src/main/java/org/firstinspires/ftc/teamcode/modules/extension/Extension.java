@@ -36,7 +36,7 @@ public class Extension {
         this.outtake = outtake;
         this.actuation = actuation;
 
-        extension = new MyServo(hardwareMap.servo.get("extension"),"Amazon",0.9, 0.113,0.965, 0.965); // base pos is when extension is all the way out
+        extension = new MyServo(hardwareMap.servo.get("extension"),"Torque",0.9, 0.0,0.333, 0.0); // base pos is when extension is all the way out
 //        extension = new MyServo(hardwareMap.servo.get("extension"),"Amazon",0.7, 0.0559,0.8809, 0.0559);
 
         servos.add(1, extension);
