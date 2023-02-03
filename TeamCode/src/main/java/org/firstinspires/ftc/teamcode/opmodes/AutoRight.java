@@ -95,7 +95,6 @@ public class AutoRight extends LinearOpMode {
         };
 
         robot.resetEncoders();
-        robot.claw.open();
 
         openCVWrapper.init();
         openCVWrapper.start();
@@ -103,12 +102,15 @@ public class AutoRight extends LinearOpMode {
         Log.e("camera setup", "");
 
         sleep(1000);
-        robot.initPosition(false);
 
         Log.e("init position", "");
 
+        robot.claw.init();
+        robot.outtake.actuation.init();
+
         while (opModeInInit()) {
             telemetry.setMsTransmissionInterval(50);
+            robot.initPosition(false);
 
             boolean detected = false;
 

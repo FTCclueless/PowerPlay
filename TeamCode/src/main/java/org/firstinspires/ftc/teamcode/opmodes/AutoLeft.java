@@ -95,7 +95,6 @@ public class AutoLeft extends LinearOpMode {
         };
 
         robot.resetEncoders();
-        robot.claw.open();
 
         openCVWrapper.init();
         openCVWrapper.start();
@@ -103,12 +102,15 @@ public class AutoLeft extends LinearOpMode {
         Log.e("camera setup", "");
 
         sleep(1000);
-        robot.initPosition(true);
 
         Log.e("init position", "");
 
+        robot.claw.init();
+        robot.outtake.actuation.init();
+
         while (opModeInInit()) {
             telemetry.setMsTransmissionInterval(50);
+            robot.initPosition(true);
 
             boolean detected = false;
 

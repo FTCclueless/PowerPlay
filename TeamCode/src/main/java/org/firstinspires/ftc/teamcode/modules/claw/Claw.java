@@ -16,8 +16,9 @@ public class Claw {
     public double closePosition = 0.0;
     public double openPosition = 0.317;
     public double parkPosition = 0.521;
+    public double initPosition = 0.206;
 
-    public enum STATE {OPEN, CLOSED, PARK}
+    public enum STATE {OPEN, CLOSED, PARK, INIT}
     public STATE currentState = STATE.OPEN;
 
     ArrayList<MyServo> servos;
@@ -42,6 +43,9 @@ public class Claw {
                 break;
             case PARK:
                 setTargetClawPosition(parkPosition);
+                break;
+            case INIT:
+                setTargetClawPosition(initPosition);
                 break;
         }
 
@@ -70,6 +74,10 @@ public class Claw {
 
     public void park() {
         currentState = STATE.PARK;
+    }
+
+    public void init() {
+        currentState = STATE.INIT;
     }
 
     public boolean isOpen () {

@@ -424,49 +424,7 @@ public class Robot {
 
     public void initPosition (boolean left) {
         double turnSign = left ? 1 : -1;
-
-        outtake.setTargetRelative(Math.cos(Math.toRadians(55)*turnSign) * 15, Math.sin(Math.toRadians(55)*turnSign) * 15, 1.75);
-
-        update();
-
-        while (System.currentTimeMillis() - timer <= 3000) {
-            Log.e("init", "");
-            outtake.setTargetRelative(Math.cos(Math.toRadians(55)*turnSign) * 15, Math.sin(Math.toRadians(55)*turnSign) * 15, 1.75);
-            update();
-        }
-
-//
-//        actuation.init();
-//        claw.open();
-//
-//        slides1 = System.currentTimeMillis();
-//        outtake.slides.setTargetSlidesLength(12);
-//        outtake.extension.setTargetExtensionLength(15);
-//
-
-//
-//        turret = System.currentTimeMillis();
-//        outtake.turret.setTargetTurretAngle(Math.toRadians(55) * turnSign); // TODO: Might change angle to 125 so we don't need to turn turret as much for preload
-//
-//        outtake.extension.setTargetExtensionLength(15);
-//        while ((!outtake.turret.isInPosition(5)) || (System.currentTimeMillis() - turret <= 1000)) {
-//            Log.e("stuck2", "");
-//            update();
-//        }
-//
-//        outtake.slides.slidesPercentMax = 0.25;
-//        slides2 = System.currentTimeMillis();
-//        outtake.slides.setTargetSlidesLength(0.0);
-//
-//        outtake.extension.setTargetExtensionLength(15);
-//        while ((!outtake.slides.isInPosition(2.5)) || (System.currentTimeMillis() - slides2 <= 1000)) {
-//            Log.e("stuck3", "");
-//            update();
-//            outtake.slides.setTargetSlidesLength(0.0);
-//        }
-//
-//        outtake.slides.slidesPercentMax = 1.0;
-
+        outtake.setTargetRelative(Math.cos(Math.toRadians(55 * turnSign)) * 5, Math.sin(Math.toRadians(55 * turnSign)) * 5, 2.5);
     }
 
     double targetLoopLength = 0.015; //Sets the target loop time in milli seconds
