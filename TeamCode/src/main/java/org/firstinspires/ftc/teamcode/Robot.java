@@ -420,45 +420,53 @@ public class Robot {
         }
     }
 
-    long slides1, turret, slides2 = System.currentTimeMillis();
+    long timer = System.currentTimeMillis();
 
     public void initPosition (boolean left) {
         double turnSign = left ? 1 : -1;
 
-        actuation.init();
-        outtake.extension.setTargetExtensionLength(15);
-        claw.open();
+        outtake.setTargetRelative(Math.cos(Math.toRadians(55)*turnSign) * 15, Math.sin(Math.toRadians(55)*turnSign) * 15, 1.75);
 
-        slides1 = System.currentTimeMillis();
-        outtake.slides.setTargetSlidesLength(12);
+        update();
 
-        while ((!outtake.slides.isInPosition(2.5)) || (System.currentTimeMillis() - slides1 <= 1000)) {
-            outtake.extension.setTargetExtensionLength(15);
-            Log.e("stuck1", "");
+        while (System.currentTimeMillis() - timer <= 3000) {
+            Log.e("init", "");
+            outtake.setTargetRelative(Math.cos(Math.toRadians(55)*turnSign) * 15, Math.sin(Math.toRadians(55)*turnSign) * 15, 1.75);
             update();
         }
 
-        turret = System.currentTimeMillis();
-        outtake.turret.setTargetTurretAngle(Math.toRadians(55) * turnSign); // TODO: Might change angle to 125 so we don't need to turn turret as much for preload
+//
+//        actuation.init();
+//        claw.open();
+//
+//        slides1 = System.currentTimeMillis();
+//        outtake.slides.setTargetSlidesLength(12);
+//        outtake.extension.setTargetExtensionLength(15);
+//
 
-        while ((!outtake.turret.isInPosition(5)) || (System.currentTimeMillis() - turret <= 1000)) {
-            outtake.extension.setTargetExtensionLength(15);
-            Log.e("stuck2", "");
-            update();
-        }
+//
+//        turret = System.currentTimeMillis();
+//        outtake.turret.setTargetTurretAngle(Math.toRadians(55) * turnSign); // TODO: Might change angle to 125 so we don't need to turn turret as much for preload
+//
+//        outtake.extension.setTargetExtensionLength(15);
+//        while ((!outtake.turret.isInPosition(5)) || (System.currentTimeMillis() - turret <= 1000)) {
+//            Log.e("stuck2", "");
+//            update();
+//        }
+//
+//        outtake.slides.slidesPercentMax = 0.25;
+//        slides2 = System.currentTimeMillis();
+//        outtake.slides.setTargetSlidesLength(0.0);
+//
+//        outtake.extension.setTargetExtensionLength(15);
+//        while ((!outtake.slides.isInPosition(2.5)) || (System.currentTimeMillis() - slides2 <= 1000)) {
+//            Log.e("stuck3", "");
+//            update();
+//            outtake.slides.setTargetSlidesLength(0.0);
+//        }
+//
+//        outtake.slides.slidesPercentMax = 1.0;
 
-        outtake.slides.slidesPercentMax = 0.25;
-        slides2 = System.currentTimeMillis();
-        outtake.slides.setTargetSlidesLength(0.0);
-
-        while ((!outtake.slides.isInPosition(2.5)) || (System.currentTimeMillis() - slides2 <= 1000)) {
-            outtake.extension.setTargetExtensionLength(15);
-            Log.e("stuck3", "");
-            update();
-            outtake.slides.setTargetSlidesLength(0.0);
-        }
-
-        outtake.slides.slidesPercentMax = 1.0;
     }
 
     double targetLoopLength = 0.015; //Sets the target loop time in milli seconds

@@ -13,7 +13,6 @@ import org.firstinspires.ftc.teamcode.modules.slides.Slides;
 import org.firstinspires.ftc.teamcode.modules.v4bar.V4Bar;
 import org.firstinspires.ftc.teamcode.util.ButtonToggle;
 
-@Disabled
 @TeleOp
 @Config
 public class SlidesPIDTuner extends LinearOpMode {

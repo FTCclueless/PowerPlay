@@ -32,7 +32,7 @@ public class Turret {
     public double targetTurretVelocity = 0.0;
     public double turretPower = 0.0;
     public double turretError = 0.0;
-    public static double kstatic = 0.08;
+    public static double kstatic = 0.1;
     public static double turretPercentMax = 0.98;
 
     double maxTurretSpeed = 8.28238063219; // radians per sec

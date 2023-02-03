@@ -80,10 +80,6 @@ public class Outtake {
 
         turretClips = isTurretGoThroughBad();
 
-        if (turretClips) {
-            Log.e("TURRET CLIPS", "");
-        }
-
         extensionIn = (currentExtensionLength <= (extension.minDistToNotHitMotor + 3));
         boolean backExtendCheck = targetSlidesLength <= 9 && (isTurretGoThroughRange(120, 185) || isTurretGoThroughRange(-185, -120));
         if(backExtendCheck) {
@@ -121,8 +117,6 @@ public class Outtake {
             }
         }
 
-        Log.e("extension.currentExtensionLenght", extension.currentExtensionLength + "");
-
         if(!actuation.isLevel()) {
             targetExtent -= extension.actuationTiltDistance;
         }
@@ -132,8 +126,6 @@ public class Outtake {
         } else {
             extension.setTargetExtensionLength(targetExtent);
         }
-
-        Log.e("AFTERWARDS extension.targetExtensionLength", extension.targetExtensionLength + "");
 
 
 //        else {
@@ -182,21 +174,31 @@ public class Outtake {
     double f = Math.toRadians(145);
 
     public boolean isTurretGoThroughBad() {
+        Log.e("targetTurretAngle", targetTurretAngle + "");
+        Log.e("currentTurretAngle", currentTurretAngle + "");
+
         double clipTarget = clipAngle(targetTurretAngle);
         double clipCurrent = clipAngle(currentTurretAngle);
+
+        Log.e("clipTarget", clipTarget + "");
+        Log.e("clipCurrent", clipCurrent + "");
+
         if (clipTarget == Math.min(Math.max(clipTarget,a),b)
                 || clipCurrent == Math.min(Math.max(clipCurrent,a),b)
-                || Math.signum(clipAngle(targetTurretAngle - (a+b)/2)) != Math.signum(clipAngle(currentTurretAngle  - (a+b)/2))){
+                || Math.signum(clipAngle(targetTurretAngle - (a+b)/2)) != Math.signum(clipAngle(currentTurretAngle  - (a+b)/2))) {
+            Log.e("turret clip 1", "");
             return true;
         }
         if (clipTarget == Math.min(Math.max(clipTarget,c),d)
                 || clipCurrent == Math.min(Math.max(clipCurrent,c),d)
-                || Math.signum(clipAngle(targetTurretAngle - (c+d)/2)) != Math.signum(clipAngle(currentTurretAngle  - (c+d)/2))){
+                || Math.signum(clipAngle(targetTurretAngle - (c+d)/2)) != Math.signum(clipAngle(currentTurretAngle  - (c+d)/2))) {
+            Log.e("turret clip 2", "");
             return true;
         }
         if (clipTarget == Math.min(Math.max(clipTarget,e),f)
                 || clipCurrent == Math.min(Math.max(clipCurrent,e),f)
-                || Math.signum(clipAngle(targetTurretAngle - (e+f)/2)) != Math.signum(clipAngle(currentTurretAngle  - (e+f)/2))){
+                || Math.signum(clipAngle(targetTurretAngle - (e+f)/2)) != Math.signum(clipAngle(currentTurretAngle  - (e+f)/2))) {
+            Log.e("turret clip 3", "");
             return true;
         }
 

@@ -7,14 +7,20 @@ public class MyServo {
     public double speed;
     public double positionPerRadian; // 300 degrees is operating range so 1/(300*pi/180)
     double max, min, basePos;
-    public MyServo(Servo servo, String servoType, double loadMultiplier, double min, double max){
+    boolean isBackwards = false;
+    public MyServo(Servo servo, String servoType, double loadMultiplier, double min, double max) {
         this(servo,servoType,loadMultiplier,min,max,min);
     }
+
     public MyServo(Servo servo, String servoType, double loadMultiplier, double min, double max, double basePos) {
+        this(servo,servoType,loadMultiplier,min,max,min, false);
+    }
+    public MyServo(Servo servo, String servoType, double loadMultiplier, double min, double max, double basePos, boolean isBackwards) {
         this.servo = servo;
         this.min = min;
         this.max = max;
         this.basePos = basePos;
+        this.isBackwards = isBackwards;
 
         switch (servoType) { // Take the no-load speed at 4.8 V and adjust as needed based on load on servo
             case "Torque":
@@ -42,6 +48,10 @@ public class MyServo {
 
         currentPosition = basePos;
         currentAngle = basePos/positionPerRadian;
+
+        if (isBackwards) {
+            positionPerRadian *= -1;
+        }
     }
 
     double currentAngle;
@@ -62,6 +72,7 @@ public class MyServo {
         if (Math.abs(update) >= Math.abs(error)) { // if setting servo position to update will cause the servo to go past it's target, set update = error
             currentAngle = targetPosition/positionPerRadian;
         }
+
         currentPosition = currentAngle * positionPerRadian; // This converts the currentAngle (in radians) to a position value (between 0-1) and then adds the intercept
         if (power == 1.0) {
             servo.setPosition(targetPosition);

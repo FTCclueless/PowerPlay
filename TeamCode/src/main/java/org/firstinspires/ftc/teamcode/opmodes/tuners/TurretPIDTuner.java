@@ -14,7 +14,6 @@ import org.firstinspires.ftc.teamcode.modules.turret.Turret;
 import org.firstinspires.ftc.teamcode.modules.v4bar.V4Bar;
 import org.firstinspires.ftc.teamcode.util.ButtonToggle;
 
-@Disabled
 @TeleOp
 @Config
 public class TurretPIDTuner extends LinearOpMode {

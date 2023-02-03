@@ -15,7 +15,7 @@ public class Extension {
     public double currentExtensionLength = 10.0;
     public double currentExtensionAngle = 0.0;
 
-    public double targetExtensionLength = 8.5;
+    public double targetExtensionLength = 10.0;
     public double targetExtensionAngle = 0.0;
 
     public double extensionPower = 1.0;
@@ -24,7 +24,7 @@ public class Extension {
     public double clawForward = 2.786; // forward from the center of the cone to where the linkage end mount is
     public double actuationTiltDistance = 2.5;
     public double momentOfInertiaConstant = 0.1;
-    public double minDistToNotHitMotor = 8.5;
+    public double minDistToNotHitMotor = 10.0;
 
     MyServo extension;
     ArrayList<MyServo> servos;
@@ -36,7 +36,7 @@ public class Extension {
         this.outtake = outtake;
         this.actuation = actuation;
 
-        extension = new MyServo(hardwareMap.servo.get("extension"),"Torque",0.9, 0.0,0.333, 0.0); // base pos is when extension is all the way out
+        extension = new MyServo(hardwareMap.servo.get("extension"),"Torque",0.9, 0.0,0.755, 0.0, false); // base pos is when extension is all the way out
 //        extension = new MyServo(hardwareMap.servo.get("extension"),"Amazon",0.7, 0.0559,0.8809, 0.0559);
 
         servos.add(1, extension);
@@ -53,7 +53,7 @@ public class Extension {
         updateExtensionValues();
         updateTelemetry();
 
-        extension.setAngle(-targetExtensionAngle, extensionPower);
+        extension.setAngle(targetExtensionAngle, extensionPower);
     }
 
     public double strokeLength = 22.36;
@@ -88,9 +88,7 @@ public class Extension {
     public void updateExtensionValues() {
 //        currentExtensionLength = (baseSlidesExtension + (strokeLength/2)) - (strokeLength/2 * Math.cos(-extension.getAngle()));
         currentExtensionAngle = extension.getAngle();
-        Log.e("currentExtensionAngle", currentExtensionAngle + "");
         currentExtensionLength = (smallLinkage*Math.cos(currentExtensionAngle) + Math.sqrt(Math.pow(bigLinkage, 2) - Math.pow(smallLinkage, 2) * Math.pow(Math.sin(currentExtensionAngle), 2))) + servoMountingBack + clawForward;
-        Log.e("currentExtensionLength", currentExtensionLength + "");
     }
 
     public boolean isInPosition (double length) {
