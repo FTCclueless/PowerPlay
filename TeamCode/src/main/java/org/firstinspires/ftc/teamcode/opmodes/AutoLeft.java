@@ -29,7 +29,7 @@ public class AutoLeft extends LinearOpMode {
 
     OpenCVWrapper openCVWrapper;
 
-    double[] coneStackHeights = new double[]{5.4, 4.15, 3.0, 1.5, 0.0}; //5.65, 4.4, 2.75, 2.0, 0.5
+    double[] coneStackHeights = new double[]{5.9, 4.65, 3.5, 1.75, 0.5}; //5.65, 4.4, 2.75, 2.0, 0.5
     ButtonToggle toggleA = new ButtonToggle();
 
     @Override
@@ -72,7 +72,7 @@ public class AutoLeft extends LinearOpMode {
                     robot.currentState = Robot.STATE.SCORING_GLOBAL;
                     robot.startScoringGlobal(
                             new Pose2d(cyclePose.getX(), cyclePose.getY(), cyclePose.getHeading()),
-                            new Pose2d(23, -1.0 * ySign), // 23, -1
+                            new Pose2d(20, -1.75 * ySign), // 23, -1
                             28.5);
                 })
                 .build();
@@ -132,6 +132,8 @@ public class AutoLeft extends LinearOpMode {
             telemetry.update();
         }
 
+        robot.outtake.slides.slidesPercentMax = 1.0;
+
         robot.drivetrain.setBreakFollowingThresholds(new Pose2d(0.5, 0.5, Math.toRadians(5)), to.end());
         drive.setPoseEstimate(origin);
         waitForStart();
@@ -150,7 +152,7 @@ public class AutoLeft extends LinearOpMode {
             // TODO verify the x and y sign on this. It should not be like this
             robot.startIntakeGlobal(
                     to.end(),
-                    new Pose2d(70,12 * ySign),
+                    new Pose2d(68,10 * ySign),
                     coneStackHeights[i]
             );
 
@@ -160,7 +162,7 @@ public class AutoLeft extends LinearOpMode {
 
             robot.startScoringGlobal(
                     new Pose2d(to.end().getX(), to.end().getY(), to.end().getHeading()),
-                    new Pose2d(23, -1.0 * ySign), // 23, -1
+                    new Pose2d(20, -1.75 * ySign), // 23, -1
                     28.5);
 
             while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) {

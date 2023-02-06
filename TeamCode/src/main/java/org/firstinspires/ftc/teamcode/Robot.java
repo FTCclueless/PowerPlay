@@ -424,7 +424,9 @@ public class Robot {
 
     public void initPosition (boolean left) {
         double turnSign = left ? 1 : -1;
-        outtake.setTargetRelative(Math.cos(Math.toRadians(55 * turnSign)) * 5, Math.sin(Math.toRadians(55 * turnSign)) * 5, 2.5);
+        outtake.slides.slidesPercentMax = 0.5;
+
+        outtake.setTargetRelative(Math.cos(Math.toRadians(55 * turnSign)) * 5, Math.sin(Math.toRadians(55 * turnSign)) * 5, 3.0);
     }
 
     double targetLoopLength = 0.015; //Sets the target loop time in milli seconds

@@ -37,11 +37,15 @@ public class MyServo {
             break;
             case "Amazon":
                 speed = Math.toRadians(60) / 0.13;
-                positionPerRadian = 0.2122065908; // different since operating range is 270 degrees
+                positionPerRadian = 0.2122065908;
             break;
             case "ProModeler":
                 speed = Math.toRadians(60) / 0.139;
-                positionPerRadian = 0.32698; // different since operating range is 270 degrees
+                positionPerRadian = 0.32698;
+                break;
+            case "JX":
+                speed = Math.toRadians(60) / 0.12;
+                positionPerRadian = 0.3183098862;
                 break;
         }
         speed *= loadMultiplier;

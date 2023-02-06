@@ -153,6 +153,8 @@ public class SevenConeAutoLeft extends LinearOpMode {
             telemetry.update();
         }
 
+        robot.outtake.slides.slidesPercentMax = 1.0;
+
         robot.drivetrain.setBreakFollowingThresholds(new Pose2d(0.5, 0.5, Math.toRadians(5)), to.end());
         drive.setPoseEstimate(origin);
         waitForStart();

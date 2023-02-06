@@ -14,9 +14,9 @@ public class Claw {
     public double clawPower = 1.0;
 
     public double closePosition = 0.0;
-    public double openPosition = 0.317;
-    public double parkPosition = 0.521;
-    public double initPosition = 0.206;
+    public double openPosition = 0.45;
+    public double parkPosition = 0.69;
+    public double initPosition = 0.258;
 
     public enum STATE {OPEN, CLOSED, PARK, INIT}
     public STATE currentState = STATE.OPEN;
@@ -26,7 +26,7 @@ public class Claw {
     public Claw(HardwareMap hardwareMap, ArrayList<MyServo> servos) {
         this.servos = servos;
 
-        claw = new MyServo(hardwareMap.servo.get("claw"),"Amazon",1,0.0,1.0, openPosition);
+        claw = new MyServo(hardwareMap.servo.get("claw"),"JX",1,0.0,1.0, openPosition);
 
         servos.add(2, claw);
     }
