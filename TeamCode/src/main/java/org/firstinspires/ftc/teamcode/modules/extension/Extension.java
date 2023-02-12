@@ -24,7 +24,6 @@ public class Extension {
     public double clawForward = 2.786; // forward from the center of the cone to where the linkage end mount is
     public double actuationTiltDistance = 2.5;
     public double momentOfInertiaConstant = 0.1;
-    public double minDistToNotHitMotor = 11;
 
     MyServo extension;
     ArrayList<MyServo> servos;
@@ -63,6 +62,7 @@ public class Extension {
     public double targetLinkageLength = 0.0;
 
     public double baseSlidesExtension = bigLinkage - smallLinkage + servoMountingBack + clawForward + 0.00001;
+    public double minDistToNotHitMotor = baseSlidesExtension;
 
     public void setTargetExtensionLength(double length) {
         length = Math.max(baseSlidesExtension, Math.min(length, strokeLength+baseSlidesExtension - 0.00001));
