@@ -107,9 +107,9 @@ public class Outtake {
             if (backExtendCheck) {
 //                slides.setTargetSlidesLength(5);
                 if (!Storage.isTeleop) {
-                    targetExtent += 5.0;
+                    targetExtent += 7.0;
                 } else {
-                    targetExtent += 1.25;
+                    targetExtent += 4.0;
                 }
 //                if (extension.isInPosition(targetExtent,0.5)) {
 //                    slides.setTargetSlidesLength(targetSlidesLength);

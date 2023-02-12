@@ -12,10 +12,10 @@ import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 import java.util.ArrayList;
 
 public class Extension {
-    public double currentExtensionLength = 8.5;
+    public double currentExtensionLength = 11.25;
     public double currentExtensionAngle = 0.0;
 
-    public double targetExtensionLength = 8.5;
+    public double targetExtensionLength = 11.25;
     public double targetExtensionAngle = 0.0;
 
     public double extensionPower = 1.0;
@@ -24,7 +24,7 @@ public class Extension {
     public double clawForward = 2.786; // forward from the center of the cone to where the linkage end mount is
     public double actuationTiltDistance = 2.5;
     public double momentOfInertiaConstant = 0.1;
-    public double minDistToNotHitMotor = 8.5;
+    public double minDistToNotHitMotor = 11;
 
     MyServo extension;
     ArrayList<MyServo> servos;
@@ -36,7 +36,7 @@ public class Extension {
         this.outtake = outtake;
         this.actuation = actuation;
 
-        extension = new MyServo(hardwareMap.servo.get("extension"),"JX",0.5, 0.0,1.0, 1.0, false); // base `pos is when extension is all the way out
+        extension = new MyServo(hardwareMap.servo.get("extension"),"Torque",0.625, 0.0,1.0, 0.0, false); // base `pos is when extension is all the way out
 //        extension = new MyServo(hardwareMap.servo.get("extension"),"Amazon",0.7, 0.0559,0.8809, 0.0559);
 
         servos.add(1, extension);
@@ -53,7 +53,7 @@ public class Extension {
         updateExtensionValues();
         updateTelemetry();
 
-        extension.setAngle(-targetExtensionAngle, extensionPower);
+        extension.setAngle(targetExtensionAngle, extensionPower);
     }
 
     public double strokeLength = 22.36;
@@ -78,7 +78,7 @@ public class Extension {
     }
 
     public void retractExtension() {
-        setTargetExtensionLength(minDistToNotHitMotor);
+        setTargetExtensionLength(minDistToNotHitMotor+0.25);
     }
 
     public double getCurrentExtensionLength() {

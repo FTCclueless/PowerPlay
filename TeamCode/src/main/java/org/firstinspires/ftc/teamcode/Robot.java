@@ -79,7 +79,7 @@ public class Robot {
     double poleHeight = 32.0;
 
     Pose2d drivePose = new Pose2d(0,0);
-    double scoringHeight = 28;
+    double scoringHeight = 26.5;
     public int scoringLevel = 3;
 
     public double intakeHeight = 0.0;
@@ -134,7 +134,7 @@ public class Robot {
                 }
                 break;
             case INTAKE_RELATIVE:
-                actuation.level();
+                actuation.downLevel();
 
                 intakeHeight = Math.max(0, Math.min(intakeHeight, 10));
 
@@ -186,6 +186,9 @@ public class Robot {
                     outtake.setTargetRelative(-outtake.extension.baseSlidesExtension,0,15);
                 } else {
                     outtake.slides.slidesPercentMax = 1.0;
+                    if (intakeHeight < 0) {
+                        intakeHeight = 0.0;
+                    }
                     outtake.setTargetRelative(outtake.extension.baseSlidesExtension,0,10+intakeHeight);
                 }
                 if (startScoringRelative) {
@@ -280,6 +283,7 @@ public class Robot {
                 claw.open();
                 if (System.currentTimeMillis() - timeSinceClawOpen >= 150) {
                     outtake.slides.setTargetSlidesLength(Math.min(scoringHeight + 6, 32));
+                    outtake.extension.retractExtension();
                     if ((outtake.slides.isInPosition(2)) || (System.currentTimeMillis() - timeSinceClawOpen >= (700))) {
                         actuation.level();
                         currentState = STATE.INTAKE_RELATIVE;
@@ -318,7 +322,7 @@ public class Robot {
         startIntakeGlobal = true;
     }
 
-    double extensionDistance = 7.0;
+    double extensionDistance = 12.0;
 
     double offsetX = 0.0;
     double offsetY = 0.0;
@@ -426,7 +430,7 @@ public class Robot {
         double turnSign = left ? 1 : -1;
         outtake.slides.slidesPercentMax = 0.5;
 
-        outtake.setTargetRelative(Math.cos(Math.toRadians(55 * turnSign)) * 5, Math.sin(Math.toRadians(55 * turnSign)) * 5, 3.0);
+        outtake.setTargetRelative(Math.cos(Math.toRadians(55 * turnSign)) * 5, Math.sin(Math.toRadians(55 * turnSign)) * 5, 2.85);
     }
 
     double targetLoopLength = 0.015; //Sets the target loop time in milli seconds

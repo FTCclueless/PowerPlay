@@ -22,7 +22,7 @@ public class MyServo {
         this.basePos = basePos;
         this.isBackwards = isBackwards;
 
-        switch (servoType) { // Take the no-load speed at 4.8 V and adjust as needed based on load on servo
+        switch (servoType) { // Take the no-load sp eed at 4.8 V and adjust as needed based on load on servo
             case "Torque":
                 speed = Math.toRadians(60) / 0.25;
                 positionPerRadian = 0.2162104887;

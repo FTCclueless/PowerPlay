@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.Robot.STATE.IDLE;
 import static org.firstinspires.ftc.teamcode.Robot.STATE.INTAKE_GLOBAL;
 import static org.firstinspires.ftc.teamcode.Robot.STATE.INTAKE_RELATIVE;
 import static org.firstinspires.ftc.teamcode.Robot.STATE.SCORING_GLOBAL;
+import static org.firstinspires.ftc.teamcode.Robot.STATE.WAIT_FOR_START_SCORING;
 
 import android.util.Log;
 
@@ -29,7 +30,7 @@ public class AutoRight extends LinearOpMode {
 
     OpenCVWrapper openCVWrapper;
 
-    double[] coneStackHeights = new double[]{5.4, 4.15, 3.35, 1.5, 0.0}; //5.65, 4.4, 2.75, 2.0, 0.5
+    double[] coneStackHeights = new double[]{4.0, 3.0, 2.0, 0.5, 0.0}; //5.65, 4.4, 2.75, 2.0, 0.5
     ButtonToggle toggleA = new ButtonToggle();
 
     @Override
@@ -73,7 +74,7 @@ public class AutoRight extends LinearOpMode {
                     robot.startScoringGlobal(
                             new Pose2d(cyclePose.getX(), cyclePose.getY(), cyclePose.getHeading()),
                             new Pose2d(23,-3.0 * ySign), // 24, 0
-                            28.5);
+                            27.5);
                 })
                 .build();
 
@@ -81,15 +82,15 @@ public class AutoRight extends LinearOpMode {
 
         Trajectory[] park = new Trajectory[]{
                 drive.trajectoryBuilder(cyclePose).strafeTo(new Vector2d( // parking position 3
-                        13,
+                        15,
                         cyclePose.getY()
                 )).build(),
                 drive.trajectoryBuilder(cyclePose).strafeTo(new Vector2d( // parking position 2
-                        34,
+                        37,
                         cyclePose.getY()
                 )).build(),
                 drive.trajectoryBuilder(cyclePose).strafeTo(new Vector2d( // parking position 1
-                        59.5,
+                        61.5,
                         cyclePose.getY()
                 )).build()
         };
@@ -118,7 +119,7 @@ public class AutoRight extends LinearOpMode {
             detected = true;
 
             if (toggleA.isClicked(gamepad1.a)) {
-                robot.claw.close();
+                robot.claw.initClose();
             }
 
             robot.update();
@@ -131,6 +132,8 @@ public class AutoRight extends LinearOpMode {
 
             telemetry.update();
         }
+
+        robot.claw.close();
 
         robot.outtake.slides.slidesPercentMax = 1.0;
 
@@ -152,7 +155,7 @@ public class AutoRight extends LinearOpMode {
             // TODO verify the x and y sign on this. It should not be like this
             robot.startIntakeGlobal(
                     to.end(),
-                    new Pose2d(70.5,12 * ySign), //70.5
+                    new Pose2d(73.5,12 * ySign), //70.5
                     coneStackHeights[i]
             );
 
@@ -163,7 +166,7 @@ public class AutoRight extends LinearOpMode {
             robot.startScoringGlobal(
                     new Pose2d(to.end().getX(), to.end().getY(), to.end().getHeading()),
                     new Pose2d(23,-3.0 * ySign), //24, 1.0
-                    28.5);
+                    27.5);
 
             while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) {
                 robot.update();
@@ -186,11 +189,14 @@ public class AutoRight extends LinearOpMode {
         robot.claw.park();
         robot.outtake.actuation.level();
 
-        while (System.currentTimeMillis() - clawStart <= 300) {
+        while (System.currentTimeMillis() - clawStart <= 2000) {
             robot.claw.park();
             robot.outtake.actuation.level();
-            robot.claw.update();
+            robot.update();
         }
+
+        robot.outtake.actuation.level();
+        robot.update();
 
         Storage.autoEndPose = drive.getPoseEstimate();
         Storage.isBlue = false;
