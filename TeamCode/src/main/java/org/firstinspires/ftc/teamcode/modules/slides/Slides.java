@@ -13,14 +13,13 @@ import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
 import java.util.ArrayList;
 
-
 public class Slides {
     public DcMotorEx slide1, slide2;
     Sensors sensors;
 
     ArrayList<MotorPriority> motorPriorities;
 
-    public PID slidesVelocityPID = new PID (0.0275,0.003,0.0);
+    public PID slidesVelocityPID = new PID (0.0275,0.003,0.0); // TODO: Tune integral term
 
     public double currentSlidesLength = 0.0;
     public double currentSlidesVelocity = 0.0;

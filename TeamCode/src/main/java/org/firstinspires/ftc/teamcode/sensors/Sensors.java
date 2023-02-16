@@ -8,8 +8,10 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.modules.drive.ThreeWheelLocalizer;
 import org.firstinspires.ftc.teamcode.util.MotorPriority;
+import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,7 +22,7 @@ public class Sensors {
     HardwareMap hardwareMap;
     ThreeWheelLocalizer localizer;
 
-    public double slidesLength, slidesVelocity;
+    public double slidesLength, slidesVelocity, slidesCurrent;
     public double turretAngle, turretVelocity;
 
     public boolean clawTouch = false;
@@ -40,6 +42,10 @@ public class Sensors {
         }
 
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
+    }
+
+    public void updateTelemetry () {
+        TelemetryUtil.packet.put("slidesCurrent: ", slidesCurrent);
     }
 
     public void updateHub1() {
@@ -65,6 +71,7 @@ public class Sensors {
 
             slidesLength = motorPriorities.get(5).motor[1].getCurrentPosition() / slidesTickToInch * -1; // inches of slides
             slidesVelocity = motorPriorities.get(5).motor[1].getVelocity() / slidesTickToInch * -1;
+            slidesCurrent = motorPriorities.get(5).motor[1].getCurrent(CurrentUnit.AMPS);
 
 //            clawTouch = clawLimit.getState();
         } catch (Exception e) {

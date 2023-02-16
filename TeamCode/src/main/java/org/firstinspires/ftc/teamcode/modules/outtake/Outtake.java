@@ -41,7 +41,7 @@ public class Outtake {
     double currentSlidesLength = 0.0;
     double currentExtensionLength = 0.0;
 
-    double turretXOffset = -2.0; // TODO: Get actual number
+    double turretXOffset = -1.26; // TODO: Get actual number
     double turretYOffset = 0.0;
 
     double x, y, z;
@@ -99,21 +99,18 @@ public class Outtake {
                 slides.setTargetSlidesLength(targetSlidesLength);
             }
         }
+
         double targetExtent = 0;
         if (turret.isInPosition(15, targetTurretAngle) && slides.isInPosition(4, targetSlidesLength)) {
             targetExtent = targetExtensionLength;
         } else {
             targetExtent = extension.baseSlidesExtension;
             if (backExtendCheck) {
-//                slides.setTargetSlidesLength(5);
                 if (!Storage.isTeleop) {
                     targetExtent += 7.0;
                 } else {
                     targetExtent += 4.0;
                 }
-//                if (extension.isInPosition(targetExtent,0.5)) {
-//                    slides.setTargetSlidesLength(targetSlidesLength);
-//                }
             }
         }
 
@@ -127,32 +124,9 @@ public class Outtake {
             extension.setTargetExtensionLength(targetExtent);
         }
 
-
-//        else {
-//            Log.e("extension.currentExtensionLength", extension.currentExtensionLength + "");
-//            if (extension.currentExtensionLength >= 12) { // if the extension is far out, move extension first before slides
-//                extension.setTargetExtensionLength(targetExtensionLength);
-//                Log.e("extension.isInPosition", extension.isInPosition(1.5) + "");
-//                if (extension.isInPosition(1.5)) {
-//                    slides.setTargetSlidesLength(targetSlidesLength);
-//                }
-//            } else { // if extension is in, then move slides first
-//                slides.setTargetSlidesLength(targetSlidesLength);
-//            }
-//        }
-//        if (currentSlidesLength >= 9 || !turretClips) {
-//            if (extension.currentExtensionLength >= 12) { // if extension is far out, move extension first before spinning turret
-//                extension.setTargetExtensionLength(targetExtensionLength);
-//                if (extension.isInPosition(1.5)) {
-//                    turret.setTargetTurretAngle(targetTurretAngle);
-//                }
-//            } else { // if extension is in, then move turret first
-//                turret.setTargetTurretAngle(targetTurretAngle);
-//                if (turret.isInPosition(5) && slides.isInPosition(2)) { // once turret is in and slides are in correct position, move extension
-//                    extension.setTargetExtensionLength(targetExtensionLength);
-//                }
-//            }
-//        }
+        if (Math.abs(slides.targetSlidesLength - slides.currentSlidesLength) >= 3) {
+            slides.slidesVelocityPID.resetIntegral();
+        }
 
         slides.update();
         turret.update();

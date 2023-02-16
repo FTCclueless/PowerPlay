@@ -20,10 +20,15 @@ public class Extension {
 
     public double extensionPower = 1.0;
 
-    public double servoMountingBack = 1.24; // the distance the extension servo is from 0,0
-    public double clawForward = 2.786; // forward from the center of the cone to where the linkage end mount is
+    public double servoMountingBack = 2.5; // the distance the extension servo is from 0,0 TODO: Fix constant
+    public double clawForward = 4.5; // forward from the center of the cone to where the linkage end mount is TODO: Fix constant
     public double actuationTiltDistance = 2.5;
-    public double momentOfInertiaConstant = 0.1;
+    public double strokeLength = 13.5827; // TODO: Fix constant
+    public double smallLinkage = 6.7913; // TODO: Fix constant
+    public double bigLinkage = 11.41; // TODO: Fix constant
+    public double targetLinkageLength = 0.0;
+    public double baseSlidesExtension = bigLinkage - smallLinkage + servoMountingBack + clawForward + 0.00001;
+    public double minDistToNotHitMotor = baseSlidesExtension;
 
     MyServo extension;
     ArrayList<MyServo> servos;
@@ -35,7 +40,7 @@ public class Extension {
         this.outtake = outtake;
         this.actuation = actuation;
 
-        extension = new MyServo(hardwareMap.servo.get("extension"),"Torque",0.625, 0.0,1.0, 0.0, false); // base `pos is when extension is all the way out
+        extension = new MyServo(hardwareMap.servo.get("extension"),"JX",0.625, 0.0,1.0, 1.0, false); // base `pos is when extension is all the way out
 //        extension = new MyServo(hardwareMap.servo.get("extension"),"Amazon",0.7, 0.0559,0.8809, 0.0559);
 
         servos.add(1, extension);
@@ -52,17 +57,8 @@ public class Extension {
         updateExtensionValues();
         updateTelemetry();
 
-        extension.setAngle(targetExtensionAngle, extensionPower);
+        extension.setAngle(-targetExtensionAngle, extensionPower);
     }
-
-    public double strokeLength = 22.36;
-
-    public double smallLinkage = 11.18;
-    public double bigLinkage = 12.4;
-    public double targetLinkageLength = 0.0;
-
-    public double baseSlidesExtension = bigLinkage - smallLinkage + servoMountingBack + clawForward + 0.00001;
-    public double minDistToNotHitMotor = baseSlidesExtension;
 
     public void setTargetExtensionLength(double length) {
         length = Math.max(baseSlidesExtension, Math.min(length, strokeLength+baseSlidesExtension - 0.00001));
