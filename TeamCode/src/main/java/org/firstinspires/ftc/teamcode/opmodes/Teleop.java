@@ -106,7 +106,7 @@ public class Teleop extends LinearOpMode {
 
             // if any buttons of the bumpers are clicked go to scoring relative
             if ((robot.currentState == Robot.STATE.WAIT_FOR_START_SCORING && (gamepad1.right_bumper || gamepad1.left_bumper || gamepad2.right_bumper || gamepad2.left_bumper)) || (robot.currentState == Robot.STATE.SCORING_RELATIVE)) {
-                robot.startScoringRelative(gamepad2, Storage.isBlue, scoringHeight);
+                robot.startScoringRelative(gamepad2, isBlue, scoringHeight);
             }
 
             if ((robot.currentState == Robot.STATE.SCORING_RELATIVE && (gamepad2.right_trigger > 0.5 || gamepad1.left_trigger > 0.5))) {

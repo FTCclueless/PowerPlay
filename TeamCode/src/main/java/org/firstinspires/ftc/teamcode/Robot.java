@@ -97,6 +97,8 @@ public class Robot {
     public boolean isAutoAim = false;
     public boolean isWaitForStartScoring180 = false;
 
+    long timer = System.currentTimeMillis();
+
     public void update() {
         loopStart = System.nanoTime();
         updateSubSystems();
@@ -146,6 +148,7 @@ public class Robot {
 
                 if (sensors.clawTouch) { // needs an external claw.close()
                     sensors.clawTouch = false;
+                    timer = System.currentTimeMillis();
                     currentState = STATE.WAIT_FOR_START_SCORING;
                 }
                 break;
@@ -180,17 +183,24 @@ public class Robot {
                 break;
             case WAIT_FOR_START_SCORING:
                 claw.close();
-                actuation.level();
-                if (isWaitForStartScoring180) {
-                    outtake.slides.slidesPercentMax = 1.0;
-                    outtake.setTargetRelative(-outtake.extension.baseSlidesExtension,0,15);
-                } else {
-                    outtake.slides.slidesPercentMax = 1.0;
-                    if (intakeHeight < 0) {
-                        intakeHeight = 0.0;
+                if (System.currentTimeMillis() - timer >= 300 || !claw.isOpen()) { // waiting for claw to close
+                    if (isWaitForStartScoring180) {
+                        outtake.slides.slidesPercentMax = 1.0;
+                        outtake.setTargetRelative(-outtake.extension.baseSlidesExtension,0,15);
+                    } else {
+                        outtake.slides.slidesPercentMax = 1.0;
+                        if (intakeHeight < 0) {
+                            intakeHeight = 0.0;
+                        }
+                        outtake.setTargetRelative(outtake.extension.baseSlidesExtension,0,10+intakeHeight);
                     }
-                    outtake.setTargetRelative(outtake.extension.baseSlidesExtension,0,10+intakeHeight);
                 }
+
+                // actuation retract
+                if (outtake.slides.currentSlidesLength >= 5) {
+                    actuation.retract();
+                }
+
                 if (startScoringRelative) {
                     outtake.slides.slidesPercentMax = 1.0;
                     isWaitForStartScoring180 = false;
@@ -284,8 +294,9 @@ public class Robot {
                 if (System.currentTimeMillis() - timeSinceClawOpen >= 150) {
                     outtake.slides.setTargetSlidesLength(Math.min(scoringHeight + 6, 32));
                     outtake.extension.retractExtension();
+                    actuation.retract();
                     if ((outtake.slides.isInPosition(2)) || (System.currentTimeMillis() - timeSinceClawOpen >= (700))) {
-                        actuation.level();
+                        actuation.retract();
                         currentState = STATE.INTAKE_RELATIVE;
                     }
                     break;
@@ -347,23 +358,22 @@ public class Robot {
 
         boolean amUpdated = false;
 
-//        double m1 = (isBlue ? 1 : -1);
-        double m1 = 1;
+        double m1 = (isBlue ? 1 : -1);
         double newAngle = 0;
         if (gamepad.dpad_up) { // forward left
-            newAngle = Math.toRadians(-45 * m1); //use 90 - 90 if you want it to work for straight across (current 45)
+            newAngle = Math.toRadians(-90); //use 90 - 90 if you want it to work for straight across (current 45)
             amUpdated = true;
         }
         else if (gamepad.dpad_right) { // forward right
-            newAngle = Math.toRadians(-135 * m1); // use -90 - 90 if you want it to work for straight across (current 45)
+            newAngle = Math.toRadians(-180); // use -90 - 90 if you want it to work for straight across (current 45)
             amUpdated = true;
         }
         else if (gamepad.dpad_down) { // back right
-            newAngle = Math.toRadians(135 * m1);
+            newAngle = Math.toRadians(180);
             amUpdated = true;
         }
         else if (gamepad.dpad_left) { // back left
-            newAngle = Math.toRadians(45 * m1); //use 90 - 90 if you want it to work for straight across (current 45)
+            newAngle = Math.toRadians(90); //use 90 - 90 if you want it to work for straight across (current 45)
             amUpdated = true;
         }
 
@@ -424,8 +434,6 @@ public class Robot {
         }
     }
 
-    long timer = System.currentTimeMillis();
-
     public void initPosition (boolean left) {
         double turnSign = left ? 1 : -1;
         outtake.slides.slidesPercentMax = 0.5;
@@ -470,6 +478,7 @@ public class Robot {
     public Pose2d stayInPlacePose = new Pose2d(0,0,0);
 
     public void updateSubSystems() {
+        sensors.updateTelemetry();
         sensors.updateHub1();
         sensors.updateHub2();
 

@@ -24,7 +24,7 @@ public class Extension {
     public double clawForward = 4.5; // forward from the center of the cone to where the linkage end mount is TODO: Fix constant
     public double actuationTiltDistance = 2.5;
     public double strokeLength = 13.5827; // TODO: Fix constant
-    public double smallLinkage = 6.7913; // TODO: Fix constant
+    public double smallLinkage = 6.79135; // TODO: Fix constant
     public double bigLinkage = 11.41; // TODO: Fix constant
     public double targetLinkageLength = 0.0;
     public double baseSlidesExtension = bigLinkage - smallLinkage + servoMountingBack + clawForward + 0.00001;
@@ -61,7 +61,7 @@ public class Extension {
     }
 
     public void setTargetExtensionLength(double length) {
-        length = Math.max(baseSlidesExtension, Math.min(length, strokeLength+baseSlidesExtension - 0.00001));
+        length = Math.max(baseSlidesExtension, Math.min(length, strokeLength+baseSlidesExtension - 0.00002));
 
         targetExtensionLength = length;
         outtake.targetExtensionLength = length;

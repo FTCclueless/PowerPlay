@@ -19,6 +19,7 @@ public class Actuation {
     double downLevelPosition = 0.746;
     double tiltedPosition = 0.396; //0.2689
     double initPosition = 0.0;
+    double retractPosition = 1.0;
 
     public Actuation(HardwareMap hardwareMap, ArrayList<MyServo> servos) {
         this.servos = servos;
@@ -70,6 +71,10 @@ public class Actuation {
 
     public void init() {
         targetActPosition = initPosition;
+    }
+
+    public void retract() {
+        targetActPosition = retractPosition;
     }
 
     public boolean isLevel () {

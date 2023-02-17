@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode.sensors;
 import android.util.Log;
 
 import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.robotcore.hardware.AnalogInput;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
@@ -14,7 +12,6 @@ import org.firstinspires.ftc.teamcode.util.MotorPriority;
 import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class Sensors {
@@ -22,7 +19,7 @@ public class Sensors {
     HardwareMap hardwareMap;
     ThreeWheelLocalizer localizer;
 
-    public double slidesLength, slidesVelocity, slidesCurrent;
+    public double slidesLength, slidesVelocity, slides1Current, slides2Current;
     public double turretAngle, turretVelocity;
 
     public boolean clawTouch = false;
@@ -45,7 +42,8 @@ public class Sensors {
     }
 
     public void updateTelemetry () {
-        TelemetryUtil.packet.put("slidesCurrent: ", slidesCurrent);
+        TelemetryUtil.packet.put("slides1Current: ", slides1Current);
+        TelemetryUtil.packet.put("slides2Current: ", slides2Current);
     }
 
     public void updateHub1() {
@@ -71,7 +69,8 @@ public class Sensors {
 
             slidesLength = motorPriorities.get(5).motor[1].getCurrentPosition() / slidesTickToInch * -1; // inches of slides
             slidesVelocity = motorPriorities.get(5).motor[1].getVelocity() / slidesTickToInch * -1;
-            slidesCurrent = motorPriorities.get(5).motor[1].getCurrent(CurrentUnit.AMPS);
+            slides1Current = motorPriorities.get(5).motor[0].getCurrent(CurrentUnit.AMPS);
+            slides2Current = motorPriorities.get(5).motor[1].getCurrent(CurrentUnit.AMPS);
 
 //            clawTouch = clawLimit.getState();
         } catch (Exception e) {
