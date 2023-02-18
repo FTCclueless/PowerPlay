@@ -91,7 +91,7 @@ public class Teleop extends LinearOpMode {
             }
 
             if (gamepad2.y) { // high (NEED TO CHANGE THE DEFAULT HEIGHT TOO)
-                scoringHeight = 26.5;
+                scoringHeight = 26.0;
                 robot.scoringLevel = 3;
             }
 

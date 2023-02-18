@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.modules.slides;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -19,7 +21,7 @@ public class Slides {
 
     ArrayList<MotorPriority> motorPriorities;
 
-    public PID slidesVelocityPID = new PID (0.0275,0.003,0.0); // TODO: Tune integral term
+    public PID slidesVelocityPID = new PID (0.0135,0.005,0.0); // TODO: Tune integral term
 
     public double currentSlidesLength = 0.0;
     public double currentSlidesVelocity = 0.0;
@@ -66,6 +68,9 @@ public class Slides {
 
         TelemetryUtil.packet.put("slidesPower: ", slidesPower);
         TelemetryUtil.packet.put("slidesError: ", slidesError);
+
+        Log.e("targetSlidesLength: ", targetSlidesLength + "");
+        Log.e("currentSlidesLength: ", currentSlidesLength + "");
     }
 
     boolean isVelocity = false;

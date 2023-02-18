@@ -79,7 +79,7 @@ public class Robot {
     double poleHeight = 32.0;
 
     Pose2d drivePose = new Pose2d(0,0);
-    double scoringHeight = 26.5;
+    double scoringHeight = 26.0;
     public int scoringLevel = 3;
 
     public double intakeHeight = 0.0;
@@ -96,6 +96,7 @@ public class Robot {
     public boolean isTeleop = false;
     public boolean isAutoAim = false;
     public boolean isWaitForStartScoring180 = false;
+    boolean alreadyTilted = false;
 
     long timer = System.currentTimeMillis();
 
@@ -136,7 +137,11 @@ public class Robot {
                 }
                 break;
             case INTAKE_RELATIVE:
-                actuation.downLevel();
+                if (outtake.turret.targetTurretAngle == 0 && outtake.turret.isInPosition(90)) {
+                    actuation.level();
+                } else {
+                    actuation.retract();
+                }
 
                 intakeHeight = Math.max(0, Math.min(intakeHeight, 10));
 
@@ -183,7 +188,12 @@ public class Robot {
                 break;
             case WAIT_FOR_START_SCORING:
                 claw.close();
-                if (System.currentTimeMillis() - timer >= 300 || !claw.isOpen()) { // waiting for claw to close
+                actuation.level();
+
+                Log.e("!claw.isOpen()", !claw.isOpen() + "");
+                Log.e("System.currentTimeMillis() - timer >= 600", (System.currentTimeMillis() - timer >= 600) + "");
+
+                if (System.currentTimeMillis() - timer >= 600 || !claw.isOpen()) { // waiting for claw to close
                     if (isWaitForStartScoring180) {
                         outtake.slides.slidesPercentMax = 1.0;
                         outtake.setTargetRelative(-outtake.extension.baseSlidesExtension,0,15);
@@ -196,21 +206,17 @@ public class Robot {
                     }
                 }
 
-                // actuation retract
-                if (outtake.slides.currentSlidesLength >= 5) {
-                    actuation.retract();
-                }
-
                 if (startScoringRelative) {
                     outtake.slides.slidesPercentMax = 1.0;
                     isWaitForStartScoring180 = false;
-                    actuation.tilt();
+                    actuation.retract();
                     extensionDistance = 12.0;
                     offsetX = 0.0;
                     offsetY = 0.0;
                     angleOffset = 0;
                     intakeHeight = 0.0;
                     startScoringRelative = false;
+                    alreadyTilted = false;
                     currentState = STATE.SCORING_RELATIVE;
                 }
 
@@ -227,6 +233,11 @@ public class Robot {
 
                 globalArmPos = outtake.getGlobalArmPose(drivetrainPoseEstimate);
                 nearestPole = field.getNearestPole(drivetrainPoseEstimate, globalArmPos, scoringLevel);
+
+                if (outtake.slides.currentSlidesLength >= scoringHeight - 7 && !alreadyTilted) {
+                    actuation.tilt();
+                    alreadyTilted = true;
+                }
 
                 if (isAutoAim) {
                     outtake.setTargetGlobal(drivetrain.getPoseEstimate(), nearestPole, scoringHeight, offsetX, offsetY);
@@ -246,6 +257,7 @@ public class Robot {
 
                     timeSinceClawOpen = System.currentTimeMillis();
                     currentState = STATE.DEPOSIT_TELEOP;
+                    alreadyTilted = false;
                 }
                 break;
             case SCORING_GLOBAL:
