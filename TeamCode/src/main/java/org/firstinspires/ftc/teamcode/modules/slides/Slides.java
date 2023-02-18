@@ -21,7 +21,7 @@ public class Slides {
 
     ArrayList<MotorPriority> motorPriorities;
 
-    public PID slidesVelocityPID = new PID (0.0135,0.005,0.0); // TODO: Tune integral term
+    public PID slidesVelocityPID = new PID (0.013,0.0,0.0); // TODO: Tune integral term
 
     public double currentSlidesLength = 0.0;
     public double currentSlidesVelocity = 0.0;
@@ -103,6 +103,9 @@ public class Slides {
 
         targetSlidesVelocity = Math.max(Math.min(slidesError * (maxSlidesSpeed/5), (maxSlidesSpeed*slidesPercentMax)),-maxSlidesSpeed*slidesPercentMax);
         slidesPower = slidesVelocityPID.update(targetSlidesVelocity - currentSlidesVelocity);
+        if (currentSlidesLength >= 3) {
+            slidesPower += ((0.0201081*currentSlidesLength) + 0.0864865);
+        }
         motorPriorities.get(5).setTargetPower(slidesPower);
 
 //        targetSlidesVelocity = Math.max(Math.min(slidesError * (maxSlidesSpeed/5), (maxSlidesSpeed*slidesPercentMax)),-maxSlidesSpeed*slidesPercentMax);

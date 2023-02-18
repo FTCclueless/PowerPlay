@@ -42,6 +42,7 @@ public class SlidesPIDTuner extends LinearOpMode {
         slides.setTargetSlidesLength(0.0);
         actuation.level();
         extension.retractExtension();
+        robot.update();
 
         while (!isStopRequested()) {
             robot.update();
@@ -51,7 +52,7 @@ public class SlidesPIDTuner extends LinearOpMode {
 
             if(a.isClicked(gamepad1.a)) {
                 currentState++;
-                if(currentState == 4) {
+                if(currentState == 6) {
                     currentState = 1;
                 }
             }
@@ -61,9 +62,15 @@ public class SlidesPIDTuner extends LinearOpMode {
                     slides.setTargetSlidesLength(0);
                     break;
                 case 2:
-                    slides.setTargetSlidesLength(15);
+                    slides.setTargetSlidesLength(10);
                     break;
                 case 3:
+                    slides.setTargetSlidesLength(15);
+                    break;
+                case 4:
+                    slides.setTargetSlidesLength(20);
+                    break;
+                case 5:
                     slides.setTargetSlidesLength(25);
                     break;
             }

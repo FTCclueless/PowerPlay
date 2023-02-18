@@ -97,6 +97,7 @@ public class Robot {
     public boolean isAutoAim = false;
     public boolean isWaitForStartScoring180 = false;
     boolean alreadyTilted = false;
+    public boolean alreadyClosed = false;
 
     long timer = System.currentTimeMillis();
 
@@ -193,7 +194,7 @@ public class Robot {
                 Log.e("!claw.isOpen()", !claw.isOpen() + "");
                 Log.e("System.currentTimeMillis() - timer >= 600", (System.currentTimeMillis() - timer >= 600) + "");
 
-                if (System.currentTimeMillis() - timer >= 600 || !claw.isOpen()) { // waiting for claw to close
+                if ((System.currentTimeMillis() - timer >= 300) || alreadyClosed) { // waiting for claw to close
                     if (isWaitForStartScoring180) {
                         outtake.slides.slidesPercentMax = 1.0;
                         outtake.setTargetRelative(-outtake.extension.baseSlidesExtension,0,15);

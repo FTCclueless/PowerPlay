@@ -24,7 +24,7 @@ public class Turret {
 
     ArrayList<MotorPriority> motorPriorities;
 
-    public PID turretPID = new PID(0.45, 0.0,0.0);
+    public PID turretPID = new PID(0.575, 0.0,0.0);
 
     public double currentTurretAngle = 0.0;
     public double currentTurretVelocity = 0.0;
@@ -68,11 +68,6 @@ public class Turret {
 
     public void update() {
         updateTurretValues();
-
-//        turretError = clipAngle(targetTurretAngle - currentTurretAngle);
-//        targetTurretVelocity = Math.max(Math.min(turretError * (maxTurretSpeed/5), (maxTurretSpeed*turretPercentMax)),-maxTurretSpeed*turretPercentMax);
-//        turretPower = turretPID.update(targetTurretVelocity - currentTurretVelocity);
-//        motorPriorities.get(4).setTargetPower(turretPower);
 
         turretError = clipAngle(targetTurretAngle - currentTurretAngle);
 

@@ -52,8 +52,10 @@ public class Teleop extends LinearOpMode {
             if (robot.currentState == Robot.STATE.INTAKE_RELATIVE) {
                 if (gamepad1.right_trigger > 0.5) {
                     claw.close();
+                    robot.alreadyClosed = true;
                 } else {
                     claw.open();
+                    robot.alreadyClosed = false;
                 }
             }
 

@@ -8,12 +8,12 @@ import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 import java.util.ArrayList;
 
 public class Actuation {
+    MyServo act;
+    ArrayList<MyServo> servos;
+
     public double currentActPosition = 0.0;
     public double targetActPosition = 0.0;
     public double actPower = 1.0;
-
-    MyServo act;
-    ArrayList<MyServo> servos;
 
     double levelPosition = 0.682;
     double downLevelPosition = 0.746;

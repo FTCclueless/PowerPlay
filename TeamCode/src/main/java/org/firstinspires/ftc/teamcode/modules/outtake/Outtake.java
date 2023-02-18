@@ -80,18 +80,18 @@ public class Outtake {
 
         turretClips = isTurretGoThroughBad();
 
-        extensionIn = (currentExtensionLength <= (extension.minDistToNotHitMotor + 3));
-        boolean backExtendCheck = targetSlidesLength <= 9 && (isTurretGoThroughRange(120, 185) || isTurretGoThroughRange(-185, -120));
-        if(backExtendCheck) {
-            extensionIn = (currentExtensionLength <= (extension.minDistToNotHitMotor + 5));
-        }
+        extensionIn = (currentExtensionLength <= (extension.minDistToNotHitMotor + 5));
+//        boolean backExtendCheck = targetSlidesLength <= 9 && (isTurretGoThroughRange(120, 185) || isTurretGoThroughRange(-185, -120));
+//        if(backExtendCheck) {
+//            extensionIn = (currentExtensionLength <= (extension.minDistToNotHitMotor + 5));
+//        }
 
         // if we are going to ram into drivetrain or extension is out and the turret is within 9
         if (!(turretClips && currentSlidesLength <= 9) && (extensionIn || turret.isInPosition(30, targetTurretAngle))) {
             turret.setTargetTurretAngle(targetTurretAngle);
         }
 
-        if ((turretClips && targetSlidesLength <= 9 && extensionIn) || (targetSlidesLength <= (actuation.isLevel()?6:1.3) && currentExtensionLength < extension.minDistToNotHitMotor)) {
+        if ((turretClips && targetSlidesLength <= 9 && extensionIn)) {
             Log.e("setting target slides length to 12", "");
             slides.setTargetSlidesLength(12);
         } else {
@@ -105,13 +105,13 @@ public class Outtake {
             targetExtent = targetExtensionLength;
         } else {
             targetExtent = extension.baseSlidesExtension;
-            if (backExtendCheck) {
-                if (!Storage.isTeleop) {
-                    targetExtent += 7.0;
-                } else {
-                    targetExtent += 4.0;
-                }
-            }
+//            if (backExtendCheck) {
+//                if (!Storage.isTeleop) {
+//                    targetExtent += 7.0;
+//                } else {
+//                    targetExtent += 4.0;
+//                }
+//            }
         }
 
         if(!actuation.isLevel()) {

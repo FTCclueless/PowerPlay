@@ -8,21 +8,17 @@ import java.util.ArrayList;
 
 public class Claw {
     MyServo claw;
+    ArrayList<MyServo> servos;
 
     public double currentClawPosition = 0.0;
     public double targetClawPosition = 0.0;
     public double clawPower = 1.0;
 
     public double closePosition = 1.0;
-    public double openPosition = 0.85799;
-    public double parkPosition = 0.6;
-    public double initPosition = 0.92499;
-    public double initClosePosition = 0.983;
-
-    public enum STATE {OPEN, CLOSED, PARK, INIT, INIT_CLOSE}
-    public STATE currentState = STATE.OPEN;
-
-    ArrayList<MyServo> servos;
+    public double openPosition = 0.786;
+    public double parkPosition = 0.537;
+    public double initPosition = 0.84099;
+    public double initClosePosition = 0.93;
 
     public Claw(HardwareMap hardwareMap, ArrayList<MyServo> servos) {
         this.servos = servos;
@@ -34,24 +30,6 @@ public class Claw {
 
     public void update() {
         updateClawValues();
-
-        switch (currentState) {
-            case OPEN:
-                setTargetClawPosition(openPosition);
-                break;
-            case CLOSED:
-                setTargetClawPosition(closePosition);
-                break;
-            case PARK:
-                setTargetClawPosition(parkPosition);
-                break;
-            case INIT:
-                setTargetClawPosition(initPosition);
-                break;
-            case INIT_CLOSE:
-                setTargetClawPosition(initClosePosition);
-                break;
-        }
 
         claw.setPosition(targetClawPosition, clawPower);
     }
@@ -69,31 +47,27 @@ public class Claw {
     }
 
     public void open() {
-        currentState = STATE.OPEN;
+        targetClawPosition = openPosition;
     }
 
     public void close() {
-        currentState = STATE.CLOSED;
+        targetClawPosition = closePosition;
     }
 
     public void park() {
-        currentState = STATE.PARK;
+        targetClawPosition = parkPosition;
     }
 
     public void init() {
-        currentState = STATE.INIT;
+        targetClawPosition = initPosition;
     }
 
     public void initClose() {
-        currentState = STATE.INIT_CLOSE;
+        targetClawPosition = initClosePosition;
     }
 
     public boolean isOpen () {
-        if (currentState == STATE.OPEN) {
-            return true;
-        } else {
-            return false;
-        }
+        return currentClawPosition == openPosition;
     }
 
     public void move() {
