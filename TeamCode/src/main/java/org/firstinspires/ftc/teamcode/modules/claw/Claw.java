@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.modules.claw;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.util.MyServo;
+import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
 import java.util.ArrayList;
 
@@ -32,8 +33,13 @@ public class Claw {
         servos.add(2, claw);
     }
 
+    public void updateTelemetry() {
+        TelemetryUtil.packet.put("CLAW STATE: ", currentState.toString());
+    }
+
     public void update() {
         updateClawValues();
+        updateTelemetry();
 
         switch (currentState) {
             case OPEN:
