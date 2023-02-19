@@ -3,13 +3,11 @@ package org.firstinspires.ftc.teamcode.modules.claw;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.util.MyServo;
-import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
 import java.util.ArrayList;
 
 public class Claw {
     MyServo claw;
-    ArrayList<MyServo> servos;
 
     public double currentClawPosition = 0.0;
     public double targetClawPosition = 0.0;
@@ -21,24 +19,45 @@ public class Claw {
     public double initPosition = 0.84099;
     public double initClosePosition = 0.93;
 
+    public enum STATE {OPEN, CLOSED, PARK, INIT, INIT_CLOSE}
+    public STATE currentState = STATE.OPEN;
+
+    ArrayList<MyServo> servos;
+
     public Claw(HardwareMap hardwareMap, ArrayList<MyServo> servos) {
         this.servos = servos;
 
-        claw = new MyServo(hardwareMap.servo.get("claw"),"Torque",1,0,1.0, openPosition);
+        claw = new MyServo(hardwareMap.servo.get("claw"),"Torque",1,0.0,1.0, openPosition);
 
         servos.add(2, claw);
     }
 
-    public void updateTelemetry() {
-        TelemetryUtil.packet.put("targetClawPosition: ", targetClawPosition);
-        TelemetryUtil.packet.put("currentClawPosition: ", currentClawPosition);
-    }
-
     public void update() {
         updateClawValues();
-        updateTelemetry();
+
+        switch (currentState) {
+            case OPEN:
+                setTargetClawPosition(openPosition);
+                break;
+            case CLOSED:
+                setTargetClawPosition(closePosition);
+                break;
+            case PARK:
+                setTargetClawPosition(parkPosition);
+                break;
+            case INIT:
+                setTargetClawPosition(initPosition);
+                break;
+            case INIT_CLOSE:
+                setTargetClawPosition(initClosePosition);
+                break;
+        }
 
         claw.setPosition(targetClawPosition, clawPower);
+    }
+
+    public void setTargetClawPosition(double position) {
+        targetClawPosition = position;
     }
 
     public double getCurrentClawAngle () {
@@ -50,26 +69,38 @@ public class Claw {
     }
 
     public void open() {
-        targetClawPosition = openPosition;
+        currentState = STATE.OPEN;
     }
 
     public void close() {
-        targetClawPosition = closePosition;
+        currentState = STATE.CLOSED;
     }
 
     public void park() {
-        targetClawPosition = parkPosition;
+        currentState = STATE.PARK;
     }
 
     public void init() {
-        targetClawPosition = initPosition;
+        currentState = STATE.INIT;
     }
 
     public void initClose() {
-        targetClawPosition = initClosePosition;
+        currentState = STATE.INIT_CLOSE;
     }
 
     public boolean isOpen () {
-        return currentClawPosition == openPosition;
+        if (currentState == STATE.OPEN) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void move() {
+        if(isOpen()) {
+            close();
+        } else {
+            open();
+        }
     }
 }

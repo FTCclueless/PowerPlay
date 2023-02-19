@@ -191,9 +191,6 @@ public class Robot {
                 claw.close();
                 actuation.level();
 
-                Log.e("!claw.isOpen()", !claw.isOpen() + "");
-                Log.e("System.currentTimeMillis() - timer >= 600", (System.currentTimeMillis() - timer >= 600) + "");
-
                 if ((System.currentTimeMillis() - timer >= 300) || alreadyClosed) { // waiting for claw to close
                     if (isWaitForStartScoring180) {
                         outtake.slides.slidesPercentMax = 1.0;
@@ -243,7 +240,7 @@ public class Robot {
                 if (isAutoAim) {
                     outtake.setTargetGlobal(drivetrain.getPoseEstimate(), nearestPole, scoringHeight, offsetX, offsetY);
                 } else {
-                    outtake.setTargetRelative(extensionDistance*Math.cos(Math.toRadians(180) + angleOffset),extensionDistance*Math.sin(Math.toRadians(180) + angleOffset), scoringHeight); // changes dynamically based on driver input
+                    outtake.setTargetRelative(extensionDistance*Math.cos(targetAngle + angleOffset),extensionDistance*Math.sin(targetAngle + angleOffset), scoringHeight); // changes dynamically based on driver input
                 }
 
                 if (startDeposit) {
@@ -302,7 +299,7 @@ public class Robot {
             case DEPOSIT_TELEOP:
                 outtake.slides.slidesPercentMax = 1.0;
 
-                outtake.setTargetRelative(extensionDistance*Math.cos(Math.toRadians(180) + angleOffset),extensionDistance*Math.sin(Math.toRadians(180) + angleOffset), scoringHeight); // changes dynamically based on driver input
+                outtake.setTargetRelative(extensionDistance*Math.cos(targetAngle + angleOffset),extensionDistance*Math.sin(targetAngle + angleOffset), scoringHeight); // changes dynamically based on driver input
                 claw.open();
                 if (System.currentTimeMillis() - timeSinceClawOpen >= 150) {
                     outtake.slides.setTargetSlidesLength(Math.min(scoringHeight + 6, 32));
@@ -331,7 +328,6 @@ public class Robot {
         TelemetryUtil.packet.put("Loop Time", loopTime);
         TelemetryUtil.packet.put("isAtPoint", isAtPoint);
         TelemetryUtil.packet.put("outtake.isInPositionGlobal", outtake.isInPositionGlobal(drivePose, conePose, 3.5)  && outtake.extension.isInPosition(0.1));
-
     }
 
     public void startIntakeRelative() {
@@ -353,16 +349,39 @@ public class Robot {
     double angleOffset = 0.0;
 
     double previousScoringPreset = 30;
-
-    public double targetAngle = Math.toRadians(-90);
+    public double targetAngle = Math.toRadians(180);
+    public boolean turnRightTurret = true;
+    boolean firstTurn = false;
+    double newAngle = 0;
 
     public void startScoringRelative(Gamepad gamepad, boolean isBlue, double scoringHeight) {
         if (!startScoringRelative) {
             angleOffset = 0.0;
             this.scoringHeight = scoringHeight;
             this.extensionDistance = 12.0;
+
+            // determine turret direction
+            if (turnRightTurret) {
+                targetAngle = Math.toRadians(90);
+            } else {
+                targetAngle = Math.toRadians(-90);
+            }
+            newAngle = targetAngle;
+            firstTurn = true;
+
+            Log.e("in !startScoringRelative", "");
         }
+
         startScoringRelative = true;
+
+        Log.e("firstTurn", firstTurn + "");
+        Log.e("(Math.abs(targetAngle - outtake.turret.currentTurretAngle)) <= 20", ((Math.abs(targetAngle - outtake.turret.currentTurretAngle)) <= 20) + "");
+
+        if ((firstTurn) && ((Math.abs(targetAngle - outtake.turret.currentTurretAngle)) <= Math.toRadians(20))) {
+            targetAngle = Math.toRadians(180);
+            firstTurn = false;
+            Log.e("in firstTurn", "");
+        }
 
         if (scoringHeight != previousScoringPreset) {
             this.scoringHeight = scoringHeight;
@@ -370,23 +389,22 @@ public class Robot {
         }
 
         boolean amUpdated = false;
-
         double m1 = (isBlue ? 1 : -1);
-        double newAngle = 0;
+
         if (gamepad.dpad_up) { // forward left
-            newAngle = Math.toRadians(-90); //use 90 - 90 if you want it to work for straight across (current 45)
+            newAngle = Math.toRadians(180); //use 90 - 90 if you want it to work for straight across (current 45)
             amUpdated = true;
         }
         else if (gamepad.dpad_right) { // forward right
-            newAngle = Math.toRadians(-180); // use -90 - 90 if you want it to work for straight across (current 45)
+            newAngle = Math.toRadians(90); // use -90 - 90 if you want it to work for straight across (current 45)
             amUpdated = true;
         }
         else if (gamepad.dpad_down) { // back right
-            newAngle = Math.toRadians(180);
+            newAngle = Math.toRadians(0);
             amUpdated = true;
         }
         else if (gamepad.dpad_left) { // back left
-            newAngle = Math.toRadians(90); //use 90 - 90 if you want it to work for straight across (current 45)
+            newAngle = Math.toRadians(-90); //use 90 - 90 if you want it to work for straight across (current 45)
             amUpdated = true;
         }
 
