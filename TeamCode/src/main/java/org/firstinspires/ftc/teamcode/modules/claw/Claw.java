@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.modules.claw;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.util.MyServo;
+import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
 import java.util.ArrayList;
 
@@ -23,19 +24,21 @@ public class Claw {
     public Claw(HardwareMap hardwareMap, ArrayList<MyServo> servos) {
         this.servos = servos;
 
-        claw = new MyServo(hardwareMap.servo.get("claw"),"Torque",1,0.0,1.0, openPosition);
+        claw = new MyServo(hardwareMap.servo.get("claw"),"Torque",1,0,1.0, openPosition);
 
         servos.add(2, claw);
     }
 
-    public void update() {
-        updateClawValues();
-
-        claw.setPosition(targetClawPosition, clawPower);
+    public void updateTelemetry() {
+        TelemetryUtil.packet.put("targetClawPosition: ", targetClawPosition);
+        TelemetryUtil.packet.put("currentClawPosition: ", currentClawPosition);
     }
 
-    public void setTargetClawPosition(double position) {
-        targetClawPosition = position;
+    public void update() {
+        updateClawValues();
+        updateTelemetry();
+
+        claw.setPosition(targetClawPosition, clawPower);
     }
 
     public double getCurrentClawAngle () {
@@ -68,13 +71,5 @@ public class Claw {
 
     public boolean isOpen () {
         return currentClawPosition == openPosition;
-    }
-
-    public void move() {
-        if(isOpen()) {
-            close();
-        } else {
-            open();
-        }
     }
 }

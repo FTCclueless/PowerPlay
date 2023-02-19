@@ -16,8 +16,7 @@ public class Actuation {
     public double actPower = 1.0;
 
     double levelPosition = 0.682;
-    double downLevelPosition = 0.746;
-    double tiltedPosition = 0.396; //0.2689
+    double tiltedPosition = 0.396;
     double initPosition = 0.0;
     double retractPosition = 1.0;
 
@@ -59,10 +58,6 @@ public class Actuation {
 
     public void level() {
         targetActPosition = levelPosition;
-    }
-
-    public void downLevel() {
-        targetActPosition = downLevelPosition;
     }
 
     public void tilt() {
