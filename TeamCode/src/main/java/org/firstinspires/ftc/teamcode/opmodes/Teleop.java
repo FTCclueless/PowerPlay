@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.modules.actuation.Actuation;
 import org.firstinspires.ftc.teamcode.modules.claw.Claw;
+import org.firstinspires.ftc.teamcode.modules.claw.ConeFlipper;
 import org.firstinspires.ftc.teamcode.modules.drive.Drivetrain;
 import org.firstinspires.ftc.teamcode.sensors.Sensors;
 import org.firstinspires.ftc.teamcode.util.ButtonToggle;
@@ -26,12 +27,15 @@ public class Teleop extends LinearOpMode {
         Claw claw = robot.claw;
         Actuation actuation = robot.outtake.actuation;
         Sensors sensors = robot.sensors;
+        ConeFlipper coneFlipper = robot.coneFlipper;
 
         drive.localizer.setPoseEstimate(Storage.autoEndPose);
 
         ButtonToggle a_x = new ButtonToggle();
         ButtonToggle b_dpad_up = new ButtonToggle();
         ButtonToggle b_left_trigger = new ButtonToggle();
+        ButtonToggle a_left_dpad = new ButtonToggle();
+        ButtonToggle a_right_dpad = new ButtonToggle();
 
         Storage.isTeleop = true;
 
@@ -78,6 +82,18 @@ public class Teleop extends LinearOpMode {
 
             if (gamepad1.dpad_down && robot.currentState == Robot.STATE.INTAKE_RELATIVE) {
                 robot.intakeHeight -= 0.3;
+            }
+
+            if (a_left_dpad.isClicked(gamepad1.dpad_left)) {
+                coneFlipper.upRight();
+            } else {
+                coneFlipper.downRight();
+            }
+
+            if (a_right_dpad.isClicked(gamepad1.dpad_right)) {
+                 coneFlipper.upLeft();
+            } else {
+                coneFlipper.downLeft();
             }
 
             // Driver B

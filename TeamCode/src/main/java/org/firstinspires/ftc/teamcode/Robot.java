@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.modules.actuation.Actuation;
+import org.firstinspires.ftc.teamcode.modules.claw.ConeFlipper;
 import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.util.Field;
 import org.firstinspires.ftc.teamcode.util.MyServo;
@@ -35,6 +36,7 @@ public class Robot {
     public Outtake outtake;
     private Actuation actuation;
     public Claw claw;
+    public ConeFlipper coneFlipper;
 
     public Sensors sensors;
     public Vision vision;
@@ -57,6 +59,7 @@ public class Robot {
         outtake = new Outtake(hardwareMap, motorPriorities, sensors, servos);
         actuation = outtake.actuation;
         claw = new Claw(hardwareMap, servos);
+        coneFlipper = new ConeFlipper(hardwareMap, servos);
         vision = new Vision();
     }
 
@@ -516,6 +519,7 @@ public class Robot {
         drivetrain.update();
         outtake.update();
         claw.update();
+        coneFlipper.update();
 
         if (updateStayInPlacePID) {
             drivetrain.updatePID(stayInPlacePose);
