@@ -46,8 +46,8 @@ I2C
 ### Expansion Hub 2
 
 Motors
-- Motor Port 0: 
-- Motor Port 1: turret
+- Motor Port 0: turret
+- Motor Port 1: 
 - Motor Port 2: slide1
 - Motor Port 3: slide2
 
@@ -66,7 +66,7 @@ Servos
 - Servo Port 5:
  
 Analog Sensors
-- Port 0-1: clawLimit
+- Port 0-1: 
 - Port 2-3: 
 
 Digital Sensors
