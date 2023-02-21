@@ -214,7 +214,6 @@ public class Robot {
                 if (startScoringRelative) {
                     outtake.slides.slidesPercentMax = 1.0;
                     isWaitForStartScoring180 = false;
-                    actuation.retract();
                     extensionDistance = 12.0;
                     offsetX = 0.0;
                     offsetY = 0.0;
@@ -242,6 +241,15 @@ public class Robot {
                 if (outtake.slides.currentSlidesLength >= scoringHeight - 7 && !alreadyTilted) {
                     actuation.tilt();
                     alreadyTilted = true;
+                }
+
+                // avoids actuation.retract from clipping motors if slides are under 12 inches
+                if ((outtake.slides.currentSlidesLength <= 6) && !alreadyTilted) {
+                    actuation.level();
+                }
+
+                if ((outtake.slides.currentSlidesLength > 6) && !alreadyTilted) {
+                    actuation.retract();
                 }
 
                 if (isAutoAim) {

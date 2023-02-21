@@ -81,10 +81,10 @@ public class Outtake {
         turretClips = isTurretGoThroughBad();
 
         extensionIn = (currentExtensionLength <= (extension.baseSlidesExtension + 5));
-//        boolean backExtendCheck = targetSlidesLength <= 9 && (isTurretGoThroughRange(120, 185) || isTurretGoThroughRange(-185, -120));
-//        if(backExtendCheck) {
-//            extensionIn = (currentExtensionLength <= (extension.minDistToNotHitMotor + 5));
-//        }
+        boolean backExtendCheck = targetSlidesLength <= 9 && (isTurretGoThroughRange(120, 185) || isTurretGoThroughRange(-185, -120));
+        if(backExtendCheck) {
+            extensionIn = (currentExtensionLength <= (extension.baseSlidesExtension + 5));
+        }
 
         // if we are going to ram into drivetrain or extension is out and the turret is within 9
         if (!(turretClips && currentSlidesLength <= 9) && (extensionIn || turret.isInPosition(30, targetTurretAngle))) {
@@ -105,13 +105,13 @@ public class Outtake {
             targetExtent = targetExtensionLength;
         } else {
             targetExtent = extension.baseSlidesExtension;
-//            if (backExtendCheck) {
-//                if (!Storage.isTeleop) {
-//                    targetExtent += 7.0;
-//                } else {
-//                    targetExtent += 4.0;
-//                }
-//            }
+            if (backExtendCheck) {
+                if (!Storage.isTeleop) {
+                    targetExtent += 7.0;
+                } else {
+                    targetExtent += 4.0;
+                }
+            }
         }
 
         if(!actuation.isLevel()) {
@@ -140,40 +140,38 @@ public class Outtake {
         setTargetRelative(extension.baseSlidesExtension,0,0);
     }
 
-    double a = Math.toRadians(17);
-    double b = Math.toRadians(35);
-    double c = Math.toRadians(-35);
-    double d = Math.toRadians(-17);
-    double e = Math.toRadians(95);
-    double f = Math.toRadians(145);
+//    double a = Math.toRadians(17);
+//    double b = Math.toRadians(35);
+//    double c = Math.toRadians(-35);
+//    double d = Math.toRadians(-17);
+//    double e = Math.toRadians(95);
+//    double f = Math.toRadians(160);
+//    double g = Math.toRadians(-160);
+//    double h = Math.toRadians(-95);
+
+    double[][] clipAngles =
+    {
+        {17, 35},
+        {-35, -17},
+        {95, 160},
+        {-160, -95}
+    };
 
     public boolean isTurretGoThroughBad() {
-        Log.e("targetTurretAngle", targetTurretAngle + "");
-        Log.e("currentTurretAngle", currentTurretAngle + "");
-
         double clipTarget = clipAngle(targetTurretAngle);
         double clipCurrent = clipAngle(currentTurretAngle);
 
-        Log.e("clipTarget", clipTarget + "");
-        Log.e("clipCurrent", clipCurrent + "");
+        for (int i = 0; i < clipAngles.length; i++) {
+            double a = clipAngles[i][0];
+            double b = clipAngles[i][1];
 
-        if (clipTarget == Math.min(Math.max(clipTarget,a),b)
-                || clipCurrent == Math.min(Math.max(clipCurrent,a),b)
-                || Math.signum(clipAngle(targetTurretAngle - (a+b)/2)) != Math.signum(clipAngle(currentTurretAngle  - (a+b)/2))) {
-            Log.e("turret clip 1", "");
-            return true;
-        }
-        if (clipTarget == Math.min(Math.max(clipTarget,c),d)
-                || clipCurrent == Math.min(Math.max(clipCurrent,c),d)
-                || Math.signum(clipAngle(targetTurretAngle - (c+d)/2)) != Math.signum(clipAngle(currentTurretAngle  - (c+d)/2))) {
-            Log.e("turret clip 2", "");
-            return true;
-        }
-        if (clipTarget == Math.min(Math.max(clipTarget,e),f)
-                || clipCurrent == Math.min(Math.max(clipCurrent,e),f)
-                || Math.signum(clipAngle(targetTurretAngle - (e+f)/2)) != Math.signum(clipAngle(currentTurretAngle  - (e+f)/2))) {
-            Log.e("turret clip 3", "");
-            return true;
+            if (clipTarget == Math.min(Math.max(clipTarget,a),b)
+                    || clipCurrent == Math.min(Math.max(clipCurrent,a),b)
+                    || Math.signum(clipAngle(targetTurretAngle - (a+b)/2)) != Math.signum(clipAngle(currentTurretAngle  - (a+b)/2))) {
+                Log.e("turret clips A:", a + "");
+                Log.e("turret clips B:", b + "");
+                return true;
+            }
         }
 
         return false;

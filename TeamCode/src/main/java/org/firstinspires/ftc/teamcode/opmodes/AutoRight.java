@@ -102,7 +102,7 @@ public class AutoRight extends LinearOpMode {
 
         Log.e("camera setup", "");
 
-        sleep(1000);
+        sleep(2000);
 
         Log.e("init position", "");
 
