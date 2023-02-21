@@ -16,18 +16,18 @@ public class ConeFlipper {
 
     double coneFlipperPower = 1.0;
 
-    double upPosition1 = 0.3399;
-    double downPosition1 = 1.0;
-    double upPosition2 = 0.823;
-    double downPosition2 = 0.161;
+    double upPosition1 = 1.0;
+    double downPosition1 = 0.3399;
+    double upPosition2 = 0.161;
+    double downPosition2 = 0.823;
 
     ArrayList<MyServo> servos;
 
     public ConeFlipper(HardwareMap hardwareMap, ArrayList<MyServo> servos) {
         this.servos = servos;
 
-        coneFlipper1 = new MyServo(hardwareMap.servo.get("coneFlipper1"),"Speed",1,0.0,1.0, downPosition1);
-        coneFlipper2 = new MyServo(hardwareMap.servo.get("coneFlipper2"),"Speed",1,0.0,1.0, downPosition2);
+        coneFlipper1 = new MyServo(hardwareMap.servo.get("coneFlipper1"),"Speed",1,0.0,1.0, upPosition1);
+        coneFlipper2 = new MyServo(hardwareMap.servo.get("coneFlipper2"),"Speed",1,0.0,1.0, upPosition2);
 
         servos.add(3, coneFlipper1);
         servos.add(4, coneFlipper2);
@@ -59,6 +59,16 @@ public class ConeFlipper {
 
     public void downRight () {
         targetConeFlipper2Position = downPosition2;
+    }
+
+    public void retract () {
+        upLeft();
+        upRight();
+    }
+
+    public void extend () {
+        downLeft();
+        downRight();
     }
 
 }

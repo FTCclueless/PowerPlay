@@ -86,6 +86,7 @@ public class Robot {
     public int scoringLevel = 3;
 
     public double intakeHeight = 0.0;
+    public double intakeExtensionDistance = 0.0;
 
     Field field = new Field();
 
@@ -121,6 +122,7 @@ public class Robot {
 
         switch (currentState) {
             case IDLE:
+                coneFlipper.retract();
                 break;
             case RETRACT:
                 claw.close();
@@ -148,8 +150,9 @@ public class Robot {
                 }
 
                 intakeHeight = Math.max(0, Math.min(intakeHeight, 10));
+                intakeExtensionDistance = Math.max(outtake.extension.baseSlidesExtension, Math.min(intakeExtensionDistance, 25));
 
-                outtake.setTargetRelative(outtake.extension.minDistToNotHitMotor,0,intakeHeight);
+                outtake.setTargetRelative(intakeExtensionDistance,0,intakeHeight);
 
                 if (outtake.slides.isInPosition(0.25)) {
                     claw.open();
@@ -157,6 +160,7 @@ public class Robot {
 
                 if (sensors.clawTouch) { // needs an external claw.close()
                     sensors.clawTouch = false;
+                    intakeExtensionDistance = 0.0;
                     timer = System.currentTimeMillis();
                     currentState = STATE.WAIT_FOR_START_SCORING;
                 }
@@ -329,8 +333,8 @@ public class Robot {
     public void updateTelemetry () {
         TelemetryUtil.packet.put("Current State", currentState);
         TelemetryUtil.packet.put("Loop Time", loopTime);
-        TelemetryUtil.packet.put("isAtPoint", isAtPoint);
-        TelemetryUtil.packet.put("outtake.isInPositionGlobal", outtake.isInPositionGlobal(drivePose, conePose, 3.5)  && outtake.extension.isInPosition(0.1));
+        TelemetryUtil.packet.put("Intake Height", intakeHeight);
+        TelemetryUtil.packet.put("Intake Extension Distance", intakeExtensionDistance);
     }
 
     public void startIntakeRelative() {
@@ -470,9 +474,10 @@ public class Robot {
 
     public void initPosition (boolean left) {
         double turnSign = left ? 1 : -1;
-        outtake.slides.slidesPercentMax = 0.5;
+        outtake.slides.slidesPercentMax = 1.0;
 
-        outtake.setTargetRelative(Math.cos(Math.toRadians(55 * turnSign)) * 5, Math.sin(Math.toRadians(55 * turnSign)) * 5, 2.85);
+        coneFlipper.retract();
+        outtake.setTargetRelative(Math.cos(Math.toRadians(55 * turnSign)) * 5, Math.sin(Math.toRadians(55 * turnSign)) * 5, 1.0);
     }
 
     double targetLoopLength = 0.015; //Sets the target loop time in milli seconds

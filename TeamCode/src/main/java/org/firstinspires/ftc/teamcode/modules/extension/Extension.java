@@ -27,8 +27,7 @@ public class Extension {
     public double smallLinkage = 6.79135; // TODO: Fix constant
     public double bigLinkage = 11.41; // TODO: Fix constant
     public double targetLinkageLength = 0.0;
-    public double baseSlidesExtension = bigLinkage - smallLinkage + servoMountingBack + clawForward + 0.00001;
-    public double minDistToNotHitMotor = baseSlidesExtension;
+    public double baseSlidesExtension = bigLinkage - smallLinkage + servoMountingBack + clawForward + 0.00001; // 11.61866
 
     MyServo extension;
     ArrayList<MyServo> servos;
@@ -74,7 +73,7 @@ public class Extension {
     }
 
     public void retractExtension() {
-        setTargetExtensionLength(minDistToNotHitMotor+0.25);
+        setTargetExtensionLength(baseSlidesExtension+0.25);
     }
 
     public double getCurrentExtensionLength() {

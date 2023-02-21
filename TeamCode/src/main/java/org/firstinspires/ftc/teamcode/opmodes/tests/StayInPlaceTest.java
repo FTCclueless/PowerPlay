@@ -11,7 +11,6 @@ import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.modules.drive.Drivetrain;
 import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequence.TrajectorySequence;
 
-@Disabled
 @Config
 @Autonomous
 public class StayInPlaceTest extends LinearOpMode {
@@ -24,8 +23,17 @@ public class StayInPlaceTest extends LinearOpMode {
         Robot robot = new Robot(hardwareMap);
         Drivetrain drive = robot.drivetrain;
 
-
         Pose2d stayPose = new Pose2d(0, 0,0);
+
+        xP = drive.xPID.p;
+        xI = drive.xPID.i;
+        xD = drive.xPID.d;
+        yP = drive.yPID.p;
+        yI = drive.yPID.i;
+        yD = drive.yPID.d;
+        headingP = drive.headingPID.p;
+        headingI = drive.headingPID.i;
+        headingD = drive.headingPID.d;
 
         robot.stayInPlacePose = stayPose;
         while (opModeInInit()) {

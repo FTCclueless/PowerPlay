@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.util;
 
 public class ButtonToggle {
     boolean lastButton = false;
+    boolean isToggled = false;
 
     public ButtonToggle() {}
 
@@ -11,4 +12,10 @@ public class ButtonToggle {
         return a;
     }
 
+    public boolean isToggled(boolean button) {
+        if (isClicked(button)) {
+            isToggled = !isToggled;
+        }
+        return isToggled;
+    }
 }

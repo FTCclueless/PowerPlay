@@ -260,9 +260,9 @@ public class Drivetrain extends MecanumDrive {
         updateTelemetry();
     }
 
-    public PID xPID = new PID(0.25, 0.12,0.0);
-    public PID yPID = new PID(-0.3, -0.15,0.0);
-    public PID headingPID = new PID(0.8, 0.1,0.0);
+    public PID xPID = new PID(0.08, 0.008,0.0);
+    public PID yPID = new PID(-0.15, -0.015,0.0);
+    public PID headingPID = new PID(1.25, 0.1,0.0);
 
     public void updatePID(Pose2d targetPose) {
         Pose2d robotPose = localizer.getPoseEstimate();

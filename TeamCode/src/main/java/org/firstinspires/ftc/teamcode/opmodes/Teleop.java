@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.modules.drive.Drivetrain;
 import org.firstinspires.ftc.teamcode.sensors.Sensors;
 import org.firstinspires.ftc.teamcode.util.ButtonToggle;
 import org.firstinspires.ftc.teamcode.util.Storage;
+import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
 @TeleOp
 public class Teleop extends LinearOpMode {
@@ -36,6 +37,7 @@ public class Teleop extends LinearOpMode {
         ButtonToggle b_left_trigger = new ButtonToggle();
         ButtonToggle a_left_dpad = new ButtonToggle();
         ButtonToggle a_right_dpad = new ButtonToggle();
+        ButtonToggle a_y = new ButtonToggle();
 
         Storage.isTeleop = true;
 
@@ -44,12 +46,14 @@ public class Teleop extends LinearOpMode {
         robot.isTeleop = true;
 
         while(opModeInInit()) {
+            coneFlipper.retract();
             robot.update();
         }
 
         waitForStart();
 
         while (!isStopRequested()) {
+
             // Driver A
             drive.drive(gamepad1);
 
@@ -72,28 +76,42 @@ public class Teleop extends LinearOpMode {
                 robot.currentState = Robot.STATE.INTAKE_RELATIVE;
             }
 
-            if (a_x.isClicked(gamepad1.x) || b_dpad_up.isClicked(gamepad2.dpad_up)) {
-                robot.isWaitForStartScoring180 = !robot.isWaitForStartScoring180;
-            }
+//            if (a_x.isClicked(gamepad1.x) || b_dpad_up.isClicked(gamepad2.dpad_up)) {
+//                robot.isWaitForStartScoring180 = !robot.isWaitForStartScoring180;
+//            }
 
-            if (gamepad1.dpad_up && robot.currentState == Robot.STATE.INTAKE_RELATIVE) {
+            if (gamepad2.dpad_up && robot.currentState == Robot.STATE.INTAKE_RELATIVE) {
                 robot.intakeHeight += 0.3;
             }
 
-            if (gamepad1.dpad_down && robot.currentState == Robot.STATE.INTAKE_RELATIVE) {
+            if (gamepad2.dpad_down && robot.currentState == Robot.STATE.INTAKE_RELATIVE) {
                 robot.intakeHeight -= 0.3;
             }
 
-            if (a_left_dpad.isClicked(gamepad1.dpad_left)) {
-                coneFlipper.upRight();
-            } else {
+            // con flippers
+            if (a_left_dpad.isToggled(gamepad1.dpad_left)) {
                 coneFlipper.downRight();
+            } else {
+                coneFlipper.upRight();
             }
 
-            if (a_right_dpad.isClicked(gamepad1.dpad_right)) {
-                 coneFlipper.upLeft();
-            } else {
+            if (a_right_dpad.isToggled(gamepad1.dpad_right)) {
                 coneFlipper.downLeft();
+            } else {
+                coneFlipper.upLeft();
+            }
+
+            Log.e("a_y.isToggled(gamepad1.y)", a_y.isToggled(gamepad1.y) + "");
+
+            // extendo intake
+            if (robot.currentState == Robot.STATE.INTAKE_RELATIVE) {
+                if (gamepad1.dpad_up) {
+                    robot.intakeExtensionDistance += 1.0;
+                }
+
+                if (gamepad1.dpad_down) {
+                    robot.intakeExtensionDistance -= 1.0;
+                }
             }
 
             // Driver B

@@ -80,7 +80,7 @@ public class Outtake {
 
         turretClips = isTurretGoThroughBad();
 
-        extensionIn = (currentExtensionLength <= (extension.minDistToNotHitMotor + 5));
+        extensionIn = (currentExtensionLength <= (extension.baseSlidesExtension + 5));
 //        boolean backExtendCheck = targetSlidesLength <= 9 && (isTurretGoThroughRange(120, 185) || isTurretGoThroughRange(-185, -120));
 //        if(backExtendCheck) {
 //            extensionIn = (currentExtensionLength <= (extension.minDistToNotHitMotor + 5));
@@ -118,7 +118,7 @@ public class Outtake {
             targetExtent -= extension.actuationTiltDistance;
         }
 
-        if ((targetExtent <= extension.minDistToNotHitMotor) && ((targetSlidesLength <= (actuation.isLevel()?6:1.3) && slides.currentSlidesLength <= 14) || (slides.currentSlidesLength < (actuation.isLevel()?6:1.3)))) {
+        if ((targetExtent <= extension.baseSlidesExtension) && ((targetSlidesLength <= (actuation.isLevel()?6:1.3) && slides.currentSlidesLength <= 14) || (slides.currentSlidesLength < (actuation.isLevel()?6:1.3)))) {
             extension.retractExtension();
         } else {
             extension.setTargetExtensionLength(targetExtent);
