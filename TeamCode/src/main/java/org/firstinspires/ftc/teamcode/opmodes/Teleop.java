@@ -39,6 +39,8 @@ public class Teleop extends LinearOpMode {
         ButtonToggle a_right_dpad = new ButtonToggle();
         ButtonToggle a_y = new ButtonToggle();
 
+        boolean extensionOut = false;
+
         Storage.isTeleop = true;
 
         robot.currentState = Robot.STATE.INTAKE_RELATIVE;
@@ -101,14 +103,20 @@ public class Teleop extends LinearOpMode {
                 coneFlipper.upLeft();
             }
 
-            Log.e("a_y.isToggled(gamepad1.y)", a_y.isToggled(gamepad1.y) + "");
-
             // extendo intake
             if (robot.currentState == Robot.STATE.INTAKE_RELATIVE) {
+                if(a_y.isClicked(gamepad1.y)) {
+                    if (!extensionOut) {
+                        robot.intakeExtensionDistance = 30;
+                        extensionOut = true;
+                    } else {
+                        robot.intakeExtensionDistance = 0;
+                        extensionOut = false;
+                    }
+                }
                 if (gamepad1.dpad_up) {
                     robot.intakeExtensionDistance += 1.0;
                 }
-
                 if (gamepad1.dpad_down) {
                     robot.intakeExtensionDistance -= 1.0;
                 }
@@ -142,6 +150,7 @@ public class Teleop extends LinearOpMode {
 
             // if any buttons of the bumpers are clicked go to scoring relative
             if ((robot.currentState == Robot.STATE.WAIT_FOR_START_SCORING && (gamepad1.right_bumper || gamepad1.left_bumper || gamepad2.right_bumper || gamepad2.left_bumper)) || (robot.currentState == Robot.STATE.SCORING_RELATIVE)) {
+                extensionOut = false;
                 robot.startScoringRelative(gamepad2, isBlue, scoringHeight);
             }
 

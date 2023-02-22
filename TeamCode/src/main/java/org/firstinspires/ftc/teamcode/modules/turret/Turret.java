@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.modules.turret;
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -59,11 +61,14 @@ public class Turret {
         TelemetryUtil.packet.put("targetTurretAngle: ", Math.toDegrees(targetTurretAngle));
         TelemetryUtil.packet.put("currentTurretAngle: ", Math.toDegrees(currentTurretAngle));
 
-//        TelemetryUtil.packet.put("targetTurretVelocity: ", targetTurretVelocity);
-//        TelemetryUtil.packet.put("currentTurretVelocity: ", currentTurretVelocity);
+        TelemetryUtil.packet.put("targetTurretVelocity: ", targetTurretVelocity);
+        TelemetryUtil.packet.put("currentTurretVelocity: ", currentTurretVelocity);
 
         TelemetryUtil.packet.put("turretPower: ", turretPower);
         TelemetryUtil.packet.put("turretError: ", Math.toDegrees(turretError));
+
+        Log.e("targetTurretAngle", Math.toDegrees(targetTurretAngle) + "");
+        Log.e("currentTurretAngle", Math.toDegrees(currentTurretAngle) + "");
     }
 
     public void update() {

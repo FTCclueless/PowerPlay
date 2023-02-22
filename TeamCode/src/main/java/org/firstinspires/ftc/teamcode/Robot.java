@@ -166,6 +166,11 @@ public class Robot {
                 }
                 break;
             case INTAKE_GLOBAL:
+                Log.e("isAtPoint", isAtPoint + "");
+                Log.e("outtake.isInPositionGlobal(drivePose, conePose, 3.5)", outtake.isInPositionGlobal(drivePose, conePose, 3.5) + "");
+                Log.e("outtake.extension.isInPosition(0.1)", outtake.extension.isInPosition(0.1) + "");
+                Log.e("hasGrabbed", hasGrabbed + "");
+
                 if ((Math.abs(drivetrain.getPoseEstimate().getX() - drivePose.getX()) <= 4) && (Math.abs(drivetrain.getPoseEstimate().getY() - drivePose.getY()) <= 4)) {
                     drivePose = drivetrain.getPoseEstimate();
                     isAtPoint = true;
@@ -343,6 +348,8 @@ public class Robot {
         TelemetryUtil.packet.put("Loop Time", loopTime);
         TelemetryUtil.packet.put("Intake Height", intakeHeight);
         TelemetryUtil.packet.put("Intake Extension Distance", intakeExtensionDistance);
+
+        Log.e("Loop Time", loopTime + "");
     }
 
     public void startIntakeRelative() {
@@ -446,7 +453,7 @@ public class Robot {
             angleOffset -= gamepad.left_stick_x * Math.toRadians(0.8);
             angleOffset -= gamepad.right_stick_x * Math.toRadians(0.8);
             extensionDistance -= gamepad.left_stick_y * 0.18375;
-            extensionDistance = Math.max(6.31103, Math.min(this.extensionDistance, 23.67279475));
+            extensionDistance = Math.max(6.31103, Math.min(this.extensionDistance, (outtake.extension.strokeLength + outtake.extension.baseSlidesExtension)));
 
             // adjustments in auto aim
             double globalAngle = drivetrain.localizer.getPoseEstimate().getHeading() + outtake.turret.getCurrentTurretAngle();
@@ -482,13 +489,37 @@ public class Robot {
 
     public void initPosition (boolean left) {
         double turnSign = left ? 1 : -1;
-        outtake.slides.slidesPercentMax = 1.0;
 
-        coneFlipper.retract();
-        outtake.setTargetRelative(Math.cos(Math.toRadians(55 * turnSign)) * 5, Math.sin(Math.toRadians(55 * turnSign)) * 5, 1.0);
+        actuation.init();
+        outtake.extension.retractExtension();
+        claw.init();
+
+        outtake.slides.setTargetSlidesLength(12);
+
+        while (!outtake.slides.isInPosition(1.5)) {
+            Log.e("stuck1", "");
+            update();
+        }
+        outtake.turret.setTargetTurretAngle(Math.toRadians(55) * turnSign);
+
+        while (!outtake.turret.isInPosition(0.75)) {
+            Log.e("stuck2", "");
+            update();
+        }
+
+        outtake.slides.slidesPercentMax = 0.25;
+        outtake.slides.setTargetSlidesLength(1.0);
+
+        while (!outtake.slides.isInPosition(0.75)) {
+            Log.e("stuck3", "");
+            update();
+            outtake.slides.setTargetSlidesLength(1.0);
+        }
+
+        outtake.slides.slidesPercentMax = 1.0;
     }
 
-    double targetLoopLength = 0.015; //Sets the target loop time in milli seconds
+    double targetLoopLength = 0.040; //Sets the target loop time in milli seconds
 
     public void updateMotors() {
         double numMotorsUpdated = 0;

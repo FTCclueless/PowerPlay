@@ -97,6 +97,8 @@ public class AutoRight extends LinearOpMode {
 
         robot.resetEncoders();
 
+        robot.initPosition(false);
+
         openCVWrapper.init();
         openCVWrapper.start();
 
@@ -111,7 +113,6 @@ public class AutoRight extends LinearOpMode {
 
         while (opModeInInit()) {
             telemetry.setMsTransmissionInterval(50);
-            robot.initPosition(false);
 
             boolean detected = false;
 
@@ -122,14 +123,13 @@ public class AutoRight extends LinearOpMode {
                 robot.claw.initClose();
             }
 
-            robot.update();
-
             if (detected) {
                 telemetry.addLine("Tag of interest is in sight! ID: " + (parkingNum + 1));
             } else {
                 telemetry.addLine("Could not find april tag! :(");
             }
 
+            robot.update();
             telemetry.update();
         }
 
@@ -155,7 +155,7 @@ public class AutoRight extends LinearOpMode {
             // TODO verify the x and y sign on this. It should not be like this
             robot.startIntakeGlobal(
                     to.end(),
-                    new Pose2d(73.5,12 * ySign), //70.5
+                    new Pose2d(70,12 * ySign), //70.5
                     coneStackHeights[i]
             );
 
