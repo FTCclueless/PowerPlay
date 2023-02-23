@@ -13,7 +13,6 @@ import org.firstinspires.ftc.teamcode.modules.drive.Drivetrain;
 import org.firstinspires.ftc.teamcode.sensors.Sensors;
 import org.firstinspires.ftc.teamcode.util.ButtonToggle;
 import org.firstinspires.ftc.teamcode.util.Storage;
-import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
 @TeleOp
 public class Teleop extends LinearOpMode {
@@ -70,7 +69,7 @@ public class Teleop extends LinearOpMode {
             }
 
             if (gamepad1.a && robot.currentState == Robot.STATE.INTAKE_RELATIVE) {
-                sensors.clawTouch = true;
+                sensors.coneInClaw = true;
             }
 
             if ((robot.currentState == Robot.STATE.WAIT_FOR_START_SCORING) && (gamepad1.b)) {

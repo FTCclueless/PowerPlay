@@ -30,8 +30,9 @@ public class AutoLeft extends LinearOpMode {
 
     OpenCVWrapper openCVWrapper;
 
-    double[] coneStackHeights = new double[]{4.0, 3.0, 2.0, 0.5, 0.0}; //5.65, 4.4, 2.75, 2.0, 0.5
+    double[] coneStackHeights = new double[]{4.5, 3.5, 2.1, 1.5, 0.0}; //5.65, 4.4, 2.75, 2.0, 0.5
     ButtonToggle toggleA = new ButtonToggle();
+    double[] timeToPark = new double[]{28000, 29000, 28000};
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -69,7 +70,7 @@ public class AutoLeft extends LinearOpMode {
                 .setReversed(true)
                 .lineToConstantHeading(new Vector2d(toPose.getX(), toPose.getY()))
                 .splineTo(new Vector2d(cyclePose.getX(), cyclePose.getY()), Math.toRadians(0))
-                .addDisplacementMarker(32, () -> {
+                .addDisplacementMarker(5, () -> {
                     robot.currentState = Robot.STATE.SCORING_GLOBAL;
                     robot.startScoringGlobal(
                             new Pose2d(cyclePose.getX(), cyclePose.getY(), cyclePose.getHeading()),
@@ -97,6 +98,8 @@ public class AutoLeft extends LinearOpMode {
 
         robot.resetEncoders();
 
+        robot.initPosition(true);
+
         openCVWrapper.init();
         openCVWrapper.start();
 
@@ -111,7 +114,6 @@ public class AutoLeft extends LinearOpMode {
 
         while (opModeInInit()) {
             telemetry.setMsTransmissionInterval(50);
-            robot.initPosition(true);
 
             boolean detected = false;
 
@@ -122,14 +124,13 @@ public class AutoLeft extends LinearOpMode {
                 robot.claw.initClose();
             }
 
-            robot.update();
-
             if (detected) {
                 telemetry.addLine("Tag of interest is in sight! ID: " + (parkingNum + 1));
             } else {
                 telemetry.addLine("Could not find april tag! :(");
             }
 
+            robot.update();
             telemetry.update();
         }
 
@@ -141,6 +142,8 @@ public class AutoLeft extends LinearOpMode {
         drive.setPoseEstimate(origin);
         waitForStart();
 
+        long startTime = System.currentTimeMillis();
+
         openCVWrapper.stop();
 
         robot.followTrajectorySequence(to, this);
@@ -150,7 +153,7 @@ public class AutoLeft extends LinearOpMode {
             robot.update();
         }
 
-        for (int i = 0; i < cycles; i++) {
+        for (int i = 0; i < cycles && (System.currentTimeMillis() - startTime <= timeToPark[parkingNum]); i++) {
             robot.currentState = INTAKE_GLOBAL;
             // TODO verify the x and y sign on this. It should not be like this
             robot.startIntakeGlobal(
@@ -159,16 +162,23 @@ public class AutoLeft extends LinearOpMode {
                     coneStackHeights[i]
             );
 
-            while (robot.currentState == INTAKE_GLOBAL) {
+            while ((robot.currentState == INTAKE_GLOBAL) && (System.currentTimeMillis() - startTime <= timeToPark[parkingNum])) {
                 robot.update();
             }
 
-            robot.startScoringGlobal(
-                    new Pose2d(to.end().getX(), to.end().getY(), to.end().getHeading()),
-                    new Pose2d(21.5, -1.75 * ySign), // 23, -1
-                    27.5);
+            if (robot.sensors.robotNextToMe) {
+                robot.startScoringGlobal(
+                        new Pose2d(to.end().getX(), to.end().getY(), to.end().getHeading()),
+                        new Pose2d(21.5, 25.75 * ySign),
+                        17.5);
+            } else {
+                robot.startScoringGlobal(
+                        new Pose2d(to.end().getX(), to.end().getY(), to.end().getHeading()),
+                        new Pose2d(21.5, -1.75 * ySign),
+                        27.5);
+            }
 
-            while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) {
+            while ((robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) && (System.currentTimeMillis() - startTime <= timeToPark[parkingNum])) {
                 robot.update();
             }
         }

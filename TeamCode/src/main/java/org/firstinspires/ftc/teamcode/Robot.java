@@ -14,7 +14,6 @@ import org.firstinspires.ftc.teamcode.modules.claw.ConeFlipper;
 import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.util.Field;
 import org.firstinspires.ftc.teamcode.util.MyServo;
-import org.firstinspires.ftc.teamcode.util.Storage;
 import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 import org.firstinspires.ftc.teamcode.vision.Vision;
 import org.firstinspires.ftc.teamcode.modules.claw.Claw;
@@ -158,8 +157,8 @@ public class Robot {
                     claw.open();
                 }
 
-                if (sensors.clawTouch) { // needs an external claw.close()
-                    sensors.clawTouch = false;
+                if (sensors.coneInClaw) { // needs an external claw.close()
+                    sensors.coneInClaw = false;
                     intakeExtensionDistance = 0.0;
                     timer = System.currentTimeMillis();
                     currentState = STATE.WAIT_FOR_START_SCORING;
@@ -185,7 +184,7 @@ public class Robot {
                     startClawCloseTime = System.currentTimeMillis();
                 }
 
-                if(sensors.clawTouch || System.currentTimeMillis() - startClawCloseTime > 300) { // needs an external claw.close()
+                if(sensors.coneInClaw || System.currentTimeMillis() - startClawCloseTime > 300) { // needs an external claw.close()
                     claw.close();
                     hasGrabbed = true;
                     outtake.setTargetGlobal(drivePose, conePose, coneHeight + 6);
@@ -196,6 +195,11 @@ public class Robot {
                     }
                 }
                 else {
+                    Log.e("SETTING GLOBAL TARGET", "");
+                    Log.e("drivePose", drivePose + "");
+                    Log.e("conePose", conePose + "");
+                    Log.e("coneHeight", coneHeight + "");
+
                     outtake.setTargetGlobal(drivePose, conePose, coneHeight);
                 }
                 break;
@@ -311,7 +315,7 @@ public class Robot {
                 outtake.setTargetGlobal(drivePose, polePose, poleHeight);
 
                 claw.open();
-                if (System.currentTimeMillis() - timeSinceClawOpen >= 125) {
+                if (System.currentTimeMillis() - timeSinceClawOpen >= 225) {
                     actuation.level();
                     currentState = STATE.INTAKE_RELATIVE;
                 }

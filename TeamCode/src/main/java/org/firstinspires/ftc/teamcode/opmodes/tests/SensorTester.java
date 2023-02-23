@@ -38,8 +38,10 @@ public class SensorTester extends LinearOpMode {
             telemetry.addData("backEncoder Pos", robot.sensors.getBackEncoderPos());
             telemetry.addData("current slides length", robot.sensors.slidesLength);
             telemetry.addData("current turret angle", Math.toDegrees(robot.sensors.turretAngle));
+            telemetry.addData("battery voltage", robot.sensors.getBatteryVoltage());
+            telemetry.addData("claw color", robot.sensors.getClawColorReadings());
+            telemetry.addData("left dist", robot.sensors.getLeftDist());
 
-            telemetry.addData("clawLimit", robot.sensors.clawTouched());
             telemetry.update();
         }
     }

@@ -39,4 +39,10 @@ public class PID {
 
         return proportion + integral + derivative;
     }
+
+    public void updatePID(PID newPid) {
+        this.p = newPid.p;
+        this.i = newPid.i;
+        this.d = newPid.d;
+    }
 }

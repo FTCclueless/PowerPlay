@@ -30,8 +30,9 @@ public class AutoRight extends LinearOpMode {
 
     OpenCVWrapper openCVWrapper;
 
-    double[] coneStackHeights = new double[]{4.0, 3.0, 2.0, 0.5, 0.0}; //5.65, 4.4, 2.75, 2.0, 0.5
+    double[] coneStackHeights = new double[]{4.5, 3.5, 2.1, 1.5, 0.0}; //5.65, 4.4, 2.75, 2.0, 0.5
     ButtonToggle toggleA = new ButtonToggle();
+    double[] timeToPark = new double[]{28000, 29000, 28000};
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -69,12 +70,12 @@ public class AutoRight extends LinearOpMode {
                 .setReversed(true)
                 .lineToConstantHeading(new Vector2d(toPose.getX(), toPose.getY()))
                 .splineTo(new Vector2d(cyclePose.getX(), cyclePose.getY()), Math.toRadians(0))
-                .addDisplacementMarker(32, () -> {
+                .addDisplacementMarker(5, () -> {
                     robot.currentState = Robot.STATE.SCORING_GLOBAL;
                     robot.startScoringGlobal(
                             new Pose2d(cyclePose.getX(), cyclePose.getY(), cyclePose.getHeading()),
-                            new Pose2d(23,-3.0 * ySign), // 24, 0
-                            27.5);
+                            new Pose2d(21,-4 * ySign), // 24, 0
+                            27.75);
                 })
                 .build();
 
@@ -90,7 +91,7 @@ public class AutoRight extends LinearOpMode {
                         cyclePose.getY()
                 )).build(),
                 drive.trajectoryBuilder(cyclePose).strafeTo(new Vector2d( // parking position 1
-                        61.5,
+                        59.5,
                         cyclePose.getY()
                 )).build()
         };
@@ -141,6 +142,8 @@ public class AutoRight extends LinearOpMode {
         drive.setPoseEstimate(origin);
         waitForStart();
 
+        long startTime = System.currentTimeMillis();
+
         openCVWrapper.stop();
 
         robot.followTrajectorySequence(to, this);
@@ -150,25 +153,25 @@ public class AutoRight extends LinearOpMode {
             robot.update();
         }
 
-        for (int i = 0; i < cycles; i++) {
+        for (int i = 0; i < cycles && (System.currentTimeMillis() - startTime <= timeToPark[parkingNum]); i++) {
             robot.currentState = INTAKE_GLOBAL;
             // TODO verify the x and y sign on this. It should not be like this
             robot.startIntakeGlobal(
                     to.end(),
-                    new Pose2d(70,12 * ySign), //70.5
+                    new Pose2d(72,12 * ySign), //70.5
                     coneStackHeights[i]
             );
 
-            while (robot.currentState == INTAKE_GLOBAL) {
+            while ((robot.currentState == INTAKE_GLOBAL) && (System.currentTimeMillis() - startTime <= timeToPark[parkingNum])) {
                 robot.update();
             }
 
             robot.startScoringGlobal(
                     new Pose2d(to.end().getX(), to.end().getY(), to.end().getHeading()),
-                    new Pose2d(23,-3.0 * ySign), //24, 1.0
+                    new Pose2d(21,-4 * ySign), //24, 1.0
                     27.5);
 
-            while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) {
+            while ((robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) && (System.currentTimeMillis() - startTime <= timeToPark[parkingNum])) {
                 robot.update();
             }
         }

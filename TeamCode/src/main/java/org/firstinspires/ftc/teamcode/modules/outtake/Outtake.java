@@ -83,7 +83,8 @@ public class Outtake {
         extensionIn = (currentExtensionLength <= (extension.baseSlidesExtension + 5.0));
         boolean backExtendCheck = targetSlidesLength <= 9 && (isTurretGoThroughRange(120, 185) || isTurretGoThroughRange(-185, -120));
         if(backExtendCheck) {
-            extensionIn = (currentExtensionLength <= (extension.baseSlidesExtension + 5.0));
+            Log.e("-----------------BACK EXTEND CHECK-----------------", "");
+            extensionIn = (currentExtensionLength <= (extension.baseSlidesExtension + 10.0));
         }
 
         // if we are going to ram into drivetrain or extension is out and the turret is within 9
@@ -111,7 +112,7 @@ public class Outtake {
             targetExtent = extension.baseSlidesExtension;
             if (backExtendCheck) {
                 if (!Storage.isTeleop) {
-                    targetExtent += 7.0;
+                    targetExtent += 1.0;
                 }
 //                else {
 //                    targetExtent += 4.0;
