@@ -87,7 +87,7 @@ public class Turret {
         turretError = clipAngle(targetTurretAngle - currentTurretAngle);
 
         // THIS CODE MAKES SURE THE WIRES DON"T TWIST TOO MUCH
-        if (Math.abs(currentTurretAngle + turretError) > Math.toRadians(315)) {
+        if (Math.abs(currentTurretAngle + turretError) > Math.toRadians(630)) {
             turretError = targetTurretAngle - currentTurretAngle;
         }
 

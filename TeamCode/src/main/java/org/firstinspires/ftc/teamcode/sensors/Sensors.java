@@ -26,7 +26,7 @@ public class Sensors {
 
     private final VoltageSensor batteryVoltageSensor;
     private final AnalogInput leftUltrasonic;
-    private final ColorSensor clawColor;
+//    private final ColorSensor clawColor;
 
     public double leftDist = 0.0;
     public double clawColorReading = 0.0;
@@ -47,7 +47,7 @@ public class Sensors {
 
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
         leftUltrasonic = hardwareMap.get(AnalogInput.class, "leftUltrasonic");
-        clawColor = hardwareMap.get(ColorSensor.class, "clawColor");
+//        clawColor = hardwareMap.get(ColorSensor.class, "clawColor");
     }
 
     public void updateTelemetry () {
@@ -64,7 +64,8 @@ public class Sensors {
             leftDist = leftUltrasonic.getVoltage();
             robotNextToMe = leftDist < 0.1;
 
-            clawColorReading = clawColor.argb() / 10000000;
+//            clawColorReading = clawColor.argb() / 10000000;
+//            clawColorReading = clawColor.alpha();
         }
         catch (Exception e) {
             Log.e("******* Error due to ", e.getClass().getName());

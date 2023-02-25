@@ -19,6 +19,8 @@ public class Teleop extends LinearOpMode {
 
     boolean isBlue = true;
     double scoringHeight = 28;
+    double initialAngle = Math.toRadians(180);
+    double extraHeight = 0.0;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -138,6 +140,26 @@ public class Teleop extends LinearOpMode {
                 robot.scoringLevel = 3;
             }
 
+            if (gamepad2.dpad_up) {
+                initialAngle = Math.toRadians(180);
+            }
+
+            if (gamepad2.dpad_right) {
+                extraHeight = 8.0;
+                initialAngle = Math.toRadians(90);
+                robot.tiltAct = false;
+            }
+
+            if (gamepad2.dpad_down) {
+                initialAngle = Math.toRadians(0);
+            }
+
+            if (gamepad2.dpad_left) {
+                extraHeight = 8.0;
+                initialAngle = Math.toRadians(-90);
+                robot.tiltAct = false;
+            }
+
             // checking for auto aim
 //            if (gamepad1.left_bumper || gamepad2.left_bumper) {
 //                robot.isAutoAim = true;
@@ -150,7 +172,7 @@ public class Teleop extends LinearOpMode {
             // if any buttons of the bumpers are clicked go to scoring relative
             if ((robot.currentState == Robot.STATE.WAIT_FOR_START_SCORING && (gamepad1.right_bumper || gamepad1.left_bumper || gamepad2.right_bumper || gamepad2.left_bumper)) || (robot.currentState == Robot.STATE.SCORING_RELATIVE)) {
                 extensionOut = false;
-                robot.startScoringRelative(gamepad2, isBlue, scoringHeight);
+                robot.startScoringRelative(gamepad2, isBlue, (scoringHeight + extraHeight), initialAngle);
             }
 
             // determines turret direction
@@ -165,6 +187,9 @@ public class Teleop extends LinearOpMode {
             if ((robot.currentState == Robot.STATE.SCORING_RELATIVE && (gamepad2.right_trigger > 0.5 || gamepad1.left_trigger > 0.5))) {
                 Log.e("deposit", "");
                 robot.startDepositing();
+                initialAngle = Math.toRadians(180);
+                extraHeight = 0.0;
+                robot.tiltAct = true;
             }
 
             if ((b_left_trigger.isClicked(gamepad2.left_trigger > 0.5)) && (robot.currentState == Robot.STATE.SCORING_RELATIVE)) {

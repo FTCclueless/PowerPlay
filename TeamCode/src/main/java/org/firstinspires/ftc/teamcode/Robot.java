@@ -101,6 +101,7 @@ public class Robot {
     public boolean isWaitForStartScoring180 = false;
     boolean alreadyTilted = false;
     public boolean alreadyClosed = false;
+    public boolean tiltAct = true;
 
     long timer = System.currentTimeMillis();
 
@@ -188,7 +189,7 @@ public class Robot {
                     claw.close();
                     hasGrabbed = true;
                     outtake.setTargetGlobal(drivePose, conePose, coneHeight + 6);
-                    if(outtake.slides.isInPosition(3)) { // needs an external claw.close()
+                    if(outtake.slides.isInPosition(1.5)) { // needs an external claw.close()
                         isAtPoint = false;
                         hasGrabbed = false;
                         currentState = STATE.SCORING_GLOBAL;
@@ -248,7 +249,11 @@ public class Robot {
                 nearestPole = field.getNearestPole(drivetrainPoseEstimate, globalArmPos, scoringLevel);
 
                 if (outtake.slides.currentSlidesLength >= scoringHeight - 7 && !alreadyTilted) {
-                    actuation.tilt();
+                    if (tiltAct) {
+                        actuation.tilt();
+                    } else {
+                        actuation.level();
+                    }
                     alreadyTilted = true;
                 }
 
@@ -332,6 +337,8 @@ public class Robot {
                     if ((outtake.slides.isInPosition(2)) || (System.currentTimeMillis() - timeSinceClawOpen >= (700))) {
                         actuation.retract();
                         currentState = STATE.INTAKE_RELATIVE;
+                        targetAngle = Math.toRadians(180);
+                        initialAngle = Math.toRadians(180);
                     }
                     break;
                 }
@@ -376,21 +383,23 @@ public class Robot {
 
     double previousScoringPreset = 30;
     public double targetAngle = Math.toRadians(180);
+    public double initialAngle = Math.toRadians(180);
     public boolean turnRightTurret = true;
     boolean firstTurn = false;
     double newAngle = 0;
 
-    public void startScoringRelative(Gamepad gamepad, boolean isBlue, double scoringHeight) {
+    public void startScoringRelative(Gamepad gamepad, boolean isBlue, double scoringHeight, double initialAngle) {
         if (!startScoringRelative) {
             angleOffset = 0.0;
             this.scoringHeight = scoringHeight;
             this.extensionDistance = 12.0;
+            this.initialAngle = initialAngle;
 
             // determine turret direction
             if (turnRightTurret) {
-                targetAngle = Math.toRadians(90);
+                targetAngle = initialAngle/2;
             } else {
-                targetAngle = Math.toRadians(-90);
+                targetAngle = initialAngle/2 * -1;
             }
             newAngle = targetAngle;
             firstTurn = true;
@@ -404,7 +413,7 @@ public class Robot {
         Log.e("(Math.abs(targetAngle - outtake.turret.currentTurretAngle)) <= 20", ((Math.abs(targetAngle - outtake.turret.currentTurretAngle)) <= 20) + "");
 
         if ((firstTurn) && ((Math.abs(targetAngle - outtake.turret.currentTurretAngle)) <= Math.toRadians(20))) {
-            targetAngle = Math.toRadians(180);
+            targetAngle = initialAngle;
             firstTurn = false;
             Log.e("in firstTurn", "");
         }

@@ -21,7 +21,6 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.ArrayList;
 // https://github.com/OpenFTC/EOCV-AprilTag-Plugin
-@Disabled
 @Config
 @TeleOp
 public class AprilTagAutonomousInitDetectionExample extends LinearOpMode

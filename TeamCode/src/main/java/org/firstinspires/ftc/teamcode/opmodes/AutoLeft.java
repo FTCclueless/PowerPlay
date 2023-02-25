@@ -30,7 +30,7 @@ public class AutoLeft extends LinearOpMode {
 
     OpenCVWrapper openCVWrapper;
 
-    double[] coneStackHeights = new double[]{4.5, 3.5, 2.1, 1.5, 0.0}; //5.65, 4.4, 2.75, 2.0, 0.5
+    double[] coneStackHeights = new double[]{4.5, 3.5, 2.6, 1.5, 0.0}; //5.65, 4.4, 2.75, 2.0, 0.5
     ButtonToggle toggleA = new ButtonToggle();
     double[] timeToPark = new double[]{28000, 29000, 28000};
 
@@ -169,7 +169,7 @@ public class AutoLeft extends LinearOpMode {
             if (robot.sensors.robotNextToMe) {
                 robot.startScoringGlobal(
                         new Pose2d(to.end().getX(), to.end().getY(), to.end().getHeading()),
-                        new Pose2d(21.5, 25.75 * ySign),
+                        new Pose2d(21.5, 24 * ySign),
                         17.5);
             } else {
                 robot.startScoringGlobal(
