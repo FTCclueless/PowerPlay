@@ -83,7 +83,7 @@ public class Outtake {
         extensionIn = (currentExtensionLength <= (extension.baseSlidesExtension + 5.0));
         boolean backExtendCheck = targetSlidesLength <= 9 && (isTurretGoThroughRange(120, 185) || isTurretGoThroughRange(-185, -120));
         if(backExtendCheck) {
-            Log.e("-----------------BACK EXTEND CHECK-----------------", "");
+//            Log.e("-----------------BACK EXTEND CHECK-----------------", "");
             extensionIn = (currentExtensionLength <= (extension.baseSlidesExtension + 10.0));
         }
 
@@ -92,12 +92,12 @@ public class Outtake {
             turret.setTargetTurretAngle(targetTurretAngle);
         }
 
-        Log.e("turretClips CLIP", turretClips + "");
-        Log.e("targetSlidesLength CLIP", targetSlidesLength + "");
-        Log.e("extensionIn CLIP", extensionIn + "");
+//        Log.e("turretClips CLIP", turretClips + "");
+//        Log.e("targetSlidesLength CLIP", targetSlidesLength + "");
+//        Log.e("extensionIn CLIP", extensionIn + "");
 
         if ((turretClips && targetSlidesLength <= 9 && extensionIn)) {
-            Log.e("setting target slides length to 12", "");
+//            Log.e("setting target slides length to 12", "");
             slides.setTargetSlidesLength(12);
         } else {
             if(extensionIn || slides.isInPosition(4, targetSlidesLength)) {

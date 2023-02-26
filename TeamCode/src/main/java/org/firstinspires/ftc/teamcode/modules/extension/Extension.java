@@ -51,8 +51,8 @@ public class Extension {
         TelemetryUtil.packet.put("currentExtensionLength: ", currentExtensionLength);
         TelemetryUtil.packet.put("currentExtensionAngle: ", currentExtensionAngle);
 
-        Log.e("targetExtensionLength", targetExtensionLength + "");
-        Log.e("currentExtensionLength", currentExtensionLength + "");
+//        Log.e("targetExtensionLength", targetExtensionLength + "");
+//        Log.e("currentExtensionLength", currentExtensionLength + "");
     }
 
     public void update() {

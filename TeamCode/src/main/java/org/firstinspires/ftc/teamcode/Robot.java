@@ -359,8 +359,10 @@ public class Robot {
         TelemetryUtil.packet.put("Loop Time", loopTime);
         TelemetryUtil.packet.put("Intake Height", intakeHeight);
         TelemetryUtil.packet.put("Intake Extension Distance", intakeExtensionDistance);
+        TelemetryUtil.packet.put("Initial Angle", Math.toDegrees(initialAngle));
+        TelemetryUtil.packet.put("Target Angle", Math.toDegrees(targetAngle));
 
-        Log.e("Loop Time", loopTime + "");
+//        Log.e("Loop Time", loopTime + "");
     }
 
     public void startIntakeRelative() {
@@ -404,15 +406,16 @@ public class Robot {
             newAngle = targetAngle;
             firstTurn = true;
 
-            Log.e("in !startScoringRelative", "");
+            Log.e("in !startScoringRelative", "----------------");
         }
 
         startScoringRelative = true;
 
-        Log.e("firstTurn", firstTurn + "");
-        Log.e("(Math.abs(targetAngle - outtake.turret.currentTurretAngle)) <= 20", ((Math.abs(targetAngle - outtake.turret.currentTurretAngle)) <= 20) + "");
+        Log.e("firstTurn value", firstTurn + "");
+        Log.e("((Math.abs(targetAngle - outtake.turret.currentTurretAngle)) <= Math.toRadians(20))", ((Math.abs(targetAngle - outtake.turret.currentTurretAngle)) <= Math.toRadians(20)) + "");
+        Log.e("newAngle", newAngle + "");
 
-        if ((firstTurn) && ((Math.abs(targetAngle - outtake.turret.currentTurretAngle)) <= Math.toRadians(20))) {
+        if ((firstTurn) && ((Math.abs(targetAngle - clipAngle(outtake.turret.currentTurretAngle))) <= Math.toRadians(20))) {
             targetAngle = initialAngle;
             firstTurn = false;
             Log.e("in firstTurn", "");
@@ -444,6 +447,7 @@ public class Robot {
         }
 
         if ((targetAngle != newAngle) && amUpdated) {
+            Log.e("updating new turret angle", "");
             targetAngle = newAngle;
             extensionDistance = 12.0;
             angleOffset = 0;

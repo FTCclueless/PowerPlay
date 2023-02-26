@@ -140,22 +140,14 @@ public class Teleop extends LinearOpMode {
                 robot.scoringLevel = 3;
             }
 
-            if (gamepad2.dpad_up) {
-                initialAngle = Math.toRadians(180);
-            }
-
             if (gamepad2.dpad_right) {
-                extraHeight = 8.0;
+                extraHeight = 2.5;
                 initialAngle = Math.toRadians(90);
                 robot.tiltAct = false;
             }
 
-            if (gamepad2.dpad_down) {
-                initialAngle = Math.toRadians(0);
-            }
-
             if (gamepad2.dpad_left) {
-                extraHeight = 8.0;
+                extraHeight = 2.5;
                 initialAngle = Math.toRadians(-90);
                 robot.tiltAct = false;
             }

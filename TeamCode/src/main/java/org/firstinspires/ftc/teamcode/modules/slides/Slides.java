@@ -69,8 +69,8 @@ public class Slides {
         TelemetryUtil.packet.put("slidesPower: ", slidesPower);
         TelemetryUtil.packet.put("slidesError: ", slidesError);
 
-        Log.e("targetSlidesLength: ", targetSlidesLength + "");
-        Log.e("currentSlidesLength: ", currentSlidesLength + "");
+//        Log.e("targetSlidesLength: ", targetSlidesLength + "");
+//        Log.e("currentSlidesLength: ", currentSlidesLength + "");
     }
 
     boolean isVelocity = false;

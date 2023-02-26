@@ -26,7 +26,7 @@ public class Turret {
 
     ArrayList<MotorPriority> motorPriorities;
 
-    public PID turretPID = new PID(0.8, 0.0,0.0);
+    public PID turretPID = new PID(0.6, 0.0,0.0);
     public PID teleopPID = new PID(0.8, 0.0,0.0);
     public PID autoPID = new PID(0.4, 0.0,0.0);
 
@@ -36,10 +36,13 @@ public class Turret {
     public double targetTurretVelocity = 0.0;
     public double turretPower = 0.0;
     public double turretError = 0.0;
-    public static double kstatic = 0.1;
-    public static double turretPercentMax = 0.98;
+    public static double kstatic = 0.15;
 
-    double maxTurretSpeed = 8.28238063219; // radians per sec
+    public static double slowDownAngle = 20;
+    public static double slowDownSpeedPercentThreshold = 0.5;
+    public static double slowDownPower = 0.1;
+
+    double turretMaxSpeed = 5.52158708813; // radians per sec
 
     public Turret(HardwareMap hardwareMap, ArrayList<MotorPriority> motorPriorities, Sensors sensors, Outtake outtake) {
         this.motorPriorities = motorPriorities;
@@ -76,13 +79,13 @@ public class Turret {
     public void update() {
         updateTurretValues();
 
-        if (Storage.isTeleop) {
-            this.turretPID.updatePID(teleopPID);
-            Log.e("turret pid updated for teleop", "");
-        } else {
-            this.turretPID.updatePID(autoPID);
-            Log.e("turret pid updated for auto", "");
-        }
+//        if (Storage.isTeleop) {
+//            this.turretPID.updatePID(teleopPID);
+//            Log.e("turret pid updated for teleop", "");
+//        } else {
+//            this.turretPID.updatePID(autoPID);
+//            Log.e("turret pid updated for auto", "");
+//        }
 
         turretError = clipAngle(targetTurretAngle - currentTurretAngle);
 
@@ -98,6 +101,11 @@ public class Turret {
         turretPower = turretPID.update(turretError);
         turretPower *= (outtake.extension.currentExtensionLength - outtake.extension.baseSlidesExtension)/outtake.extension.strokeLength * -0.2 + 1;
         turretPower += ((Math.abs(Math.toDegrees(turretError)) > 0.3) ? kstatic : 0) * Math.signum(turretPower);
+
+        if ((currentTurretVelocity >= (turretMaxSpeed * slowDownSpeedPercentThreshold)) && (turretError <= Math.toRadians(slowDownAngle))) {
+            turretPower = -slowDownPower * Math.signum(turretPower);
+            Log.e("slow down triggered", "--------------------");
+        }
 
         motorPriorities.get(4).setTargetPower(-turretPower);
 
