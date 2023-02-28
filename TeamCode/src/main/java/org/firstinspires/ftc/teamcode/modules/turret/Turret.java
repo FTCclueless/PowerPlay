@@ -124,8 +124,10 @@ public class Turret {
         targetTurretAngle = angle;
         outtake.targetTurretAngle = targetTurretAngle;
 
-        if (targetTurretAngle != previousTurretTargetAngle) {
-            if(Math.abs(targetTurretAngle - previousTurretTargetAngle) >= Math.toRadians(100)) {
+        double turretError = clipAngle(targetTurretAngle - previousTurretTargetAngle);
+
+        if (Math.abs(turretError) >= Math.toRadians(30)) {
+            if(turretError >= Math.toRadians(100)) {
                 slowDownPower = bigTurretChangeSlowDownPower;
                 Log.e("big turret target change", "");
             } else {
