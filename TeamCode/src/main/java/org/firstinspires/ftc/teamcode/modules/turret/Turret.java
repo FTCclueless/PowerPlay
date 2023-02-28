@@ -26,7 +26,7 @@ public class Turret {
 
     ArrayList<MotorPriority> motorPriorities;
 
-    public PID turretPID = new PID(0.6, 0.0,0.0);
+    public PID turretPID = new PID(0.65, 0.0,0.0);
     public PID teleopPID = new PID(0.8, 0.0,0.0);
     public PID autoPID = new PID(0.4, 0.0,0.0);
 
@@ -39,10 +39,11 @@ public class Turret {
     public double turretError = 0.0;
     public static double kstatic = 0.15;
 
-    public double slowDownAngle = 20;
-    public static double bigTurretChangeSlowDownPower = 0.35;
+    public static double slowDownAngle = 15;
+    public static double stopSlowDownAngle = 3;
+    public static double bigTurretChangeSlowDownPower = 0.07;
     public static double slowDownSpeedPercentThreshold = 0.35;
-    public static double slowDownPower = 0.1;
+    public static double slowDownPower = 0.05; // remember to change 131
 
     double turretMaxSpeed = 5.52158708813; // radians per sec
 
@@ -104,7 +105,7 @@ public class Turret {
         turretPower *= (outtake.extension.currentExtensionLength - outtake.extension.baseSlidesExtension)/outtake.extension.strokeLength * -0.2 + 1;
         turretPower += ((Math.abs(Math.toDegrees(turretError)) > 0.3) ? kstatic : 0) * Math.signum(turretPower);
 
-        if ((Math.abs(currentTurretVelocity) >= (turretMaxSpeed * slowDownSpeedPercentThreshold)) && (turretError <= Math.toRadians(slowDownAngle))) {
+        if ((Math.abs(currentTurretVelocity) >= (turretMaxSpeed * slowDownSpeedPercentThreshold)) && ((Math.abs(turretError) < Math.toRadians(slowDownAngle)) && (Math.abs(turretError) > Math.toRadians(stopSlowDownAngle)))) {
             turretPower = -slowDownPower * Math.signum(turretPower);
             Log.e("slow down triggered", "--------------------");
         }
@@ -128,7 +129,7 @@ public class Turret {
                 slowDownPower = bigTurretChangeSlowDownPower;
                 Log.e("big turret target change", "");
             } else {
-                slowDownPower = 0.1;
+                slowDownPower = 0.05;
                 Log.e("small turret target change", "");
             }
             previousTurretTargetAngle = targetTurretAngle;

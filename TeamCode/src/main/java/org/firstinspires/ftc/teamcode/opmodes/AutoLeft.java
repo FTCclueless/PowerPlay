@@ -174,7 +174,7 @@ public class AutoLeft extends LinearOpMode {
             } else {
                 robot.startScoringGlobal(
                         new Pose2d(to.end().getX(), to.end().getY(), to.end().getHeading()),
-                        new Pose2d(21.5, -1.75 * ySign),
+                        new Pose2d(21.5, -2.25 * ySign),
                         27.5);
             }
 

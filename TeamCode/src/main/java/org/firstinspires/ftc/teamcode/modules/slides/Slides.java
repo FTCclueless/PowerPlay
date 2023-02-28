@@ -103,7 +103,7 @@ public class Slides {
 
         targetSlidesVelocity = Math.max(Math.min(slidesError * (maxSlidesSpeed/5), (maxSlidesSpeed*slidesPercentMax)),-maxSlidesSpeed*slidesPercentMax);
         slidesPower = slidesVelocityPID.update(targetSlidesVelocity - currentSlidesVelocity);
-        if (currentSlidesLength >= 3) {
+        if (currentSlidesLength >= 0.1) {
             slidesPower += ((0.0201081*currentSlidesLength) + 0.0864865);
         }
         motorPriorities.get(5).setTargetPower(slidesPower);
