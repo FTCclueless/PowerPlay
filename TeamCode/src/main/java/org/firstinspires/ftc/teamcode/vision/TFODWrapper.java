@@ -86,8 +86,8 @@ public class TFODWrapper {
 
         // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
         // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
-        tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
-        // tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
+//        tfod.loadModelFromAsset(TFOD_MODEL_FILE, LABELS);
+         tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
         if (tfod != null) {
             tfod.activate();
 

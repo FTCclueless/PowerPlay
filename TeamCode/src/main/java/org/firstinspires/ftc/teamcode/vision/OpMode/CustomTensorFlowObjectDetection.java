@@ -56,7 +56,7 @@ import java.util.List;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@Disabled
+
 @TeleOp(name = "Custom TensorFlow Object Detection", group = "Concept")
 @Config
 public class CustomTensorFlowObjectDetection extends LinearOpMode {

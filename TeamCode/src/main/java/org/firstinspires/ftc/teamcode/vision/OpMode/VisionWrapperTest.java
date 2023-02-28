@@ -13,25 +13,28 @@ import org.firstinspires.ftc.teamcode.util.SafeSleep;
 import org.firstinspires.ftc.teamcode.vision.OpenCVWrapper;
 import org.firstinspires.ftc.teamcode.vision.TFODWrapper;
 
-@Disabled
+import java.io.File;
+
 @TeleOp(name = "VisionWrapperTest", group = "Concept")
 public class VisionWrapperTest extends LinearOpMode {
     TFODWrapper tfodWrapper;
     OpenCVWrapper openCVWrapper;
     String[]  labels = {
-        "1 base",
-        "2 top"
+        "0 top"
     };
 
     private String TAG = "VisionWrapperTest";
     boolean useWebCamera = false;
-    boolean runTFOD = false;
-    boolean runAprilTag = true;
+    boolean runTFOD = true;
+    boolean runAprilTag = false;
     @Override
     public void runOpMode() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        tfodWrapper = new TFODWrapper("/sdcard/FIRST/tflitemodels/CustomTeamModel.tflite", labels, useWebCamera, telemetry, hardwareMap);
+        File f = new File("");
+        System.out.println(f.getAbsolutePath());
+        tfodWrapper = new TFODWrapper("/sdcard/FIRST/tflitemodels/best-fp16.tflite", labels, useWebCamera, telemetry, hardwareMap);
+//        tfodWrapper = new TFODWrapper("../assets/best-fp16.tflite", labels, useWebCamera, telemetry, hardwareMap);
         tfodWrapper.setOpMode(this);
 
         /** Wait for the game to begin */
