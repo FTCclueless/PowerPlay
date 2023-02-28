@@ -33,13 +33,15 @@ public class Turret {
     public double currentTurretAngle = 0.0;
     public double currentTurretVelocity = 0.0;
     public double targetTurretAngle = 0.0;
+    public double previousTurretTargetAngle = 0.0;
     public double targetTurretVelocity = 0.0;
     public double turretPower = 0.0;
     public double turretError = 0.0;
     public static double kstatic = 0.15;
 
-    public static double slowDownAngle = 20;
-    public static double slowDownSpeedPercentThreshold = 0.5;
+    public double slowDownAngle = 20;
+    public static double bigTurretChangeSlowDownPower = 0.35;
+    public static double slowDownSpeedPercentThreshold = 0.35;
     public static double slowDownPower = 0.1;
 
     double turretMaxSpeed = 5.52158708813; // radians per sec
@@ -102,7 +104,7 @@ public class Turret {
         turretPower *= (outtake.extension.currentExtensionLength - outtake.extension.baseSlidesExtension)/outtake.extension.strokeLength * -0.2 + 1;
         turretPower += ((Math.abs(Math.toDegrees(turretError)) > 0.3) ? kstatic : 0) * Math.signum(turretPower);
 
-        if ((currentTurretVelocity >= (turretMaxSpeed * slowDownSpeedPercentThreshold)) && (turretError <= Math.toRadians(slowDownAngle))) {
+        if ((Math.abs(currentTurretVelocity) >= (turretMaxSpeed * slowDownSpeedPercentThreshold)) && (turretError <= Math.toRadians(slowDownAngle))) {
             turretPower = -slowDownPower * Math.signum(turretPower);
             Log.e("slow down triggered", "--------------------");
         }
@@ -120,6 +122,17 @@ public class Turret {
     public void setTargetTurretAngle(double angle) {
         targetTurretAngle = angle;
         outtake.targetTurretAngle = targetTurretAngle;
+
+        if (targetTurretAngle != previousTurretTargetAngle) {
+            if(Math.abs(targetTurretAngle - previousTurretTargetAngle) >= Math.toRadians(100)) {
+                slowDownPower = bigTurretChangeSlowDownPower;
+                Log.e("big turret target change", "");
+            } else {
+                slowDownPower = 0.1;
+                Log.e("small turret target change", "");
+            }
+            previousTurretTargetAngle = targetTurretAngle;
+        }
     }
 
     public double getCurrentTurretAngle() {

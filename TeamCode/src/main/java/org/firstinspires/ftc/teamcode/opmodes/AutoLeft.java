@@ -158,7 +158,7 @@ public class AutoLeft extends LinearOpMode {
             // TODO verify the x and y sign on this. It should not be like this
             robot.startIntakeGlobal(
                     to.end(),
-                    new Pose2d(71.5,11 * ySign),
+                    new Pose2d(70,12 * ySign),
                     coneStackHeights[i]
             );
 

@@ -338,7 +338,6 @@ public class Robot {
                         actuation.retract();
                         currentState = STATE.INTAKE_RELATIVE;
                         targetAngle = Math.toRadians(180);
-                        initialAngle = Math.toRadians(180);
                     }
                     break;
                 }
@@ -359,7 +358,6 @@ public class Robot {
         TelemetryUtil.packet.put("Loop Time", loopTime);
         TelemetryUtil.packet.put("Intake Height", intakeHeight);
         TelemetryUtil.packet.put("Intake Extension Distance", intakeExtensionDistance);
-        TelemetryUtil.packet.put("Initial Angle", Math.toDegrees(initialAngle));
         TelemetryUtil.packet.put("Target Angle", Math.toDegrees(targetAngle));
 
 //        Log.e("Loop Time", loopTime + "");
@@ -385,23 +383,21 @@ public class Robot {
 
     double previousScoringPreset = 30;
     public double targetAngle = Math.toRadians(180);
-    public double initialAngle = Math.toRadians(180);
     public boolean turnRightTurret = true;
     boolean firstTurn = false;
     double newAngle = 0;
 
-    public void startScoringRelative(Gamepad gamepad, boolean isBlue, double scoringHeight, double initialAngle) {
+    public void startScoringRelative(Gamepad gamepad, boolean isBlue, double scoringHeight) {
         if (!startScoringRelative) {
             angleOffset = 0.0;
             this.scoringHeight = scoringHeight;
             this.extensionDistance = 12.0;
-            this.initialAngle = initialAngle;
 
             // determine turret direction
             if (turnRightTurret) {
-                targetAngle = initialAngle/2;
+                targetAngle = Math.toRadians(180)/2;
             } else {
-                targetAngle = initialAngle/2 * -1;
+                targetAngle = Math.toRadians(180)/2 * -1;
             }
             newAngle = targetAngle;
             firstTurn = true;
@@ -416,7 +412,7 @@ public class Robot {
         Log.e("newAngle", newAngle + "");
 
         if ((firstTurn) && ((Math.abs(targetAngle - clipAngle(outtake.turret.currentTurretAngle))) <= Math.toRadians(20))) {
-            targetAngle = initialAngle;
+            targetAngle = Math.toRadians(180);
             firstTurn = false;
             Log.e("in firstTurn", "");
         }
@@ -467,7 +463,7 @@ public class Robot {
         }
         else {
             //relative
-            angleOffset -= gamepad.left_stick_x * Math.toRadians(0.8);
+//            angleOffset -= gamepad.left_stick_x * Math.toRadians(0.8);
             angleOffset -= gamepad.right_stick_x * Math.toRadians(0.8);
             extensionDistance -= gamepad.left_stick_y * 0.18375;
             extensionDistance = Math.max(6.31103, Math.min(this.extensionDistance, (outtake.extension.strokeLength + outtake.extension.baseSlidesExtension)));

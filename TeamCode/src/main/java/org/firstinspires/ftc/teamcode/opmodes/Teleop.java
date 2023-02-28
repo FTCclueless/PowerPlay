@@ -38,7 +38,7 @@ public class Teleop extends LinearOpMode {
         ButtonToggle b_left_trigger = new ButtonToggle();
         ButtonToggle a_left_dpad = new ButtonToggle();
         ButtonToggle a_right_dpad = new ButtonToggle();
-        ButtonToggle a_y = new ButtonToggle();
+        ButtonToggle a_b = new ButtonToggle();
 
         boolean extensionOut = false;
 
@@ -74,7 +74,7 @@ public class Teleop extends LinearOpMode {
                 sensors.coneInClaw = true;
             }
 
-            if ((robot.currentState == Robot.STATE.WAIT_FOR_START_SCORING) && (gamepad1.b)) {
+            if ((robot.currentState == Robot.STATE.WAIT_FOR_START_SCORING) && (gamepad1.y)) {
                 robot.outtake.slides.slidesPercentMax = 1.0;
                 robot.currentState = Robot.STATE.INTAKE_RELATIVE;
             }
@@ -106,7 +106,7 @@ public class Teleop extends LinearOpMode {
 
             // extendo intake
             if (robot.currentState == Robot.STATE.INTAKE_RELATIVE) {
-                if(a_y.isClicked(gamepad1.y)) {
+                if(a_b.isClicked(gamepad1.b)) {
                     if (!extensionOut) {
                         robot.intakeExtensionDistance = 30;
                         extensionOut = true;
@@ -140,19 +140,7 @@ public class Teleop extends LinearOpMode {
                 robot.scoringLevel = 3;
             }
 
-            if (gamepad2.dpad_right) {
-                extraHeight = 2.5;
-                initialAngle = Math.toRadians(90);
-                robot.tiltAct = false;
-            }
-
-            if (gamepad2.dpad_left) {
-                extraHeight = 2.5;
-                initialAngle = Math.toRadians(-90);
-                robot.tiltAct = false;
-            }
-
-            // checking for auto aim
+// checking for auto aim
 //            if (gamepad1.left_bumper || gamepad2.left_bumper) {
 //                robot.isAutoAim = true;
 //            }
@@ -164,7 +152,7 @@ public class Teleop extends LinearOpMode {
             // if any buttons of the bumpers are clicked go to scoring relative
             if ((robot.currentState == Robot.STATE.WAIT_FOR_START_SCORING && (gamepad1.right_bumper || gamepad1.left_bumper || gamepad2.right_bumper || gamepad2.left_bumper)) || (robot.currentState == Robot.STATE.SCORING_RELATIVE)) {
                 extensionOut = false;
-                robot.startScoringRelative(gamepad2, isBlue, (scoringHeight + extraHeight), initialAngle);
+                robot.startScoringRelative(gamepad2, isBlue, (scoringHeight));
             }
 
             // determines turret direction
