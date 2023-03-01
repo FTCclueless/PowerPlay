@@ -26,7 +26,7 @@ public class Turret {
 
     ArrayList<MotorPriority> motorPriorities;
 
-    public PID turretPID = new PID(0.65, 0.0,0.008);
+    public PID turretPID = new PID(0.617, 0.0,0.00075);
     public PID teleopPID = new PID(0.8, 0.0,0.0);
     public PID autoPID = new PID(0.4, 0.0,0.0);
 
