@@ -103,7 +103,8 @@ public class Turret {
         turretPower = turretPID.update(turretError);
         turretPower *= (outtake.extension.currentExtensionLength - outtake.extension.baseSlidesExtension)/outtake.extension.strokeLength * -0.2 + 1;
         turretPower += ((Math.abs(Math.toDegrees(turretError)) > 0.3) ? kstatic : 0) * Math.signum(turretPower);
-        //there is a -1 because the turret power is negative turret error
+        // there is a -1 because the turret power is negative turret error
+        // makes sure that we only apply slow down power if the turret is moving opposite of power. If turret is already moving in direction of slow down we don't apply slow down power
         if ((-1 * currentTurretVelocity * Math.signum(turretError) >= (turretMaxSpeed * slowDownSpeedPercentThreshold)) && ((Math.abs(turretError) < Math.toRadians(slowDownAngle)) && (Math.abs(turretError) > Math.toRadians(stopSlowDownAngle)))) {
             turretPower = - (isLargeTurn ? (0.25/13.6)*(outtake.extension.currentExtensionLength-11.61865) + 0.10: 0.05) * Math.signum(turretPower);
             Log.e("slow down triggered", "--------------------");
