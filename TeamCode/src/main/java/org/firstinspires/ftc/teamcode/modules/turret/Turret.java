@@ -41,9 +41,8 @@ public class Turret {
 
     public static double slowDownAngle = 25;
     public static double stopSlowDownAngle = 3;
-    public static double bigTurretChangeSlowDownPower = 0.15;
     public static double slowDownSpeedPercentThreshold = 0.35;
-    public static double slowDownPower = 0.05; // remember to change 131
+    boolean isLargeTurn = false;
 
     double turretMaxSpeed = 5.52158708813; // radians per sec
 
@@ -104,9 +103,9 @@ public class Turret {
         turretPower = turretPID.update(turretError);
         turretPower *= (outtake.extension.currentExtensionLength - outtake.extension.baseSlidesExtension)/outtake.extension.strokeLength * -0.2 + 1;
         turretPower += ((Math.abs(Math.toDegrees(turretError)) > 0.3) ? kstatic : 0) * Math.signum(turretPower);
-
-        if ((Math.abs(currentTurretVelocity) >= (turretMaxSpeed * slowDownSpeedPercentThreshold)) && ((Math.abs(turretError) < Math.toRadians(slowDownAngle)) && (Math.abs(turretError) > Math.toRadians(stopSlowDownAngle)))) {
-            turretPower = -slowDownPower * Math.signum(turretPower);
+        //there is a -1 because the turret power is negative turret error
+        if ((-1 * currentTurretVelocity * Math.signum(turretError) >= (turretMaxSpeed * slowDownSpeedPercentThreshold)) && ((Math.abs(turretError) < Math.toRadians(slowDownAngle)) && (Math.abs(turretError) > Math.toRadians(stopSlowDownAngle)))) {
+            turretPower = - (isLargeTurn ? (0.25/13.6)*(outtake.extension.currentExtensionLength-11.61865) + 0.10: 0.05) * Math.signum(turretPower);
             Log.e("slow down triggered", "--------------------");
         }
 
@@ -128,11 +127,10 @@ public class Turret {
 
         if (turretError >= Math.toRadians(30)) {
             if(turretError >= Math.toRadians(100)) {
-                slowDownPower = 0.0641738*outtake.extension.currentExtensionLength - 0.363241;
-                slowDownPower = Math.max(0.15, Math.min(slowDownPower, 0.75));
+                isLargeTurn = true;
                 Log.e("big turret target change", "");
             } else {
-                slowDownPower = 0.05;
+                isLargeTurn = false;
                 Log.e("small turret target change", "");
             }
             previousTurretTargetAngle = targetTurretAngle;
