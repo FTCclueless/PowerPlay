@@ -41,7 +41,7 @@ public class Turret {
 
     public static double slowDownAngle = 15;
     public static double stopSlowDownAngle = 3;
-    public static double bigTurretChangeSlowDownPower = 0.07;
+    public static double bigTurretChangeSlowDownPower = 0.15;
     public static double slowDownSpeedPercentThreshold = 0.35;
     public static double slowDownPower = 0.05; // remember to change 131
 
@@ -124,11 +124,12 @@ public class Turret {
         targetTurretAngle = angle;
         outtake.targetTurretAngle = targetTurretAngle;
 
-        double turretError = clipAngle(targetTurretAngle - previousTurretTargetAngle);
+        double turretError = Math.abs(clipAngle(targetTurretAngle - previousTurretTargetAngle));
 
-        if (Math.abs(turretError) >= Math.toRadians(30)) {
+        if (turretError >= Math.toRadians(30)) {
             if(turretError >= Math.toRadians(100)) {
-                slowDownPower = bigTurretChangeSlowDownPower;
+                slowDownPower = 0.0641738*outtake.extension.currentExtensionLength - 0.363241;
+                slowDownPower = Math.max(0.15, Math.min(slowDownPower, 0.75));
                 Log.e("big turret target change", "");
             } else {
                 slowDownPower = 0.05;

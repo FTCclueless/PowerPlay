@@ -79,6 +79,10 @@ public class Extension {
         setTargetExtensionLength(baseSlidesExtension+0.25);
     }
 
+    public void extendExtension() {
+        setTargetExtensionLength(30);
+    }
+
     public double getCurrentExtensionLength() {
         return currentExtensionLength;
     }

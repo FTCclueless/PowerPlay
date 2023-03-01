@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.tuners;
 
+import android.widget.Button;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -36,6 +38,8 @@ public class TurretPIDTuner extends LinearOpMode {
         Extension extension = robot.outtake.extension;
         Actuation actuation = robot.outtake.actuation;
 
+        double extensionLength = extension.baseSlidesExtension;
+
         p = turret.turretPID.p;
         i = turret.turretPID.i;
         d = turret.turretPID.d;
@@ -62,6 +66,16 @@ public class TurretPIDTuner extends LinearOpMode {
                     currentState = 1;
                 }
             }
+
+            if (gamepad1.dpad_up) {
+                extensionLength += 1.0;
+            }
+
+            if (gamepad1.dpad_down) {
+                extensionLength -= 1.0;
+            }
+
+            extension.setTargetExtensionLength(extensionLength);
 
             switch(currentState) {
                 case 1:
