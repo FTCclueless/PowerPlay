@@ -30,7 +30,7 @@ public class AutoRight extends LinearOpMode {
 
     OpenCVWrapper openCVWrapper;
 
-    double[] coneStackHeights = new double[]{4.5, 3.5, 2.6, 1.5, 0.0}; //5.65, 4.4, 2.75, 2.0, 0.5
+    double[] coneStackHeights = new double[]{4.5, 3.5, 2.6, 1.65, 0.0}; //5.65, 4.4, 2.75, 2.0, 0.5
     ButtonToggle toggleA = new ButtonToggle();
     double[] timeToPark = new double[]{28000, 29000, 28000};
 
@@ -75,7 +75,7 @@ public class AutoRight extends LinearOpMode {
                     robot.startScoringGlobal(
                             new Pose2d(cyclePose.getX(), cyclePose.getY(), cyclePose.getHeading()),
                             new Pose2d(21,-4 * ySign), // 24, 0
-                            27.75);
+                            27.25);
                 })
                 .build();
 
@@ -166,10 +166,17 @@ public class AutoRight extends LinearOpMode {
                 robot.update();
             }
 
-            robot.startScoringGlobal(
-                    new Pose2d(to.end().getX(), to.end().getY(), to.end().getHeading()),
-                    new Pose2d(21,-4 * ySign), //24, 1.0
-                    27.5);
+            if (robot.sensors.robotNextToMe) {
+                robot.startScoringGlobal(
+                        new Pose2d(to.end().getX(), to.end().getY(), to.end().getHeading()),
+                        new Pose2d(21.0, 28.0 * ySign), //24, 1.0
+                        18.15);
+            } else {
+                robot.startScoringGlobal(
+                        new Pose2d(to.end().getX(), to.end().getY(), to.end().getHeading()),
+                        new Pose2d(21.0, -4.0 * ySign), //24, 1.0
+                        26.5);
+            }
 
             while ((robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) && (System.currentTimeMillis() - startTime <= timeToPark[parkingNum])) {
                 robot.update();

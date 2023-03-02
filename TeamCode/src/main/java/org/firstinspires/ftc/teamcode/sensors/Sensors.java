@@ -53,7 +53,11 @@ public class Sensors {
     public void updateTelemetry () {
         TelemetryUtil.packet.put("slides1Current: ", slides1Current);
         TelemetryUtil.packet.put("slides2Current: ", slides2Current);
+
+        Log.e("robotNextToMeCounter", robotNextToMeCounter + "");
     }
+
+    int robotNextToMeCounter;
 
     public void updateHub1() {
         try {
@@ -62,7 +66,16 @@ public class Sensors {
             localizer.encoders[2].update(motorPriorities.get(1).motor[0].getCurrentPosition()); // back
 
             leftDist = leftUltrasonic.getVoltage();
-            robotNextToMe = leftDist < 0.1;
+
+            if (leftDist < 0.07) {
+                robotNextToMeCounter += 1;
+            } else {
+                robotNextToMeCounter -= 1;
+            }
+
+            robotNextToMeCounter = Math.max(0, Math.min(robotNextToMeCounter, 10));
+
+            robotNextToMe = robotNextToMeCounter > 5;
 
 //            clawColorReading = clawColor.argb() / 10000000;
 //            clawColorReading = clawColor.alpha();

@@ -166,11 +166,6 @@ public class Robot {
                 }
                 break;
             case INTAKE_GLOBAL:
-                Log.e("isAtPoint", isAtPoint + "");
-                Log.e("outtake.isInPositionGlobal(drivePose, conePose, 3.5)", outtake.isInPositionGlobal(drivePose, conePose, 3.5) + "");
-                Log.e("outtake.extension.isInPosition(0.1)", outtake.extension.isInPosition(0.1) + "");
-                Log.e("hasGrabbed", hasGrabbed + "");
-
                 if ((Math.abs(drivetrain.getPoseEstimate().getX() - drivePose.getX()) <= 4) && (Math.abs(drivetrain.getPoseEstimate().getY() - drivePose.getY()) <= 4)) {
                     drivePose = drivetrain.getPoseEstimate();
                     isAtPoint = true;
@@ -196,11 +191,6 @@ public class Robot {
                     }
                 }
                 else {
-                    Log.e("SETTING GLOBAL TARGET", "");
-                    Log.e("drivePose", drivePose + "");
-                    Log.e("conePose", conePose + "");
-                    Log.e("coneHeight", coneHeight + "");
-
                     outtake.setTargetGlobal(drivePose, conePose, coneHeight);
                 }
                 break;
@@ -401,20 +391,13 @@ public class Robot {
             }
             newAngle = targetAngle;
             firstTurn = true;
-
-            Log.e("in !startScoringRelative", "----------------");
         }
 
         startScoringRelative = true;
 
-        Log.e("firstTurn value", firstTurn + "");
-        Log.e("((Math.abs(targetAngle - outtake.turret.currentTurretAngle)) <= Math.toRadians(20))", ((Math.abs(targetAngle - outtake.turret.currentTurretAngle)) <= Math.toRadians(20)) + "");
-        Log.e("newAngle", newAngle + "");
-
         if ((firstTurn) && ((Math.abs(targetAngle - clipAngle(outtake.turret.currentTurretAngle))) <= Math.toRadians(20))) {
             targetAngle = Math.toRadians(180);
             firstTurn = false;
-            Log.e("in firstTurn", "");
         }
 
         if (scoringHeight != previousScoringPreset) {

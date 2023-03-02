@@ -174,8 +174,8 @@ public class Outtake {
             if (clipTarget == Math.min(Math.max(clipTarget,a),b)
                     || clipCurrent == Math.min(Math.max(clipCurrent,a),b)
                     || Math.signum(clipAngle(targetTurretAngle - (a+b)/2)) != Math.signum(clipAngle(currentTurretAngle  - (a+b)/2))) {
-                Log.e("turret clips A:", a + "");
-                Log.e("turret clips B:", b + "");
+//                Log.e("turret clips A:", a + "");
+//                Log.e("turret clips B:", b + "");
                 return true;
             }
         }

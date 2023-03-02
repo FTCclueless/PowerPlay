@@ -26,7 +26,7 @@ public class Turret {
 
     ArrayList<MotorPriority> motorPriorities;
 
-    public PID turretPID = new PID(0.617, 0.0,0.00075);
+    public PID turretPID = new PID(0.617, 0.0,0.0);
     public PID teleopPID = new PID(0.8, 0.0,0.0);
     public PID autoPID = new PID(0.4, 0.0,0.0);
 
@@ -37,10 +37,10 @@ public class Turret {
     public double targetTurretVelocity = 0.0;
     public double turretPower = 0.0;
     public double turretError = 0.0;
-    public static double kstatic = 0.15;
+    public static double kstatic = 0.11;
 
     public static double slowDownAngle = 25;
-    public static double stopSlowDownAngle = 3;
+    public static double stopSlowDownAngle = 7;
     public static double slowDownSpeedPercentThreshold = 0.35;
     boolean isLargeTurn = false;
 
@@ -74,8 +74,8 @@ public class Turret {
         TelemetryUtil.packet.put("turretPower: ", turretPower);
         TelemetryUtil.packet.put("turretError: ", Math.toDegrees(turretError));
 
-        Log.e("targetTurretAngle", Math.toDegrees(targetTurretAngle) + "");
-        Log.e("currentTurretAngle", Math.toDegrees(currentTurretAngle) + "");
+//        Log.e("targetTurretAngle", Math.toDegrees(targetTurretAngle) + "");
+//        Log.e("currentTurretAngle", Math.toDegrees(currentTurretAngle) + "");
     }
 
     public void update() {
@@ -105,7 +105,7 @@ public class Turret {
         turretPower += ((Math.abs(Math.toDegrees(turretError)) > 0.3) ? kstatic : 0) * Math.signum(turretPower);
         // there is a -1 because the turret power is negative turret error
         // makes sure that we only apply slow down power if the turret is moving opposite of power. If turret is already moving in direction of slow down we don't apply slow down power
-        if ((-1 * currentTurretVelocity * Math.signum(turretError) >= (turretMaxSpeed * slowDownSpeedPercentThreshold)) && ((Math.abs(turretError) < Math.toRadians(slowDownAngle)) && (Math.abs(turretError) > Math.toRadians(stopSlowDownAngle)))) {
+        if ((currentTurretVelocity * Math.signum(turretError) >= (turretMaxSpeed * slowDownSpeedPercentThreshold)) && ((Math.abs(turretError) < Math.toRadians(slowDownAngle)) && (Math.abs(turretError) > Math.toRadians(stopSlowDownAngle)))) {
             turretPower = - (isLargeTurn ? (0.25/13.6)*(outtake.extension.currentExtensionLength-11.61865) + 0.10: 0.05) * Math.signum(turretPower);
             Log.e("slow down triggered", "--------------------");
         }
