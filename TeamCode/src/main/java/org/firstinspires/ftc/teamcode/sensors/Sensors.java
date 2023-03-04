@@ -53,6 +53,7 @@ public class Sensors {
     public void updateTelemetry () {
         TelemetryUtil.packet.put("slides1Current: ", slides1Current);
         TelemetryUtil.packet.put("slides2Current: ", slides2Current);
+        TelemetryUtil.packet.put("leftDist: ", leftDist);
 
         Log.e("robotNextToMeCounter", robotNextToMeCounter + "");
     }
@@ -67,7 +68,7 @@ public class Sensors {
 
             leftDist = leftUltrasonic.getVoltage();
 
-            if (leftDist < 0.07) {
+            if (leftDist < 0.1) {
                 robotNextToMeCounter += 1;
             } else {
                 robotNextToMeCounter -= 1;

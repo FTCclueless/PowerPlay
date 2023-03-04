@@ -180,7 +180,7 @@ public class Robot {
                     startClawCloseTime = System.currentTimeMillis();
                 }
 
-                if(sensors.coneInClaw || System.currentTimeMillis() - startClawCloseTime > 300) { // needs an external claw.close()
+                if(sensors.coneInClaw || System.currentTimeMillis() - startClawCloseTime > 225) { // needs an external claw.close()
                     claw.close();
                     hasGrabbed = true;
                     outtake.setTargetGlobal(drivePose, conePose, coneHeight + 6);

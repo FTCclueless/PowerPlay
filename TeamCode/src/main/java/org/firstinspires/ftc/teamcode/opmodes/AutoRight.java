@@ -47,7 +47,7 @@ public class AutoRight extends LinearOpMode {
         int ySign = lr ? 1 : -1;
 
         Pose2d origin = new Pose2d(
-                34.5,
+                32,
                 62 * ySign,
                 lr ? Math.toRadians(90) : Math.toRadians(-90)
         );
@@ -60,7 +60,7 @@ public class AutoRight extends LinearOpMode {
 
         Pose2d cyclePose = new Pose2d(
                 45.5,
-                13 * ySign,
+                12 * ySign,
                 Math.toRadians(180)
         );
 
@@ -74,7 +74,7 @@ public class AutoRight extends LinearOpMode {
                     robot.currentState = Robot.STATE.SCORING_GLOBAL;
                     robot.startScoringGlobal(
                             new Pose2d(cyclePose.getX(), cyclePose.getY(), cyclePose.getHeading()),
-                            new Pose2d(21,-4 * ySign), // 24, 0
+                            new Pose2d(21,-2.5 * ySign), // 24, 0
                             27.25);
                 })
                 .build();
@@ -83,7 +83,7 @@ public class AutoRight extends LinearOpMode {
 
         Trajectory[] park = new Trajectory[]{
                 drive.trajectoryBuilder(cyclePose).strafeTo(new Vector2d( // parking position 3
-                        15,
+                        12,
                         cyclePose.getY()
                 )).build(),
                 drive.trajectoryBuilder(cyclePose).strafeTo(new Vector2d( // parking position 2
@@ -158,7 +158,7 @@ public class AutoRight extends LinearOpMode {
             // TODO verify the x and y sign on this. It should not be like this
             robot.startIntakeGlobal(
                     to.end(),
-                    new Pose2d(72,12 * ySign), //70.5
+                    new Pose2d(69,12 * ySign), //70.5
                     coneStackHeights[i]
             );
 
@@ -169,13 +169,13 @@ public class AutoRight extends LinearOpMode {
             if (robot.sensors.robotNextToMe) {
                 robot.startScoringGlobal(
                         new Pose2d(to.end().getX(), to.end().getY(), to.end().getHeading()),
-                        new Pose2d(21.0, 28.0 * ySign), //24, 1.0
-                        18.15);
+                        new Pose2d(21.0, 23.25 * ySign), //24, 1.0
+                        19);
             } else {
                 robot.startScoringGlobal(
                         new Pose2d(to.end().getX(), to.end().getY(), to.end().getHeading()),
-                        new Pose2d(21.0, -4.0 * ySign), //24, 1.0
-                        26.5);
+                        new Pose2d(21.0, -2.5 * ySign), //24, 1.0
+                        26.75);
             }
 
             while ((robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) && (System.currentTimeMillis() - startTime <= timeToPark[parkingNum])) {
