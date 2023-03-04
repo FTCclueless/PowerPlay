@@ -30,7 +30,7 @@ public class AutoLeft extends LinearOpMode {
 
     OpenCVWrapper openCVWrapper;
 
-    double[] coneStackHeights = new double[]{4.75, 3.5, 2.6, 1.65, 0.0}; //5.65, 4.4, 2.75, 2.0, 0.5
+    double[] coneStackHeights = new double[]{4.5, 3.5, 2.6, 1.65, 0.5}; //5.65, 4.4, 2.75, 2.0, 0.5
     ButtonToggle toggleA = new ButtonToggle();
     double[] timeToPark = new double[]{28000, 29000, 28000};
 
@@ -159,7 +159,7 @@ public class AutoLeft extends LinearOpMode {
 
         robot.currentState = INTAKE_GLOBAL;
         robot.startIntakeGlobal(
-                toCycle.end(),
+                new Pose2d(cyclePose.getX() + 3, cyclePose.getY(), cyclePose.getHeading()),
                 new Pose2d(69,12 * ySign),
                 coneStackHeights[0]
         );
@@ -169,17 +169,19 @@ public class AutoLeft extends LinearOpMode {
         robot.updateStayInPlacePID = true;
 
         for (int i = 0; i < cycles && (System.currentTimeMillis() - startTime <= timeToPark[parkingNum]); i++) {
-            robot.currentState = INTAKE_GLOBAL;
-            // TODO verify the x and y sign on this. It should not be like this
-            robot.startIntakeGlobal(
-                    toCycle.end(),
-                    new Pose2d(69,12 * ySign),
-                    coneStackHeights[i]
-            );
+            if (i != 0) {
+                robot.currentState = INTAKE_GLOBAL;
+                robot.startIntakeGlobal(
+                        toCycle.end(),
+                        new Pose2d(69,12 * ySign),
+                        coneStackHeights[i]
+                );
+            }
 
             while ((robot.currentState == INTAKE_GLOBAL) && (System.currentTimeMillis() - startTime <= timeToPark[parkingNum])) {
                 robot.update();
             }
+
 
             if (robot.sensors.robotNextToMe) {
                 robot.startScoringGlobal(
@@ -190,7 +192,7 @@ public class AutoLeft extends LinearOpMode {
                 robot.startScoringGlobal(
                         new Pose2d(toCycle.end().getX(), toCycle.end().getY(), toCycle.end().getHeading()),
                         new Pose2d(21.0, -2.5 * ySign),
-                        26.75);
+                        27.25);
             }
 
             while ((robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) && (System.currentTimeMillis() - startTime <= timeToPark[parkingNum])) {
@@ -214,14 +216,11 @@ public class AutoLeft extends LinearOpMode {
         robot.claw.park();
         robot.outtake.actuation.level();
 
-        while (System.currentTimeMillis() - clawStart <= 2000) {
+        do  {
             robot.claw.park();
             robot.outtake.actuation.level();
             robot.update();
-        }
-
-        robot.outtake.actuation.level();
-        robot.update();
+        } while (System.currentTimeMillis() - clawStart <= 2000);
 
         Storage.autoEndPose = drive.getPoseEstimate();
         Storage.isBlue = true;

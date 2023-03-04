@@ -192,6 +192,9 @@ public class Robot {
                 }
                 else {
                     outtake.setTargetGlobal(drivePose, conePose, coneHeight);
+                    if (!isAtPoint) {
+                        outtake.extension.setTargetExtensionLength(outtake.targetExtensionLength - 8);
+                    }
                 }
                 break;
             case WAIT_FOR_START_SCORING:
@@ -299,7 +302,7 @@ public class Robot {
                     outtake.extension.retractExtension();
                 }
 
-                if (isAtPoint && (outtake.isInPositionGlobal(drivePose, polePose,3.5) && (outtake.extension.isInPosition(0.5)))) {
+                if (isAtPoint && (outtake.isInPositionGlobal(drivePose, polePose,3.5, 2.0) && (outtake.extension.isInPosition(0.5)))) {
                     timeSinceClawOpen = System.currentTimeMillis();
                     isAtPoint = false;
                     currentState = STATE.DEPOSIT_AUTO;

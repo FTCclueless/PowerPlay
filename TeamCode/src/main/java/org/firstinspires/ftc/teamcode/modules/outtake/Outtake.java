@@ -272,9 +272,13 @@ public class Outtake {
     }
 
     public boolean isInPositionGlobal(Pose2d robotPose, Pose2d targetPose, double threshold) {
+        return isInPositionGlobal(robotPose, targetPose, threshold, threshold);
+    }
+
+    public boolean isInPositionGlobal(Pose2d robotPose, Pose2d targetPose, double threshold, double slidesThreshold) {
         Pose2d globalCoords = findGlobalCoordinates(robotPose, x,y);
 
-        if ((Math.abs(globalCoords.getX() - targetPose.getX()) <= threshold) && (Math.abs(globalCoords.getY() - targetPose.getY()) <= threshold) && (slides.isInPosition(threshold))) {
+        if ((Math.abs(globalCoords.getX() - targetPose.getX()) <= threshold) && (Math.abs(globalCoords.getY() - targetPose.getY()) <= threshold) && (slides.isInPosition(slidesThreshold))) {
             return true;
         } else {
             return false;
