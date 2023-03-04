@@ -66,6 +66,9 @@ public class Sensors {
             localizer.encoders[1].update(motorPriorities.get(3).motor[0].getCurrentPosition()); // right
             localizer.encoders[2].update(motorPriorities.get(1).motor[0].getCurrentPosition()); // back
 
+            turretAngle = motorPriorities.get(2).motor[0].getCurrentPosition() / turretTicksToRadian; // radians of turret
+            turretVelocity = motorPriorities.get(2).motor[0].getVelocity() / turretTicksToRadian;
+
             leftDist = leftUltrasonic.getVoltage();
 
             if (leftDist < 0.1) {
@@ -93,8 +96,8 @@ public class Sensors {
 
     public void updateHub2() {
         try {
-            turretAngle = motorPriorities.get(4).motor[0].getCurrentPosition() / turretTicksToRadian * -1; // radians of turret
-            turretVelocity = motorPriorities.get(4).motor[0].getVelocity() / turretTicksToRadian * -1;
+//            turretAngle = motorPriorities.get(4).motor[0].getCurrentPosition() / turretTicksToRadian * -1; // radians of turret
+//            turretVelocity = motorPriorities.get(4).motor[0].getVelocity() / turretTicksToRadian * -1;
 
             slidesLength = motorPriorities.get(5).motor[1].getCurrentPosition() / slidesTickToInch * -1; // inches of slides
             slidesVelocity = motorPriorities.get(5).motor[1].getVelocity() / slidesTickToInch * -1;
