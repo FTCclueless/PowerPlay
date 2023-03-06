@@ -504,10 +504,15 @@ public class Robot {
     public void initPosition (boolean left) {
         double turnSign = left ? 1 : -1;
 
+        // Before anything the poleAlignment servo must be up
+        poleAlignment.init();
+        do {
+            update();
+        } while (!poleAlignment.isInitPosition());
+
         actuation.init();
         outtake.extension.retractExtension();
         claw.init();
-        poleAlignment.init();
 
         outtake.slides.setTargetSlidesLength(12);
 
