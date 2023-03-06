@@ -112,8 +112,10 @@ public class AutoLeft extends LinearOpMode {
 
         Log.e("init position", "");
 
-        robot.claw.init();
-        robot.outtake.actuation.init();
+        // Pole allignment must be inited first or else it will be caught
+
+        /*robot.claw.init();
+        robot.outtake.actuation.init();*/
 
         while (opModeInInit()) {
             telemetry.setMsTransmissionInterval(50);

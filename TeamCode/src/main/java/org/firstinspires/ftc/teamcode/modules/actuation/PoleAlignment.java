@@ -19,7 +19,8 @@ public class PoleAlignment {
 
     double upPosition = 0.911;
     double downPosition = 0.2389;
-    double initPosition = 0.7219;
+    // FIXME this init position is stalling (scuffed fix)
+    double initPosition = 0.6219;
 
     public PoleAlignment(HardwareMap hardwareMap, ArrayList<MyServo> servos, Claw claw) {
         this.servos = servos;
@@ -80,6 +81,10 @@ public class PoleAlignment {
 
     public void forceUp() {
         targetPoleAlignmentPosition = upPosition;
+    }
+
+    public boolean isInitPosition() {
+        return currentPoleAlignmentPosition == initPosition;
     }
 
     public void init() {
