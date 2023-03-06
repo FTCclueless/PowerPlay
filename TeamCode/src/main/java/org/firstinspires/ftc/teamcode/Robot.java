@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.modules.PoleAlignment.PoleAlignment;
 import org.firstinspires.ftc.teamcode.modules.actuation.Actuation;
-import org.firstinspires.ftc.teamcode.modules.actuation.PoleAlignment;
 import org.firstinspires.ftc.teamcode.modules.claw.ConeFlipper;
 import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.util.Field;

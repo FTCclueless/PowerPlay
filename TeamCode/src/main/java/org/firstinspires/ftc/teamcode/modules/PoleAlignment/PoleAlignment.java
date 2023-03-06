@@ -2,32 +2,32 @@ package org.firstinspires.ftc.teamcode.modules.PoleAlignment;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.modules.actuation.Actuation;
+import org.firstinspires.ftc.teamcode.modules.claw.Claw;
 import org.firstinspires.ftc.teamcode.util.MyServo;
 import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
 import java.util.ArrayList;
 
 public class PoleAlignment {
+    MyServo poleAlignment;
+    ArrayList<MyServo> servos;
+    Claw claw;
+
     public double currentPoleAlignmentPosition = 0.0;
     public double targetPoleAlignmentPosition = 0.0;
     public double poleAlignmentPower = 1.0;
 
-    MyServo poleAlignment;
-    ArrayList<MyServo> servos;
-    Actuation actuation;
+    double upPosition = 0.911;
+    double downPosition = 0.2389;
+    double initPosition = 0.7219;
 
-    double initPosition = 0.682;
-    double intakePosition = 0.396; //0.2689
-    double depositPosition = 0.149;
-
-    public PoleAlignment(HardwareMap hardwareMap, ArrayList<MyServo> servos, Actuation actuation) {
+    public PoleAlignment(HardwareMap hardwareMap, ArrayList<MyServo> servos, Claw claw) {
         this.servos = servos;
-        this.actuation = actuation;
+        this.claw = claw;
 
-        poleAlignment = new MyServo(hardwareMap.servo.get("poleAlignment"),"JX",1,0,1.0, initPosition);
+        poleAlignment = new MyServo(hardwareMap.servo.get("poleAlignment"),"Speed",0.5,0,1.0, upPosition);
 
-        servos.add(2, poleAlignment);
+        servos.add(5, poleAlignment);
     }
 
     public void updateTelemetry() {
@@ -36,7 +36,7 @@ public class PoleAlignment {
     }
 
     public void update() {
-        updatePoleAlignmentValues();
+        updateActValues();
         updateTelemetry();
 
         poleAlignment.setPosition(targetPoleAlignmentPosition, poleAlignmentPower);
@@ -50,7 +50,7 @@ public class PoleAlignment {
         return currentPoleAlignmentPosition;
     }
 
-    public void updatePoleAlignmentValues() {
+    public void updateActValues() {
         currentPoleAlignmentPosition = poleAlignment.getCurrentPosition();
     }
 
@@ -58,15 +58,31 @@ public class PoleAlignment {
         return Math.abs(targetPoleAlignmentPosition - currentPoleAlignmentPosition) <= position;
     }
 
+    public void up() {
+        if (!(currentPoleAlignmentPosition == upPosition)) {
+            if (claw.isClosed()) {
+                targetPoleAlignmentPosition = upPosition;
+            } else {
+                claw.close();
+            }
+        }
+    }
+
+    public void down() {
+        if (!(currentPoleAlignmentPosition == downPosition)) {
+            if (claw.isClosed()) {
+                targetPoleAlignmentPosition = downPosition;
+            } else {
+                claw.close();
+            }
+        }
+    }
+
+    public void forceUp() {
+        targetPoleAlignmentPosition = upPosition;
+    }
+
     public void init() {
         targetPoleAlignmentPosition = initPosition;
-    }
-
-    public void intake() {
-        targetPoleAlignmentPosition = intakePosition;
-    }
-
-    public void deposit() {
-        targetPoleAlignmentPosition = depositPosition;
     }
 }
