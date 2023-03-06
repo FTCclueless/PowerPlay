@@ -579,6 +579,7 @@ public class Robot {
         outtake.update();
         claw.update();
         coneFlipper.update();
+        poleAlignment.update();
 
         if (updateStayInPlacePID) {
             drivetrain.updatePID(stayInPlacePose);
