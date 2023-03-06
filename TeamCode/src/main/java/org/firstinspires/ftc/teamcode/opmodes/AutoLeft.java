@@ -5,7 +5,6 @@ import static org.firstinspires.ftc.teamcode.Robot.STATE.IDLE;
 import static org.firstinspires.ftc.teamcode.Robot.STATE.INTAKE_GLOBAL;
 import static org.firstinspires.ftc.teamcode.Robot.STATE.INTAKE_RELATIVE;
 import static org.firstinspires.ftc.teamcode.Robot.STATE.SCORING_GLOBAL;
-import static org.firstinspires.ftc.teamcode.Robot.STATE.WAIT_FOR_START_SCORING;
 
 import android.util.Log;
 
@@ -30,7 +29,7 @@ public class AutoLeft extends LinearOpMode {
 
     OpenCVWrapper openCVWrapper;
 
-    double[] coneStackHeights = new double[]{4.5, 3.5, 2.6, 1.65, 0.5}; //5.65, 4.4, 2.75, 2.0, 0.5
+    double[] coneStackHeights = new double[]{4.5, 3.5, 2.6, 1.3, 0.85}; //5.65, 4.4, 2.75, 2.0, 0.5
     ButtonToggle toggleA = new ButtonToggle();
     double[] timeToPark = new double[]{28000, 29000, 28000};
 
@@ -59,7 +58,7 @@ public class AutoLeft extends LinearOpMode {
         );
 
         Pose2d cyclePose = new Pose2d(
-                47.1,
+                45.1,
                 14 * ySign,
                 Math.toRadians(180)
         );
@@ -69,6 +68,7 @@ public class AutoLeft extends LinearOpMode {
         TrajectorySequence toPreload = drive.trajectorySequenceBuilder(origin)
                 .lineToConstantHeading(new Vector2d(toPose.getX(), toPose.getY()))
                 .addDisplacementMarker(5, () -> {
+                    robot.claw.close();
                     robot.currentState = Robot.STATE.SCORING_GLOBAL;
                     robot.startScoringGlobal(
                             new Pose2d(toPose.getX(), toPose.getY(), toPose.getHeading()),
@@ -151,6 +151,7 @@ public class AutoLeft extends LinearOpMode {
 
         openCVWrapper.stop();
 
+        robot.claw.close();
         robot.followTrajectorySequence(toPreload, this);
 
         while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) {
@@ -160,7 +161,7 @@ public class AutoLeft extends LinearOpMode {
         robot.currentState = INTAKE_GLOBAL;
         robot.startIntakeGlobal(
                 new Pose2d(cyclePose.getX() + 3, cyclePose.getY(), cyclePose.getHeading()),
-                new Pose2d(69,12 * ySign),
+                new Pose2d(70,12 * ySign),
                 coneStackHeights[0]
         );
 
@@ -173,7 +174,7 @@ public class AutoLeft extends LinearOpMode {
                 robot.currentState = INTAKE_GLOBAL;
                 robot.startIntakeGlobal(
                         toCycle.end(),
-                        new Pose2d(69,12 * ySign),
+                        new Pose2d(70,12 * ySign),
                         coneStackHeights[i]
                 );
             }
@@ -182,8 +183,7 @@ public class AutoLeft extends LinearOpMode {
                 robot.update();
             }
 
-
-            if (robot.sensors.robotNextToMe) {
+            if (robot.sensors.robotNextToMeLeft) {
                 robot.startScoringGlobal(
                         new Pose2d(toCycle.end().getX(), toCycle.end().getY(), toCycle.end().getHeading()),
                         new Pose2d(21.0, 25.5 * ySign),
@@ -191,8 +191,8 @@ public class AutoLeft extends LinearOpMode {
             } else {
                 robot.startScoringGlobal(
                         new Pose2d(toCycle.end().getX(), toCycle.end().getY(), toCycle.end().getHeading()),
-                        new Pose2d(21.0, -2.5 * ySign),
-                        27.25);
+                        new Pose2d(24.2, -0.75 * ySign),
+                        27.5);
             }
 
             while ((robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) && (System.currentTimeMillis() - startTime <= timeToPark[parkingNum])) {

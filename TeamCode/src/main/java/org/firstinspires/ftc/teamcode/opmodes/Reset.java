@@ -10,6 +10,9 @@ import org.firstinspires.ftc.teamcode.Robot;
 @Config
 @Autonomous(group = "Reset")
 public class Reset extends LinearOpMode {
+
+    boolean poleAlignmentMoved = false;
+
     @Override
     public void runOpMode() throws InterruptedException {
         Robot robot = new Robot(hardwareMap);
@@ -25,9 +28,17 @@ public class Reset extends LinearOpMode {
             robot.outtake.extension.retractExtension();
             robot.outtake.slides.setTargetSlidesLength(0);
             robot.coneFlipper.retract();
-            if (robot.outtake.extension.isInPosition(5)) {
+            robot.claw.close();
+
+            if (robot.claw.isClosed()) {
+                robot.poleAlignment.up();
+                poleAlignmentMoved = true;
+            }
+
+            if (poleAlignmentMoved) {
                 robot.claw.open();
             }
+
             robot.update();
         }
     }

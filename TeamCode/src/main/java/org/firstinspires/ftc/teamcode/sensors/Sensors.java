@@ -4,7 +4,6 @@ import android.util.Log;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.AnalogInput;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
@@ -26,12 +25,15 @@ public class Sensors {
 
     private final VoltageSensor batteryVoltageSensor;
     private final AnalogInput leftUltrasonic;
+    private final AnalogInput rightUltrasonic;
 //    private final ColorSensor clawColor;
 
     public double leftDist = 0.0;
+    public double rightDist = 0.0;
     public double clawColorReading = 0.0;
     public boolean coneInClaw = false;
-    public boolean robotNextToMe = false;
+    public boolean robotNextToMeLeft = false;
+    public boolean robotNextToMeRight = false;
 
     public Sensors (HardwareMap hardwareMap, ArrayList<MotorPriority> motorPriorities, ThreeWheelLocalizer localizer) {
         this.motorPriorities = motorPriorities;
@@ -47,6 +49,7 @@ public class Sensors {
 
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
         leftUltrasonic = hardwareMap.get(AnalogInput.class, "leftUltrasonic");
+        rightUltrasonic = hardwareMap.get(AnalogInput.class, "rightUltrasonic");
 //        clawColor = hardwareMap.get(ColorSensor.class, "clawColor");
     }
 
@@ -54,11 +57,14 @@ public class Sensors {
         TelemetryUtil.packet.put("slides1Current: ", slides1Current);
         TelemetryUtil.packet.put("slides2Current: ", slides2Current);
         TelemetryUtil.packet.put("leftDist: ", leftDist);
+        TelemetryUtil.packet.put("rightDist: ", rightDist);
 
-        Log.e("robotNextToMeCounter", robotNextToMeCounter + "");
+        TelemetryUtil.packet.put("robotNextToMeCounterLeft: ", robotNextToMeCounterLeft);
+        TelemetryUtil.packet.put("robotNextToMeCounterRight: ", robotNextToMeCounterRight);
     }
 
-    int robotNextToMeCounter;
+    int robotNextToMeCounterLeft;
+    int robotNextToMeCounterRight;
 
     public void updateHub1() {
         try {
@@ -69,17 +75,29 @@ public class Sensors {
             turretAngle = motorPriorities.get(2).motor[0].getCurrentPosition() / turretTicksToRadian; // radians of turret
             turretVelocity = motorPriorities.get(2).motor[0].getVelocity() / turretTicksToRadian;
 
-            leftDist = leftUltrasonic.getVoltage();
+//            leftDist = leftUltrasonic.getVoltage();
+//            rightDist = rightUltrasonic.getVoltage();
+//
+//            if (leftDist < 0.1) {
+//                robotNextToMeCounterLeft += 1;
+//            } else {
+//                robotNextToMeCounterLeft -= 1;
+//            }
+//
+//            robotNextToMeCounterLeft = Math.max(0, Math.min(robotNextToMeCounterLeft, 10));
+//            robotNextToMeLeft = robotNextToMeCounterLeft > 5;
+//
+//            if (rightDist < 0.1) {
+//                robotNextToMeCounterRight += 1;
+//            } else {
+//                robotNextToMeCounterRight -= 1;
+//            }
+//
+//            robotNextToMeCounterRight = Math.max(0, Math.min(robotNextToMeCounterRight, 10));
+//            robotNextToMeRight = robotNextToMeCounterRight > 5;
 
-            if (leftDist < 0.1) {
-                robotNextToMeCounter += 1;
-            } else {
-                robotNextToMeCounter -= 1;
-            }
-
-            robotNextToMeCounter = Math.max(0, Math.min(robotNextToMeCounter, 10));
-
-            robotNextToMe = robotNextToMeCounter > 5;
+            robotNextToMeLeft = false;
+            robotNextToMeRight = false;
 
 //            clawColorReading = clawColor.argb() / 10000000;
 //            clawColorReading = clawColor.alpha();
@@ -137,6 +155,8 @@ public class Sensors {
     public double getClawColorReadings() { return clawColorReading; }
 
     public double getLeftDist() { return leftDist; }
+
+    public double getRightDist() { return rightDist; }
 
     public double getBatteryVoltage() { return batteryVoltageSensor.getVoltage(); }
 }

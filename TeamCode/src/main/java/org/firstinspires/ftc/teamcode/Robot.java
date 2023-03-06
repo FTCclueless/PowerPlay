@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.modules.actuation.Actuation;
+import org.firstinspires.ftc.teamcode.modules.actuation.PoleAlignment;
 import org.firstinspires.ftc.teamcode.modules.claw.ConeFlipper;
 import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.util.Field;
@@ -36,6 +37,7 @@ public class Robot {
     private Actuation actuation;
     public Claw claw;
     public ConeFlipper coneFlipper;
+    public PoleAlignment poleAlignment;
 
     public Sensors sensors;
     public Vision vision;
@@ -59,6 +61,7 @@ public class Robot {
         actuation = outtake.actuation;
         claw = new Claw(hardwareMap, servos);
         coneFlipper = new ConeFlipper(hardwareMap, servos);
+        poleAlignment = new PoleAlignment(hardwareMap, servos, claw);
         vision = new Vision();
     }
 
@@ -180,7 +183,11 @@ public class Robot {
                     startClawCloseTime = System.currentTimeMillis();
                 }
 
-                if(sensors.coneInClaw || System.currentTimeMillis() - startClawCloseTime > 225) { // needs an external claw.close()
+                if (outtake.extension.isInPosition(3)) {
+                    actuation.level();
+                }
+
+                if(sensors.coneInClaw || System.currentTimeMillis() - startClawCloseTime > 200) { // needs an external claw.close()
                     claw.close();
                     hasGrabbed = true;
                     outtake.setTargetGlobal(drivePose, conePose, coneHeight + 6);
@@ -293,10 +300,10 @@ public class Robot {
 
                 if (isAtPoint) {
                     outtake.setTargetGlobal(drivePose, polePose, poleHeight);
-                    actuation.tilt();
+                    actuation.level();
+                    poleAlignment.down();
                 }
                 else {
-                    claw.close();
                     actuation.level();
                     outtake.setTargetGlobal(drivePose, polePose, 12);
                     outtake.extension.retractExtension();
@@ -305,16 +312,24 @@ public class Robot {
                 if (isAtPoint && (outtake.isInPositionGlobal(drivePose, polePose,3.5, 2.0) && (outtake.extension.isInPosition(0.5)))) {
                     timeSinceClawOpen = System.currentTimeMillis();
                     isAtPoint = false;
+                    actuation.level();
                     currentState = STATE.DEPOSIT_AUTO;
                 }
+
+                claw.close();
                 break;
             case DEPOSIT_AUTO:
                 outtake.slides.slidesPercentMax = 1.0;
                 outtake.setTargetGlobal(drivePose, polePose, poleHeight);
 
-                claw.open();
-                if (System.currentTimeMillis() - timeSinceClawOpen >= 225) {
-                    actuation.level();
+                actuation.level();
+
+                if (System.currentTimeMillis() - timeSinceClawOpen >= 150) {
+                    claw.open();
+                }
+
+                if (System.currentTimeMillis() - timeSinceClawOpen >= 230) {
+                    poleAlignment.up();
                     currentState = STATE.INTAKE_RELATIVE;
                 }
                 break;
@@ -492,6 +507,7 @@ public class Robot {
         actuation.init();
         outtake.extension.retractExtension();
         claw.init();
+        poleAlignment.init();
 
         outtake.slides.setTargetSlidesLength(12);
 

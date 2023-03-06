@@ -15,10 +15,10 @@ public class Claw {
     public double clawPower = 1.0;
 
     public double closePosition = 0.0;
-    public double openPosition = 0.347;
+    public double openPosition = 0.442;
     public double parkPosition = 0.677;
     public double initPosition = 0.282;
-    public double initClosePosition = 0.1;
+    public double initClosePosition = 0.175;
 
     public enum STATE {OPEN, CLOSED, PARK, INIT, INIT_CLOSE}
     public STATE currentState = STATE.OPEN;
@@ -95,11 +95,11 @@ public class Claw {
     }
 
     public boolean isOpen () {
-        if (currentState == STATE.OPEN) {
-            return true;
-        } else {
-            return false;
-        }
+        return (currentState == STATE.OPEN && isInPosition(1));
+    }
+
+    public boolean isClosed () {
+        return (currentState == STATE.CLOSED && isInPosition(1));
     }
 
     public void move() {
@@ -108,5 +108,9 @@ public class Claw {
         } else {
             open();
         }
+    }
+
+    public boolean isInPosition (double position) {
+        return Math.abs(targetClawPosition - currentClawPosition) <= position;
     }
 }

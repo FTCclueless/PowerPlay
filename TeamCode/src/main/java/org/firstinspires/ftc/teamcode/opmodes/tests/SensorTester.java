@@ -41,6 +41,7 @@ public class SensorTester extends LinearOpMode {
             telemetry.addData("battery voltage", robot.sensors.getBatteryVoltage());
             telemetry.addData("claw color", robot.sensors.getClawColorReadings());
             telemetry.addData("left dist", robot.sensors.getLeftDist());
+            telemetry.addData("right dist", robot.sensors.getRightDist());
 
             telemetry.update();
         }
