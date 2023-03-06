@@ -102,7 +102,8 @@ public class AutoRight extends LinearOpMode {
         // Pole allignment must be inited before any claw or anything else
         robot.poleAlignment.init();
         do {
-            robot.poleAlignment.update();
+            // robot.poleAlignment.update(); uncomment me for scuffed method
+            robot.update();
         } while (robot.poleAlignment.isInitPosition());
 
         robot.resetEncoders();

@@ -78,6 +78,10 @@ public class PoleAlignment {
         }
     }
 
+    public boolean isInitPosition() {
+        return currentPoleAlignmentPosition == initPosition;
+    }
+
     public void forceUp() {
         targetPoleAlignmentPosition = upPosition;
     }
