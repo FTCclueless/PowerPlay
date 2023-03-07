@@ -169,6 +169,8 @@ public class Robot {
                 }
                 break;
             case INTAKE_GLOBAL:
+                poleAlignment.up();
+
                 if ((Math.abs(drivetrain.getPoseEstimate().getX() - drivePose.getX()) <= 4) && (Math.abs(drivetrain.getPoseEstimate().getY() - drivePose.getY()) <= 4)) {
                     drivePose = drivetrain.getPoseEstimate();
                     isAtPoint = true;
@@ -177,6 +179,8 @@ public class Robot {
                 if ((isAtPoint && (outtake.isInPositionGlobal(drivePose, conePose, 3.5)  && outtake.extension.isInPosition(0.1)) || hasGrabbed)) {
                     hasGrabbed = true;
                     claw.close();
+                    actuation.tilt();
+                    poleAlignment.actuationTiltRetract();
                 }
                 else {
                     claw.open();
@@ -300,8 +304,10 @@ public class Robot {
 
                 if (isAtPoint) {
                     outtake.setTargetGlobal(drivePose, polePose, poleHeight);
-                    actuation.level();
-                    poleAlignment.down();
+                    if (outtake.slides.currentSlidesLength >= 12) {
+                        actuation.level();
+                        poleAlignment.down();
+                    }
                 }
                 else {
                     actuation.level();
@@ -329,8 +335,12 @@ public class Robot {
                 }
 
                 if (System.currentTimeMillis() - timeSinceClawOpen >= 230) {
+                    claw.close();
                     poleAlignment.up();
-                    currentState = STATE.INTAKE_RELATIVE;
+                }
+
+                if (System.currentTimeMillis() - timeSinceClawOpen >= 600) {
+                    currentState = STATE.INTAKE_GLOBAL;
                 }
                 break;
             case DEPOSIT_TELEOP:

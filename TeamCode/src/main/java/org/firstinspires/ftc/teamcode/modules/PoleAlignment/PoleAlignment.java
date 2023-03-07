@@ -19,6 +19,8 @@ public class PoleAlignment {
 
     double upPosition = 0.911;
     double downPosition = 0.2389;
+    double actuationLevelRetractPosition = 0.9269;
+    double actuationTiltRetractPosition = 0.816;
     double initPosition = 0.6219;
 
     public PoleAlignment(HardwareMap hardwareMap, ArrayList<MyServo> servos, Claw claw) {
@@ -59,23 +61,11 @@ public class PoleAlignment {
     }
 
     public void up() {
-        if (!(currentPoleAlignmentPosition == upPosition)) {
-            if (claw.isClosed()) {
-                targetPoleAlignmentPosition = upPosition;
-            } else {
-                claw.close();
-            }
-        }
+        targetPoleAlignmentPosition = upPosition;
     }
 
     public void down() {
-        if (!(currentPoleAlignmentPosition == downPosition)) {
-            if (claw.isClosed()) {
-                targetPoleAlignmentPosition = downPosition;
-            } else {
-                claw.close();
-            }
-        }
+        targetPoleAlignmentPosition = downPosition;
     }
 
     public boolean isInitPosition() {
@@ -88,5 +78,13 @@ public class PoleAlignment {
 
     public void init() {
         targetPoleAlignmentPosition = initPosition;
+    }
+
+    public void actuationLevelRetract() {
+        targetPoleAlignmentPosition = actuationLevelRetractPosition;
+    }
+
+    public void actuationTiltRetract() {
+        targetPoleAlignmentPosition = actuationTiltRetractPosition;
     }
 }

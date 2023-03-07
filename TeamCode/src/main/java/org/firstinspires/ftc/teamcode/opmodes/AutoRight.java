@@ -69,11 +69,13 @@ public class AutoRight extends LinearOpMode {
                 .lineToConstantHeading(new Vector2d(toPose.getX(), toPose.getY()))
                 .addDisplacementMarker(3, () -> {
                     robot.claw.close();
+                    robot.poleAlignment.actuationLevelRetract();
                     robot.currentState = Robot.STATE.SCORING_GLOBAL;
                     robot.startScoringGlobal(
                             new Pose2d(toPose.getX(), toPose.getY(), toPose.getHeading()),
                             new Pose2d(24.25, 0.0 * ySign),
-                            28);
+                            32);
+                    Log.e("IN DISPLACEMENT", "MARKERS!");
                 })
                 .build();
 
@@ -192,7 +194,7 @@ public class AutoRight extends LinearOpMode {
                 robot.startScoringGlobal(
                         new Pose2d(toCycle.end().getX(), toCycle.end().getY(), toCycle.end().getHeading()),
                         new Pose2d(20.5, -3.5 * ySign), //24, 1.0
-                        27.25);
+                        32);
             }
 
             while ((robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) && (System.currentTimeMillis() - startTime <= timeToPark[parkingNum])) {
