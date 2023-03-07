@@ -18,6 +18,7 @@ public class Actuation {
     double levelPosition = 0.682;
     double downLevelPosition = 0.746;
     double tiltedPosition = 0.396; //0.2689
+    double autoStackTiltPosition = 0.3; //0.2689
     double initPosition = 0.0;
     double retractPosition = 1.0;
 
@@ -75,6 +76,10 @@ public class Actuation {
 
     public void retract() {
         targetActPosition = retractPosition;
+    }
+
+    public void autoStackTilt() {
+        targetActPosition = autoStackTiltPosition;
     }
 
     public boolean isLevel () {

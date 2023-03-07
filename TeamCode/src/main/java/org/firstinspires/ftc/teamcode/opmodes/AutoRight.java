@@ -31,7 +31,7 @@ public class AutoRight extends LinearOpMode {
 
     double[] coneStackHeights = new double[]{4.5, 3.5, 2.6, 1.3, 0.85}; //5.65, 4.4, 2.75, 2.0, 0.5
     ButtonToggle toggleA = new ButtonToggle();
-    double[] timeToPark = new double[]{28000, 29000, 28000};
+    double[] timeToPark = new double[]{35000, 35000, 35000};
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -69,12 +69,12 @@ public class AutoRight extends LinearOpMode {
                 .lineToConstantHeading(new Vector2d(toPose.getX(), toPose.getY()))
                 .addDisplacementMarker(3, () -> {
                     robot.claw.close();
-                    robot.poleAlignment.actuationLevelRetract();
+                    robot.poleAlignment.oversideRetract();
                     robot.currentState = Robot.STATE.SCORING_GLOBAL;
                     robot.startScoringGlobal(
                             new Pose2d(toPose.getX(), toPose.getY(), toPose.getHeading()),
-                            new Pose2d(24.25, 0.0 * ySign),
-                            32);
+                            new Pose2d(27.0, 0.0 * ySign),
+                            27.25);
                     Log.e("IN DISPLACEMENT", "MARKERS!");
                 })
                 .build();
@@ -163,7 +163,7 @@ public class AutoRight extends LinearOpMode {
         robot.currentState = INTAKE_GLOBAL;
         robot.startIntakeGlobal(
                 new Pose2d(cyclePose.getX() + 3, cyclePose.getY(), cyclePose.getHeading()),
-                new Pose2d(69.75,12 * ySign),
+                new Pose2d(70,12 * ySign),
                 coneStackHeights[0]
         );
 
@@ -176,7 +176,7 @@ public class AutoRight extends LinearOpMode {
                 robot.currentState = INTAKE_GLOBAL;
                 robot.startIntakeGlobal(
                         toCycle.end(),
-                        new Pose2d(69.75,12 * ySign),
+                        new Pose2d(70.5,12 * ySign),
                         coneStackHeights[i]
                 );
             }
@@ -194,7 +194,7 @@ public class AutoRight extends LinearOpMode {
                 robot.startScoringGlobal(
                         new Pose2d(toCycle.end().getX(), toCycle.end().getY(), toCycle.end().getHeading()),
                         new Pose2d(20.5, -3.5 * ySign), //24, 1.0
-                        32);
+                        27.55);
             }
 
             while ((robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) && (System.currentTimeMillis() - startTime <= timeToPark[parkingNum])) {
@@ -202,11 +202,20 @@ public class AutoRight extends LinearOpMode {
             }
         }
 
-        robot.currentState = INTAKE_RELATIVE;
+        robot.currentState = IDLE;
+        long timer = System.currentTimeMillis();
 
+        robot.outtake.extension.retractExtension();
         robot.update();
-        while (!robot.outtake.isInPosition(5)) {
+        while (!(robot.outtake.slides.currentSlidesLength <= 5)) {
             robot.update();
+            if (robot.outtake.extension.isInPosition(1)) {
+                robot.claw.close();
+                robot.poleAlignment.oversideRetract();
+            }
+            if (System.currentTimeMillis() - timer >= 750) {
+                robot.currentState = INTAKE_RELATIVE;
+            }
         }
 
         robot.updateStayInPlacePID = false;

@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.modules.PoleAlignment;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.modules.claw.Claw;
+import org.firstinspires.ftc.teamcode.modules.actuation.Actuation;
 import org.firstinspires.ftc.teamcode.util.MyServo;
 import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
@@ -11,23 +11,27 @@ import java.util.ArrayList;
 public class PoleAlignment {
     MyServo poleAlignment;
     ArrayList<MyServo> servos;
-    Claw claw;
+    Actuation actuation;
 
     public double currentPoleAlignmentPosition = 0.0;
     public double targetPoleAlignmentPosition = 0.0;
     public double poleAlignmentPower = 1.0;
 
-    double upPosition = 0.911;
-    double downPosition = 0.2389;
-    double actuationLevelRetractPosition = 0.9269;
-    double actuationTiltRetractPosition = 0.816;
-    double initPosition = 0.6219;
+    // pole alignment positions
+    double initPosition = 0.703;
 
-    public PoleAlignment(HardwareMap hardwareMap, ArrayList<MyServo> servos, Claw claw) {
+    double downLevelPosition = 0.3539;
+    double undersideRetractLevelPosition = 0.0;
+    double oversideRetractLevelPosition = 1.0;
+
+    double downTiltPosition = 0.3049;
+    double oversideRetractTiltPosition = 0.91399;
+
+    public PoleAlignment(HardwareMap hardwareMap, ArrayList<MyServo> servos, Actuation actuation) {
         this.servos = servos;
-        this.claw = claw;
+        this.actuation = actuation;
 
-        poleAlignment = new MyServo(hardwareMap.servo.get("poleAlignment"),"Speed",0.5,0,1.0, upPosition);
+        poleAlignment = new MyServo(hardwareMap.servo.get("poleAlignment"),"Speed",0.5,0.0,1.0, oversideRetractLevelPosition);
 
         servos.add(5, poleAlignment);
     }
@@ -38,21 +42,13 @@ public class PoleAlignment {
     }
 
     public void update() {
-        updateActValues();
+        updatePoleAlignmentValues();
         updateTelemetry();
 
         poleAlignment.setPosition(targetPoleAlignmentPosition, poleAlignmentPower);
     }
 
-    public void setTargetPoleAlignmentPosition(double position) {
-        targetPoleAlignmentPosition = position;
-    }
-
-    public double getCurrentPoleAlignmentPosition() {
-        return currentPoleAlignmentPosition;
-    }
-
-    public void updateActValues() {
+    public void updatePoleAlignmentValues() {
         currentPoleAlignmentPosition = poleAlignment.getCurrentPosition();
     }
 
@@ -60,31 +56,31 @@ public class PoleAlignment {
         return Math.abs(targetPoleAlignmentPosition - currentPoleAlignmentPosition) <= position;
     }
 
-    public void up() {
-        targetPoleAlignmentPosition = upPosition;
-    }
-
-    public void down() {
-        targetPoleAlignmentPosition = downPosition;
-    }
-
     public boolean isInitPosition() {
-        return currentPoleAlignmentPosition == initPosition;
-    }
-
-    public void forceUp() {
-        targetPoleAlignmentPosition = upPosition;
+        return Math.abs(currentPoleAlignmentPosition - initPosition) <= 0.1;
     }
 
     public void init() {
         targetPoleAlignmentPosition = initPosition;
     }
 
-    public void actuationLevelRetract() {
-        targetPoleAlignmentPosition = actuationLevelRetractPosition;
+    public void down() {
+        if (actuation.isLevel()) {
+            targetPoleAlignmentPosition = downLevelPosition;
+        } else {
+            targetPoleAlignmentPosition = downTiltPosition;
+        }
     }
 
-    public void actuationTiltRetract() {
-        targetPoleAlignmentPosition = actuationTiltRetractPosition;
+    public void undersideRetract() {
+        targetPoleAlignmentPosition = undersideRetractLevelPosition;
+    }
+
+    public void oversideRetract() {
+        if (actuation.isLevel()) {
+            targetPoleAlignmentPosition = oversideRetractLevelPosition;
+        } else {
+            targetPoleAlignmentPosition = oversideRetractTiltPosition;
+        }
     }
 }

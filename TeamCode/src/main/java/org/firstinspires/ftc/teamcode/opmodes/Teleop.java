@@ -182,6 +182,8 @@ public class Teleop extends LinearOpMode {
                 }
             }
 
+            robot.poleAlignment.oversideRetract();
+
             robot.update();
         }
     }
