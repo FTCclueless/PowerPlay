@@ -20,7 +20,7 @@ public class PoleAlignment {
     // pole alignment positions
     double initPosition = 0.703;
 
-    double downLevelPosition = 0.3539;
+    double downLevelPosition = 0.3;
     double undersideRetractLevelPosition = 0.0;
     double oversideRetractLevelPosition = 1.0;
 

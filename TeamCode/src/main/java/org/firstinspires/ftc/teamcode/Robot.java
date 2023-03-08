@@ -183,12 +183,12 @@ public class Robot {
                     startClawCloseTime = System.currentTimeMillis();
                 }
 
-                if(sensors.coneInClaw || System.currentTimeMillis() - startClawCloseTime > 225) { // needs an external claw.close()
+                if(sensors.coneInClaw || System.currentTimeMillis() - startClawCloseTime > 225) {
                     claw.close();
                     actuation.tilt();
                     hasGrabbed = true;
-                    outtake.setTargetGlobal(drivePose, conePose, coneHeight + 7);
-                    if(System.currentTimeMillis() - startClawCloseTime > 600) { // needs an external claw.close()
+                    outtake.setTargetGlobal(drivePose, conePose, coneHeight + 8);
+                    if(outtake.slides.currentSlidesLength >= coneHeight + 5) { // needs an external claw.close()
                         isAtPoint = false;
                         hasGrabbed = false;
                         currentState = STATE.SCORING_GLOBAL;
@@ -196,6 +196,9 @@ public class Robot {
                 }
                 else {
                     outtake.setTargetGlobal(drivePose, conePose, coneHeight);
+                    if (!isAtPoint){
+                        outtake.extension.setTargetExtensionLength(outtake.extension.targetLinkageLength - 8);
+                    }
                 }
 
                 poleAlignment.undersideRetract();
