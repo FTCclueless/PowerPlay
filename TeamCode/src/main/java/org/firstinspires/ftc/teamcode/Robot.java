@@ -335,8 +335,6 @@ public class Robot {
                 break;
             case DEPOSIT_TELEOP:
                 outtake.slides.slidesPercentMax = 1.0;
-
-                outtake.setTargetRelative(extensionDistance*Math.cos(targetAngle + angleOffset),extensionDistance*Math.sin(targetAngle + angleOffset), scoringHeight); // changes dynamically based on driver input
                 claw.open();
                 if (System.currentTimeMillis() - timeSinceClawOpen >= 150) {
                     outtake.slides.setTargetSlidesLength(Math.min(scoringHeight + 6, 32));
@@ -344,8 +342,19 @@ public class Robot {
                     actuation.retract();
                     if ((outtake.slides.isInPosition(2)) || (System.currentTimeMillis() - timeSinceClawOpen >= (700))) {
                         actuation.retract();
-                        currentState = STATE.INTAKE_RELATIVE;
-                        targetAngle = Math.toRadians(180);
+
+                        if (turnRightTurret) {
+                            targetAngle = Math.toRadians(10);
+                        } else {
+                            targetAngle = Math.toRadians(-10);
+                        }
+
+                        outtake.setTargetRelative(outtake.extension.baseSlidesExtension * Math.cos(targetAngle),outtake.extension.baseSlidesExtension* Math.sin(targetAngle),0.0);
+
+                        if (outtake.turret.isInPosition(30)) {
+                            currentState = STATE.INTAKE_RELATIVE;
+                            targetAngle = Math.toRadians(180);
+                        }
                     }
                     break;
                 }
@@ -403,9 +412,9 @@ public class Robot {
 
             // determine turret direction
             if (turnRightTurret) {
-                targetAngle = Math.toRadians(180)/2;
+                targetAngle = Math.toRadians(170);
             } else {
-                targetAngle = Math.toRadians(180)/2 * -1;
+                targetAngle = Math.toRadians(-170);
             }
             newAngle = targetAngle;
             firstTurn = true;
@@ -466,7 +475,7 @@ public class Robot {
             //relative
 //            angleOffset -= gamepad.left_stick_x * Math.toRadians(0.8);
             angleOffset -= gamepad.right_stick_x * Math.toRadians(0.8);
-            extensionDistance -= gamepad.left_stick_y * 0.18375;
+            extensionDistance -= gamepad.left_stick_y * 0.3675;
             extensionDistance = Math.max(6.31103, Math.min(this.extensionDistance, (outtake.extension.strokeLength + outtake.extension.baseSlidesExtension)));
 
             // adjustments in auto aim

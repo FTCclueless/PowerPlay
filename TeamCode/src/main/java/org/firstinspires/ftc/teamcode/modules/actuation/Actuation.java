@@ -85,4 +85,12 @@ public class Actuation {
     public boolean isLevel () {
         return targetActPosition == levelPosition;
     }
+
+    public boolean isTilted () {
+        return targetActPosition == tiltedPosition;
+    }
+
+    public boolean isFolded () {
+        return targetActPosition == retractPosition;
+    }
 }

@@ -75,8 +75,8 @@ public class Sensors {
             turretAngle = motorPriorities.get(2).motor[0].getCurrentPosition() / turretTicksToRadian; // radians of turret
             turretVelocity = motorPriorities.get(2).motor[0].getVelocity() / turretTicksToRadian;
 
-//            leftDist = leftUltrasonic.getVoltage();
-//            rightDist = rightUltrasonic.getVoltage();
+            leftDist = leftUltrasonic.getVoltage();
+            rightDist = rightUltrasonic.getVoltage();
 //
 //            if (leftDist < 0.1) {
 //                robotNextToMeCounterLeft += 1;

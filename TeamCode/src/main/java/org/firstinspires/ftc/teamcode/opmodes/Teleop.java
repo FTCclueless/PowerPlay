@@ -75,6 +75,7 @@ public class Teleop extends LinearOpMode {
             }
 
             if ((robot.currentState == Robot.STATE.WAIT_FOR_START_SCORING) && (gamepad1.y)) {
+                extensionOut = false;
                 robot.outtake.slides.slidesPercentMax = 1.0;
                 robot.currentState = Robot.STATE.INTAKE_RELATIVE;
             }

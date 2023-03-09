@@ -73,7 +73,7 @@ public class AutoRight extends LinearOpMode {
                     robot.currentState = Robot.STATE.SCORING_GLOBAL;
                     robot.startScoringGlobal(
                             new Pose2d(toPose.getX(), toPose.getY(), toPose.getHeading()),
-                            new Pose2d(27.0, 0.0 * ySign),
+                            new Pose2d(24.0, 0.0 * ySign),
                             27.85);
                     Log.e("IN DISPLACEMENT", "MARKERS!");
                 })
@@ -193,7 +193,7 @@ public class AutoRight extends LinearOpMode {
             } else {
                 robot.startScoringGlobal(
                         new Pose2d(toCycle.end().getX(), toCycle.end().getY(), toCycle.end().getHeading()),
-                        new Pose2d(20.5, -3.5 * ySign), //24, 1.0
+                        new Pose2d(20.5, -2.25 * ySign), //24, 1.0
                         28.25);
             }
 
