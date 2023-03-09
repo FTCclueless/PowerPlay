@@ -322,13 +322,15 @@ public class Robot {
                 outtake.slides.slidesPercentMax = 1.0;
                 outtake.setTargetGlobal(drivePose, polePose, poleHeight);
 
-                actuation.level();
+//                actuation.level();
+                actuation.tilt();
 
                 if (System.currentTimeMillis() - timeSinceClawOpen >= 150) {
                     claw.open();
                 }
 
                 if (System.currentTimeMillis() - timeSinceClawOpen >= 300) {
+                    actuation.level();
                     poleAlignment.undersideRetract();
                     currentState = STATE.INTAKE_GLOBAL;
                 }

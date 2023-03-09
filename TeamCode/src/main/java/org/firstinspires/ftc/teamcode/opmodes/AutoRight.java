@@ -58,7 +58,7 @@ public class AutoRight extends LinearOpMode {
         );
 
         Pose2d cyclePose = new Pose2d(
-                44.5,
+                45.0, //44.5
                 12 * ySign,
                 Math.toRadians(180)
         );
