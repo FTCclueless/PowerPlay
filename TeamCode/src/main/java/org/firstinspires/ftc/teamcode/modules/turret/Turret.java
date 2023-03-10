@@ -46,6 +46,8 @@ public class Turret {
 
     double turretMaxSpeed = 5.52158708813; // radians per sec
 
+    public double maxTurretAngle = 630;
+
     public Turret(HardwareMap hardwareMap, ArrayList<MotorPriority> motorPriorities, Sensors sensors, Outtake outtake) {
         this.motorPriorities = motorPriorities;
         this.sensors = sensors;
@@ -81,18 +83,16 @@ public class Turret {
     public void update() {
         updateTurretValues();
 
-//        if (Storage.isTeleop) {
-//            this.turretPID.updatePID(teleopPID);
-//            Log.e("turret pid updated for teleop", "");
-//        } else {
-//            this.turretPID.updatePID(autoPID);
-//            Log.e("turret pid updated for auto", "");
-//        }
+        if (Storage.isTeleop) {
+            maxTurretAngle = 270;
+        } else {
+            maxTurretAngle = 630;
+        }
 
         turretError = clipAngle(targetTurretAngle - currentTurretAngle);
 
         // THIS CODE MAKES SURE THE WIRES DON"T TWIST TOO MUCH
-        if (Math.abs(currentTurretAngle + turretError) > Math.toRadians(630)) {
+        if (Math.abs(currentTurretAngle + turretError) > Math.toRadians(maxTurretAngle)) {
             turretError = targetTurretAngle - currentTurretAngle;
         }
 

@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
@@ -26,12 +27,13 @@ public class Sensors {
     private final VoltageSensor batteryVoltageSensor;
     private final AnalogInput leftUltrasonic;
     private final AnalogInput rightUltrasonic;
-//    private final ColorSensor clawColor;
+    private final ColorSensor clawColor;
 
     public double leftDist = 0.0;
     public double rightDist = 0.0;
     public double clawColorReading = 0.0;
     public boolean coneInClaw = false;
+    public boolean detectedCone = false;
     public boolean robotNextToMeLeft = false;
     public boolean robotNextToMeRight = false;
 
@@ -50,7 +52,7 @@ public class Sensors {
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
         leftUltrasonic = hardwareMap.get(AnalogInput.class, "leftUltrasonic");
         rightUltrasonic = hardwareMap.get(AnalogInput.class, "rightUltrasonic");
-//        clawColor = hardwareMap.get(ColorSensor.class, "clawColor");
+        clawColor = hardwareMap.get(ColorSensor.class, "clawColor");
     }
 
     public void updateTelemetry () {
@@ -77,16 +79,16 @@ public class Sensors {
 
             leftDist = leftUltrasonic.getVoltage();
             rightDist = rightUltrasonic.getVoltage();
-//
-//            if (leftDist < 0.1) {
-//                robotNextToMeCounterLeft += 1;
-//            } else {
-//                robotNextToMeCounterLeft -= 1;
-//            }
-//
-//            robotNextToMeCounterLeft = Math.max(0, Math.min(robotNextToMeCounterLeft, 10));
-//            robotNextToMeLeft = robotNextToMeCounterLeft > 5;
-//
+
+            if (leftDist < 0.1) {
+                robotNextToMeCounterLeft += 1;
+            } else {
+                robotNextToMeCounterLeft -= 1;
+            }
+
+            robotNextToMeCounterLeft = Math.max(0, Math.min(robotNextToMeCounterLeft, 10));
+            robotNextToMeLeft = robotNextToMeCounterLeft > 5;
+
 //            if (rightDist < 0.1) {
 //                robotNextToMeCounterRight += 1;
 //            } else {
@@ -96,11 +98,8 @@ public class Sensors {
 //            robotNextToMeCounterRight = Math.max(0, Math.min(robotNextToMeCounterRight, 10));
 //            robotNextToMeRight = robotNextToMeCounterRight > 5;
 
-            robotNextToMeLeft = false;
-            robotNextToMeRight = false;
-
-//            clawColorReading = clawColor.argb() / 10000000;
-//            clawColorReading = clawColor.alpha();
+            clawColorReading = Math.abs(clawColor.argb() / (1e8));
+            detectedCone = clawColorReading >= 1.0;
         }
         catch (Exception e) {
             Log.e("******* Error due to ", e.getClass().getName());

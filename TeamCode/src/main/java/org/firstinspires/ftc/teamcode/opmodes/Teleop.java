@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.modules.PoleAlignment.PoleAlignment;
 import org.firstinspires.ftc.teamcode.modules.actuation.Actuation;
 import org.firstinspires.ftc.teamcode.modules.claw.Claw;
 import org.firstinspires.ftc.teamcode.modules.claw.ConeFlipper;
@@ -30,6 +31,7 @@ public class Teleop extends LinearOpMode {
         Actuation actuation = robot.outtake.actuation;
         Sensors sensors = robot.sensors;
         ConeFlipper coneFlipper = robot.coneFlipper;
+        PoleAlignment poleAlignment = robot.poleAlignment;
 
         drive.localizer.setPoseEstimate(Storage.autoEndPose);
 
@@ -50,6 +52,7 @@ public class Teleop extends LinearOpMode {
 
         while(opModeInInit()) {
             coneFlipper.retract();
+            poleAlignment.oversideRetract();
             robot.update();
         }
 

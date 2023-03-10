@@ -75,7 +75,6 @@ public class AutoRight extends LinearOpMode {
                             new Pose2d(toPose.getX(), toPose.getY(), toPose.getHeading()),
                             new Pose2d(24.0, 0.0 * ySign),
                             27.85);
-                    Log.e("IN DISPLACEMENT", "MARKERS!");
                 })
                 .build();
 

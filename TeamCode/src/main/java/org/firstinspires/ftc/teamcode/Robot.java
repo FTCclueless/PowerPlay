@@ -332,6 +332,9 @@ public class Robot {
                 if (System.currentTimeMillis() - timeSinceClawOpen >= 300) {
                     actuation.level();
                     poleAlignment.undersideRetract();
+                }
+
+                if (System.currentTimeMillis() - timeSinceClawOpen >= 400) {
                     currentState = STATE.INTAKE_GLOBAL;
                 }
                 break;
