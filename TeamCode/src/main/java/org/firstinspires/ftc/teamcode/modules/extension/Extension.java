@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.modules.actuation.Actuation;
 import org.firstinspires.ftc.teamcode.modules.outtake.Outtake;
 import org.firstinspires.ftc.teamcode.util.MyServo;
+import org.firstinspires.ftc.teamcode.util.Storage;
 import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
 import java.util.ArrayList;
@@ -75,8 +76,13 @@ public class Extension {
         targetExtensionAngle = Math.acos((Math.pow(smallLinkage, 2) + Math.pow(targetLinkageLength, 2) - Math.pow(bigLinkage, 2))/(2*smallLinkage*targetLinkageLength));
     }
 
+    // Use when robot is facing reverse direciton, stops the clipping into the drivetrain
+    public void retractExtensionReverse() {
+        setTargetExtensionLength(baseSlidesExtension + 3.5);
+    }
+
     public void retractExtension() {
-        setTargetExtensionLength(baseSlidesExtension+0.25);
+        setTargetExtensionLength(baseSlidesExtension + 0.25);
     }
 
     public void extendExtension() {
