@@ -68,11 +68,7 @@ public class Teleop extends LinearOpMode {
                     claw.close();
                     robot.alreadyClosed = true;
                 } else {
-                    if (robot.outtake.turret.targetTurretAngle == 0 && robot.outtake.turret.isInPosition(5)) {
-                        claw.open();
-                    } else {
-                        claw.retractOpen();
-                    }
+                    claw.open();
                     robot.alreadyClosed = false;
                 }
             }
