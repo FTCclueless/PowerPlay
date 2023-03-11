@@ -73,8 +73,8 @@ public class AutoRight extends LinearOpMode {
                     robot.currentState = Robot.STATE.SCORING_GLOBAL;
                     robot.startScoringGlobal(
                             new Pose2d(toPose.getX(), toPose.getY(), toPose.getHeading()),
-                            new Pose2d(24.0, 0.0 * ySign),
-                            27.85);
+                            new Pose2d(23.0, 0.0 * ySign),
+                            28.75);
                 })
                 .build();
 
@@ -85,19 +85,19 @@ public class AutoRight extends LinearOpMode {
 
         drive.setPoseEstimate(origin);
 
-        Trajectory[] park = new Trajectory[]{
-                drive.trajectoryBuilder(cyclePose).strafeTo(new Vector2d( // parking position 3
+        TrajectorySequence[] park = new TrajectorySequence[]{
+                drive.trajectorySequenceBuilder(cyclePose).strafeTo(new Vector2d( // parking position 3
                         12,
                         cyclePose.getY()
-                )).build(),
-                drive.trajectoryBuilder(cyclePose).strafeTo(new Vector2d( // parking position 2
+                )).turn(Math.toRadians(95)).build(),
+                drive.trajectorySequenceBuilder(cyclePose).strafeTo(new Vector2d( // parking position 2
                         37,
                         cyclePose.getY()
-                )).build(),
-                drive.trajectoryBuilder(cyclePose).strafeTo(new Vector2d( // parking position 1
+                )).turn(Math.toRadians(95)).build(),
+                drive.trajectorySequenceBuilder(cyclePose).strafeTo(new Vector2d( // parking position 1
                         59.5,
                         cyclePose.getY()
-                )).build()
+                )).turn(Math.toRadians(95)).build()
         };
 
         robot.resetEncoders();
@@ -162,7 +162,7 @@ public class AutoRight extends LinearOpMode {
         robot.currentState = INTAKE_GLOBAL;
         robot.startIntakeGlobal(
                 new Pose2d(cyclePose.getX() + 3, cyclePose.getY(), cyclePose.getHeading()),
-                new Pose2d(70,12 * ySign),
+                new Pose2d(71,11 * ySign),
                 coneStackHeights[0]
         );
 
@@ -175,7 +175,7 @@ public class AutoRight extends LinearOpMode {
                 robot.currentState = INTAKE_GLOBAL;
                 robot.startIntakeGlobal(
                         toCycle.end(),
-                        new Pose2d(70.5,12 * ySign),
+                        new Pose2d(71,11 * ySign),
                         coneStackHeights[i]
                 );
             }
@@ -187,13 +187,13 @@ public class AutoRight extends LinearOpMode {
             if (robot.sensors.robotNextToMeRight) {
                 robot.startScoringGlobal(
                         new Pose2d(toCycle.end().getX(), toCycle.end().getY(), toCycle.end().getHeading()),
-                        new Pose2d(21.0, 24 * ySign), //24, 1.0
-                        18.35);
+                        new Pose2d(21.0, 24 * ySign),
+                        18.35 + robot.autoIntakeHeightDifference);
             } else {
                 robot.startScoringGlobal(
                         new Pose2d(toCycle.end().getX(), toCycle.end().getY(), toCycle.end().getHeading()),
-                        new Pose2d(20.5, -2.25 * ySign), //24, 1.0
-                        28.25);
+                        new Pose2d(23.5, -2.25 * ySign),
+                        28.5 + robot.autoIntakeHeightDifference);
             }
 
             while ((robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) && (System.currentTimeMillis() - startTime <= timeToPark[parkingNum])) {
@@ -204,6 +204,7 @@ public class AutoRight extends LinearOpMode {
         robot.currentState = IDLE;
         long timer = System.currentTimeMillis();
 
+        robot.poleAlignment.oversideRetract();
         robot.outtake.extension.retractExtension();
         robot.update();
         while (!(robot.outtake.slides.currentSlidesLength <= 5)) {
@@ -220,15 +221,17 @@ public class AutoRight extends LinearOpMode {
         robot.updateStayInPlacePID = false;
         robot.drivetrain.setBreakFollowingThresholds(new Pose2d(0.5, 0.5, Math.toRadians(5)), park[parkingNum].end());
 
-        robot.followTrajectory(park[parkingNum], this);
+        robot.followTrajectorySequence(park[parkingNum], this);
 
         long clawStart = System.currentTimeMillis();
         robot.claw.park();
-        robot.outtake.actuation.level();
+        robot.outtake.actuation.init();
+        robot.poleAlignment.init();
 
         do  {
             robot.claw.park();
-            robot.outtake.actuation.level();
+            robot.outtake.actuation.init();
+            robot.poleAlignment.init();
             robot.update();
         } while (System.currentTimeMillis() - clawStart <= 2000);
 

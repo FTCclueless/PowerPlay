@@ -106,6 +106,8 @@ public class Robot {
     public boolean alreadyClosed = false;
     public boolean tiltAct = true;
 
+    public double autoIntakeHeightDifference = 0.0;
+
     long timer = System.currentTimeMillis();
 
     public void update() {
@@ -152,14 +154,16 @@ public class Robot {
                     actuation.retract();
                 }
 
+                if (outtake.turret.targetTurretAngle == 0 && outtake.turret.isInPosition(5)) {
+                    claw.open();
+                } else {
+                    claw.retractOpen();
+                }
+
                 intakeHeight = Math.max(0, Math.min(intakeHeight, 10));
                 intakeExtensionDistance = Math.max(outtake.extension.baseSlidesExtension, Math.min(intakeExtensionDistance, 25));
 
                 outtake.setTargetRelative(intakeExtensionDistance,0,intakeHeight);
-
-                if (outtake.slides.isInPosition(0.25)) {
-                    claw.open();
-                }
 
                 if (sensors.coneInClaw) { // needs an external claw.close()
                     sensors.coneInClaw = false;
@@ -177,6 +181,7 @@ public class Robot {
                 if ((isAtPoint && (outtake.isInPositionGlobal(drivePose, conePose, 3.5)  && outtake.extension.isInPosition(0.1)) || hasGrabbed)) {
                     hasGrabbed = true;
                     claw.close();
+                    autoIntakeHeightDifference = outtake.slides.targetSlidesLength - outtake.slides.currentSlidesLength;
                 }
                 else {
                     claw.open();
@@ -187,8 +192,8 @@ public class Robot {
                     claw.close();
                     actuation.tilt();
                     hasGrabbed = true;
-                    outtake.setTargetGlobal(drivePose, conePose, coneHeight + 8);
-                    if(outtake.slides.currentSlidesLength >= coneHeight + 5) { // needs an external claw.close()
+                    outtake.setTargetGlobal(drivePose, conePose, coneHeight + 6.0);
+                    if(outtake.slides.currentSlidesLength >= coneHeight + 2.0) { // needs an external claw.close()
                         isAtPoint = false;
                         hasGrabbed = false;
                         currentState = STATE.SCORING_GLOBAL;
@@ -299,6 +304,7 @@ public class Robot {
 
                 if (isAtPoint) {
                     outtake.setTargetGlobal(drivePose, polePose, poleHeight);
+                    outtake.extension.setTargetExtensionLength(outtake.targetExtensionLength + 3);
                     actuation.tilt();
                     if (outtake.slides.currentSlidesLength >= 12) {
                         poleAlignment.down();
@@ -312,7 +318,7 @@ public class Robot {
                     poleAlignment.undersideRetract();
                 }
 
-                if (isAtPoint && (outtake.isInPositionGlobal(drivePose, polePose,3.5) && (outtake.extension.isInPosition(0.5)))) {
+                if (isAtPoint && (outtake.isInPositionGlobal(drivePose, polePose,5.0) && outtake.extension.isInPosition(3.5))) {
                     timeSinceClawOpen = System.currentTimeMillis();
                     isAtPoint = false;
                     currentState = STATE.DEPOSIT_AUTO;
@@ -325,16 +331,16 @@ public class Robot {
 //                actuation.level();
                 actuation.tilt();
 
-                if (System.currentTimeMillis() - timeSinceClawOpen >= 150) {
+                if (System.currentTimeMillis() - timeSinceClawOpen >= 500) {
                     claw.open();
                 }
 
-                if (System.currentTimeMillis() - timeSinceClawOpen >= 300) {
+                if (System.currentTimeMillis() - timeSinceClawOpen >= 550) {
                     actuation.level();
                     poleAlignment.undersideRetract();
                 }
 
-                if (System.currentTimeMillis() - timeSinceClawOpen >= 400) {
+                if (System.currentTimeMillis() - timeSinceClawOpen >= 575) {
                     currentState = STATE.INTAKE_GLOBAL;
                 }
                 break;
@@ -344,9 +350,9 @@ public class Robot {
                 if (System.currentTimeMillis() - timeSinceClawOpen >= 150) {
                     outtake.slides.setTargetSlidesLength(Math.min(scoringHeight + 6, 32));
                     outtake.extension.retractExtension();
-                    actuation.retract();
-                    if ((outtake.slides.isInPosition(2)) || (System.currentTimeMillis() - timeSinceClawOpen >= (700))) {
+                    if ((outtake.slides.isInPosition(2)) || (System.currentTimeMillis() - timeSinceClawOpen >= (300))) {
                         actuation.retract();
+                        claw.retractOpen();
 
                         if (turnRightTurret) {
                             targetAngle = Math.toRadians(10);
@@ -382,7 +388,7 @@ public class Robot {
         TelemetryUtil.packet.put("Intake Extension Distance", intakeExtensionDistance);
         TelemetryUtil.packet.put("Target Angle", Math.toDegrees(targetAngle));
 
-//        Log.e("Loop Time", loopTime + "");
+        Log.e("autoIntakeHeightDifference", autoIntakeHeightDifference + "");
     }
 
     public void startIntakeRelative() {
@@ -534,7 +540,7 @@ public class Robot {
             Log.e("stuck1", "");
             update();
         }
-        outtake.turret.setTargetTurretAngle(Math.toRadians(55) * turnSign);
+        outtake.turret.setTargetTurretAngle(Math.toRadians(48) * turnSign);
 
         while (!outtake.turret.isInPosition(0.75)) {
             Log.e("stuck2", "");

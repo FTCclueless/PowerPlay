@@ -39,7 +39,7 @@ public class Turret {
     public double turretError = 0.0;
     public static double kstatic = 0.11;
 
-    public static double slowDownAngle = 25;
+    public static double slowDownAngle = 40;
     public static double stopSlowDownAngle = 7;
     public static double slowDownSpeedPercentThreshold = 0.35;
     boolean isLargeTurn = false;

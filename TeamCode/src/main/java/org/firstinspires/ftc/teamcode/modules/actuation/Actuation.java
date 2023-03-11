@@ -20,7 +20,7 @@ public class Actuation {
     double tiltedPosition = 0.396; //0.2689
     double autoStackTiltPosition = 0.3; //0.2689
     double initPosition = 0.0;
-    double retractPosition = 1.0;
+    double retractPosition = 0.0;
 
     public Actuation(HardwareMap hardwareMap, ArrayList<MyServo> servos) {
         this.servos = servos;

@@ -18,21 +18,21 @@ public class PoleAlignment {
     public double poleAlignmentPower = 1.0;
 
     // pole alignment positions
-    double initPosition = 0.703;
+    double initPosition = 0.8089;
 
-    double downLevelPosition = 0.25;
+    double downLevelPosition = 0.43;
     double undersideRetractLevelPosition = 0.0;
     double oversideRetractLevelPosition = 1.0;
-    double oversideRetractTiltPosition = 0.91399;
+    double oversideRetractTiltPosition = 0.995;
     double oversideRetractFoldPosition = 1.0;
 
-    double downTiltPosition = 0.26; // 0.28
+    double downTiltPosition = 0.369; // 0.28
 
     public PoleAlignment(HardwareMap hardwareMap, ArrayList<MyServo> servos, Actuation actuation) {
         this.servos = servos;
         this.actuation = actuation;
 
-        poleAlignment = new MyServo(hardwareMap.servo.get("poleAlignment"),"Speed",0.5,0.0,1.0, oversideRetractLevelPosition);
+        poleAlignment = new MyServo(hardwareMap.servo.get("poleAlignment"),"Super Speed",0.5,0.0,1.0, oversideRetractLevelPosition);
 
         servos.add(5, poleAlignment);
     }
@@ -85,7 +85,7 @@ public class PoleAlignment {
             targetPoleAlignmentPosition = oversideRetractTiltPosition;
         }
         else if (actuation.isFolded()){
-            targetPoleAlignmentPosition = oversideRetractFoldPosition;
+            targetPoleAlignmentPosition = initPosition;
         }
         else {
             targetPoleAlignmentPosition = oversideRetractTiltPosition;
