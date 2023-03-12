@@ -134,6 +134,8 @@ public class AutoRight extends LinearOpMode {
                 telemetry.addLine("Could not find april tag! :(");
             }
 
+            robot.odoLifter.down();
+
             robot.update();
             telemetry.update();
         }
@@ -188,12 +190,12 @@ public class AutoRight extends LinearOpMode {
                 robot.startScoringGlobal(
                         new Pose2d(toCycle.end().getX(), toCycle.end().getY(), toCycle.end().getHeading()),
                         new Pose2d(21.0, 24 * ySign),
-                        18.35 + robot.autoIntakeHeightDifference);
+                        18.35);
             } else {
                 robot.startScoringGlobal(
                         new Pose2d(toCycle.end().getX(), toCycle.end().getY(), toCycle.end().getHeading()),
                         new Pose2d(23.5, -2.25 * ySign),
-                        28.5 + robot.autoIntakeHeightDifference);
+                        28.5);
             }
 
             while ((robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) && (System.currentTimeMillis() - startTime <= timeToPark[parkingNum])) {

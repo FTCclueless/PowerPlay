@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.modules.PoleAlignment.PoleAlignment;
 import org.firstinspires.ftc.teamcode.modules.actuation.Actuation;
 import org.firstinspires.ftc.teamcode.modules.claw.ConeFlipper;
 import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.modules.odoLifter.OdoLifter;
 import org.firstinspires.ftc.teamcode.util.Field;
 import org.firstinspires.ftc.teamcode.util.MyServo;
 import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
@@ -38,6 +39,7 @@ public class Robot {
     public Claw claw;
     public ConeFlipper coneFlipper;
     public PoleAlignment poleAlignment;
+    public OdoLifter odoLifter;
 
     public Sensors sensors;
     public Vision vision;
@@ -62,6 +64,7 @@ public class Robot {
         claw = new Claw(hardwareMap, servos);
         coneFlipper = new ConeFlipper(hardwareMap, servos);
         poleAlignment = new PoleAlignment(hardwareMap, servos, actuation);
+        odoLifter = new OdoLifter(hardwareMap, servos);
         vision = new Vision();
     }
 
@@ -542,7 +545,7 @@ public class Robot {
         }
         outtake.turret.setTargetTurretAngle(Math.toRadians(48) * turnSign);
 
-        while (!outtake.turret.isInPosition(0.75)) {
+        while (!outtake.turret.isInPosition(2)) {
             Log.e("stuck2", "");
             update();
         }
@@ -605,6 +608,7 @@ public class Robot {
         claw.update();
         coneFlipper.update();
         poleAlignment.update();
+        odoLifter.update();
 
         if (updateStayInPlacePID) {
             drivetrain.updatePID(stayInPlacePose);

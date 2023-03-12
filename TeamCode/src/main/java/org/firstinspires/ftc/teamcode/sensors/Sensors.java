@@ -27,7 +27,7 @@ public class Sensors {
     private final VoltageSensor batteryVoltageSensor;
     private final AnalogInput leftUltrasonic;
     private final AnalogInput rightUltrasonic;
-    private final ColorSensor clawColor;
+//    private final ColorSensor clawColor;
 
     public double leftDist = 0.0;
     public double rightDist = 0.0;
@@ -52,7 +52,7 @@ public class Sensors {
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
         leftUltrasonic = hardwareMap.get(AnalogInput.class, "leftUltrasonic");
         rightUltrasonic = hardwareMap.get(AnalogInput.class, "rightUltrasonic");
-        clawColor = hardwareMap.get(ColorSensor.class, "clawColor");
+//        clawColor = hardwareMap.get(ColorSensor.class, "clawColor");
     }
 
     public void updateTelemetry () {
@@ -98,7 +98,7 @@ public class Sensors {
 //            robotNextToMeCounterRight = Math.max(0, Math.min(robotNextToMeCounterRight, 10));
 //            robotNextToMeRight = robotNextToMeCounterRight > 5;
 
-            clawColorReading = Math.abs(clawColor.argb() / (1e8));
+//            clawColorReading = Math.abs(clawColor.argb() / (1e8));
             detectedCone = clawColorReading >= 1.0;
         }
         catch (Exception e) {
@@ -116,8 +116,8 @@ public class Sensors {
 //            turretAngle = motorPriorities.get(4).motor[0].getCurrentPosition() / turretTicksToRadian * -1; // radians of turret
 //            turretVelocity = motorPriorities.get(4).motor[0].getVelocity() / turretTicksToRadian * -1;
 
-            slidesLength = motorPriorities.get(5).motor[1].getCurrentPosition() / slidesTickToInch * -1; // inches of slides
-            slidesVelocity = motorPriorities.get(5).motor[1].getVelocity() / slidesTickToInch * -1;
+            slidesLength = motorPriorities.get(5).motor[0].getCurrentPosition() / slidesTickToInch; // inches of slides
+            slidesVelocity = motorPriorities.get(5).motor[0].getVelocity() / slidesTickToInch;
             slides1Current = motorPriorities.get(5).motor[0].getCurrent(CurrentUnit.AMPS);
             slides2Current = motorPriorities.get(5).motor[1].getCurrent(CurrentUnit.AMPS);
 
