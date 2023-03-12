@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.modules.actuation.Actuation;
 import org.firstinspires.ftc.teamcode.modules.claw.Claw;
 import org.firstinspires.ftc.teamcode.modules.claw.ConeFlipper;
 import org.firstinspires.ftc.teamcode.modules.drive.Drivetrain;
+import org.firstinspires.ftc.teamcode.modules.odoLifter.OdoLifter;
 import org.firstinspires.ftc.teamcode.sensors.Sensors;
 import org.firstinspires.ftc.teamcode.util.ButtonToggle;
 import org.firstinspires.ftc.teamcode.util.Storage;
@@ -32,6 +33,7 @@ public class Teleop extends LinearOpMode {
         Sensors sensors = robot.sensors;
         ConeFlipper coneFlipper = robot.coneFlipper;
         PoleAlignment poleAlignment = robot.poleAlignment;
+        OdoLifter odoLifter = robot.odoLifter;
 
         drive.localizer.setPoseEstimate(Storage.autoEndPose);
 
@@ -53,6 +55,7 @@ public class Teleop extends LinearOpMode {
         while(opModeInInit()) {
             coneFlipper.retract();
             poleAlignment.oversideRetract();
+            odoLifter.up();
             robot.update();
         }
 
@@ -68,7 +71,11 @@ public class Teleop extends LinearOpMode {
                     claw.close();
                     robot.alreadyClosed = true;
                 } else {
-                    claw.open();
+                    if (robot.outtake.turret.targetTurretAngle == 0 && robot.outtake.turret.isInPosition(5)) {
+                        claw.open();
+                    } else {
+                        claw.retractOpen();
+                    }
                     robot.alreadyClosed = false;
                 }
             }

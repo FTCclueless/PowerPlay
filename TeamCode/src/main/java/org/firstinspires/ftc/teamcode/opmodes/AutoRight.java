@@ -29,7 +29,7 @@ public class AutoRight extends LinearOpMode {
 
     OpenCVWrapper openCVWrapper;
 
-    double[] coneStackHeights = new double[]{4.5, 3.5, 2.6, 1.3, 0.85}; //5.65, 4.4, 2.75, 2.0, 0.5
+    double[] coneStackHeights = new double[]{5.25, 3.5, 3.1, 1.75, 0.8}; //5.65, 4.4, 2.75, 2.0, 0.5
     ButtonToggle toggleA = new ButtonToggle();
     double[] timeToPark = new double[]{35000, 35000, 35000};
 
@@ -74,7 +74,7 @@ public class AutoRight extends LinearOpMode {
                     robot.startScoringGlobal(
                             new Pose2d(toPose.getX(), toPose.getY(), toPose.getHeading()),
                             new Pose2d(24.0, 0.0 * ySign),
-                            27.85);
+                            29.5);
                 })
                 .build();
 
@@ -85,19 +85,19 @@ public class AutoRight extends LinearOpMode {
 
         drive.setPoseEstimate(origin);
 
-        Trajectory[] park = new Trajectory[]{
-                drive.trajectoryBuilder(cyclePose).strafeTo(new Vector2d( // parking position 3
+        TrajectorySequence[] park = new TrajectorySequence[]{
+                drive.trajectorySequenceBuilder(cyclePose).strafeTo(new Vector2d( // parking position 3
                         12,
                         cyclePose.getY()
-                )).build(),
-                drive.trajectoryBuilder(cyclePose).strafeTo(new Vector2d( // parking position 2
+                )).turn(Math.toRadians(95)).build(),
+                drive.trajectorySequenceBuilder(cyclePose).strafeTo(new Vector2d( // parking position 2
                         37,
                         cyclePose.getY()
-                )).build(),
-                drive.trajectoryBuilder(cyclePose).strafeTo(new Vector2d( // parking position 1
+                )).turn(Math.toRadians(95)).build(),
+                drive.trajectorySequenceBuilder(cyclePose).strafeTo(new Vector2d( // parking position 1
                         59.5,
                         cyclePose.getY()
-                )).build()
+                )).turn(Math.toRadians(95)).build()
         };
 
         robot.resetEncoders();
@@ -124,7 +124,7 @@ public class AutoRight extends LinearOpMode {
             parkingNum = openCVWrapper.getParkingNum();
             detected = true;
 
-            if (toggleA.isClicked(gamepad1.a)) {
+            if (toggleA.isToggled(gamepad1.a)) {
                 robot.claw.initClose();
             }
 
@@ -133,6 +133,8 @@ public class AutoRight extends LinearOpMode {
             } else {
                 telemetry.addLine("Could not find april tag! :(");
             }
+
+            robot.odoLifter.down();
 
             robot.update();
             telemetry.update();
@@ -162,7 +164,7 @@ public class AutoRight extends LinearOpMode {
         robot.currentState = INTAKE_GLOBAL;
         robot.startIntakeGlobal(
                 new Pose2d(cyclePose.getX() + 3, cyclePose.getY(), cyclePose.getHeading()),
-                new Pose2d(70,12 * ySign),
+                new Pose2d(72.5,11 * ySign),
                 coneStackHeights[0]
         );
 
@@ -175,7 +177,7 @@ public class AutoRight extends LinearOpMode {
                 robot.currentState = INTAKE_GLOBAL;
                 robot.startIntakeGlobal(
                         toCycle.end(),
-                        new Pose2d(70.5,12 * ySign),
+                        new Pose2d(72.5,11 * ySign),
                         coneStackHeights[i]
                 );
             }
@@ -187,13 +189,13 @@ public class AutoRight extends LinearOpMode {
             if (robot.sensors.robotNextToMeRight) {
                 robot.startScoringGlobal(
                         new Pose2d(toCycle.end().getX(), toCycle.end().getY(), toCycle.end().getHeading()),
-                        new Pose2d(21.0, 24 * ySign), //24, 1.0
+                        new Pose2d(21.0, 24 * ySign),
                         18.35);
             } else {
                 robot.startScoringGlobal(
                         new Pose2d(toCycle.end().getX(), toCycle.end().getY(), toCycle.end().getHeading()),
-                        new Pose2d(20.5, -2.25 * ySign), //24, 1.0
-                        28.25);
+                        new Pose2d(22.5, -3.5 * ySign),
+                        29.5);
             }
 
             while ((robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) && (System.currentTimeMillis() - startTime <= timeToPark[parkingNum])) {
@@ -204,6 +206,7 @@ public class AutoRight extends LinearOpMode {
         robot.currentState = IDLE;
         long timer = System.currentTimeMillis();
 
+        robot.poleAlignment.oversideRetract();
         robot.outtake.extension.retractExtension();
         robot.update();
         while (!(robot.outtake.slides.currentSlidesLength <= 5)) {
@@ -220,15 +223,17 @@ public class AutoRight extends LinearOpMode {
         robot.updateStayInPlacePID = false;
         robot.drivetrain.setBreakFollowingThresholds(new Pose2d(0.5, 0.5, Math.toRadians(5)), park[parkingNum].end());
 
-        robot.followTrajectory(park[parkingNum], this);
+        robot.followTrajectorySequence(park[parkingNum], this);
 
         long clawStart = System.currentTimeMillis();
         robot.claw.park();
-        robot.outtake.actuation.level();
+        robot.outtake.actuation.init();
+        robot.poleAlignment.init();
 
         do  {
             robot.claw.park();
-            robot.outtake.actuation.level();
+            robot.outtake.actuation.init();
+            robot.poleAlignment.init();
             robot.update();
         } while (System.currentTimeMillis() - clawStart <= 2000);
 

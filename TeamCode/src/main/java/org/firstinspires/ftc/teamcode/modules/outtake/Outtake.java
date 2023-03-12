@@ -83,8 +83,8 @@ public class Outtake {
         extensionIn = (currentExtensionLength <= (extension.baseSlidesExtension + 5.0));
         boolean backExtendCheck = targetSlidesLength <= 9 && (isTurretGoThroughRange(120, 185) || isTurretGoThroughRange(-185, -120));
         if(backExtendCheck) {
-//            Log.e("-----------------BACK EXTEND CHECK-----------------", "");
-            extensionIn = (currentExtensionLength <= (extension.baseSlidesExtension + 19.0));
+            Log.e("-----------------BACK EXTEND CHECK-----------------", "");
+            extensionIn = (currentExtensionLength <= (extension.baseSlidesExtension + 10.0));
         }
 
         // if we are going to ram into drivetrain or extension is out and the turret is within 9
@@ -100,19 +100,19 @@ public class Outtake {
 //            Log.e("setting target slides length to 12", "");
             slides.setTargetSlidesLength(12);
         } else {
-            if(extensionIn || slides.isInPosition(4, targetSlidesLength)) {
+            if(extensionIn || slides.isInPosition(6, targetSlidesLength)) {
                 slides.setTargetSlidesLength(targetSlidesLength);
             }
         }
 
         double targetExtent = 0;
-        if (turret.isInPosition(15, targetTurretAngle) && slides.isInPosition(4, targetSlidesLength)) {
+        if (turret.isInPosition(15, targetTurretAngle) && slides.isInPosition(6, targetSlidesLength)) {
             targetExtent = targetExtensionLength;
         } else {
             targetExtent = extension.baseSlidesExtension;
             if (backExtendCheck) {
                 if (!Storage.isTeleop) {
-                    targetExtent += 1.0;
+                    targetExtent += 7.0;
                 }
 //                else {
 //                    targetExtent += 4.0;
@@ -157,8 +157,8 @@ public class Outtake {
 
     double[][] clipAngles =
     {
-        {17, 35},
-        {-35, -17},
+        {5, 65},
+        {-65, -5},
         {95, 160},
         {-160, -95}
     };

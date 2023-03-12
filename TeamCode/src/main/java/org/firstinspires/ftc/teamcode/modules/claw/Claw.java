@@ -14,13 +14,14 @@ public class Claw {
     public double targetClawPosition = 0.0;
     public double clawPower = 1.0;
 
-    public double closePosition = 0.0;
-    public double openPosition = 0.442;
-    public double parkPosition = 0.677;
-    public double initPosition = 0.282;
-    public double initClosePosition = 0.175;
+    public double closePosition = 0.139;
+    public double openPosition = 0.514;
+    public double retractOpenPosition = 0.297;
+    public double parkPosition = 0.916;
+    public double initPosition = 0.382;
+    public double initClosePosition = 0.2639;
 
-    public enum STATE {OPEN, CLOSED, PARK, INIT, INIT_CLOSE}
+    public enum STATE {OPEN, RETRACT_OPEN, CLOSED, PARK, INIT, INIT_CLOSE}
     public STATE currentState = STATE.OPEN;
 
     ArrayList<MyServo> servos;
@@ -44,6 +45,9 @@ public class Claw {
         switch (currentState) {
             case OPEN:
                 setTargetClawPosition(openPosition);
+                break;
+            case RETRACT_OPEN:
+                setTargetClawPosition(retractOpenPosition);
                 break;
             case CLOSED:
                 setTargetClawPosition(closePosition);
@@ -76,6 +80,10 @@ public class Claw {
 
     public void open() {
         currentState = STATE.OPEN;
+    }
+
+    public void retractOpen() {
+        currentState = STATE.RETRACT_OPEN;
     }
 
     public void close() {
