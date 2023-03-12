@@ -49,33 +49,21 @@ public class ParkAuto extends LinearOpMode {
 
         // TODO clean this up a little? Kinda lookin a little bad
         Trajectory[] park = new Trajectory[]{
-                drive.trajectoryBuilder(origin).strafeTo(new Vector2d( // parking position 1
+                drive.trajectoryBuilder(to.end()).strafeTo(new Vector2d( // parking position 1
                         59.5,
-                        12 * ySign
+                        33 * ySign
                 )).build(),
-                drive.trajectoryBuilder(origin).strafeTo(new Vector2d( // parking position 2
+                drive.trajectoryBuilder(to.end()).strafeTo(new Vector2d( // parking position 2
                         34,
-                        12 * ySign
+                        33 * ySign
                 )).build(),
-                drive.trajectoryBuilder(origin).strafeTo(new Vector2d( // parking position 3
+                drive.trajectoryBuilder(to.end()).strafeTo(new Vector2d( // parking position 3
                         13,
-                        12 * ySign
+                        33 * ySign
                 )).build()
         };
 
-        robot.poleAlignment.parkAutoInit();
-        while (!robot.poleAlignment.isParkAutoInitPosition()) {
-            robot.update();
-        }
-        long clawStart = System.currentTimeMillis();
-        robot.resetEncoders();
-        robot.outtake.actuation.level();
-        robot.outtake.extension.retractExtension();
-        robot.claw.park();
-        robot.update();
-        while (System.currentTimeMillis() - clawStart <= 650) {
-            robot.update();
-        }
+        robot.initPosition(lr);
 
         openCVWrapper.init();
         openCVWrapper.start();
@@ -89,9 +77,6 @@ public class ParkAuto extends LinearOpMode {
             parkingNum = openCVWrapper.getParkingNum();
             detected = true;  //should we always set to true ??? It is only used to send telemetry anyways
             ///////////
-
-            robot.outtake.actuation.level();
-            robot.outtake.extension.retractExtension();
 
             robot.update();
 

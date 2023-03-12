@@ -19,7 +19,6 @@ public class PoleAlignment {
 
     // pole alignment positions
     double initPosition = 0.8089;
-    double parkInitPosition = 0.7089;
 
     double downLevelPosition = 0.43;
     double undersideRetractLevelPosition = 0.0;
@@ -54,12 +53,19 @@ public class PoleAlignment {
         currentPoleAlignmentPosition = poleAlignment.getCurrentPosition();
     }
 
-    public void parkAutoInit() {
-        currentPoleAlignmentPosition = parkInitPosition;
-    }
-
-    public boolean isParkAutoInitPosition() {
-        return Math.abs(currentPoleAlignmentPosition - parkInitPosition) <= 0.1;
+    public boolean isOversideRetract() {
+        if (actuation.isLevel()) {
+            return Math.abs(targetPoleAlignmentPosition - oversideRetractLevelPosition) <= 0.1;
+        }
+        else if (actuation.isTilted()){
+            return Math.abs(targetPoleAlignmentPosition - oversideRetractTiltPosition) <= 0.1;
+        }
+        else if (actuation.isFolded()){
+            return Math.abs(targetPoleAlignmentPosition - oversideRetractFoldPosition) <= 0.1;
+        }
+        else {
+            return Math.abs(targetPoleAlignmentPosition - oversideRetractTiltPosition) <= 0.1;
+        }
     }
 
     public boolean isInPosition (double position) {
