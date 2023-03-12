@@ -332,7 +332,7 @@ public class Robot {
                 outtake.setTargetGlobal(drivePose, polePose, poleHeight);
 
 //                actuation.level();
-                actuation.tilt();
+                actuation.level();
 
                 if (System.currentTimeMillis() - timeSinceClawOpen >= 500) {
                     claw.open();

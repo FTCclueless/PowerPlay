@@ -77,26 +77,26 @@ public class Sensors {
             turretAngle = motorPriorities.get(2).motor[0].getCurrentPosition() / turretTicksToRadian; // radians of turret
             turretVelocity = motorPriorities.get(2).motor[0].getVelocity() / turretTicksToRadian;
 
-            leftDist = leftUltrasonic.getVoltage();
+//            leftDist = leftUltrasonic.getVoltage();
             rightDist = rightUltrasonic.getVoltage();
 
-            if (leftDist < 0.1) {
-                robotNextToMeCounterLeft += 1;
-            } else {
-                robotNextToMeCounterLeft -= 1;
-            }
-
-            robotNextToMeCounterLeft = Math.max(0, Math.min(robotNextToMeCounterLeft, 10));
-            robotNextToMeLeft = robotNextToMeCounterLeft > 5;
-
-//            if (rightDist < 0.1) {
-//                robotNextToMeCounterRight += 1;
+//            if (leftDist < 0.1) {
+//                robotNextToMeCounterLeft += 1;
 //            } else {
-//                robotNextToMeCounterRight -= 1;
+//                robotNextToMeCounterLeft -= 1;
 //            }
 //
-//            robotNextToMeCounterRight = Math.max(0, Math.min(robotNextToMeCounterRight, 10));
-//            robotNextToMeRight = robotNextToMeCounterRight > 5;
+//            robotNextToMeCounterLeft = Math.max(0, Math.min(robotNextToMeCounterLeft, 10));
+//            robotNextToMeLeft = robotNextToMeCounterLeft > 5;
+
+            if (rightDist < 0.1) {
+                robotNextToMeCounterRight += 1;
+            } else {
+                robotNextToMeCounterRight -= 1;
+            }
+
+            robotNextToMeCounterRight = Math.max(0, Math.min(robotNextToMeCounterRight, 10));
+            robotNextToMeRight = robotNextToMeCounterRight > 5;
 
 //            clawColorReading = Math.abs(clawColor.argb() / (1e8));
             detectedCone = clawColorReading >= 1.0;

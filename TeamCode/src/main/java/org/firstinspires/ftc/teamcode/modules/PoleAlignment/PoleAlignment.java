@@ -85,7 +85,7 @@ public class PoleAlignment {
             targetPoleAlignmentPosition = oversideRetractTiltPosition;
         }
         else if (actuation.isFolded()){
-            targetPoleAlignmentPosition = initPosition;
+            targetPoleAlignmentPosition = oversideRetractFoldPosition;
         }
         else {
             targetPoleAlignmentPosition = oversideRetractTiltPosition;
