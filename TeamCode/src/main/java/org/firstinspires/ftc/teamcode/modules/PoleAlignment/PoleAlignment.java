@@ -19,6 +19,7 @@ public class PoleAlignment {
 
     // pole alignment positions
     double initPosition = 0.8089;
+    double parkInitPosition = 0.7089;
 
     double downLevelPosition = 0.43;
     double undersideRetractLevelPosition = 0.0;
@@ -51,6 +52,14 @@ public class PoleAlignment {
 
     public void updatePoleAlignmentValues() {
         currentPoleAlignmentPosition = poleAlignment.getCurrentPosition();
+    }
+
+    public void parkAutoInit() {
+        currentPoleAlignmentPosition = parkInitPosition;
+    }
+
+    public boolean isParkAutoInitPosition() {
+        return Math.abs(currentPoleAlignmentPosition - parkInitPosition) <= 0.1;
     }
 
     public boolean isInPosition (double position) {

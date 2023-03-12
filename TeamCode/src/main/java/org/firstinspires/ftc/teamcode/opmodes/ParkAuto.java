@@ -63,6 +63,10 @@ public class ParkAuto extends LinearOpMode {
                 )).build()
         };
 
+        robot.poleAlignment.parkAutoInit();
+        while (!robot.poleAlignment.isParkAutoInitPosition()) {
+            robot.update();
+        }
         long clawStart = System.currentTimeMillis();
         robot.resetEncoders();
         robot.outtake.actuation.level();

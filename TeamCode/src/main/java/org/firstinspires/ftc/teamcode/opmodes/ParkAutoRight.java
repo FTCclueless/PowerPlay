@@ -3,10 +3,10 @@ package org.firstinspires.ftc.teamcode.opmodes;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Autonomous(group = "Test")
-public class ParkAutoTopLeft extends ParkAuto {
-    public ParkAutoTopLeft() {
+public class ParkAutoRight extends ParkAuto {
+    public ParkAutoRight() {
         super();
-        super.lr = true;
+        super.lr = false;
         super.tb = true;
     }
 }
