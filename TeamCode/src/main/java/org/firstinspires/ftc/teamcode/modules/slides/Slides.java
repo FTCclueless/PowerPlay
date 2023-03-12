@@ -81,12 +81,6 @@ public class Slides {
 
         slidesError = targetSlidesLength - currentSlidesLength;
 
-        if (!Storage.isTeleop) {
-            maxSlidesSpeed = 82.9718558749 * 0.95;
-        } else {
-            maxSlidesSpeed = 82.9718558749;
-        }
-
 //        if (Math.abs(slidesError) <= 5) {
 //            if (isVelocity) {
 //                isVelocity = false;

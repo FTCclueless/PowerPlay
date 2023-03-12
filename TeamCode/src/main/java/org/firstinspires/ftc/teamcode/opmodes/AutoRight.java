@@ -74,7 +74,7 @@ public class AutoRight extends LinearOpMode {
                     robot.startScoringGlobal(
                             new Pose2d(toPose.getX(), toPose.getY(), toPose.getHeading()),
                             new Pose2d(24.0, 0.0 * ySign),
-                            29);
+                            29.5);
                 })
                 .build();
 
@@ -194,7 +194,7 @@ public class AutoRight extends LinearOpMode {
             } else {
                 robot.startScoringGlobal(
                         new Pose2d(toCycle.end().getX(), toCycle.end().getY(), toCycle.end().getHeading()),
-                        new Pose2d(23.5, -3.5 * ySign),
+                        new Pose2d(22.5, -3.5 * ySign),
                         29.5);
             }
 

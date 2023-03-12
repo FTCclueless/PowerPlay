@@ -331,7 +331,6 @@ public class Robot {
                 outtake.slides.slidesPercentMax = 1.0;
                 outtake.setTargetGlobal(drivePose, polePose, poleHeight);
 
-//                actuation.level();
                 actuation.level();
 
                 if (System.currentTimeMillis() - timeSinceClawOpen >= 500) {

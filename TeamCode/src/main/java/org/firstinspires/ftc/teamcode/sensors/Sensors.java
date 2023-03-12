@@ -89,14 +89,14 @@ public class Sensors {
 //            robotNextToMeCounterLeft = Math.max(0, Math.min(robotNextToMeCounterLeft, 10));
 //            robotNextToMeLeft = robotNextToMeCounterLeft > 5;
 
-            if (rightDist < 0.1) {
-                robotNextToMeCounterRight += 1;
-            } else {
-                robotNextToMeCounterRight -= 1;
-            }
-
-            robotNextToMeCounterRight = Math.max(0, Math.min(robotNextToMeCounterRight, 10));
-            robotNextToMeRight = robotNextToMeCounterRight > 5;
+//            if (rightDist < 0.1) {
+//                robotNextToMeCounterRight += 1;
+//            } else {
+//                robotNextToMeCounterRight -= 1;
+//            }
+//
+//            robotNextToMeCounterRight = Math.max(0, Math.min(robotNextToMeCounterRight, 10));
+//            robotNextToMeRight = robotNextToMeCounterRight > 5;
 
 //            clawColorReading = Math.abs(clawColor.argb() / (1e8));
             detectedCone = clawColorReading >= 1.0;
