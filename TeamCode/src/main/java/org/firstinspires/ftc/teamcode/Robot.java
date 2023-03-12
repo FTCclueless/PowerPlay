@@ -203,6 +203,7 @@ public class Robot {
                     }
                 }
                 else {
+                    actuation.level();
                     outtake.setTargetGlobal(drivePose, conePose, coneHeight);
                     if (!isAtPoint){
                         outtake.extension.setTargetExtensionLength(outtake.extension.targetLinkageLength - 8);
@@ -307,7 +308,7 @@ public class Robot {
 
                 if (isAtPoint) {
                     outtake.setTargetGlobal(drivePose, polePose, poleHeight);
-                    outtake.extension.setTargetExtensionLength(outtake.targetExtensionLength + 3);
+                    outtake.extension.setTargetExtensionLength(outtake.targetExtensionLength + 8);
                     actuation.tilt();
                     if (outtake.slides.currentSlidesLength >= 12) {
                         poleAlignment.down();
@@ -331,18 +332,15 @@ public class Robot {
                 outtake.slides.slidesPercentMax = 1.0;
                 outtake.setTargetGlobal(drivePose, polePose, poleHeight);
 
-                actuation.level();
-
-                if (System.currentTimeMillis() - timeSinceClawOpen >= 500) {
+                if (System.currentTimeMillis() - timeSinceClawOpen >= 600) {
                     claw.open();
                 }
 
-                if (System.currentTimeMillis() - timeSinceClawOpen >= 550) {
-                    actuation.level();
+                if (System.currentTimeMillis() - timeSinceClawOpen >= 650) {
                     poleAlignment.undersideRetract();
                 }
 
-                if (System.currentTimeMillis() - timeSinceClawOpen >= 575) {
+                if (System.currentTimeMillis() - timeSinceClawOpen >= 700) {
                     currentState = STATE.INTAKE_GLOBAL;
                 }
                 break;

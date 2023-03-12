@@ -26,7 +26,7 @@ public class PoleAlignment {
     double oversideRetractTiltPosition = 0.995;
     double oversideRetractFoldPosition = 1.0;
 
-    double downTiltPosition = 0.369; // 0.28
+    double downTiltPosition = 0.4; // 0.28
 
     public PoleAlignment(HardwareMap hardwareMap, ArrayList<MyServo> servos, Actuation actuation) {
         this.servos = servos;
