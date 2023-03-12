@@ -130,7 +130,7 @@ public class Robot {
                 coneFlipper.retract();
                 break;
             case RETRACT:
-                claw.open();
+                claw.close();
                 actuation.level();
                 outtake.retract();
                 if (startIntakeRelative) {
@@ -154,7 +154,11 @@ public class Robot {
                     actuation.retract();
                 }
 
-                claw.open();
+                if (outtake.turret.targetTurretAngle == 0 && outtake.turret.isInPosition(5)) {
+                    claw.open();
+                } else {
+                    claw.retractOpen();
+                }
 
                 intakeHeight = Math.max(0, Math.min(intakeHeight, 10));
                 intakeExtensionDistance = Math.max(outtake.extension.baseSlidesExtension, Math.min(intakeExtensionDistance, 25));
@@ -348,7 +352,7 @@ public class Robot {
                     outtake.extension.retractExtension();
                     if ((outtake.slides.isInPosition(2)) || (System.currentTimeMillis() - timeSinceClawOpen >= (300))) {
                         actuation.retract();
-                        claw.open();
+                        claw.retractOpen();
 
                         if (turnRightTurret) {
                             targetAngle = Math.toRadians(10);
