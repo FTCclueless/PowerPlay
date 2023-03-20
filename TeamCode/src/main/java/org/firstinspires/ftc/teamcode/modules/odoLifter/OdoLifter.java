@@ -22,7 +22,7 @@ public class OdoLifter {
 
         odoLifter = new MyServo(hardwareMap.servo.get("odoLifter"),"Torque",1,0,1.0, downPosition);
 
-        servos.add(6, odoLifter);
+        servos.add(5, odoLifter);
     }
 
     public void update() {

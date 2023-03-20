@@ -43,27 +43,25 @@ public class ParkAuto extends LinearOpMode {
         TrajectorySequence to = drive.trajectorySequenceBuilder(origin)
             .strafeTo(new Vector2d(
                 origin.getX(),
-                33 * ySign
+                20 * ySign
             ))
             .build();
 
         // TODO clean this up a little? Kinda lookin a little bad
         Trajectory[] park = new Trajectory[]{
                 drive.trajectoryBuilder(to.end()).strafeTo(new Vector2d( // parking position 1
-                        59.5,
-                        33 * ySign
+                        59.5 * xSign,
+                        20 * ySign
                 )).build(),
                 drive.trajectoryBuilder(to.end()).strafeTo(new Vector2d( // parking position 2
-                        34,
-                        33 * ySign
+                        34 * xSign,
+                        20 * ySign
                 )).build(),
                 drive.trajectoryBuilder(to.end()).strafeTo(new Vector2d( // parking position 3
-                        13,
-                        33 * ySign
+                        13 * xSign,
+                        20 * ySign
                 )).build()
         };
-
-        robot.initPosition(lr);
 
         openCVWrapper.init();
         openCVWrapper.start();

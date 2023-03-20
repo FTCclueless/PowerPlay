@@ -63,6 +63,10 @@ public class Extension {
         extension.setAngle(-targetExtensionAngle, extensionPower);
     }
 
+    public void setTargetExtensionAngle (double angle) {
+        targetExtensionAngle = Math.toRadians(angle);
+    }
+
     public void setTargetExtensionLength(double length) {
         length = Math.max(baseSlidesExtension, Math.min(length, strokeLength+baseSlidesExtension - 0.00002));
 

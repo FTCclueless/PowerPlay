@@ -27,17 +27,8 @@ public class Reset extends LinearOpMode {
             robot.outtake.extension.retractExtension();
             robot.outtake.slides.setTargetSlidesLength(0);
             robot.coneFlipper.retract();
-            robot.claw.close();
+            robot.claw.open();
             robot.odoLifter.down();
-
-            if (robot.claw.isClosed()) {
-                robot.poleAlignment.oversideRetract();
-                poleAlignmentMoved = true;
-            }
-
-            if (poleAlignmentMoved) {
-                robot.claw.open();
-            }
 
             robot.update();
         }

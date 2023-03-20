@@ -58,7 +58,7 @@ public class AutoRight extends LinearOpMode {
         );
 
         Pose2d cyclePose = new Pose2d(
-                45.0, //44.5
+                43.0, //44.5
                 12 * ySign,
                 Math.toRadians(180)
         );
@@ -69,11 +69,10 @@ public class AutoRight extends LinearOpMode {
                 .lineToConstantHeading(new Vector2d(toPose.getX(), toPose.getY()))
                 .addDisplacementMarker(3, () -> {
                     robot.claw.close();
-                    robot.poleAlignment.oversideRetract();
                     robot.currentState = Robot.STATE.SCORING_GLOBAL;
                     robot.startScoringGlobal(
                             new Pose2d(toPose.getX(), toPose.getY(), toPose.getHeading()),
-                            new Pose2d(22.0, 0.0 * ySign),
+                            new Pose2d(24.0, -3.5 * ySign),
                             28.5);
                 })
                 .build();
@@ -194,7 +193,7 @@ public class AutoRight extends LinearOpMode {
             } else {
                 robot.startScoringGlobal(
                         new Pose2d(toCycle.end().getX(), toCycle.end().getY(), toCycle.end().getHeading()),
-                        new Pose2d(24, -2.0 * ySign),
+                        new Pose2d(23, -3.5 * ySign),
                         28.5);
             }
 
@@ -206,14 +205,12 @@ public class AutoRight extends LinearOpMode {
         robot.currentState = IDLE;
         long timer = System.currentTimeMillis();
 
-        robot.poleAlignment.oversideRetract();
         robot.outtake.extension.retractExtension();
         robot.update();
         while (!(robot.outtake.slides.currentSlidesLength <= 5)) {
             robot.update();
             if (robot.outtake.extension.isInPosition(1)) {
                 robot.claw.close();
-                robot.poleAlignment.oversideRetract();
             }
             if (System.currentTimeMillis() - timer >= 750) {
                 robot.currentState = INTAKE_RELATIVE;
@@ -228,12 +225,10 @@ public class AutoRight extends LinearOpMode {
         long clawStart = System.currentTimeMillis();
         robot.claw.park();
         robot.outtake.actuation.init();
-        robot.poleAlignment.init();
 
         do  {
             robot.claw.park();
             robot.outtake.actuation.init();
-            robot.poleAlignment.init();
             robot.update();
         } while (System.currentTimeMillis() - clawStart <= 2000);
 

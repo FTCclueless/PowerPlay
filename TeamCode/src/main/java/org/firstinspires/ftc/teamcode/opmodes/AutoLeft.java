@@ -69,7 +69,6 @@ public class AutoLeft extends LinearOpMode {
                 .lineToConstantHeading(new Vector2d(toPose.getX(), toPose.getY()))
                 .addDisplacementMarker(3, () -> {
                     robot.claw.close();
-                    robot.poleAlignment.oversideRetract();
                     robot.currentState = Robot.STATE.SCORING_GLOBAL;
                     robot.startScoringGlobal(
                             new Pose2d(toPose.getX(), toPose.getY(), toPose.getHeading()),
@@ -184,17 +183,17 @@ public class AutoLeft extends LinearOpMode {
                 robot.update();
             }
 
-            if (robot.sensors.robotNextToMeLeft) {
-                robot.startScoringGlobal(
-                        new Pose2d(toCycle.end().getX(), toCycle.end().getY(), toCycle.end().getHeading()),
-                        new Pose2d(21.0, 25.5 * ySign),
-                        18.35);
-            } else {
-                robot.startScoringGlobal(
-                        new Pose2d(toCycle.end().getX(), toCycle.end().getY(), toCycle.end().getHeading()),
-                        new Pose2d(25, -1.0 * ySign),
-                        28.5);
-            }
+//            if (robot.sensors.robotNextToMeLeft) {
+            robot.startScoringGlobal(
+                    new Pose2d(toCycle.end().getX(), toCycle.end().getY(), toCycle.end().getHeading()),
+                    new Pose2d(21.0, 25.5 * ySign),
+                    18.35);
+//            } else {
+//                robot.startScoringGlobal(
+//                        new Pose2d(toCycle.end().getX(), toCycle.end().getY(), toCycle.end().getHeading()),
+//                        new Pose2d(25, -1.0 * ySign),
+//                        28.5);
+//            }
 
             while ((robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) && (System.currentTimeMillis() - startTime <= timeToPark[parkingNum])) {
                 robot.update();
@@ -204,14 +203,12 @@ public class AutoLeft extends LinearOpMode {
         robot.currentState = IDLE;
         long timer = System.currentTimeMillis();
 
-        robot.poleAlignment.oversideRetract();
         robot.outtake.extension.retractExtension();
         robot.update();
         while (!(robot.outtake.slides.currentSlidesLength <= 5)) {
             robot.update();
             if (robot.outtake.extension.isInPosition(1)) {
                 robot.claw.close();
-                robot.poleAlignment.oversideRetract();
             }
             if (System.currentTimeMillis() - timer >= 750) {
                 robot.currentState = INTAKE_RELATIVE;
@@ -226,12 +223,10 @@ public class AutoLeft extends LinearOpMode {
         long clawStart = System.currentTimeMillis();
         robot.claw.park();
         robot.outtake.actuation.init();
-        robot.poleAlignment.init();
 
         do  {
             robot.claw.park();
             robot.outtake.actuation.init();
-            robot.poleAlignment.init();
             robot.update();
         } while (System.currentTimeMillis() - clawStart <= 2000);
 

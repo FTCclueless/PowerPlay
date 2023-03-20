@@ -16,6 +16,7 @@ public class Actuation {
     public double actPower = 1.0;
 
     double levelPosition = 0.682;
+    double miniDunkPosition = 0.525;
     double downLevelPosition = 0.746;
     double tiltedPosition = 0.396; //0.2689
     double autoStackTiltPosition = 0.3; //0.2689
@@ -80,6 +81,10 @@ public class Actuation {
 
     public void autoStackTilt() {
         targetActPosition = autoStackTiltPosition;
+    }
+
+    public void miniDunk() {
+        targetActPosition = miniDunkPosition;
     }
 
     public boolean isLevel () {

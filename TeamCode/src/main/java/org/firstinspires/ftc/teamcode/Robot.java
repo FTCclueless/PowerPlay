@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.modules.PoleAlignment.PoleAlignment;
 import org.firstinspires.ftc.teamcode.modules.actuation.Actuation;
 import org.firstinspires.ftc.teamcode.modules.claw.ConeFlipper;
 import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequence.TrajectorySequence;
@@ -38,7 +37,6 @@ public class Robot {
     private Actuation actuation;
     public Claw claw;
     public ConeFlipper coneFlipper;
-    public PoleAlignment poleAlignment;
     public OdoLifter odoLifter;
 
     public Sensors sensors;
@@ -63,7 +61,6 @@ public class Robot {
         actuation = outtake.actuation;
         claw = new Claw(hardwareMap, servos);
         coneFlipper = new ConeFlipper(hardwareMap, servos);
-        poleAlignment = new PoleAlignment(hardwareMap, servos, actuation);
         odoLifter = new OdoLifter(hardwareMap, servos);
         vision = new Vision();
     }
@@ -191,7 +188,7 @@ public class Robot {
                     startClawCloseTime = System.currentTimeMillis();
                 }
 
-                if(sensors.coneInClaw || System.currentTimeMillis() - startClawCloseTime > 225) {
+                if(sensors.coneInClaw || System.currentTimeMillis() - startClawCloseTime > 300) {
                     claw.close();
                     actuation.tilt();
                     hasGrabbed = true;
@@ -209,8 +206,6 @@ public class Robot {
                         outtake.extension.setTargetExtensionLength(outtake.extension.targetLinkageLength - 8);
                     }
                 }
-
-                poleAlignment.undersideRetract();
                 break;
             case WAIT_FOR_START_SCORING:
                 claw.close();
@@ -308,21 +303,16 @@ public class Robot {
 
                 if (isAtPoint) {
                     outtake.setTargetGlobal(drivePose, polePose, poleHeight);
-                    outtake.extension.setTargetExtensionLength(outtake.targetExtensionLength + 8);
                     actuation.tilt();
-                    if (outtake.slides.currentSlidesLength >= 12) {
-                        poleAlignment.down();
-                    }
                 }
                 else {
                     claw.close();
                     actuation.level();
                     outtake.setTargetGlobal(drivePose, polePose, 12);
                     outtake.extension.retractExtension();
-                    poleAlignment.undersideRetract();
                 }
 
-                if (isAtPoint && (outtake.isInPositionGlobal(drivePose, polePose,5.0) && outtake.extension.isInPosition(3.5))) {
+                if (isAtPoint && (outtake.isInPositionGlobal(drivePose, polePose,5.0,1.0) && outtake.extension.isInPosition(3.5))) {
                     timeSinceClawOpen = System.currentTimeMillis();
                     isAtPoint = false;
                     currentState = STATE.DEPOSIT_AUTO;
@@ -336,11 +326,7 @@ public class Robot {
                     claw.open();
                 }
 
-                if (System.currentTimeMillis() - timeSinceClawOpen >= 650) {
-                    poleAlignment.undersideRetract();
-                }
-
-                if (System.currentTimeMillis() - timeSinceClawOpen >= 700) {
+                if (System.currentTimeMillis() - timeSinceClawOpen >= 675) {
                     currentState = STATE.INTAKE_GLOBAL;
                 }
                 break;
@@ -525,11 +511,6 @@ public class Robot {
         double turnSign = left ? 1 : -1;
 
         // Before anything the poleAlignment servo must be up
-        poleAlignment.init();
-        do {
-            update();
-        } while (!poleAlignment.isInitPosition());
-
         actuation.init();
         outtake.extension.retractExtension();
         claw.init();
@@ -604,7 +585,6 @@ public class Robot {
         outtake.update();
         claw.update();
         coneFlipper.update();
-        poleAlignment.update();
         odoLifter.update();
 
         if (updateStayInPlacePID) {
