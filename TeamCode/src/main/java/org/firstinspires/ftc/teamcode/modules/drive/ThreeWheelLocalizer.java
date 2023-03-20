@@ -1,22 +1,16 @@
 package org.firstinspires.ftc.teamcode.modules.drive;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.localization.Localizer;
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.util.Encoder;
 import org.firstinspires.ftc.teamcode.util.MyEncoder;
-import org.firstinspires.ftc.teamcode.util.MyPose2d;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.firstinspires.ftc.teamcode.util.Pose2d;
 
 import java.util.ArrayList;
 
 @Config
-public class ThreeWheelLocalizer implements Localizer {
+public class ThreeWheelLocalizer {
 
     public MyEncoder[] encoders;
     long lastTime = System.nanoTime();
@@ -24,13 +18,13 @@ public class ThreeWheelLocalizer implements Localizer {
     public double y = 0;
     public double heading = 0;
 
-    MyPose2d currentPose = new MyPose2d(0,0,0);
-    MyPose2d currentVel = new MyPose2d(0,0,0);
-    MyPose2d relCurrentVel = new MyPose2d(0,0,0);
-    MyPose2d currentPowerVector = new MyPose2d(0,0,0);
+    Pose2d currentPose = new Pose2d(0,0,0);
+    Pose2d currentVel = new Pose2d(0,0,0);
+    Pose2d relCurrentVel = new Pose2d(0,0,0);
+    Pose2d currentPowerVector = new Pose2d(0,0,0);
 
-    ArrayList<MyPose2d> poseHistory = new ArrayList<MyPose2d>();
-    ArrayList<MyPose2d> relHistory = new ArrayList<MyPose2d>();
+    ArrayList<Pose2d> poseHistory = new ArrayList<Pose2d>();
+    ArrayList<Pose2d> relHistory = new ArrayList<Pose2d>();
     ArrayList<Double> loopTimes = new ArrayList<Double>();
 
     BNO055IMU imu;
@@ -38,9 +32,9 @@ public class ThreeWheelLocalizer implements Localizer {
     public ThreeWheelLocalizer(HardwareMap hardwareMap) {
         encoders = new MyEncoder[3];
 
-        encoders[0] = new MyEncoder(new MyPose2d(0,7.233659277778),  -1); // left (y = 7.6861797267140135)
-        encoders[1] = new MyEncoder(new MyPose2d(0,-6.10600173333),1); // right (y = -5.664117306820334)
-        encoders[2] = new MyEncoder(new MyPose2d(-3, 0),  -1); // back (x = -2.16505140605)
+        encoders[0] = new MyEncoder(new Pose2d(0,7.233659277778),  -1); // left (y = 7.6861797267140135)
+        encoders[1] = new MyEncoder(new Pose2d(0,-6.10600173333),1); // right (y = -5.664117306820334)
+        encoders[2] = new MyEncoder(new Pose2d(-3, 0),  -1); // back (x = -2.16505140605)
 //        encoders[2] = new MyEncoder(new MyPose2d(-1.9304662534597792, 0),  -1); // back
     }
 
@@ -65,24 +59,18 @@ public class ThreeWheelLocalizer implements Localizer {
 //        loopIMUTimes.clear();
     }
 
-    @NotNull
-    @Override
     public Pose2d getPoseEstimate() {
         return new Pose2d(currentPose.x, currentPose.y, currentPose.heading);
     }
 
-    @Override
-    public void setPoseEstimate(@NotNull Pose2d pose2d) {
+    public void setPoseEstimate(Pose2d pose2d) {
         setPose(pose2d.getX(), pose2d.getY(), pose2d.getHeading());
     }
 
-    @Nullable
-    @Override
     public Pose2d getPoseVelocity() {
         return new Pose2d(currentVel.x, currentVel.y, currentVel.heading);
     }
 
-    @Override
     public void update() {
         long currentTime = System.nanoTime();
         double loopTime = (currentTime-lastTime)/1000000000.0;
@@ -102,7 +90,7 @@ public class ThreeWheelLocalizer implements Localizer {
         //This is a weighted average for the amount moved forward with the weights being how far away the other one is from the center
         double relDeltaX = (deltaRight*leftY - deltaLeft*rightY)/(leftY-rightY);
 
-        relHistory.add(0,new MyPose2d(relDeltaX,relDeltaY,deltaHeading));
+        relHistory.add(0,new Pose2d(relDeltaX,relDeltaY,deltaHeading));
 //        relIMUHistory.add(0,new MyPose2d(relDeltaX,relDeltaY,deltaHeading));
 
         if (deltaHeading != 0) { // this avoids the issue where deltaHeading = 0 and then it goes to undefined. This effectively does L'Hopital's
@@ -116,7 +104,7 @@ public class ThreeWheelLocalizer implements Localizer {
 
         heading += deltaHeading;
 
-        currentPose = new MyPose2d(x, y, heading);
+        currentPose = new Pose2d(x, y, heading);
 
         loopTimes.add(0,loopTime);
         poseHistory.add(0,currentPose);
@@ -196,12 +184,12 @@ public class ThreeWheelLocalizer implements Localizer {
                 lastIndex = i;
             }
         }
-        currentVel = new MyPose2d(
+        currentVel = new Pose2d(
                 (poseHistory.get(0).getX() - poseHistory.get(lastIndex).getX()) / actualVelTime,
                 (poseHistory.get(0).getY() - poseHistory.get(lastIndex).getY()) / actualVelTime,
                 (poseHistory.get(0).getHeading() - poseHistory.get(lastIndex).getHeading()) / actualVelTime
         );
-        relCurrentVel = new MyPose2d(
+        relCurrentVel = new Pose2d(
                 (relDeltaXTotal) / actualVelTime,
                 (relDeltaYTotal) / actualVelTime,
                 (poseHistory.get(0).getHeading() - poseHistory.get(lastIndex).getHeading()) / actualVelTime

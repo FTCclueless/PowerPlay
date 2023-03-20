@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.modules.outtake;
 
 import android.util.Log;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.modules.actuation.Actuation;
@@ -13,6 +12,7 @@ import org.firstinspires.ftc.teamcode.sensors.Sensors;
 import org.firstinspires.ftc.teamcode.util.Model;
 import org.firstinspires.ftc.teamcode.util.MotorPriority;
 import org.firstinspires.ftc.teamcode.util.MyServo;
+import org.firstinspires.ftc.teamcode.util.Pose2d;
 import org.firstinspires.ftc.teamcode.util.Pose3D;
 import org.firstinspires.ftc.teamcode.util.Storage;
 import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
@@ -222,16 +222,6 @@ public class Outtake {
         targetTurretAngle = Math.atan2(targetY,targetX);
         targetExtensionLength = targetExtension;
         targetSlidesLength = Math.max(0, targetHeight);
-
-        //Log.e("targetExtensionLength", targetExtensionLength + "");
-
-//        if (isIntersectingRobot(targetX, targetY, targetZ)) { // checks if the target position is a valid position
-//            targetExtensionLength = currentExtensionLength;
-//            targetTurretAngle = currentTurretAngle;
-//            targetSlidesLength = currentSlidesLength;
-//
-//            Log.e("INTERSECTION: ", "PLEASE BE AWARE!!");
-//        }
     }
 
     public Pose2d findGlobalCoordinates (Pose2d robotPose, double xOffset, double yOffset) {

@@ -118,8 +118,8 @@ public class Sensors {
 
             slidesLength = motorPriorities.get(5).motor[0].getCurrentPosition() / slidesTickToInch; // inches of slides
             slidesVelocity = motorPriorities.get(5).motor[0].getVelocity() / slidesTickToInch;
-            slides1Current = motorPriorities.get(5).motor[0].getCurrent(CurrentUnit.AMPS);
-            slides2Current = motorPriorities.get(5).motor[1].getCurrent(CurrentUnit.AMPS);
+            //slides1Current = motorPriorities.get(5).motor[0].getCurrent(CurrentUnit.AMPS);
+            //slides2Current = motorPriorities.get(5).motor[1].getCurrent(CurrentUnit.AMPS);
 
 //            clawTouch = clawLimit.getState();
         } catch (Exception e) {

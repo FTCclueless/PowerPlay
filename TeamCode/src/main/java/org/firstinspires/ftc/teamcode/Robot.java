@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import android.util.Log;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -11,10 +9,11 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.modules.actuation.Actuation;
 import org.firstinspires.ftc.teamcode.modules.claw.ConeFlipper;
-import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.modules.drive.basilisk.Spline;
 import org.firstinspires.ftc.teamcode.modules.odoLifter.OdoLifter;
 import org.firstinspires.ftc.teamcode.util.Field;
 import org.firstinspires.ftc.teamcode.util.MyServo;
+import org.firstinspires.ftc.teamcode.util.Pose2d;
 import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 import org.firstinspires.ftc.teamcode.vision.Vision;
 import org.firstinspires.ftc.teamcode.modules.claw.Claw;
@@ -357,8 +356,9 @@ public class Robot {
                 }
         }
 
-        drivetrain.trajectorySequenceRunner.globalArmPose = globalArmPos;
-        drivetrain.trajectorySequenceRunner.nearestPole = nearestPole;
+        // TODO: Write dashboard field diagram
+        //drivetrain.trajectorySequenceRunner.globalArmPose = globalArmPos;
+        //drivetrain.trajectorySequenceRunner.nearestPole = nearestPole;
 
         TelemetryUtil.sendTelemetry();
     }
@@ -604,22 +604,22 @@ public class Robot {
         resetEncoders();
     }
 
-    public void followTrajectory(Trajectory trajectory, LinearOpMode opMode) {
+    public void followTrajectory(Spline trajectory, LinearOpMode opMode) {
         drivetrain.followTrajectoryAsync(trajectory);
         while(drivetrain.isBusy() && opMode.opModeIsActive()) {
             update();
         }
     }
 
-    public void followTrajectory(Trajectory trajectory, LinearOpMode opMode, long startTime) {
+    public void followTrajectory(Spline trajectory, LinearOpMode opMode, long startTime) {
         drivetrain.followTrajectoryAsync(trajectory);
         while(drivetrain.isBusy() && (opMode.opModeIsActive() || (System.currentTimeMillis() - startTime >= 29500 && System.currentTimeMillis() - startTime <= 30800))) {
             update();
         }
     }
 
-    public void followTrajectorySequence(TrajectorySequence trajectorySequence, LinearOpMode opMode) {
-        drivetrain.followTrajectorySequenceAsync(trajectorySequence);
+    public void followTrajectorySequence(Spline trajectorySequence, LinearOpMode opMode) {
+        drivetrain.followTrajectoryAsync(trajectorySequence);
         while(drivetrain.isBusy() && opMode.opModeIsActive()) {
             update();
         }

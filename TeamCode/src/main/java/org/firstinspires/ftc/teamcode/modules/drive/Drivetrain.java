@@ -1,66 +1,36 @@
 package org.firstinspires.ftc.teamcode.modules.drive;
 
-import androidx.annotation.NonNull;
-
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.control.PIDCoefficients;
-import com.acmerobotics.roadrunner.drive.DriveSignal;
-import com.acmerobotics.roadrunner.drive.MecanumDrive;
-import com.acmerobotics.roadrunner.followers.HolonomicPIDVAFollower;
-import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
-import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
-import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint;
-import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
-import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
-import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
-import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
-import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
-import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequence.TrajectorySequenceRunner;
+import org.firstinspires.ftc.teamcode.modules.drive.basilisk.Spline;
 import org.firstinspires.ftc.teamcode.util.AxisDirection;
 import org.firstinspires.ftc.teamcode.util.BNO055IMUUtil;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
 import org.firstinspires.ftc.teamcode.util.MotorPriority;
 import org.firstinspires.ftc.teamcode.util.PID;
-import org.firstinspires.ftc.teamcode.util.Storage;
+import org.firstinspires.ftc.teamcode.util.Pose2d;
 import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.firstinspires.ftc.teamcode.modules.drive.DriveConstants.MAX_ACCEL;
-import static org.firstinspires.ftc.teamcode.modules.drive.DriveConstants.MAX_ANG_ACCEL;
-import static org.firstinspires.ftc.teamcode.modules.drive.DriveConstants.MAX_ANG_VEL;
-import static org.firstinspires.ftc.teamcode.modules.drive.DriveConstants.MAX_VEL;
-import static org.firstinspires.ftc.teamcode.modules.drive.DriveConstants.MOTOR_VELO_PID;
 import static org.firstinspires.ftc.teamcode.modules.drive.DriveConstants.RUN_USING_ENCODER;
 import static org.firstinspires.ftc.teamcode.modules.drive.DriveConstants.TRACK_WIDTH;
-import static org.firstinspires.ftc.teamcode.modules.drive.DriveConstants.encoderTicksToInches;
-import static org.firstinspires.ftc.teamcode.modules.drive.DriveConstants.kA;
-import static org.firstinspires.ftc.teamcode.modules.drive.DriveConstants.kStatic;
-import static org.firstinspires.ftc.teamcode.modules.drive.DriveConstants.kV;
-
-import android.util.Log;
 
 @Config
-public class Drivetrain extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(12.5, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(10, 0, 0);
+public class Drivetrain {
+//    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(12.5, 0, 0);
+//    public static PIDCoefficients HEADING_PID = new PIDCoefficients(10, 0, 0);
 
 //    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(15, 0, 0);
 //    public static PIDCoefficients HEADING_PID = new PIDCoefficients(10, 0, 0);
@@ -70,13 +40,6 @@ public class Drivetrain extends MecanumDrive {
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
     public static double OMEGA_WEIGHT = 1;
-
-    public TrajectorySequenceRunner trajectorySequenceRunner;
-
-    private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(MAX_VEL, MAX_ANG_VEL, TRACK_WIDTH);
-    private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(MAX_ACCEL);
-
-    private TrajectoryFollower follower;
 
     public DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private List<DcMotorEx> motors;
@@ -88,15 +51,14 @@ public class Drivetrain extends MecanumDrive {
 
     public ThreeWheelLocalizer localizer;
 
+    Spline splineFollower = new Spline(new Pose2d(0,0,0));
+
     public PID autoPID = new PID(0.0, 0.0,0.0);
 
     public Drivetrain(HardwareMap hardwareMap, ArrayList<MotorPriority> motorPriorities) {
-        super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
-
         this.motorPriorities = motorPriorities;
 
-        follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
-                new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
+        splineFollower.points.clear();
 
         LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
 
@@ -137,19 +99,12 @@ public class Drivetrain extends MecanumDrive {
 
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        if (RUN_USING_ENCODER && MOTOR_VELO_PID != null) {
-            setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
-        }
-
         leftRear.setDirection(DcMotor.Direction.REVERSE);
         leftFront.setDirection(DcMotor.Direction.REVERSE);
 
         localizer = new ThreeWheelLocalizer(hardwareMap);
-        setLocalizer(localizer);
 
         localizer.getIMU(imu);
-
-        trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
     }
 
     public void resetOdoReadings() {
@@ -168,65 +123,6 @@ public class Drivetrain extends MecanumDrive {
         setMotorPowers(p1, p2, p3, p4);
     }
 
-    public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
-        return new TrajectoryBuilder(startPose, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
-    }
-
-    public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, boolean reversed) {
-        return new TrajectoryBuilder(startPose, reversed, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
-    }
-
-    public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, double startHeading) {
-        return new TrajectoryBuilder(startPose, startHeading, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
-    }
-
-    public TrajectorySequenceBuilder trajectorySequenceBuilder(Pose2d startPose) {
-        return new TrajectorySequenceBuilder(
-                startPose,
-                VEL_CONSTRAINT, ACCEL_CONSTRAINT,
-                MAX_ANG_VEL, MAX_ANG_ACCEL
-        );
-    }
-
-    public void turnAsync(double angle) {
-        trajectorySequenceRunner.followTrajectorySequenceAsync(
-                trajectorySequenceBuilder(getPoseEstimate())
-                        .turn(angle)
-                        .build()
-        );
-    }
-
-    public void turn(double angle) {
-        turnAsync(angle);
-        waitForIdle();
-    }
-
-    public void followTrajectoryAsync(Trajectory trajectory) {
-        trajectorySequenceRunner.followTrajectorySequenceAsync(
-                trajectorySequenceBuilder(trajectory.start())
-                        .addTrajectory(trajectory)
-                        .build()
-        );
-    }
-
-    public void followTrajectory(Trajectory trajectory) {
-        followTrajectoryAsync(trajectory);
-        waitForIdle();
-    }
-
-    public void followTrajectorySequenceAsync(TrajectorySequence trajectorySequence) {
-        trajectorySequenceRunner.followTrajectorySequenceAsync(trajectorySequence);
-    }
-
-    public void followTrajectorySequence(TrajectorySequence trajectorySequence) {
-        followTrajectorySequenceAsync(trajectorySequence);
-        waitForIdle();
-    }
-
-    public Pose2d getLastError() {
-        return trajectorySequenceRunner.getLastPoseError();
-    }
-
     public void updateTelemetry() {}
 
     double xThreshold = 0.5;
@@ -234,19 +130,46 @@ public class Drivetrain extends MecanumDrive {
     double headingThreshold = Math.toRadians(5.0);
 
     public void update() {
-        updatePoseEstimate();
+        localizer.update();
 
-        Pose2d estimate = getPoseEstimate();
-        DriveSignal signal = trajectorySequenceRunner.update(estimate, getPoseVelocity());
+        Pose2d estimate = localizer.getPoseEstimate();
+        Pose2d signal = splineFollower.getErrorFromNextPoint(estimate); // signal is null when in teleop only in auto do we have signal
         if (signal != null) {
-            double forward = signal.getVel().getX() * kV + signal.getAccel().getX() * kA; forward += Math.signum(forward) * kStatic;
-            double left = (signal.getVel().getY() * kV + signal.getAccel().getY() * kA) * LATERAL_MULTIPLIER * -1.0; left += Math.signum(left) * kStatic;
-            double turn = signal.getVel().getHeading() * kV + signal.getAccel().getHeading() * kA; turn *= (0.5 * TRACK_WIDTH); turn += Math.signum(turn) * kStatic;
+            double leftPower = 0;
+            double rightPower = 0;
+            double strafePower = 0;
+            double errorDistance = Math.sqrt(Math.pow(signal.x,2) + Math.pow(signal.y,2));
 
-            motorPriorities.get(0).setTargetPower(forward+left-turn);
-            motorPriorities.get(1).setTargetPower(forward-left-turn);
-            motorPriorities.get(2).setTargetPower(forward+left+turn);
-            motorPriorities.get(3).setTargetPower(forward-left+turn);
+            double headingError = Math.atan2(signal.y,signal.x); // pointing at the point
+
+            if (errorDistance < splineFollower.minimumRobotDistanceFromPoint / 2) {
+                strafePower = signal.y/4.0; // divide by 4.0 to make strafe power more manageable
+                headingError = signal.heading; // ending at the points given heading
+            }
+
+            if (signal.heading != 0) {
+                double radius = signal.x / headingError;
+                double leftDist = (radius - (TRACK_WIDTH / 2))*headingError;
+                double rightDist = (radius + (TRACK_WIDTH / 2))*headingError;
+
+                double maxDist = Math.max(Math.abs(leftDist), Math.abs(rightDist));
+
+                leftPower = leftDist / maxDist;
+                rightPower = rightDist / maxDist;
+            }
+            else {
+                leftPower = Math.signum(signal.x);
+                rightPower = Math.signum(signal.x);
+            }
+            // Based on how far away we are from the next point and the minimum distance required we add in a multiplier to help the robot go to the next point faster or slow down if we are approaching a point.
+            // We make sure we don't multiply more than 1.0 because it will range clip, losing the proportion we want
+            leftPower *= Math.min(1.0,errorDistance/splineFollower.minimumRobotDistanceFromPoint);
+            rightPower *= Math.min(1.0,errorDistance/splineFollower.minimumRobotDistanceFromPoint);
+
+            motorPriorities.get(0).setTargetPower(leftPower+strafePower);
+            motorPriorities.get(1).setTargetPower(leftPower-strafePower);
+            motorPriorities.get(2).setTargetPower(rightPower+strafePower);
+            motorPriorities.get(3).setTargetPower(rightPower-strafePower);
         }
 
         if((breakFollowing)
@@ -302,7 +225,7 @@ public class Drivetrain extends MecanumDrive {
     }
 
     public void breakFollowing() {
-        trajectorySequenceRunner.breakFollowing();
+        splineFollower.points.clear();
     }
 
     public void waitForIdle() {
@@ -311,7 +234,7 @@ public class Drivetrain extends MecanumDrive {
     }
 
     public boolean isBusy() {
-        return trajectorySequenceRunner.isBusy();
+        return splineFollower.points.size() != 0;
     }
 
     public void setMode(DcMotor.RunMode runMode) {
@@ -326,57 +249,6 @@ public class Drivetrain extends MecanumDrive {
         }
     }
 
-    public void setPIDFCoefficients(DcMotor.RunMode runMode, PIDFCoefficients coefficients) {
-        PIDFCoefficients compensatedCoefficients = new PIDFCoefficients(
-                coefficients.p, coefficients.i, coefficients.d,
-                coefficients.f * 12 / batteryVoltageSensor.getVoltage()
-        );
-
-        for (DcMotorEx motor : motors) {
-            motor.setPIDFCoefficients(runMode, compensatedCoefficients);
-        }
-    }
-
-    public void setWeightedDrivePower(Pose2d drivePower) {
-        Pose2d vel = drivePower;
-
-        if (Math.abs(drivePower.getX()) + Math.abs(drivePower.getY())
-                + Math.abs(drivePower.getHeading()) > 1) {
-            // re-normalize the powers according to the weights
-            double denom = VX_WEIGHT * Math.abs(drivePower.getX())
-                    + VY_WEIGHT * Math.abs(drivePower.getY())
-                    + OMEGA_WEIGHT * Math.abs(drivePower.getHeading());
-
-            vel = new Pose2d(
-                    VX_WEIGHT * drivePower.getX(),
-                    VY_WEIGHT * drivePower.getY(),
-                    OMEGA_WEIGHT * drivePower.getHeading()
-            ).div(denom);
-        }
-
-        setDrivePower(vel);
-    }
-
-    @NonNull
-    @Override
-    public List<Double> getWheelPositions() {
-        List<Double> wheelPositions = new ArrayList<>();
-        for (DcMotorEx motor : motors) {
-            wheelPositions.add(encoderTicksToInches(motor.getCurrentPosition()));
-        }
-        return wheelPositions;
-    }
-
-    @Override
-    public List<Double> getWheelVelocities() {
-        List<Double> wheelVelocities = new ArrayList<>();
-        for (DcMotorEx motor : motors) {
-            wheelVelocities.add(encoderTicksToInches(motor.getVelocity()));
-        }
-        return wheelVelocities;
-    }
-
-    @Override
     public void setMotorPowers(double lf, double lr, double rr, double rf) {
         leftFront.setPower(lf);
         leftRear.setPower(lr);
@@ -384,24 +256,11 @@ public class Drivetrain extends MecanumDrive {
         rightFront.setPower(rf);
     }
 
-    @Override
-    public double getRawExternalHeading() {
-        return imu.getAngularOrientation().firstAngle;
+    public Pose2d getPoseEstimate() {
+        return localizer.getPoseEstimate();
     }
 
-    @Override
-    public Double getExternalHeadingVelocity() {
-        return (double) imu.getAngularVelocity().zRotationRate;
-    }
-
-    public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {
-        return new MinVelocityConstraint(Arrays.asList(
-                new AngularVelocityConstraint(maxAngularVel),
-                new MecanumVelocityConstraint(maxVel, trackWidth)
-        ));
-    }
-
-    public static TrajectoryAccelerationConstraint getAccelerationConstraint(double maxAccel) {
-        return new ProfileAccelerationConstraint(maxAccel);
+    public void followTrajectoryAsync(Spline trajectory) {
+        splineFollower = trajectory;
     }
 }
