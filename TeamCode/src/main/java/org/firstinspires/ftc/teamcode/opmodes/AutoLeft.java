@@ -8,16 +8,14 @@ import static org.firstinspires.ftc.teamcode.Robot.STATE.SCORING_GLOBAL;
 
 import android.util.Log;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.modules.drive.Drivetrain;
-import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.modules.drive.basilisk.Spline;
 import org.firstinspires.ftc.teamcode.util.ButtonToggle;
+import org.firstinspires.ftc.teamcode.util.Pose2d;
 import org.firstinspires.ftc.teamcode.util.Storage;
 import org.firstinspires.ftc.teamcode.vision.OpenCVWrapper;
 
@@ -65,38 +63,27 @@ public class AutoLeft extends LinearOpMode {
 
         robot.stayInPlacePose = cyclePose;
 
-        TrajectorySequence toPreload = drive.trajectorySequenceBuilder(origin)
-                .lineToConstantHeading(new Vector2d(toPose.getX(), toPose.getY()))
-                .addDisplacementMarker(3, () -> {
-                    robot.claw.close();
-                    robot.currentState = Robot.STATE.SCORING_GLOBAL;
-                    robot.startScoringGlobal(
-                            new Pose2d(toPose.getX(), toPose.getY(), toPose.getHeading()),
-                            new Pose2d(24.0, 0.0 * ySign),
-                            28.5);
-                })
-                .build();
+        Spline toPreload = new Spline (origin).addPoint(new Pose2d(toPose.getX(), toPose.getY()));
 
-        TrajectorySequence toCycle = drive.trajectorySequenceBuilder(toPreload.end())
+        Spline toCycle = new Spline(toPreload.end())
                 .setReversed(true)
-                .splineTo(new Vector2d(cyclePose.getX(), cyclePose.getY()), Math.toRadians(0))
-                .build();
+                .addPoint(new Pose2d(cyclePose.getX(), cyclePose.getY(), Math.toRadians(0)));
 
         drive.setPoseEstimate(origin);
 
-        TrajectorySequence[] park = new TrajectorySequence[]{
-                drive.trajectorySequenceBuilder(cyclePose).strafeTo(new Vector2d( // parking position 1
+        Spline[] park = new Spline[]{
+                new Spline(cyclePose).addPoint(new Pose2d( // parking position 1
                         59.5,
                         cyclePose.getY()
-                )).turn(Math.toRadians(-95)).build(),
-                drive.trajectorySequenceBuilder(cyclePose).strafeTo(new Vector2d( // parking position 2
+                )).turn(Math.toRadians(-95)),
+                new Spline(cyclePose).addPoint(new Pose2d( // parking position 2
                         34,
                         cyclePose.getY()
-                )).turn(Math.toRadians(-95)).build(),
-                drive.trajectorySequenceBuilder(cyclePose).strafeTo(new Vector2d( // parking position 3
+                )).turn(Math.toRadians(-95)),
+                new Spline(cyclePose).addPoint(new Pose2d( // parking position 3
                         13,
                         cyclePose.getY()
-                )).turn(Math.toRadians(-95)).build()
+                )).turn(Math.toRadians(-95))
         };
 
         robot.resetEncoders();
@@ -152,7 +139,13 @@ public class AutoLeft extends LinearOpMode {
         openCVWrapper.stop();
 
         robot.claw.close();
-        robot.followTrajectorySequence(toPreload, this);
+        robot.currentState = Robot.STATE.SCORING_GLOBAL;
+        robot.startScoringGlobal(
+                new Pose2d(toPose.getX(), toPose.getY(), toPose.getHeading()),
+                new Pose2d(24.0, 0.0 * ySign),
+                28.5);
+
+        robot.followSpline(toPreload, this);
 
         while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) {
             robot.update();
@@ -165,7 +158,7 @@ public class AutoLeft extends LinearOpMode {
                 coneStackHeights[0]
         );
 
-        robot.followTrajectorySequence(toCycle, this);
+        robot.followSpline(toCycle, this);
 
         robot.updateStayInPlacePID = true;
 
@@ -218,7 +211,7 @@ public class AutoLeft extends LinearOpMode {
         robot.updateStayInPlacePID = false;
         robot.drivetrain.setBreakFollowingThresholds(new Pose2d(0.5, 0.5, Math.toRadians(5)), park[parkingNum].end());
 
-        robot.followTrajectorySequence(park[parkingNum], this);
+        robot.followSpline(park[parkingNum], this);
 
         long clawStart = System.currentTimeMillis();
         robot.claw.park();

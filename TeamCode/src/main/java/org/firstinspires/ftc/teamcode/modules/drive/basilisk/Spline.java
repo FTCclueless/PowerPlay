@@ -5,7 +5,8 @@ import org.firstinspires.ftc.teamcode.util.Pose2d;
 import java.util.ArrayList;
 
 public class Spline {
-    public ArrayList<Pose2d> points;
+    public ArrayList<Pose2d> points = new ArrayList<>();
+    double headingOffset = 0;
 
     public Spline (Pose2d startPose) {
         points.add(startPose);
@@ -43,7 +44,8 @@ public class Spline {
                 double velY = yCoefficents[1] + 2.0*yCoefficents[2]*t2 + 3.0*yCoefficents[3]*t2*t2;
 
                 // heading is equal to the inverse tangent of velX and velY because velX and velY have a magnitude and a direction and soh cah toa
-                point.heading = Math.atan2(velY,velX);
+                point.heading = Math.atan2(velY,velX) + headingOffset;
+                point.clipAngle();
 
                 points.add(point);
                 lastPoint = point;
@@ -57,6 +59,7 @@ public class Spline {
 
     public double minimumRobotDistanceFromPoint = 8.0;
     double minimumRobotThresholdFromEndPoint = 0.5;
+    double minimumRobotTurningThresholdFromEndPoint = Math.toRadians(5);
 
     public Pose2d getErrorFromNextPoint(Pose2d currentRobotPose) {
         if(points.size() == 0){
@@ -69,7 +72,7 @@ public class Spline {
         }
 
         // checking if we have finished the spline
-        if (points.get(0).getDistance(currentRobotPose) < minimumRobotThresholdFromEndPoint) {
+        if ((points.get(0).getDistance(currentRobotPose) < minimumRobotThresholdFromEndPoint) && (points.get(0).getAngle(currentRobotPose) < minimumRobotTurningThresholdFromEndPoint)) {
             points.remove(0);
             return null;
         }
@@ -80,7 +83,29 @@ public class Spline {
                 globalError.x*Math.cos(currentRobotPose.heading) + globalError.y*Math.sin(currentRobotPose.heading),
                 globalError.y*Math.cos(currentRobotPose.heading) - globalError.x*Math.sin(currentRobotPose.heading),
                 points.get(0).heading-currentRobotPose.heading);
+        relativeError.clipAngle();
 
         return relativeError;
+    }
+
+    public Pose2d end() {
+        return points.get(points.size()-1);
+    }
+
+    // When building splines you must put this function before the section you want to be reversed
+    public Spline setReversed(boolean setReversed) {
+        headingOffset = (setReversed) ? Math.toRadians(180) : 0;
+        return this;
+    }
+
+    public Pose2d getLastPoint () {
+        return points.get(points.size()-1);
+    }
+
+    public Spline turn (double angle) {
+        Pose2d lastPoint = getLastPoint();
+        lastPoint.heading = angle;
+        points.add(lastPoint);
+        return this;
     }
 }

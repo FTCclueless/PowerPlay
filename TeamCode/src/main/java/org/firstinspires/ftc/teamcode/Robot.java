@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode;
 
 import android.util.Log;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.canvas.Canvas;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -11,6 +14,7 @@ import org.firstinspires.ftc.teamcode.modules.actuation.Actuation;
 import org.firstinspires.ftc.teamcode.modules.claw.ConeFlipper;
 import org.firstinspires.ftc.teamcode.modules.drive.basilisk.Spline;
 import org.firstinspires.ftc.teamcode.modules.odoLifter.OdoLifter;
+import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.util.Field;
 import org.firstinspires.ftc.teamcode.util.MyServo;
 import org.firstinspires.ftc.teamcode.util.Pose2d;
@@ -41,6 +45,8 @@ public class Robot {
     public Sensors sensors;
     public Vision vision;
 
+    private final FtcDashboard dashboard;
+
     public ArrayList<MotorPriority> motorPriorities = new ArrayList<>();
     public ArrayList<MyServo> servos = new ArrayList<>();
 
@@ -62,6 +68,9 @@ public class Robot {
         coneFlipper = new ConeFlipper(hardwareMap, servos);
         odoLifter = new OdoLifter(hardwareMap, servos);
         vision = new Vision();
+
+        dashboard = FtcDashboard.getInstance();
+        dashboard.setTelemetryTransmissionInterval(25);
     }
 
     public boolean isRelative = false;
@@ -375,6 +384,8 @@ public class Robot {
         TelemetryUtil.packet.put("Target Angle", Math.toDegrees(targetAngle));
 
         Log.e("autoIntakeHeightDifference", autoIntakeHeightDifference + "");
+
+        updateDashboard();
     }
 
     public void startIntakeRelative() {
@@ -594,6 +605,18 @@ public class Robot {
         updateMotors();
     }
 
+    public void updateDashboard() {
+        Canvas fieldOverlay = TelemetryUtil.packet.fieldOverlay();
+        Pose2d poseEstimate = drivetrain.getPoseEstimate();
+
+        TelemetryUtil.packet.put("x", poseEstimate.getX());
+        TelemetryUtil.packet.put("y", poseEstimate.getY());
+        TelemetryUtil.packet.put("heading (deg)", Math.toDegrees(poseEstimate.getHeading()));
+
+        DashboardUtil.drawRobot(fieldOverlay, poseEstimate);
+        DashboardUtil.drawSampledPath(fieldOverlay, drivetrain.currentSplineToFollow);
+    }
+
     public void setConePose (Pose2d pose2d) { conePose = pose2d; }
     public void setPolePose (Pose2d pose2d) { polePose = pose2d; }
     public void setConeHeight (double height) { coneHeight = height; }
@@ -604,22 +627,22 @@ public class Robot {
         resetEncoders();
     }
 
-    public void followTrajectory(Spline trajectory, LinearOpMode opMode) {
-        drivetrain.followTrajectoryAsync(trajectory);
+    public void followSplineWithTimer(Spline trajectory, LinearOpMode opMode) {
+        drivetrain.setSpline(trajectory);
         while(drivetrain.isBusy() && opMode.opModeIsActive()) {
             update();
         }
     }
 
-    public void followTrajectory(Spline trajectory, LinearOpMode opMode, long startTime) {
-        drivetrain.followTrajectoryAsync(trajectory);
+    public void followSplineWithTimer(Spline trajectory, LinearOpMode opMode, long startTime) {
+        drivetrain.setSpline(trajectory);
         while(drivetrain.isBusy() && (opMode.opModeIsActive() || (System.currentTimeMillis() - startTime >= 29500 && System.currentTimeMillis() - startTime <= 30800))) {
             update();
         }
     }
 
-    public void followTrajectorySequence(Spline trajectorySequence, LinearOpMode opMode) {
-        drivetrain.followTrajectoryAsync(trajectorySequence);
+    public void followSpline(Spline spline, LinearOpMode opMode) {
+        drivetrain.setSpline(spline);
         while(drivetrain.isBusy() && opMode.opModeIsActive()) {
             update();
         }

@@ -31,4 +31,20 @@ public class Pose2d {
     public double getDistance(Pose2d newPoint) {
         return Math.sqrt(Math.pow((this.x - newPoint.x),2) + Math.pow((this.y - newPoint.y),2));
     }
+
+    public double getAngle(Pose2d newPoint) {
+        newPoint.heading = Math.abs(this.heading - newPoint.heading);
+        newPoint.clipAngle();
+        return Math.abs(newPoint.heading);
+    }
+
+    public double clipAngle() {
+        while (this.heading > Math.PI) {
+            this.heading -= Math.PI * 2.0;
+        }
+        while (this.heading < -Math.PI) {
+            this.heading += Math.PI * 2.0;
+        }
+        return this.heading;
+    }
 }

@@ -1,14 +1,11 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.modules.drive.Drivetrain;
-import org.firstinspires.ftc.teamcode.modules.drive.roadrunner.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.modules.drive.basilisk.Spline;
+import org.firstinspires.ftc.teamcode.util.Pose2d;
 import org.firstinspires.ftc.teamcode.util.Storage;
 import org.firstinspires.ftc.teamcode.vision.OpenCVWrapper;
 
@@ -39,28 +36,26 @@ public class ParkAuto extends LinearOpMode {
 
         drive.setPoseEstimate(origin);
 
-        drive.setPoseEstimate(origin); // FIXME is this needed?
-        TrajectorySequence to = drive.trajectorySequenceBuilder(origin)
-            .strafeTo(new Vector2d(
+        drive.setPoseEstimate(origin);
+        Spline to = new Spline(origin)
+            .addPoint(new Pose2d(
                 origin.getX(),
                 20 * ySign
-            ))
-            .build();
+            ));
 
-        // TODO clean this up a little? Kinda lookin a little bad
-        Trajectory[] park = new Trajectory[]{
-                drive.trajectoryBuilder(to.end()).strafeTo(new Vector2d( // parking position 1
+        Spline[] park = new Spline[]{
+                new Spline(to.end()).addPoint(new Pose2d( // parking position 1
                         59.5 * xSign,
                         20 * ySign
-                )).build(),
-                drive.trajectoryBuilder(to.end()).strafeTo(new Vector2d( // parking position 2
+                )),
+                new Spline(to.end()).addPoint(new Pose2d( // parking position 2
                         34 * xSign,
                         20 * ySign
-                )).build(),
-                drive.trajectoryBuilder(to.end()).strafeTo(new Vector2d( // parking position 3
+                )),
+                new Spline(to.end()).addPoint(new Pose2d( // parking position 3
                         13 * xSign,
                         20 * ySign
-                )).build()
+                ))
         };
 
         openCVWrapper.init();
@@ -91,8 +86,8 @@ public class ParkAuto extends LinearOpMode {
 
         openCVWrapper.stop();
 
-        robot.followTrajectorySequence(to, this);
-        robot.followTrajectory(park[parkingNum], this);
+        robot.followSpline(to, this);
+        robot.followSplineWithTimer(park[parkingNum], this);
 
         Storage.autoEndPose = drive.getPoseEstimate();
         Storage.isBlue = true;

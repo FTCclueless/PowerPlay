@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.util;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-
 public class Field {
     Pole[][] poles = new Pole[][]{
             {new Pole(48, 48, 0), new Pole(48, 24, 1), new Pole(48, 0, 0), new Pole(48, -24, 1), new Pole(48, -48, 0)},

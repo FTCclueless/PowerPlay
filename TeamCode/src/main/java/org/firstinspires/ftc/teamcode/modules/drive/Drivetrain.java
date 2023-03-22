@@ -26,6 +26,9 @@ import java.util.List;
 
 import static org.firstinspires.ftc.teamcode.modules.drive.DriveConstants.RUN_USING_ENCODER;
 import static org.firstinspires.ftc.teamcode.modules.drive.DriveConstants.TRACK_WIDTH;
+import static org.firstinspires.ftc.teamcode.modules.drive.DriveConstants.kStatic;
+
+import android.util.Log;
 
 @Config
 public class Drivetrain {
@@ -51,14 +54,14 @@ public class Drivetrain {
 
     public ThreeWheelLocalizer localizer;
 
-    Spline splineFollower = new Spline(new Pose2d(0,0,0));
+    public Spline currentSplineToFollow = new Spline(new Pose2d(0,0,0));
 
     public PID autoPID = new PID(0.0, 0.0,0.0);
 
     public Drivetrain(HardwareMap hardwareMap, ArrayList<MotorPriority> motorPriorities) {
         this.motorPriorities = motorPriorities;
 
-        splineFollower.points.clear();
+        currentSplineToFollow.points.clear();
 
         LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
 
@@ -133,7 +136,7 @@ public class Drivetrain {
         localizer.update();
 
         Pose2d estimate = localizer.getPoseEstimate();
-        Pose2d signal = splineFollower.getErrorFromNextPoint(estimate); // signal is null when in teleop only in auto do we have signal
+        Pose2d signal = currentSplineToFollow.getErrorFromNextPoint(estimate); // signal is null when in teleop only in auto do we have signal
         if (signal != null) {
             double leftPower = 0;
             double rightPower = 0;
@@ -142,13 +145,14 @@ public class Drivetrain {
 
             double headingError = Math.atan2(signal.y,signal.x); // pointing at the point
 
-            if (errorDistance < splineFollower.minimumRobotDistanceFromPoint / 2) {
+            if (errorDistance < currentSplineToFollow.minimumRobotDistanceFromPoint / 2) {
                 strafePower = signal.y/4.0; // divide by 4.0 to make strafe power more manageable
-                headingError = signal.heading; // ending at the points given heading
+                headingError = -signal.heading; // ending at the points given heading
+                Log.e("headingError", headingError + "");
             }
 
             if (signal.heading != 0) {
-                double radius = signal.x / headingError;
+                double radius = signal.x / headingError; // s = r*theta
                 double leftDist = (radius - (TRACK_WIDTH / 2))*headingError;
                 double rightDist = (radius + (TRACK_WIDTH / 2))*headingError;
 
@@ -163,13 +167,21 @@ public class Drivetrain {
             }
             // Based on how far away we are from the next point and the minimum distance required we add in a multiplier to help the robot go to the next point faster or slow down if we are approaching a point.
             // We make sure we don't multiply more than 1.0 because it will range clip, losing the proportion we want
-            leftPower *= Math.min(1.0,errorDistance/splineFollower.minimumRobotDistanceFromPoint);
-            rightPower *= Math.min(1.0,errorDistance/splineFollower.minimumRobotDistanceFromPoint);
+            leftPower *= Math.max(Math.min(1.0,errorDistance/ currentSplineToFollow.minimumRobotDistanceFromPoint),0.3);
+            rightPower *= Math.max(Math.min(1.0,errorDistance/ currentSplineToFollow.minimumRobotDistanceFromPoint),0.3);
+            strafePower *= -1;
 
-            motorPriorities.get(0).setTargetPower(leftPower+strafePower);
-            motorPriorities.get(1).setTargetPower(leftPower-strafePower);
-            motorPriorities.get(2).setTargetPower(rightPower+strafePower);
-            motorPriorities.get(3).setTargetPower(rightPower-strafePower);
+            double[] motorPowers = {
+                    leftPower + strafePower,
+                    leftPower - strafePower,
+                    rightPower + strafePower,
+                    rightPower - strafePower
+            };
+            for (int i = 0; i < motorPowers.length; i ++){
+                motorPowers[i] *= 1.0-kStatic;
+                motorPowers[i] += kStatic * Math.signum(motorPowers[i]);
+                motorPriorities.get(i).setTargetPower(motorPowers[i]);
+            }
         }
 
         if((breakFollowing)
@@ -225,7 +237,7 @@ public class Drivetrain {
     }
 
     public void breakFollowing() {
-        splineFollower.points.clear();
+        currentSplineToFollow.points.clear();
     }
 
     public void waitForIdle() {
@@ -234,7 +246,7 @@ public class Drivetrain {
     }
 
     public boolean isBusy() {
-        return splineFollower.points.size() != 0;
+        return currentSplineToFollow.points.size() != 0;
     }
 
     public void setMode(DcMotor.RunMode runMode) {
@@ -260,7 +272,11 @@ public class Drivetrain {
         return localizer.getPoseEstimate();
     }
 
-    public void followTrajectoryAsync(Spline trajectory) {
-        splineFollower = trajectory;
+    public void setSpline(Spline spline) {
+        currentSplineToFollow = spline;
+    }
+
+    public void setPoseEstimate(Pose2d pose2d) {
+        localizer.setPoseEstimate(pose2d);
     }
 }
