@@ -134,50 +134,29 @@ public class Drivetrain {
 
     public void update() {
         localizer.update();
-
         Pose2d estimate = localizer.getPoseEstimate();
         Pose2d signal = currentSplineToFollow.getErrorFromNextPoint(estimate); // signal is null when in teleop only in auto do we have signal
         if (signal != null) {
-            double leftPower = 0;
-            double rightPower = 0;
-            double strafePower = 0;
             double errorDistance = Math.sqrt(Math.pow(signal.x,2) + Math.pow(signal.y,2));
-
-            double headingError = Math.atan2(signal.y,signal.x); // pointing at the point
-
-            if (errorDistance < currentSplineToFollow.minimumRobotDistanceFromPoint / 2) {
-                strafePower = signal.y/4.0; // divide by 4.0 to make strafe power more manageable
-                headingError = -signal.heading; // ending at the points given heading
-                Log.e("headingError", headingError + "");
-            }
-
-            if (signal.heading != 0) {
-                double radius = signal.x / headingError; // s = r*theta
-                double leftDist = (radius - (TRACK_WIDTH / 2))*headingError;
-                double rightDist = (radius + (TRACK_WIDTH / 2))*headingError;
-
-                double maxDist = Math.max(Math.abs(leftDist), Math.abs(rightDist));
-
-                leftPower = leftDist / maxDist;
-                rightPower = rightDist / maxDist;
-            }
-            else {
-                leftPower = Math.signum(signal.x);
-                rightPower = Math.signum(signal.x);
-            }
-            // Based on how far away we are from the next point and the minimum distance required we add in a multiplier to help the robot go to the next point faster or slow down if we are approaching a point.
-            // We make sure we don't multiply more than 1.0 because it will range clip, losing the proportion we want
-            leftPower *= Math.max(Math.min(1.0,errorDistance/ currentSplineToFollow.minimumRobotDistanceFromPoint),0.3);
-            rightPower *= Math.max(Math.min(1.0,errorDistance/ currentSplineToFollow.minimumRobotDistanceFromPoint),0.3);
-            strafePower *= -1;
-
+            boolean inDist = errorDistance < currentSplineToFollow.minimumRobotDistanceFromPoint / 2;
+            double headingError = inDist ? signal.heading : Math.atan2(signal.y,signal.x); // pointing at the point
+            Log.e("headingError", headingError + "");
+            double fwd = signal.x;
+            double strafePower = inDist ? signal.y/4.0 : 0.0;
+            double turn = headingError*TRACK_WIDTH/2.0;
             double[] motorPowers = {
-                    leftPower + strafePower,
-                    leftPower - strafePower,
-                    rightPower + strafePower,
-                    rightPower - strafePower
+                    fwd + strafePower - turn,
+                    fwd - strafePower - turn,
+                    fwd + strafePower + turn,
+                    fwd - strafePower + turn
             };
+            double max = Math.abs(motorPowers[0]);
+            for (int i = 1; i < motorPowers.length; i ++){
+                max = Math.max(max, Math.abs(motorPowers[i]));
+            }
             for (int i = 0; i < motorPowers.length; i ++){
+                motorPowers[i] /= max;
+                motorPowers[i] *= Math.max(Math.min(1.0,errorDistance/ currentSplineToFollow.minimumRobotDistanceFromPoint),0.3);
                 motorPowers[i] *= 1.0-kStatic;
                 motorPowers[i] += kStatic * Math.signum(motorPowers[i]);
                 motorPriorities.get(i).setTargetPower(motorPowers[i]);
