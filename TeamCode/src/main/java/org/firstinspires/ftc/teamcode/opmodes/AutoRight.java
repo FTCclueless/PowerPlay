@@ -64,11 +64,12 @@ public class AutoRight extends LinearOpMode {
         robot.stayInPlacePose = cyclePose;
 
         Spline toPreload = new Spline(origin)
-                .addPoint(new Pose2d(toPose.getX(), toPose.getY()));
+                .setReversed(true)
+                .addPoint(toPose);
 
         Spline toCycle = new Spline(toPreload.end())
                 .setReversed(true)
-                .addPoint(new Pose2d(cyclePose.getX(), cyclePose.getY(), Math.toRadians(0)));
+                .addPoint(cyclePose);
 
         drive.setPoseEstimate(origin);
 

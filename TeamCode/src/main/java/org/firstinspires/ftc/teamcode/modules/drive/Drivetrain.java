@@ -138,12 +138,15 @@ public class Drivetrain {
         Pose2d signal = currentSplineToFollow.getErrorFromNextPoint(estimate); // signal is null when in teleop only in auto do we have signal
         if (signal != null) {
             double errorDistance = Math.sqrt(Math.pow(signal.x,2) + Math.pow(signal.y,2));
-            boolean inDist = errorDistance < currentSplineToFollow.minimumRobotDistanceFromPoint / 2;
-            double headingError = inDist ? signal.heading : Math.atan2(signal.y,signal.x); // pointing at the point
-            Log.e("headingError", headingError + "");
+            boolean inDist = errorDistance < 6.0;
+            double headingError = inDist ? signal.heading : Math.atan2(signal.y*4.0,signal.x)+currentSplineToFollow.points.get(0).headingOffset; // pointing at the point
+            while (Math.abs(headingError) > Math.toRadians(180)) {
+                headingError -= Math.signum(headingError) * Math.toRadians(360);
+            }
+            Log.e("headingError", headingError + " " + inDist);
             double fwd = signal.x;
-            double strafePower = inDist ? signal.y/4.0 : 0.0;
-            double turn = headingError*TRACK_WIDTH/2.0;
+            double strafePower = inDist ? signal.y/-4.0 : 0.0;
+            double turn = 2.5*headingError*TRACK_WIDTH/2.0; // s/r = theta
             double[] motorPowers = {
                     fwd + strafePower - turn,
                     fwd - strafePower - turn,
@@ -154,10 +157,24 @@ public class Drivetrain {
             for (int i = 1; i < motorPowers.length; i ++){
                 max = Math.max(max, Math.abs(motorPowers[i]));
             }
+            double maxSpeed = Math.min(1.0, errorDistance / currentSplineToFollow.minimumRobotDistanceFromPoint); // we want the speed to slow down as we approach the point
+           // slow down on turns
+            if (currentSplineToFollow.points.size() >= 2) {
+                double changeAngle = 0;
+                int maxDist = 12; // start slowing down 12 inches from turn
+                double k = 0.35;
+                int maxIndex = Math.min(maxDist/2-1,currentSplineToFollow.points.size()-1); // since we have points every two inches if we divide maxDist by 2 we get number of points
+                for (int i = 0; i < maxIndex; i ++) { // iterating through the next 6 points and taking a kalman filter of change angles
+                    // first get change in angle between last point and point in front of it then multiply by a constant k and add in 65 percent of change angle from previous point
+                    changeAngle = Math.abs(currentSplineToFollow.points.get(maxIndex - i).heading - currentSplineToFollow.points.get(maxIndex-i-1).heading) * k + changeAngle * (1.0-k);
+                }
+                maxSpeed *= 1.0 - Math.min(changeAngle/Math.toRadians(5),0.15); // max we slow down to on a turn is 0.85
+            }
+            maxSpeed = Math.max(maxSpeed,0.5); // min max speed
             for (int i = 0; i < motorPowers.length; i ++){
-                motorPowers[i] /= max;
-                motorPowers[i] *= Math.max(Math.min(1.0,errorDistance/ currentSplineToFollow.minimumRobotDistanceFromPoint),0.3);
-                motorPowers[i] *= 1.0-kStatic;
+                motorPowers[i] /= max; // keeps proportions in tack by getting a percentage
+                motorPowers[i] *= maxSpeed; // slow down motors
+                motorPowers[i] *= 1.0-kStatic; // we do this so that we keep proportions when we add kstatic in the next line below. If we had just added kstatic without doing this 0.9 and 1.0 become the same motor power
                 motorPowers[i] += kStatic * Math.signum(motorPowers[i]);
                 motorPriorities.get(i).setTargetPower(motorPowers[i]);
             }
