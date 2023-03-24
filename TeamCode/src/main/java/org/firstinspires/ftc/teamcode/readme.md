@@ -54,8 +54,8 @@ Motors
 Encoders
 - Motor Port 0: turret
 - Motor Port 1: 
-- Motor Port 2: 
-- Motor Port 3: slides
+- Motor Port 2: slides
+- Motor Port 3:
 
 Servos
 - Servo Port 0: 

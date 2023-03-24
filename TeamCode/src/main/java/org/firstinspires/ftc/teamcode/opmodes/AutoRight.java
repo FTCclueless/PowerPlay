@@ -46,13 +46,13 @@ public class AutoRight extends LinearOpMode {
         Pose2d origin = new Pose2d(
                 34,
                 62 * ySign,
-                lr ? Math.toRadians(90) : Math.toRadians(-90)
+                lr ? Math.toRadians(-90) : Math.toRadians(90)
         );
 
         Pose2d toPose = new Pose2d(
                 origin.getX(),
                 20 * ySign,
-                lr ? Math.toRadians(90) : Math.toRadians(-90)
+                origin.heading
         );
 
         Pose2d cyclePose = new Pose2d(
@@ -65,11 +65,11 @@ public class AutoRight extends LinearOpMode {
 
         Spline toPreload = new Spline(origin)
                 .setReversed(true)
-                .addPoint(toPose);
+                .addPoint(new Pose2d(toPose.x, toPose.y, origin.heading * -1));
 
-        Spline toCycle = new Spline(toPreload.end())
+        Spline toCycle = new Spline(new Pose2d(toPose))
                 .setReversed(true)
-                .addPoint(cyclePose);
+                .addPoint(new Pose2d(cyclePose.x, cyclePose.y, cyclePose.heading + Math.toRadians(180)));
 
         drive.setPoseEstimate(origin);
 
@@ -77,15 +77,15 @@ public class AutoRight extends LinearOpMode {
                 new Spline(cyclePose).addPoint(new Pose2d( // parking position 3
                         12,
                         cyclePose.getY()
-                )).turn(Math.toRadians(95)),
+                )).turn(Math.toRadians(-95)),
                 new Spline(cyclePose).addPoint(new Pose2d( // parking position 2
                         37,
                         cyclePose.getY()
-                )).turn(Math.toRadians(95)),
+                )).turn(Math.toRadians(-95)),
                 new Spline(cyclePose).addPoint(new Pose2d( // parking position 1
                         59.5,
                         cyclePose.getY()
-                )).turn(Math.toRadians(95))
+                )).turn(Math.toRadians(-95))
         };
 
         robot.resetEncoders();
@@ -132,7 +132,7 @@ public class AutoRight extends LinearOpMode {
 
         robot.outtake.slides.slidesPercentMax = 1.0;
 
-        robot.drivetrain.setBreakFollowingThresholds(new Pose2d(0.5, 0.5, Math.toRadians(5)), toCycle.end());
+        robot.drivetrain.setBreakFollowingThresholds(new Pose2d(0.5, 0.5, Math.toRadians(-5)), cyclePose);
         drive.setPoseEstimate(origin);
         waitForStart();
 
@@ -151,6 +151,7 @@ public class AutoRight extends LinearOpMode {
         robot.followSpline(toPreload, this);
 
         while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) {
+            robot.drivetrain.setMotorPowers(0,0,0,0);
             robot.update();
         }
 
@@ -169,7 +170,7 @@ public class AutoRight extends LinearOpMode {
             if (i != 0) {
                 robot.currentState = INTAKE_GLOBAL;
                 robot.startIntakeGlobal(
-                        toCycle.end(),
+                        cyclePose,
                         new Pose2d(70,11 * ySign),
                         coneStackHeights[i]
                 );
@@ -181,12 +182,12 @@ public class AutoRight extends LinearOpMode {
 
             if (robot.sensors.robotNextToMeRight) {
                 robot.startScoringGlobal(
-                        new Pose2d(toCycle.end().getX(), toCycle.end().getY(), toCycle.end().getHeading()),
+                        cyclePose,
                         new Pose2d(21.0, 24 * ySign),
                         18.35);
             } else {
                 robot.startScoringGlobal(
-                        new Pose2d(toCycle.end().getX(), toCycle.end().getY(), toCycle.end().getHeading()),
+                        cyclePose,
                         new Pose2d(23, -3.5 * ySign),
                         28.5);
             }
@@ -212,7 +213,7 @@ public class AutoRight extends LinearOpMode {
         }
 
         robot.updateStayInPlacePID = false;
-        robot.drivetrain.setBreakFollowingThresholds(new Pose2d(0.5, 0.5, Math.toRadians(5)), park[parkingNum].end());
+        robot.drivetrain.setBreakFollowingThresholds(new Pose2d(0.5, 0.5, Math.toRadians(-5)), park[parkingNum].end());
 
         robot.followSpline(park[parkingNum], this);
 
