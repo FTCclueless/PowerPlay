@@ -62,12 +62,6 @@ public class NineConeAutoRight extends LinearOpMode {
                 Math.toRadians(180)
         );
 
-        Pose2d toPose2 = new Pose2d(
-                origin.getX(),
-                -20 * ySign,
-                origin.heading
-        );
-
         Pose2d cyclePose2 = new Pose2d(
                 -44.5, //44.5
                 12 * ySign,
@@ -85,24 +79,24 @@ public class NineConeAutoRight extends LinearOpMode {
                 .addPoint(new Pose2d(cyclePose.x, cyclePose.y, cyclePose.heading + Math.toRadians(180)));
 
         Spline toCycle2 = new Spline(new Pose2d(toPose))
-                .addPoint(new Pose2d(-cyclePose.x, cyclePose.y, cyclePose.heading + Math.toRadians(0)));
+                .addPoint(new Pose2d(cyclePose2.x, cyclePose2.y, cyclePose2.heading + Math.toRadians(180)));
 
         drive.setPoseEstimate(origin);
 
         Spline[] park = new Spline[]{
-            new Spline(cyclePose).addPoint(new Pose2d( // parking position 1
+            new Spline(cyclePose2).addPoint(new Pose2d( // parking position 1
                     -59.5,
-                    cyclePose.getY(),
+                    cyclePose2.getY(),
                     Math.toRadians(180)
             )),
-            new Spline(cyclePose).addPoint(new Pose2d( // parking position 2
+            new Spline(cyclePose2).addPoint(new Pose2d( // parking position 2
                     -37,
-                    cyclePose.getY(),
+                    cyclePose2.getY(),
                     Math.toRadians(180)
             )),
-            new Spline(cyclePose).addPoint(new Pose2d( // parking position 3
+            new Spline(cyclePose2).addPoint(new Pose2d( // parking position 3
                     -12,
-                    cyclePose.getY(),
+                    cyclePose2.getY(),
                     Math.toRadians(180)
             ))
         };
