@@ -189,7 +189,7 @@ public class Robot {
                 if ((isAtPoint && (outtake.isInPositionGlobal(drivePose, conePose, 3.5)  && outtake.extension.isInPosition(0.1)) || hasGrabbed)) {
                     hasGrabbed = true;
                     claw.close();
-                    autoIntakeHeightDifference = outtake.slides.targetSlidesLength - outtake.slides.currentSlidesLength;
+                    autoIntakeHeightDifference = outtake.slides.currentSlidesLength - outtake.slides.targetSlidesLength;
                 }
                 else {
                     claw.open();
@@ -330,11 +330,11 @@ public class Robot {
                 outtake.slides.slidesPercentMax = 1.0;
                 outtake.setTargetGlobal(drivePose, polePose, poleHeight);
 
-                if (System.currentTimeMillis() - timeSinceClawOpen >= 600) {
+                if (System.currentTimeMillis() - timeSinceClawOpen >= 150) {
                     claw.open();
                 }
 
-                if (System.currentTimeMillis() - timeSinceClawOpen >= 675) {
+                if (System.currentTimeMillis() - timeSinceClawOpen >= 300) {
                     currentState = STATE.INTAKE_GLOBAL;
                 }
                 break;

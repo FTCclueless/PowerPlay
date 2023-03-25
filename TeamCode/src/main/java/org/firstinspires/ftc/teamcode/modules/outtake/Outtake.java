@@ -112,7 +112,7 @@ public class Outtake {
             targetExtent = extension.baseSlidesExtension;
             if (backExtendCheck) {
                 if (!Storage.isTeleop) {
-                    targetExtent += 1.5;
+                    targetExtent += 5.0;
                 }
 //                else {
 //                    targetExtent += 4.0;

@@ -20,8 +20,9 @@ import org.firstinspires.ftc.teamcode.util.Storage;
 import org.firstinspires.ftc.teamcode.vision.OpenCVWrapper;
 
 @Autonomous(group = "Auto")
-public class AutoRight extends LinearOpMode {
+public class NineConeAutoRight extends LinearOpMode {
     public static final int cycles = 5;
+    public static final int cycles2 = 3;
     public static int parkingNum = 0;
     public static final boolean lr = false; // Left : true | Right : false
 
@@ -61,6 +62,18 @@ public class AutoRight extends LinearOpMode {
                 Math.toRadians(180)
         );
 
+        Pose2d toPose2 = new Pose2d(
+                origin.getX(),
+                -20 * ySign,
+                origin.heading
+        );
+
+        Pose2d cyclePose2 = new Pose2d(
+                -44.5, //44.5
+                12 * ySign,
+                Math.toRadians(180)
+        );
+
         robot.stayInPlacePose = cyclePose;
 
         Spline toPreload = new Spline(origin)
@@ -71,21 +84,24 @@ public class AutoRight extends LinearOpMode {
                 .setReversed(true)
                 .addPoint(new Pose2d(cyclePose.x, cyclePose.y, cyclePose.heading + Math.toRadians(180)));
 
+        Spline toCycle2 = new Spline(new Pose2d(toPose))
+                .addPoint(new Pose2d(-cyclePose.x, cyclePose.y, cyclePose.heading + Math.toRadians(0)));
+
         drive.setPoseEstimate(origin);
 
         Spline[] park = new Spline[]{
-            new Spline(cyclePose).addPoint(new Pose2d( // parking position 3
-                    12,
+            new Spline(cyclePose).addPoint(new Pose2d( // parking position 1
+                    -59.5,
                     cyclePose.getY(),
                     Math.toRadians(180)
             )),
             new Spline(cyclePose).addPoint(new Pose2d( // parking position 2
-                    37,
+                    -37,
                     cyclePose.getY(),
                     Math.toRadians(180)
             )),
-            new Spline(cyclePose).addPoint(new Pose2d( // parking position 1
-                    59.5,
+            new Spline(cyclePose).addPoint(new Pose2d( // parking position 3
+                    -12,
                     cyclePose.getY(),
                     Math.toRadians(180)
             ))
@@ -166,7 +182,6 @@ public class AutoRight extends LinearOpMode {
         );
 
         robot.followSpline(toCycle, this);
-
         robot.updateStayInPlacePID = true;
 
         for (int i = 0; i < cycles && (System.currentTimeMillis() - startTime <= timeToPark[parkingNum]); i++) {
@@ -200,7 +215,43 @@ public class AutoRight extends LinearOpMode {
             }
         }
 
-        robot.currentState = IDLE;
+        robot.currentState = INTAKE_RELATIVE;
+
+        robot.updateStayInPlacePID = false;
+        robot.followSpline(toCycle2, this);
+        robot.updateStayInPlacePID = true;
+
+        for (int i = 0; i < cycles2 && (System.currentTimeMillis() - startTime <= timeToPark[parkingNum]); i++) {
+            if (i != 0) {
+                robot.currentState = INTAKE_GLOBAL;
+                robot.startIntakeGlobal(
+                        cyclePose,
+                        new Pose2d(-70,12 * ySign),
+                        coneStackHeights[i]
+                );
+            }
+
+            while ((robot.currentState == INTAKE_GLOBAL) && (System.currentTimeMillis() - startTime <= timeToPark[parkingNum])) {
+                robot.update();
+            }
+
+            if (robot.sensors.robotNextToMeRight) {
+                robot.startScoringGlobal(
+                        cyclePose,
+                        new Pose2d(-21.0, 24 * ySign),
+                        18.35);
+            } else {
+                robot.startScoringGlobal(
+                        cyclePose,
+                        new Pose2d(-24.5, -1.0 * ySign),
+                        32 + robot.autoIntakeHeightDifference);
+            }
+
+            while ((robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) && (System.currentTimeMillis() - startTime <= timeToPark[parkingNum])) {
+                robot.update();
+            }
+        }
+
         long timer = System.currentTimeMillis();
 
         robot.outtake.extension.retractExtension();
@@ -214,12 +265,6 @@ public class AutoRight extends LinearOpMode {
                 robot.currentState = INTAKE_RELATIVE;
             }
         }
-
-        robot.updateStayInPlacePID = false;
-
-        robot.currentState = IDLE;
-        robot.claw.park();
-        robot.outtake.actuation.level();
 
         robot.followSpline(park[parkingNum], this);
 
