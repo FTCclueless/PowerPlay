@@ -22,7 +22,7 @@ import org.firstinspires.ftc.teamcode.vision.OpenCVWrapper;
 @Autonomous(group = "Auto")
 public class NineConeAutoRight extends LinearOpMode {
     public static final int cycles = 5;
-    public static final int cycles2 = 3;
+    public static final int cycles2 = 2;
     public static int parkingNum = 0;
     public static final boolean lr = false; // Left : true | Right : false
 
@@ -63,8 +63,8 @@ public class NineConeAutoRight extends LinearOpMode {
         );
 
         Pose2d cyclePose2 = new Pose2d(
-                -44.5, //44.5
-                12 * ySign,
+                -47.5, //44.5
+                10.5 * ySign,
                 Math.toRadians(180)
         );
 
@@ -78,8 +78,8 @@ public class NineConeAutoRight extends LinearOpMode {
                 .setReversed(true)
                 .addPoint(new Pose2d(cyclePose.x, cyclePose.y, cyclePose.heading + Math.toRadians(180)));
 
-        Spline toCycle2 = new Spline(new Pose2d(toPose))
-                .addPoint(new Pose2d(cyclePose2.x, cyclePose2.y, cyclePose2.heading + Math.toRadians(180)));
+        Spline toCycle2 = new Spline(new Pose2d(toCycle.end()))
+                .addPoint(new Pose2d(cyclePose2.x, cyclePose2.y, cyclePose2.heading));
 
         drive.setPoseEstimate(origin);
 
@@ -209,35 +209,38 @@ public class NineConeAutoRight extends LinearOpMode {
             }
         }
 
-        robot.currentState = INTAKE_RELATIVE;
-
         robot.updateStayInPlacePID = false;
+        robot.currentState = INTAKE_RELATIVE;
+        robot.intakeHeight = 5.05;
+        while (robot.outtake.slides.currentSlidesLength >= 10) {
+            robot.update();
+        }
+
         robot.followSpline(toCycle2, this);
+        robot.stayInPlacePose = cyclePose2;
         robot.updateStayInPlacePID = true;
 
         for (int i = 0; i < cycles2 && (System.currentTimeMillis() - startTime <= timeToPark[parkingNum]); i++) {
-            if (i != 0) {
-                robot.currentState = INTAKE_GLOBAL;
-                robot.startIntakeGlobal(
-                        cyclePose,
-                        new Pose2d(-70,12 * ySign),
-                        coneStackHeights[i]
-                );
-            }
+            robot.currentState = INTAKE_GLOBAL;
+            robot.startIntakeGlobal(
+                    cyclePose2,
+                    new Pose2d(-71,8.0 * ySign),
+                    coneStackHeights[i]
+            );
 
             while ((robot.currentState == INTAKE_GLOBAL) && (System.currentTimeMillis() - startTime <= timeToPark[parkingNum])) {
                 robot.update();
             }
 
-            if (robot.sensors.robotNextToMeRight) {
+            if (robot.sensors.robotNextToMeLeft) {
                 robot.startScoringGlobal(
-                        cyclePose,
+                        cyclePose2,
                         new Pose2d(-21.0, 24 * ySign),
                         18.35);
             } else {
                 robot.startScoringGlobal(
-                        cyclePose,
-                        new Pose2d(-24.5, -1.0 * ySign),
+                        cyclePose2,
+                        new Pose2d(-27.5, -1.75 * ySign),
                         32 + robot.autoIntakeHeightDifference);
             }
 
@@ -246,20 +249,13 @@ public class NineConeAutoRight extends LinearOpMode {
             }
         }
 
-        long timer = System.currentTimeMillis();
+        robot.updateStayInPlacePID = false;
 
         robot.outtake.extension.retractExtension();
+        robot.currentState = INTAKE_RELATIVE;
         robot.update();
-        while (!(robot.outtake.slides.currentSlidesLength <= 5)) {
-            robot.update();
-            if (robot.outtake.extension.isInPosition(1)) {
-                robot.claw.close();
-            }
-            if (System.currentTimeMillis() - timer >= 200) {
-                robot.currentState = INTAKE_RELATIVE;
-            }
-        }
 
+        Log.e("HERE", ":wefjowief29921193");
         robot.followSpline(park[parkingNum], this);
 
         Storage.autoEndPose = drive.getPoseEstimate();

@@ -154,7 +154,7 @@ public class Drivetrain {
                     fwd - strafePower + turn
             };
             double max = Math.abs(motorPowers[0]);
-            for (int i = 1; i < motorPowers.length; i ++){
+            for (int i = 1; i < motorPowers.length; i ++) {
                 max = Math.max(max, Math.abs(motorPowers[i]));
             }
             double maxSpeed = Math.min(1.0, errorDistance / currentSplineToFollow.minimumRobotDistanceFromPoint); // we want the speed to slow down as we approach the point

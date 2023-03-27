@@ -15,12 +15,12 @@ public class Actuation {
     public double targetActPosition = 0.0;
     public double actPower = 1.0;
 
-    double levelPosition = 0.682;
-    double miniDunkPosition = 0.525;
-    double downLevelPosition = 0.746;
-    double tiltedPosition = 0.396; //0.2689
-    double autoStackTiltPosition = 0.3; //0.2689
-    double initPosition = 0.0;
+    double levelPosition = 0.715;
+    double miniDunkPosition = 0.558;
+    double downLevelPosition = 0.779;
+    double tiltedPosition = 0.429;
+    double autoStackTiltPosition = 0.333;
+    double initPosition = 0.092;
     double retractPosition = 0.0;
 
     public Actuation(HardwareMap hardwareMap, ArrayList<MyServo> servos) {

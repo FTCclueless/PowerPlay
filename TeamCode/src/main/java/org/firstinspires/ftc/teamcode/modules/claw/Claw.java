@@ -14,12 +14,12 @@ public class Claw {
     public double targetClawPosition = 0.0;
     public double clawPower = 1.0;
 
-    public double closePosition = 0.139;
-    public double openPosition = 0.514;
-    public double retractOpenPosition = 0.297;
-    public double parkPosition = 0.916;
-    public double initPosition = 0.382;
-    public double initClosePosition = 0.2639;
+    public double closePosition = 0.0;
+    public double openPosition = 0.3;
+    public double retractOpenPosition = 0.2;
+    public double parkPosition = 0.88;
+    public double initPosition = 0.224;
+    public double initClosePosition = 0.075;
 
     public enum STATE {OPEN, RETRACT_OPEN, CLOSED, PARK, INIT, INIT_CLOSE}
     public STATE currentState = STATE.OPEN;
