@@ -28,7 +28,7 @@ public class NineConeAutoRight extends LinearOpMode {
 
     OpenCVWrapper openCVWrapper;
 
-    double[] coneStackHeights = new double[]{5.05, 3.5, 3.1, 1.5, 0.8}; //5.65, 4.4, 2.75, 2.0, 0.5
+    double[] coneStackHeights = new double[]{5.05, 3.5, 3.1, 1.5, 0.7}; //5.65, 4.4, 2.75, 2.0, 0.5
     ButtonToggle toggleA = new ButtonToggle();
     double[] timeToPark = new double[]{35000, 35000, 35000};
 
@@ -85,7 +85,7 @@ public class NineConeAutoRight extends LinearOpMode {
 
         Spline[] park = new Spline[]{
             new Spline(cyclePose2).addPoint(new Pose2d( // parking position 1
-                    -59.5,
+                    -55.5,
                     cyclePose2.getY(),
                     Math.toRadians(180)
             )),
@@ -240,7 +240,7 @@ public class NineConeAutoRight extends LinearOpMode {
             } else {
                 robot.startScoringGlobal(
                         cyclePose2,
-                        new Pose2d(-27.5, -1.75 * ySign),
+                        new Pose2d(-24.7, -1.75 * ySign),
                         32 + robot.autoIntakeHeightDifference);
             }
 
@@ -253,9 +253,13 @@ public class NineConeAutoRight extends LinearOpMode {
 
         robot.outtake.extension.retractExtension();
         robot.currentState = INTAKE_RELATIVE;
-        robot.update();
+        // Monkey see monkey do
+        long start = System.currentTimeMillis();
+        while (System.currentTimeMillis() < start + 1000) {
+            robot.update();
+        }
 
-        Log.e("HERE", ":wefjowief29921193");
+        // Log.e("HERE", ":wefjowief29921193");
         robot.followSpline(park[parkingNum], this);
 
         Storage.autoEndPose = drive.getPoseEstimate();
