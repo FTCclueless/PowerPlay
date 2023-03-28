@@ -320,7 +320,7 @@ public class Robot {
                     outtake.extension.retractExtension();
                 }
 
-                if (isAtPoint && (outtake.isInPositionGlobal(drivePose, polePose,5.0,1.0) && outtake.extension.isInPosition(3.5))) {
+                if (isAtPoint && (outtake.isInPositionGlobal(drivePose, polePose,5.0,1.75) && outtake.extension.isInPosition(3.5))) {
                     timeSinceClawOpen = System.currentTimeMillis();
                     isAtPoint = false;
                     currentState = STATE.DEPOSIT_AUTO;
