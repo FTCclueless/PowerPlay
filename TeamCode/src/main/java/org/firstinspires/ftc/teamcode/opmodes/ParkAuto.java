@@ -87,7 +87,7 @@ public class ParkAuto extends LinearOpMode {
         openCVWrapper.stop();
 
         robot.followSpline(to, this);
-        robot.followSplineWithTimer(park[parkingNum], this);
+        robot.followSpline(park[parkingNum], this);
 
         Storage.autoEndPose = drive.getPoseEstimate();
         Storage.isBlue = true;

@@ -259,8 +259,7 @@ public class NineConeAutoRight extends LinearOpMode {
             robot.update();
         }
 
-        // Log.e("HERE", ":wefjowief29921193");
-        robot.followSpline(park[parkingNum], this);
+        robot.followSplineWithTimer(park[parkingNum], this, startTime);
 
         Storage.autoEndPose = drive.getPoseEstimate();
         Storage.isBlue = false;
