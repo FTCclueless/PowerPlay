@@ -159,8 +159,8 @@ public class NineConeAutoRight extends LinearOpMode {
         robot.currentState = Robot.STATE.SCORING_GLOBAL;
         robot.startScoringGlobal(
                 new Pose2d(toPose.getX(), toPose.getY()-6.0, toPose.getHeading()),
-                new Pose2d(23.5, -1.8 * ySign),
-                26.5);
+                new Pose2d(23.5, -1.2 * ySign),
+                25.75);
         robot.followSpline(toPreload, this);
 
         while (robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) {
@@ -200,8 +200,8 @@ public class NineConeAutoRight extends LinearOpMode {
             } else {
                 robot.startScoringGlobal(
                         cyclePose,
-                        new Pose2d(24.5, -0.7 * ySign),
-                        31 + robot.autoIntakeHeightDifference);
+                        new Pose2d(25, -2.4 * ySign),
+                        31.65 + robot.autoIntakeHeightDifference);
             }
 
             while ((robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) && (System.currentTimeMillis() - startTime <= timeToPark[parkingNum])) {
@@ -240,8 +240,8 @@ public class NineConeAutoRight extends LinearOpMode {
             } else {
                 robot.startScoringGlobal(
                         cyclePose2,
-                        new Pose2d(-24.7, -1.75 * ySign),
-                        31 + robot.autoIntakeHeightDifference);
+                        new Pose2d(-23.7, -2.1 * ySign),
+                        31.65 + robot.autoIntakeHeightDifference);
             }
 
             while ((robot.currentState == SCORING_GLOBAL || robot.currentState == DEPOSIT_AUTO) && (System.currentTimeMillis() - startTime <= timeToPark[parkingNum])) {
