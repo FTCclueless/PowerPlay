@@ -40,7 +40,7 @@ public class VisionPipeline extends OpenCvPipeline {
 
     static final int YCRCB_CHANNEL_IDX = 2;
 
-    static final Point REGION1_TOP_LEFT_ANCHOR_POINT = new Point(30,0); // change x coordinate to change height where we take 4 rows
+    static final Point REGION1_TOP_LEFT_ANCHOR_POINT = new Point(40,0); // change x coordinate to change height where we take 4 rows
     static final int REGION_WIDTH = 4;
     static final int REGION_HEIGHT = 240; // 1080
 
@@ -80,7 +80,7 @@ public class VisionPipeline extends OpenCvPipeline {
         Imgproc.rectangle(
                 input,
                 new Point(region1_pointA.x, pole[0]),
-                new Point(region1_pointB.x, pole[1]),
+                new Point(region1_pointB.x, pole[0]+pole[1]),
                 new Scalar(255, 0, 0), 1);
 
         return input;
@@ -104,12 +104,12 @@ public class VisionPipeline extends OpenCvPipeline {
     public double min = 0;
     public double max = 100;
 
-    int longestLength = 0;
-    int currentLength = 0;
-    int currentStart = 0;
-    int longestStart = 0;
-
     private double[] findLongestLength(Mat input) {
+        int longestLength = 0;
+        int currentLength = 0;
+        int currentStart = 0;
+        int longestStart = 0;
+
         for (int i = 0; i < input.rows(); i++) {
             double currentPixel = input.get(i, 0)[0];
             if (currentPixel >= min && currentPixel <= max) {
@@ -123,10 +123,7 @@ public class VisionPipeline extends OpenCvPipeline {
                 longestLength = currentLength;
                 longestStart = currentStart;
             }
-
-            Log.e("currentPixel", currentPixel + "");
         }
-        Log.e("NEW LINE","------------");
 
         return new double[] {(double) longestStart, (double) longestLength};
     }
