@@ -8,6 +8,7 @@ import org.java_websocket.framing.PongFrame;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
@@ -32,6 +33,7 @@ public class VisionPipeline extends OpenCvPipeline {
      *
      */
 
+    Mat croppedMat = new Mat();
     Mat cbMat = new Mat();
     Mat deNoiseMat = new Mat();
     Mat averageMat = new Mat();
@@ -54,8 +56,11 @@ public class VisionPipeline extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input)
     {
+        // crop in
+        croppedMat = input.submat(new Rect(region1_pointA, region1_pointB));
+
         // convert to CB color space
-        Imgproc.cvtColor(input, cbMat, Imgproc.COLOR_RGB2YCrCb);
+        Imgproc.cvtColor(croppedMat, cbMat, Imgproc.COLOR_RGB2YCrCb);
         Core.extractChannel(cbMat, cbMat, YCRCB_CHANNEL_IDX);
 
         // de-noise image
@@ -71,12 +76,14 @@ public class VisionPipeline extends OpenCvPipeline {
         // get width of patch
         // perform transformations to get angle + distance away
 
+        // draw cropped area
         Imgproc.rectangle(
                 input,
                 region1_pointA,
                 region1_pointB,
                 new Scalar(0, 255, 0), 1);
 
+        // pole
         Imgproc.rectangle(
                 input,
                 new Point(region1_pointA.x, pole[0]),
