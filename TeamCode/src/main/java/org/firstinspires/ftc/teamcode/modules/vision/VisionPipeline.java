@@ -4,16 +4,15 @@ import android.util.Log;
 
 import com.acmerobotics.dashboard.config.Config;
 
+import org.java_websocket.framing.PongFrame;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
-import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-@Config
 public class VisionPipeline extends OpenCvPipeline {
     /*
      * Points which actually define the sample region rectangles, derived from above values
@@ -33,11 +32,13 @@ public class VisionPipeline extends OpenCvPipeline {
      *
      */
 
-    Mat region = new Mat();
-    Mat YCrCb = new Mat();
-    Mat Cb = new Mat();
+    Mat cbMat = new Mat();
+    Mat deNoiseMat = new Mat();
+    Mat averageMat = new Mat();
 
-    Mat average = new Mat();
+    double[] pole = new double[2];
+
+    static final int YCRCB_CHANNEL_IDX = 2;
 
     static final Point REGION1_TOP_LEFT_ANCHOR_POINT = new Point(30,0); // change x coordinate to change height where we take 4 rows
     static final int REGION_WIDTH = 4;
@@ -50,42 +51,21 @@ public class VisionPipeline extends OpenCvPipeline {
             REGION1_TOP_LEFT_ANCHOR_POINT.x - REGION_WIDTH,
             REGION1_TOP_LEFT_ANCHOR_POINT.y + REGION_HEIGHT);
 
-    void inputToCb(Mat input)
-    {
-        Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
-        Core.extractChannel(YCrCb, Cb, 2);
-    }
-
-    @Override
-    public void init(Mat firstFrame)
-    {
-        /*
-         * We need to call this in order to make sure the 'Cb'
-         * object is initialized, so that the submats we make
-         * will still be linked to it on subsequent frames. (If
-         * the object were to only be initialized in processFrame,
-         * then the submats would become delinked because the backing
-         * buffer would be re-allocated the first time a real frame
-         * was crunched)
-         */
-        inputToCb(firstFrame);
-
-        // grab 4 rows
-        region = Cb.submat(new Rect(region1_pointA, region1_pointB));
-    }
-
     @Override
     public Mat processFrame(Mat input)
     {
         // convert to CB color space
-        inputToCb(input);
+        Imgproc.cvtColor(input, cbMat, Imgproc.COLOR_RGB2YCrCb);
+        Core.extractChannel(cbMat, cbMat, YCRCB_CHANNEL_IDX);
+
+        // de-noise image
+        noiseReduction(cbMat, deNoiseMat);
 
         // average rows
-        Imgproc.resize(input, average, new Size(1,1080));
-
-        // get average yellowness of image
+        Imgproc.resize(deNoiseMat, averageMat, new Size(1,240));
 
         // search for blobs/patches
+        pole = findLongestLength(averageMat);
 
         // get center pixel value of patch
         // get width of patch
@@ -97,6 +77,57 @@ public class VisionPipeline extends OpenCvPipeline {
                 region1_pointB,
                 new Scalar(0, 255, 0), 1);
 
+        Imgproc.rectangle(
+                input,
+                new Point(region1_pointA.x, pole[0]),
+                new Point(region1_pointB.x, pole[1]),
+                new Scalar(255, 0, 0), 1);
+
         return input;
+    }
+
+    /*
+     * The elements we use for noise reduction
+     */
+    Mat erodeElement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(4, 4));
+    Mat dilateElement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3, 3));
+
+    private void noiseReduction(Mat input, Mat output)
+    {
+        Imgproc.erode(input, output, erodeElement);
+        Imgproc.erode(output, output, erodeElement);
+
+        Imgproc.dilate(output, output, dilateElement);
+        Imgproc.dilate(output, output, dilateElement);
+    }
+
+    public double min = 0;
+    public double max = 100;
+
+    int longestLength = 0;
+    int currentLength = 0;
+    int currentStart = 0;
+    int longestStart = 0;
+
+    private double[] findLongestLength(Mat input) {
+        for (int i = 0; i < input.rows(); i++) {
+            double currentPixel = input.get(i, 0)[0];
+            if (currentPixel >= min && currentPixel <= max) {
+                currentLength += 1;
+            } else {
+                currentLength = 0;
+                currentStart = i+1;
+            }
+
+            if (currentLength > longestLength) {
+                longestLength = currentLength;
+                longestStart = currentStart;
+            }
+
+            Log.e("currentPixel", currentPixel + "");
+        }
+        Log.e("NEW LINE","------------");
+
+        return new double[] {(double) longestStart, (double) longestLength};
     }
 }

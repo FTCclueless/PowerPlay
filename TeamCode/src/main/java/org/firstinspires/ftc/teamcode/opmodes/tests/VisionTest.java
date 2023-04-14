@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.modules.vision.VisionPipeline;
+import org.firstinspires.ftc.teamcode.vision.Vision;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -16,6 +17,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 @TeleOp
 public class VisionTest extends LinearOpMode {
     OpenCvCamera webcam;
+    public static double min = 0;
+    public static double max = 100;
 
     @Override
     public void runOpMode()
@@ -24,7 +27,9 @@ public class VisionTest extends LinearOpMode {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
-        webcam.setPipeline(new VisionPipeline());
+        VisionPipeline visionPipeline = new VisionPipeline();
+
+        webcam.setPipeline(visionPipeline);
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
@@ -47,9 +52,8 @@ public class VisionTest extends LinearOpMode {
 
         waitForStart();
 
-        while (opModeIsActive())
-        {
-           updateTelemetry();
+        while (opModeIsActive()) {
+            updateTelemetry();
 
             if(gamepad1.a)
             {
