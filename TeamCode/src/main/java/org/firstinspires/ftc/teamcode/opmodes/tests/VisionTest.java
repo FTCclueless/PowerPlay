@@ -11,12 +11,11 @@ import org.firstinspires.ftc.teamcode.modules.vision.VisionPipeline;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvWebcam;
 
 @Config
 @TeleOp
 public class VisionTest extends LinearOpMode {
-    OpenCvWebcam webcam;
+    OpenCvCamera webcam;
 
     @Override
     public void runOpMode()
@@ -27,13 +26,12 @@ public class VisionTest extends LinearOpMode {
 
         webcam.setPipeline(new VisionPipeline());
 
-        webcam.setMillisecondsPermissionTimeout(5000); // Timeout for obtaining permission is configurable. Set before opening.
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
             public void onOpened()
             {
-                webcam.startStreaming(1920, 1080, OpenCvCameraRotation.UPRIGHT);
+                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -43,20 +41,15 @@ public class VisionTest extends LinearOpMode {
         telemetry.addLine("Waiting for start");
         telemetry.update();
 
-        Log.e("waintng for start", "");
+        while (opModeInInit()) {
+            updateTelemetry();
+        }
 
         waitForStart();
 
         while (opModeIsActive())
         {
-            Log.e("looping", "");
-            telemetry.addData("Frame Count", webcam.getFrameCount());
-            telemetry.addData("FPS", String.format("%.2f", webcam.getFps()));
-            telemetry.addData("Total frame time ms", webcam.getTotalFrameTimeMs());
-            telemetry.addData("Pipeline time ms", webcam.getPipelineTimeMs());
-            telemetry.addData("Overhead time ms", webcam.getOverheadTimeMs());
-            telemetry.addData("Theoretical max FPS", webcam.getCurrentPipelineMaxFps());
-            telemetry.update();
+           updateTelemetry();
 
             if(gamepad1.a)
             {
@@ -64,5 +57,15 @@ public class VisionTest extends LinearOpMode {
                 webcam.closeCameraDevice();
             }
         }
+    }
+
+    public void updateTelemetry() {
+        telemetry.addData("Frame Count", webcam.getFrameCount());
+        telemetry.addData("FPS", String.format("%.2f", webcam.getFps()));
+        telemetry.addData("Total frame time ms", webcam.getTotalFrameTimeMs());
+        telemetry.addData("Pipeline time ms", webcam.getPipelineTimeMs());
+        telemetry.addData("Overhead time ms", webcam.getOverheadTimeMs());
+        telemetry.addData("Theoretical max FPS", webcam.getCurrentPipelineMaxFps());
+        telemetry.update();
     }
 }

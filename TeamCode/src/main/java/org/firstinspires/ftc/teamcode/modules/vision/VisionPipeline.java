@@ -8,6 +8,7 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
@@ -38,19 +39,16 @@ public class VisionPipeline extends OpenCvPipeline {
 
     Mat average = new Mat();
 
-    static final Point REGION1_TOP_LEFT_ANCHOR_POINT = new Point(1920,0); // change x coordinate to change height where we take 4 rows
+    static final Point REGION1_TOP_LEFT_ANCHOR_POINT = new Point(30,0); // change x coordinate to change height where we take 4 rows
     static final int REGION_WIDTH = 4;
-    static final int REGION_HEIGHT = 1080;
+    static final int REGION_HEIGHT = 240; // 1080
 
     Point region1_pointA = new Point(
             REGION1_TOP_LEFT_ANCHOR_POINT.x,
             REGION1_TOP_LEFT_ANCHOR_POINT.y);
     Point region1_pointB = new Point(
-            REGION1_TOP_LEFT_ANCHOR_POINT.x + REGION_WIDTH,
+            REGION1_TOP_LEFT_ANCHOR_POINT.x - REGION_WIDTH,
             REGION1_TOP_LEFT_ANCHOR_POINT.y + REGION_HEIGHT);
-
-    public static long timeToProcess;
-    long start;
 
     void inputToCb(Mat input)
     {
@@ -79,14 +77,11 @@ public class VisionPipeline extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input)
     {
-        start = System.currentTimeMillis();
         // convert to CB color space
         inputToCb(input);
 
         // average rows
         Imgproc.resize(input, average, new Size(1,1080));
-        Log.e("---------------------------ONE FRAME---------------------------", average.toString());
-        Log.e("Average:", average.toString());
 
         // get average yellowness of image
 
@@ -96,7 +91,12 @@ public class VisionPipeline extends OpenCvPipeline {
         // get width of patch
         // perform transformations to get angle + distance away
 
-        timeToProcess = System.currentTimeMillis() - start;
+        Imgproc.rectangle(
+                input,
+                region1_pointA,
+                region1_pointB,
+                new Scalar(0, 255, 0), 1);
+
         return input;
     }
 }
