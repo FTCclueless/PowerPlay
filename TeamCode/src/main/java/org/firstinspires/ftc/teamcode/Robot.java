@@ -186,7 +186,7 @@ public class Robot {
                     isAtPoint = true;
                 }
 
-                if ((isAtPoint && (outtake.isInPositionGlobal(drivePose, conePose, 3.5)  && outtake.extension.isInPosition(0.1)) || hasGrabbed)) {
+                if ((isAtPoint && (outtake.isInPositionGlobal(drivePose, conePose, 3.0)  && outtake.extension.isInPosition(0.1)) || hasGrabbed)) {
                     hasGrabbed = true;
                     claw.close();
                     autoIntakeHeightDifference = outtake.slides.currentSlidesLength - outtake.slides.targetSlidesLength;
@@ -320,7 +320,7 @@ public class Robot {
                     outtake.extension.retractExtension();
                 }
 
-                if (isAtPoint && (outtake.isInPositionGlobal(drivePose, polePose,5.0,2.0) && outtake.extension.isInPosition(3.5))) {
+                if (isAtPoint && (outtake.isInPositionGlobal(drivePose, polePose,5.0,0.7) && outtake.extension.isInPosition(3.5))) {
                     timeSinceClawOpen = System.currentTimeMillis();
                     isAtPoint = false;
                     currentState = STATE.DEPOSIT_AUTO;
@@ -625,13 +625,6 @@ public class Robot {
     public void testMode () {
         currentState = STATE.IDLE;
         resetEncoders();
-    }
-
-    public void followSplineWithTimer(Spline trajectory, LinearOpMode opMode) {
-        drivetrain.setSpline(trajectory);
-        while(drivetrain.isBusy() && opMode.opModeIsActive()) {
-            update();
-        }
     }
 
     public void followSplineWithTimer(Spline trajectory, LinearOpMode opMode, long startTime) {
