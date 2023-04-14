@@ -59,7 +59,6 @@ public class Teleop extends LinearOpMode {
         waitForStart();
 
         while (!isStopRequested()) {
-
             // Driver A
             drive.drive(gamepad1);
 
