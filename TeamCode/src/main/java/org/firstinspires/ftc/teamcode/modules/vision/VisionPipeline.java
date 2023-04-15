@@ -2,9 +2,6 @@ package org.firstinspires.ftc.teamcode.modules.vision;
 
 import android.util.Log;
 
-import com.acmerobotics.dashboard.config.Config;
-
-import org.java_websocket.framing.PongFrame;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -13,6 +10,8 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
+
+import java.util.ArrayList;
 
 public class VisionPipeline extends OpenCvPipeline {
     /*
@@ -53,6 +52,20 @@ public class VisionPipeline extends OpenCvPipeline {
             REGION1_TOP_LEFT_ANCHOR_POINT.x - REGION_WIDTH,
             REGION1_TOP_LEFT_ANCHOR_POINT.y + REGION_HEIGHT);
 
+    // math variables
+    double verticalResolution = 240;
+    double fov = Math.toRadians(47.3); // radians
+    double poleWidthInInches = 1;
+
+    double distanceFromPole;
+    double angleFromPole;
+
+    ArrayList<Double> distanceData = new ArrayList<Double>();
+    double averageDistance = 0;
+
+    ArrayList<Double> angleData = new ArrayList<Double>();
+    double averageAngle = 0;
+
     @Override
     public Mat processFrame(Mat input)
     {
@@ -72,9 +85,38 @@ public class VisionPipeline extends OpenCvPipeline {
         // search for blobs/patches
         pole = findLongestLength(averageMat);
 
-        // get center pixel value of patch
-        // get width of patch
-        // perform transformations to get angle + distance away
+        // perform transformations to get pole's distance away
+        double poleWidthInPixels = pole[1];
+        distanceFromPole = (poleWidthInInches/2)/(Math.tan(((poleWidthInPixels)/verticalResolution)*fov));
+
+        double distanceSum = 0;
+
+        distanceData.add(distanceFromPole);
+        if (distanceData.size() > 10) {
+            distanceData.remove(0);
+        }
+        for (double a : distanceData) {
+            distanceSum += a;
+        }
+
+        averageDistance = distanceSum / distanceData.size();
+
+        // perform transformations to get pole's angle away
+        double polePositionInPixels = pole[0] + (pole[1]/2);
+        angleFromPole = fov * (0.5 - (polePositionInPixels/verticalResolution)) * -1;
+
+        double angleSum = 0;
+
+        angleData.add(angleFromPole);
+        if (angleData.size() > 10) {
+            angleData.remove(0);
+        }
+        for (double a : angleData) {
+            angleSum += a;
+        }
+
+        averageAngle = angleSum / angleData.size();
+
 
         // draw cropped area
         Imgproc.rectangle(
@@ -89,6 +131,12 @@ public class VisionPipeline extends OpenCvPipeline {
                 new Point(region1_pointA.x, pole[0]),
                 new Point(region1_pointB.x, pole[0]+pole[1]),
                 new Scalar(255, 0, 0), 1);
+
+        Log.e("distanceFromPole", distanceFromPole + "");
+        Log.e("angleFromPole", Math.toDegrees(angleFromPole) + "");
+
+        Log.e("distanceAverage", averageDistance + "");
+        Log.e("angleAverage", Math.toDegrees(averageAngle) + "");
 
         return input;
     }
@@ -121,14 +169,14 @@ public class VisionPipeline extends OpenCvPipeline {
             double currentPixel = input.get(i, 0)[0];
             if (currentPixel >= min && currentPixel <= max) {
                 currentLength += 1;
+
+                if (currentLength > longestLength) {
+                    longestLength = currentLength;
+                    longestStart = currentStart;
+                }
             } else {
                 currentLength = 0;
                 currentStart = i+1;
-            }
-
-            if (currentLength > longestLength) {
-                longestLength = currentLength;
-                longestStart = currentStart;
             }
         }
 
