@@ -41,8 +41,8 @@ public class Outtake {
     double currentSlidesLength = 0.0;
     double currentExtensionLength = 0.0;
 
-    double turretXOffset = -1.26; // TODO: Get actual number
-    double turretYOffset = 0.0;
+    public double turretXOffset = -1.26;
+    public double turretYOffset = 0.0;
 
     double x, y, z;
 

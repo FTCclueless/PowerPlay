@@ -13,6 +13,7 @@ import java.util.List;
  */
 public class DashboardUtil {
     private static final double ROBOT_RADIUS = 9; // in
+    private static final double POLE_RADIUS = 0.5; // in
 
     public static void drawPoseHistory(Canvas canvas, List<Pose2d> poseHistory) {
         double[] xPoints = new double[poseHistory.size()];
@@ -47,5 +48,9 @@ public class DashboardUtil {
         double x1 = pose.getX() + v.getX() / 2, y1 = pose.getY() + v.getY() / 2;
         double x2 = pose.getX() + v.getX(), y2 = pose.getY() + v.getY();
         canvas.strokeLine(x1, y1, x2, y2);
+    }
+
+    public static void drawPole(Canvas canvas, Pose2d pose) {
+        canvas.strokeCircle(pose.getX(), pose.getY(), POLE_RADIUS);
     }
 }

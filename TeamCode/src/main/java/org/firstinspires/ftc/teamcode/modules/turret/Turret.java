@@ -48,6 +48,8 @@ public class Turret {
 
     public double maxTurretAngle = 630;
 
+    public boolean zeroPower = false;
+
     public Turret(HardwareMap hardwareMap, ArrayList<MotorPriority> motorPriorities, Sensors sensors, Outtake outtake) {
         this.motorPriorities = motorPriorities;
         this.sensors = sensors;
@@ -110,7 +112,11 @@ public class Turret {
             Log.e("slow down triggered", "--------------------");
         }
 
-        motorPriorities.get(4).setTargetPower(-turretPower);
+        if (zeroPower) {
+            motorPriorities.get(4).setTargetPower(0.0);
+        } else {
+            motorPriorities.get(4).setTargetPower(-turretPower);
+        }
 
         updateTelemetry();
     }
